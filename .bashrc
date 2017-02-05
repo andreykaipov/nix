@@ -1,33 +1,33 @@
 
-#PS1="\n\[\e[32m\]\u\[\e[m\]\[\e[32m\]@\[\e[m\]\[\e[32m\]\h\[\e[m\]:\[\e[33m\]\w\[\e[m\]\n$ "
+# enable programmable completion features if it's not enabled already
+if ! shopt -oq posix; then
+  if [[ -r /usr/share/bash-completion/bash_completion ]]; then
+    . /usr/share/bash-completion/bash_completion
+  elif [[ -r /etc/bash_completion ]]; then
+    . /etc/bash_completion
+  fi
+fi
 
-# e.g. open textbook.pdf
-alias open='gnome-open'
+# if xterm, set title to user@host:dir (branch)
+case "$TERM" in xterm*|rxvt*)
+        PS1="\n\`if [ \$? = 0 ]; then echo '\[\e[1;32m\]\u\[\e[0m\]@\[\e[1;32m\]\H'; else echo '\[\e[1;31m\]\u\[\e[0m\]@\[\e[1;31m\]\H'; fi\`\[\e[0m\]:\[\e[1;33m\]\w \[\e[1;36m\]$(__git_ps1 '(%s)') \[\e[0;39m\]\n$ "
+        ;;
+esac
 
-# Typical ll, but show dot files first.
-alias ll='LC_COLLATE=C ls -alF'
+# enable colors for ls and grep
+if [[ -x /usr/bin/dircolors ]]; then
+    test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
+    alias ls='ls --color=yes'
+    alias grep='grep --color=auto'
+fi
 
-# Allows the creation of nested directories.
-alias mkdir='mkdir -p'
+# yellow directories 8-)
+LS_COLORS=$LS_COLORS:'di=1;33'
 
-# Less with line numbers.
-alias less='less -N'
+# other aliases
+[[ -r "$HOME/.bash_aliases" ]] && . "$HOME/.bash_aliases"
 
-# Gotta stay safe!
-alias rm='rm -i'
+# set the right umask for creating 755 dirs and 644 files
+# sometimes it's not set by default...?
+umask 0022
 
-# View data written (in GB) to /dev/sda1.
-# This is only for certain SSDs.
-# See http://serverfault.com/a/571741.
-alias vdw="sudo smartctl -A /dev/sda1 | awk '/^241/ { print \"GBW: \"(\$10 * 512) * 1.0e-9, \"GB\" }'"
-
-# Easy way to view permissions of things.
-alias getperms='stat --format %a'
-
-# Give good permissions to files and dirs accordingly in the working directory.
-# 755 to dirs and 644 to files.
-alias restorewdperms='find . -type d -exec chmod 755 {} \; &&
-                    find . -type f -exec chmod 644 {} \;'
-
-# What is python2?
-alias python=python3
