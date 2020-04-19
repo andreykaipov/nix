@@ -1,0 +1,13 @@
+*
+
+# metaf
+!.gitignore
+!README.md
+!Makefile
+# endmetaf
+
+!.config
+!.config/nvim
+!.config/nvim/*.vim
+
+
