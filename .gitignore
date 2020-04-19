@@ -3,7 +3,8 @@
 # metaf
 !.gitignore
 !README.md
-!Makefile
+!meta
+!meta/*.sh
 # endmetaf
 
 !.config
