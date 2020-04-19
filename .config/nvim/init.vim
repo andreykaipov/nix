@@ -4,6 +4,13 @@ else
   let root = expand('~/.config/nvim')
 endif
 
+" preserve history after closing
+"
+if has('persistent_undo')
+  set undofile
+  exec printf("set undodir=%s/undo", root)
+endif
+
 " install Vim Plug for Neovim
 " https://github.com/junegunn/vim-plug/wiki/tips#automatic-installationi
 "
