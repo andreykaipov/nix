@@ -15,3 +15,6 @@ done
 
 echo "Created symlinks in \$HOME for:"
 echo "$configs" | xargs -n1 echo -
+
+echo "Installing VIM plugins"
+nvim +PlugInstall +qa
