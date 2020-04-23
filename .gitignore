@@ -10,5 +10,8 @@
 !.config
 !.config/nvim
 !.config/nvim/*.vim
-!.config/nvim/ftplugin
-!.config/nvim/ftplugin/*.vim
+!.config/nvim/ft*
+!.config/nvim/ft*/*.vim
+!.config/nvim/after
+!.config/nvim/after/*plugin
+!.config/nvim/after/*plugin/*.vim
