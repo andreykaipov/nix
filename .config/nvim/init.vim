@@ -17,7 +17,10 @@ if !filereadable(vimplug_local)
 
     echo 'Installing Vim-Plug...'
     silent exec printf('!curl -sLo %s %s --create-dirs', vimplug_local, vimplug_remote)
-    autocmd startup VimEnter * PlugInstall --sync
+    augroup _
+        au!
+        autocmd VimEnter * PlugInstall --sync
+    augroup END
 endif
 
 " install plugins
