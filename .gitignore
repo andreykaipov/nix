@@ -25,4 +25,6 @@
 !.config/alacritty
 !.config/alacritty/alacritty.tmpl.yml
 
+!.xrc
+!.aliases
 !.git-prompt.sh

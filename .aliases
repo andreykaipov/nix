@@ -1,0 +1,16 @@
+#!/bin/sh
+
+# yellow dirs
+export LS_COLORS=$LS_COLORS:'di=1;33'
+export LC_COLLATE=C
+alias ls='ls -AlX --group-directories-first --no-group --classify --color=auto'
+alias ll='ls'
+alias l='ls'
+
+# gotta stay safe
+alias rm='rm -i'
+
+alias vi='nvim'
+alias vim='nvim'
+
+alias k='kubectl'
