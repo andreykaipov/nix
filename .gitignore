@@ -21,10 +21,11 @@
 
 !.gitconfig
 !.gitconfig-work
+!.git-prompt.sh
 
 !.config/alacritty
 !.config/alacritty/alacritty.tmpl.yml
 
 !.xrc
 !.aliases
-!.git-prompt.sh
+!.tmux.conf
