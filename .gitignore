@@ -24,3 +24,5 @@
 
 !.config/alacritty
 !.config/alacritty/alacritty.tmpl.yml
+
+!.git-prompt.sh
