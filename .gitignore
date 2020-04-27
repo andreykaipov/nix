@@ -15,6 +15,9 @@
 !.config/nvim/after
 !.config/nvim/after/*plugin
 !.config/nvim/after/*plugin/*.vim
+!.config/nvim/tmp
+!.config/nvim/tmp/bak
+!.config/nvim/tmp/bak/.gitkeep
 
 !.gitconfig
 !.gitconfig-work
