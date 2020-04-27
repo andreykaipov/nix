@@ -1,0 +1,9 @@
+[user]
+    name = Andrey Kaipov
+    email = andreykaipov@users.noreply.github.com
+
+[credential]
+    helper = cache --timeout=1000
+
+[includeIf "gitdir:~/projects/work/**"]
+    path = .gitconfig-work

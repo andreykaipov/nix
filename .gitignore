@@ -15,3 +15,6 @@
 !.config/nvim/after
 !.config/nvim/after/*plugin
 !.config/nvim/after/*plugin/*.vim
+
+!.gitconfig
+!.gitconfig-work
