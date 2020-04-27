@@ -1,7 +1,7 @@
 #!/bin/sh
 # shellcheck disable=SC2016
 
-metafiles="$(awk '/metaf/,/endmetaf/' .gitignore | awk '/!/' | cut -c2- | paste -sd\|)"
+metafiles="$(awk '/metaf/,/endmetaf/' .gitignore | awk '/!/' | cut -c2- | tr '\n' '|' | sed 's/.$//')"
 configs="$(find . -depth 1 | cut -c3- | grep -vEx ".git|$metafiles")"
 
 for c in $configs; do
