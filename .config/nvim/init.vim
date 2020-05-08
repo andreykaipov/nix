@@ -68,6 +68,10 @@ nmap <C-k> <C-w>k
 nmap <C-l> <C-w>l
 nmap <C-h> <C-w>h
 
+" double tap v to select the entire line
+"
+nmap vv <S-v>
+
 " make Vim behave similarly when using terminal keyboard shortcuts in command
 " mode (see :help tcsh-style). strangely, <C-u> works already.
 "
@@ -89,6 +93,7 @@ vmap K :m '<-2<cr>gv=gv
 " show 81 char line. ideally our code won't go past it.
 " because of this, we don't need to wrap lines.
 "
+set textwidth=80
 set colorcolumn=81
 set nowrap
 
@@ -121,7 +126,7 @@ function! SetCustomHighlights()
     highlight ColorColumn                            ctermbg=155
     highlight CursorLine                             ctermbg=black
     highlight CursorLineNr            ctermfg=yellow ctermbg=black
-    highlight Normal                  ctermfg=252
+    highlight Normal                  ctermfg=252    ctermbg=black
     highlight MatchParen   cterm=bold ctermfg=208    ctermbg=233
     " highlight highlight-group :cterm=NONE ctermbg=NONE ctermfg=NONE gui=NONE guibg=NONE guifg=NONE
 endfunction
@@ -129,9 +134,22 @@ endfunction
 augroup init
     au!
 
-    " better to put this in an autocmd rather than directly calling it, e.g.
-    " sourcing $VIMRC will not toggle numbers this way
-    autocmd BufReadPost * ToggleNumbers
+    " we use an autocmd to set global formatoptions because underlying plugins
+    " may overwrite this value.
+    "
+    " c - autowrap comments using the textwidth, inserting the comment leader
+    " r - automatically insert comment leader after hitting <cr> during Insert
+    " o - automatically insert comment leader after hitting o or O during Normal
+    " q - allow comment formatting via gq
+    " 1 - don't break lines after one-letter words, if possible
+    " j - remove comment leaders when joining lines, if possible
+    "
+    autocmd BufNewFile,BufRead * set formatoptions=croq1j
+
+    " better to put this in an autocmd rather than directly calling it, since
+    " resourcing $MYVIMRC will not toggle numbers this way
+    "
+    autocmd BufNewFile,BufRead * ToggleNumbers
 
     " override any colorscheme with our custom highlights that are superior
     " anywhere, don't @ me
@@ -140,7 +158,7 @@ augroup init
 
     " go back to last position after closing (see :help restore-cursor)
     "
-    autocmd BufReadPost *
+    autocmd BufRead *
         \ if line("'\"") >= 1 && line("'\"") <= line("$") && &ft !~# 'commit'
         \ |   exe "normal! g`\""
         \ | endif
