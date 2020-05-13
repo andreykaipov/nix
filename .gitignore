@@ -26,6 +26,9 @@
 !.config/alacritty
 !.config/alacritty/alacritty.tmpl.yml
 
-!.xrc
-!.aliases
+!.shlogin
+!.shrc
+!.shenv
+!.shalias
+!.shfunction
 !.tmux.conf

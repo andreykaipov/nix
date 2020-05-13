@@ -1,0 +1,27 @@
+#!/bin/sh
+
+# setup ls (note: not POSIX)
+#
+command -v dircolors >/dev/null && eval "$(dircolors)"
+export LS_COLORS="$LS_COLORS:di=1;33"
+
+# Wow holy fucking shit you're parsing the output of ls? How careless are you?
+#
+# The ls here without a sort is good enough, but we pipe it into a stable sort,
+# sorting on the colored file names from LS_COLORS. This causes the files in our
+# directory to show up grouped by file type, alphabetically. It's hacky yeah.
+#
+# shellcheck disable=SC2012
+ll() {
+    ls -AlGFh --group-directories-first --color "$@" | sort -s -k8,8
+}
+
+alias l='ll'
+
+# gotta stay safe
+alias rm='rm -i'
+
+alias vi='nvim'
+alias vim='nvim'
+
+alias k='kubectl'

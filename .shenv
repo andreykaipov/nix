@@ -1,4 +1,60 @@
 #!/bin/sh
 
+paths="
+    $HOME/bin
+    /usr/local/sbin
+    /usr/local/bin
+    /usr/sbin
+    /usr/bin
+    /sbin
+    /bin
+    /mnt/c/Windows/System32/WindowsPowerShell/v1.0
+    /mnt/c/Windows/System32
+    /mnt/c/Windows
+"
+
+# since we use tr to set our path, we can use the `command` builtin to find tr
+# shellcheck disable=SC2086
+PATH="$(echo $paths | PATH='/bin:/usr/bin:/usr/local/bin' command tr ' ' ':')"
+export PATH
+
 export TMPDIR="${TMP:-/tmp}"
 export EDITOR=vi
+
+export DOCKER_HOST=tcp://localhost:2375
+
+export GOBIN="$HOME/bin"
+export GOPATH="$HOME/go"
+
+# ANSI escape codes.
+# https://en.wikipedia.org/wiki/ANSI_escape_code#SGR_parameters
+# https://en.wikipedia.org/wiki/ANSI_escape_code#Colors
+# We could use 24-bit colors but these are fine.
+
+export _default='\e[39m'
+export _white='\e[97m'
+
+export _black='\e[30m'
+export _red='\e[31m'
+export _green='\e[32m'
+export _yellow='\e[33m'
+export _blue='\e[34m'
+export _purple='\e[35m'
+export _cyan='\e[36m'
+
+export _lightblack='\e[90m'
+export _lightred='\e[91m'
+export _lightgreen='\e[92m'
+export _lightyellow='\e[93m'
+export _lightblue='\e[94m'
+export _lightpurple='\e[95m'
+export _lightcyan='\e[96m'
+
+export _brightred='\e[1;31m'
+export _brightgreen='\e[1;32m'
+export _brightyellow='\e[1;33m'
+export _brightblue='\e[1;34m'
+export _brightpurple='\e[1;35m'
+export _brightcyan='\e[1;36m'
+
+export _reset='\e[0m'

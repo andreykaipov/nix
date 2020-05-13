@@ -1,61 +1,111 @@
 #!/bin/sh
+# shellcheck disable=SC1090
 #
-# .shinit contains commands that bootstrap our login shell. Anything that
-# doesn't need to be ran on every new interactive shell should go here.
+# .shlogin contains commands to bootstrap our login shell. How do we invoke this
+# file if we don't use the traditional .profile naming convention for login
+# shells?
 #
-# For example, setting common environment variables, commands that might be
-# slow, and starting window managers or desktop environments, and starting tmux , and configuring agents to be
-# used by all interactive shells, and should not be
-# executed at all for any interactive shell spawned from within tmux. However,
+# While not actually documented by the POSIX standard, any POSIX-compatible
+# shell (e.g. ash, dash, ksh, bash, zsh, etc.) will read the the ENV environment
+# variable to initialize the shell's environment. Typically, one of these shells
+# will be symlinked to just `sh`, so we can run `ENV=~/.shlogin sh` to have our
+# shell initialize itself with the commands from this file.
 #
-# these commands should remain idempotent, if we ever do start several login
-# shells, or intentionally source this file from an interactive shell.
+# Note the distinction between login and non-login shells is meaningless apart
+# from the files they read at startup. By explicitly providing the
+# initialization file for our shell, we know exactly what file our shell is
+# sourcing and don't have to muck around knowing the source order of
+# /etc/profile, .profile, or .(bash_|z)profile when debugging our "login" shell.
+# I also have trust issues, and this way I know exactly what happens to my
+# shell.
 #
-# How do we invoke this file?
+# Flow of execution is as follows:
+# 1. Pick a terminal (e.g. Windows Terminal, Alacritty, st, etc.)
+# 2. Configure the terminal to start with a default command of something like:
+#    `ENV=~/.shlogin sh`
+# 3. .shlogin will be sourced:
+#   - We'll check for the SSH agent's auth socket.
+#   - We'll export env vars that we don't expect to change between logins.
+#   - We'll do some other junk that makes sense to do only once, i.e. at login.
+#   - We'll exec into a tmux session (and do nothing if we're already in one).
+#     This should be done last to persist the environment to child shells.
+# 4. tmux's default-command takes over and our "non-login" shell is invoked for
+#    whenever we create new tmux panes/windows. We use .shrc for that.
 #
-# Any POSIX-compliant shell can be invoked as a login shell by setting `ENV`
-# pointing to this file, e.g. `ENV=.shinit sh`.
+# Since this file is idempotent, we can technically use it for non-login shells
+# too, but... that would feel odd (to me). For example, we don't need to check
+# every time we open up a new tmux pane if we're inside of a tmux session,
+# because of course we are! However, it's really up to the user. If one feels
+# like a command should only be run once (like at "login"), it should be done
+# here. Otherwise, we'll put it in .shrc.
 #
-# sh on almost every system you choose will be POSIX-compatible, whether it's
-# symlinked to ash, dash, ksh, bash, zsh, whatever.
-#
-# So, wherever we're allowed to customize our terminal's profiles and set a
-# login command is where we should add `ENV=.shinit sh`.
-#
-# This way, only the contents of this file will get executed during login. We
-# can't trust what's happening inside of /etc/profile, .profile, etc. on
-# whatever new system we're setting up our development environment on.
+# Essentially, we're optimizing for milliseconds each time we open up a new
+# terminal pane by carefully distinguishing between commands we want to only
+# once, as opposed to every time. Imagine what I can do with all that time
+# saved!
 
-# 
-export TMPDIR="${TMP:-/tmp}"
-export EDITOR=vi
-
-# set up ssh-agent
-# if the socket already exists, grab the pid and export it.
-# otherwise, just start the agent.
-#
-export SSH_AUTH_SOCK=$TMPDIR/ssh.auth.sock
-if [ -S "$SSH_AUTH_SOCK" ]; then
-    SSH_AGENT_PID="$(pgrep -f "ssh-agent -sa $SSH_AUTH_SOCK")"
-    export SSH_AGENT_PID
-else
-    eval "$(ssh-agent -sa "$SSH_AUTH_SOCK")"
-fi
-
-# umask might not always be set, like in WSL distros
-#
-umask 0022
-
-# setup tmux
-# note: this should always be last because we want any new shells 
-#
-# if $TMUX is empty, then we're not inside of a tmux session and we can either
-# attach into an existing one, or create a new one. our session is called local.
-#
-if [ -z "$TMUX" ]; then
-    if tmux ls -F '#{session_name}' | grep -qx local; then
-        exec tmux attach -t local
-    else
-        exec tmux new -s local
+# 1. If there's more than one agent running, terminate them all.
+# 2. Read ~/.ssh-agent for the connection info.
+# 3. If `ssh-add -l` exits 2, we've failed to connect.
+#    either the socket has been cleaned up, the process was killed, or the agent
+#    is just not running. in any case, kill the remaining agent process if any,
+#    and start up a new agent, writing its connection info to ~/.ssh-agent.
+# 4. Otherwise, we're good and we add our keys.
+ensure_ssh_agent() {
+    ssh_agent_pids="$(ps -e | awk '$NF == "ssh-agent" {print $1}')"
+    if [ "$(echo "$ssh_agent_pids" | wc -l)" -gt 1 ]; then
+        echo "More than one SSH agent is running. Terminating them all."
+        echo "$ssh_agent_pids" | xargs kill -TERM
     fi
-fi
+
+    echo "Setting up SSH agent..."
+    if [ -r ~/.ssh-agent ]; then
+        . ~/.ssh-agent
+    fi
+
+    # see http://man7.org/linux/man-pages/man1/ssh-add.1.html#EXIT_STATUS
+    ssh-add -l >/dev/null
+    ssh_status="$?"
+
+    if [ "$ssh_status" -eq 2 ]; then
+        kill -TERM "$ssh_agent_pids" 2> /dev/null
+        echo "Starting ssh-agent"
+        (umask 0066; ssh-agent -s > ~/.ssh-agent)
+        . ~/.ssh-agent
+    fi
+
+    ssh-add ~/.ssh/*.pem
+}
+
+ensure_tmux() {
+    echo "Setting up tmux..."
+    if [ -z "$TMUX" ]; then
+        if tmux ls -F '#{session_name}' | grep -qx local; then
+            echo "Local tmux session already exists"
+            echo "If you'd really like to, we'll attach into it in 10 seconds"
+            echo "Otherwise, send ^C"
+            sleep 10
+            exec tmux attach -t local
+        else
+            echo "Starting local tmux session"
+            exec tmux new -s local
+        fi
+    else
+        echo "We're already inside of a tmux session"
+    fi
+}
+
+main() {
+    umask 0022 # might not always be set, like in WSL distros
+    . ~/.shenv
+
+    ensure_ssh_agent
+    ensure_tmux
+
+    # a "login" shell would have exec'd into a tmux session by now, so anything
+    # below would be done only for "non-login" shells.
+
+
+}
+
+main
