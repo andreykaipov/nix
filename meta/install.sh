@@ -1,8 +1,11 @@
 #!/bin/sh
-# shellcheck disable=SC2016
+# shellcheck disable=SC2012,SC2016
 
 metafiles="$(awk '/metaf/,/endmetaf/' .gitignore | awk '/!/' | cut -c2- | tr '\n' '|' | sed 's/.$//')"
-configs="$(find . -depth 1 | cut -c3- | grep -vEx ".git|$metafiles")"
+configs="$(git ls-files | cut -d/ -f1 | sort | uniq | grep -vEx "$metafiles")"
+
+echo "Removing existing symlinks in \$HOME pointing to this directory"
+ls -al ~ | awk -v "pwd=$PWD" '/^l/ && $11~pwd {print $9}' | xargs -I% sh -c 'echo rm -f "$HOME/%"; rm -f "$HOME/%"'
 
 for c in $configs; do
         d="$HOME/$c"
@@ -11,7 +14,7 @@ for c in $configs; do
                 mv "$d" "$d.bak"
         fi
 
-        ln -fs "$PWD/$c" -t "$HOME"
+        ln -s "$PWD/$c" -t "$HOME"
 done
 
 echo "Created symlinks in \$HOME for top-level files:"
