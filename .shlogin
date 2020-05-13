@@ -101,11 +101,6 @@ main() {
 
     ensure_ssh_agent
     ensure_tmux
-
-    # a "login" shell would have exec'd into a tmux session by now, so anything
-    # below would be done only for "non-login" shells.
-
-
 }
 
 main
