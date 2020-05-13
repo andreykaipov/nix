@@ -1,0 +1,4 @@
+#!/bin/sh
+
+export TMPDIR="${TMP:-/tmp}"
+export EDITOR=vi

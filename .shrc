@@ -1,29 +1,55 @@
 #!/bin/sh
 # shellcheck source=/dev/null disable=SC2025
 
-export FROM_XRC=1
+export DOCKER_HOST=tcp://localhost:2375
+export PATH="$HOME/bin:$PATH"
+
+export GOBIN="$HOME/bin"
+export GOPATH="$HOME/go"
 
 sourcef() { [ -r "$1" ] && . "$1"; }
 sourcef ~/.git-prompt.sh
 sourcef ~/.aliases
-
-[ -z "$SSH_AUTH_SOCK" ] && eval "$(ssh-agent)"
+sourcef ~/.shls
 
 # why not export these too :)
-export green='\[\e[32m\]'
-export red='\[\e[31m\]'
-export yellow='\[\e[1;33m\]'
-export purple='\[\e[1;35m\]'
-export blue='\[\e[34m\]'
-export reset='\[\e[0m\]'
+export _red='\[\e[31m\]'
+export _green='\[\e[32m\]'
+export _yellow='\[\e[33m\]'
+export _blue='\[\e[34m\]'
+export _purple='\[\e[35m\]'
+export _cyan='\[\e[36m\]'
 
-# only set a PS1 if it's our shell's default
+export _brightred='\[\e[1;31m\]'
+export _brightgreen='\[\e[1;32m\]'
+export _brightyellow='\[\e[1;33m\]'
+export _brightblue='\[\e[1;34m\]'
+export _brightpurple='\[\e[1;35m\]'
+export _brightcyan='\[\e[1;36m\]'
+
+export _lightred='\[\e[91m\]'
+export _lightgreen='\[\e[92m\]'
+export _lightyellow='\[\e[93m\]'
+export _lightblue='\[\e[94m\]'
+export _lightpurple='\[\e[95m\]'
+export _lightcyan='\[\e[96m\]'
+
+export _reset='\[\e[0m\]'
+
+# only set a PS1 if it's bash's default
 defaultbashps1='\\s-\\v\\\$'
 if echo "$PS1" | grep -Eq "$defaultbashps1"; then
     # ┌[hh:mm:ss] [path/to/whatever] [n files, m bytes]
     # └▶ vi ~/.bash_profile
-    export PS1="\n┌[\$(if [ \$? = 0 ]; then echo '$green\D{%T}$reset'; else echo '$red\D{%T}$reset'; fi)] [$yellow\w$reset] \$(__git_ps1 '[$purple%s\e[0m] ')[$blue\$(ls | wc -l) files, \$(ls -al | head -n1 | sed 's/total //')$reset]\n└▶ "
+    PS1="\n┌[\$(if [ \$? = 0 ]; then echo '$_green\D{%T}$_reset'; else echo '$_red\D{%T}$_reset'; fi)] [$_brightyellow\w$_reset] \$(__git_ps1 '[$_brightpurple%s\e[0m] ')[$_blue\$(ls | wc -l) files, \$(ls -al | head -n1 | sed 's/total //')$_reset]\n└▶ "
 fi
+
+#PS1="
+#\$(ssh_info)%{\$fg_bold[yellow]%}%~%u%{\$reset_color%} %{\$fg_bold[cyan]%}\$(__git_ps1 '%s')
+#%(?.%{\$fg[green]%}.%{\$fg[red]%})%(!.#.❯)%{\$reset_color%} "
+
+#PS1="\n┌[\$(if [ \$? = 0 ]; then echo '$green\D{%T}$reset'; else echo '$red\D{%T}$reset'; fi)] [$boldyellow\w$reset] \$(__git_ps1 '[$boldpurple%s\e[0m] ')[$blue\$(ls | wc -l) files, \$(ls -al | head -n1 | sed 's/total //')$reset]\n└▶ "
+#export PS1="\n┌[\$(if [ \$? = 0 ]; then echo '$green\D{%T}$reset'; else echo '$red\D{%T}$reset'; fi)] [$yellow\w$reset] \$(__git_ps1 '[$purple%s\e[0m] ')[$blue\$(ls | wc -l) files, \$(ls -al | head -n1 | sed 's/total //')$reset]\n└▶ "
 
 tfvars2json() {
     f="$1"
@@ -125,4 +151,13 @@ reset_gp_vpn() {
     launchctl load /Library/LaunchAgents/com.paloaltonetworks.gp.pangpa.plist
     launchctl load /Library/LaunchAgents/com.paloaltonetworks.gp.pangps.plist
     echo "Done!"
+}
+
+weather() {
+    # change Paris to your default location
+    location="${1:-}"
+    if [ "$(tput cols)" -lt 125 ]; then
+        params='n'
+    fi
+    curl -s "wttr.in/$location?$params" | head -n-2
 }

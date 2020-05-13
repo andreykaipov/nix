@@ -1,0 +1,61 @@
+#!/bin/sh
+#
+# .shinit contains commands that bootstrap our login shell. Anything that
+# doesn't need to be ran on every new interactive shell should go here.
+#
+# For example, setting common environment variables, commands that might be
+# slow, and starting window managers or desktop environments, and starting tmux , and configuring agents to be
+# used by all interactive shells, and should not be
+# executed at all for any interactive shell spawned from within tmux. However,
+#
+# these commands should remain idempotent, if we ever do start several login
+# shells, or intentionally source this file from an interactive shell.
+#
+# How do we invoke this file?
+#
+# Any POSIX-compliant shell can be invoked as a login shell by setting `ENV`
+# pointing to this file, e.g. `ENV=.shinit sh`.
+#
+# sh on almost every system you choose will be POSIX-compatible, whether it's
+# symlinked to ash, dash, ksh, bash, zsh, whatever.
+#
+# So, wherever we're allowed to customize our terminal's profiles and set a
+# login command is where we should add `ENV=.shinit sh`.
+#
+# This way, only the contents of this file will get executed during login. We
+# can't trust what's happening inside of /etc/profile, .profile, etc. on
+# whatever new system we're setting up our development environment on.
+
+# 
+export TMPDIR="${TMP:-/tmp}"
+export EDITOR=vi
+
+# set up ssh-agent
+# if the socket already exists, grab the pid and export it.
+# otherwise, just start the agent.
+#
+export SSH_AUTH_SOCK=$TMPDIR/ssh.auth.sock
+if [ -S "$SSH_AUTH_SOCK" ]; then
+    SSH_AGENT_PID="$(pgrep -f "ssh-agent -sa $SSH_AUTH_SOCK")"
+    export SSH_AGENT_PID
+else
+    eval "$(ssh-agent -sa "$SSH_AUTH_SOCK")"
+fi
+
+# umask might not always be set, like in WSL distros
+#
+umask 0022
+
+# setup tmux
+# note: this should always be last because we want any new shells 
+#
+# if $TMUX is empty, then we're not inside of a tmux session and we can either
+# attach into an existing one, or create a new one. our session is called local.
+#
+if [ -z "$TMUX" ]; then
+    if tmux ls -F '#{session_name}' | grep -qx local; then
+        exec tmux attach -t local
+    else
+        exec tmux new -s local
+    fi
+fi
