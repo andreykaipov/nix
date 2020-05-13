@@ -1,5 +1,12 @@
 #!/bin/sh
 
+# Everything here is intended to work from a completely empty environment! That
+# is, the following should succeed and print out only the variables defined in
+# this file:
+# ```
+# env - sh -c ". $HOME/.shenv; env" | sort
+# ```
+
 paths="
     $HOME/bin
     /usr/local/sbin
@@ -12,7 +19,6 @@ paths="
     /mnt/c/Windows/System32
     /mnt/c/Windows
 "
-
 # since we use tr to set our path, we can use the `command` builtin to find tr
 # shellcheck disable=SC2086
 PATH="$(echo $paths | PATH='/bin:/usr/bin:/usr/local/bin' command tr ' ' ':')"
@@ -58,3 +64,9 @@ export _brightpurple='\e[1;35m'
 export _brightcyan='\e[1;36m'
 
 export _reset='\e[0m'
+
+#
+
+
+
+#

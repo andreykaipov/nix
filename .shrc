@@ -1,21 +1,65 @@
 #!/bin/sh
+# shellcheck source=/dev/null disable=SC2016,SC2046
+#
+# What should and should not go into this file? Well, since our local tmux
+# session inherits the environment from the login shell that spawned it, any
+# environment variables are available from within child tmux windows/panes too,
+# so we don't need to source ~/.shenv here too. However, aliases and functions
+# are not exportable, so we must source ~/.shalias and ~/.shfunction here.
+#
+# But wait -- what happens if I want to update the environment during my tmux
+# session? Shouldn't we also source ~/.shenv? No, because once everything is set
+# up, the environment doesn't change often nor dynamically enough, so it doesn't
+# merit exporting them as often as we create new tmux panes. However, when they
+# they do change, it'd be very cumbersome relying on tmux inheriting the login
+# shell's environment as it means us having to restart tmux and "logging in" all
+# over again.
+#
+# Fortunately, there's a way around this! We can update tmux's global
+# environment from within tmux itself. To do so safely, we source our ~/.shenv
+# from an empty environment (env - sh -c ...) to avoid any potential pollution
+# with our existing environment. Once parsed and updated, we also source the
+# same file from the executing shell.
+#
+# The workflow for updating environmental variables is to edit ~/.shenv as
+# usual, and then run envupdate instead of sourcing ~/.shenv from the current
+# shell. Any new tmux windows/panes will have our updated environment!
+#
+# If we want to get really sophisticated in the future, we can set up a watch on
+# ~/.shenv via inotify to run this function on changes to avoid doing so
+# manually! But I'm not too crazy yet!
 
-# shellcheck source=.shenv
-. "$HOME/.shenv"
+envupdate() {
+    env - sh -c ". $HOME/.shenv; env" | while read -r line; do
+	arg="$(echo "$line" | cut -d= -f1)"
+	val="$(echo "$line" | cut -d= -f2-)"
+	tmux set-environment -gt local "$arg" "$val"
+    done
 
-# shellcheck source=/dev/null
+    . ~/.shenv
+}
+
 . "$HOME/.shalias"
 . "$HOME/.shfunction"
 . "$HOME/.git-prompt.sh"
 
+# don't export it
+# path/to/whatever
+# ❯ vi ~/.shrc
+PS1="
+\[${_brightyellow:?}\]\w\[${_reset:?}\] \$(__git_ps1 '${_brightcyan:?}%s${_reset:?}')
+\$(if [ \$? = 0 ]; then echo -e '\[${_brightgreen:?}\]'; else echo -e '\[${_red:?}\]'; fi)❯\[${_reset:?}\] "
+
+
+
+
+###
+
+
+
+#
 # ┌[hh:mm:ss] [path/to/whatever] [n files, m bytes]
 # └▶ vi ~/.shrc
 # PS1="
 # ┌[\$(if [ \$? = 0 ]; then echo '$_green\D{%T}$_reset'; else echo '$_red\D{%T}$_reset'; fi)] [$_brightyellow\w$_reset] \$(__git_ps1 '[$_brightpurple%s\e[0m] ')[$_blue\$(ls | wc -l) files, \$(ls -al | head -n1 | sed 's/total //')$_reset]
 # └▶ "
-
-# path/to/whatever
-# ❯ vi ~/.shrc
-PS1="
-\[$_brightyellow\]\w\[$_reset\] \$(__git_ps1 '$_brightcyan%s$_reset')
-\$(if [ \$? = 0 ]; then echo -e '\[$_brightgreen\]'; else echo -e '\[$_red\]'; fi)❯\[$_reset\] "
