@@ -154,7 +154,7 @@ augroup init
     " override any colorscheme with our custom highlights that are superior
     " anywhere, don't @ me
     "
-    autocmd ColorScheme * call SetCustomHighlights()
+    autocmd ColorScheme * :call SetCustomHighlights()
 
     " go back to last position after closing (see :help restore-cursor)
     "
