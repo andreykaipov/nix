@@ -49,15 +49,17 @@ envupdate() {
 . "$HOME/.git-prompt.sh"
 
 # don't export it
+# non-printing chars have to be surrounded by \[\], otherwise Bash will
+# improperly display the prompt especially with reverse searching
 # \e[5 q at the end makes our cursor a blinking vertical line
+#
 # path/to/whatever
 # ❯ vi ~/.shrc
 PS1="
 \[${_brightyellow:?}\]\w\[${_reset:?}\] \$(__git_ps1 '${_brightcyan:?}%s${_reset:?}')
-\$(if [ \$? = 0 ]; then echo -e '\[${_brightgreen:?}\]'; else echo -e '\[${_red:?}\]'; fi)❯\[${_reset:?}\] \e[5 q"
+\$(if [ \$? = 0 ]; then echo -e '\[${_brightgreen:?}\]'; else echo -e '\[${_red:?}\]'; fi)❯\[${_reset:?}\] \[\e[5 q\]"
 
 ###
-
 
 
 #
