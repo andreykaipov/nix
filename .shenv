@@ -1,10 +1,11 @@
 #!/bin/sh
-
-# Everything here is intended to work from a completely empty environment! That
-# is, the following should succeed and print out only the variables defined in
-# this file:
+#
+# Note this file uses a few commands like `tr` and `dircolors.hex` on our PATH
+# to create environment variables. If sourced from a shell with an empty PATH,
+# it'll fail. Make sure this script works from a limited environment for our
+# envupdate function in ~/.shrc too. We can mimic this with:
 # ```
-# env - sh -c ". $HOME/.shenv; env" | sort
+# env - "HOME=$HOME" "PATH=$PATH" "SHELL=sh" sh -c ". $HOME/.shenv; env" | sort
 # ```
 
 paths="
@@ -21,7 +22,7 @@ paths="
 "
 # since we use tr to set our path, we can use the `command` builtin to find tr
 # shellcheck disable=SC2086
-PATH="$(echo $paths | PATH='/bin:/usr/bin:/usr/local/bin' command tr ' ' ':')"
+PATH="$(echo $paths | tr ' ' ':')"
 export PATH
 
 export TMPDIR="${TMP:-/tmp}"

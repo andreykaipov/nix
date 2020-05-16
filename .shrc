@@ -5,7 +5,9 @@
 # session inherits the environment from the login shell that spawned it, any
 # environment variables are available from within child tmux windows/panes too,
 # so we don't need to source ~/.shenv here too. However, aliases and functions
-# are not exportable, so we must source ~/.shalias and ~/.shfunction here.
+# are not exportable, so we must source ~/.shalias and ~/.shfunction here. This
+# is rather quick as functions and aliases defined via single quotes are lazily
+# evaluated.
 #
 # But wait -- what happens if I want to update the environment during my tmux
 # session? Shouldn't we also source ~/.shenv? No, because once everything is set
@@ -17,9 +19,9 @@
 #
 # Fortunately, there's a way around this! We can update tmux's global
 # environment from within tmux itself. To do so safely, we source our ~/.shenv
-# from an empty environment (env - sh -c ...) to avoid any potential pollution
-# with our existing environment. Once parsed and updated, we also source the
-# same file from the executing shell.
+# from a very limited environment (env - a=b c=d ... sh -c ...) to avoid any
+# potential pollution with our existing environment. Once parsed and updated, we
+# also source the same file from the executing shell.
 #
 # The workflow for updating environmental variables is to edit ~/.shenv as
 # usual, and then run envupdate instead of sourcing ~/.shenv from the current
@@ -30,13 +32,17 @@
 # manually! But I'm not too crazy yet!
 
 envupdate() {
-    env - sh -c ". $HOME/.shenv; env" | while read -r line; do
-	arg="$(echo "$line" | cut -d= -f1)"
-	val="$(echo "$line" | cut -d= -f2-)"
-	tmux set-environment -gt local "$arg" "$val"
-    done
-
     . ~/.shenv
+
+    env - \
+	"HOME=$HOME" \
+	"PATH=$PATH" \
+	"SHELL=$SHELL" | \
+	sh -c '. $HOME/.shenv; env' | while read -r line; do
+		arg="$(echo "$line" | cut -d= -f1)"
+		val="$(echo "$line" | cut -d= -f2-)"
+		tmux set-environment -gt local "$arg" "$val"
+	done
 }
 
 . "$HOME/.shalias"
