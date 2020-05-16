@@ -72,6 +72,8 @@ ensure_ssh_agent() {
         echo "Starting ssh-agent"
         (umask 0066; ssh-agent -s > ~/.ssh-agent)
         . ~/.ssh-agent
+    else
+        echo "Looks like it was already running!"
     fi
 
     ssh-add ~/.ssh/*.pem
