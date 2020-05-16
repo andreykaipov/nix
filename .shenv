@@ -1,12 +1,27 @@
 #!/bin/sh
+# shellcheck disable=SC2086
 #
 # Note this file uses a few commands like `tr` and `dircolors.hex` on our PATH
 # to create environment variables. If sourced from a shell with an empty PATH,
-# it'll fail. Make sure this script works from a limited environment for our
-# envupdate function in ~/.shrc too. We can mimic this with:
+# it'll fail. Thankfully, shells are smart and shouldn't let you do this. The
+# following starts a shell with an empty environment. It's supposed to mimic our
+# login shell and the envupdate function in ~/.shrc too.
+#
 # ```
-# env - "HOME=$HOME" "PATH=$PATH" "SHELL=sh" sh -c ". $HOME/.shenv; env" | sort
+# env - sh -c 'env; echo $PATH'
 # ```
+#
+# The only env var output will be PWD. However, the PATH printed in this case
+# will be the common **/sbin and **/bin directories. With this, we'll be able to
+# re-export the path with `tr`, and any other dependent binaries like in ~/bin
+# will be found. Having said that, there are a few env vars we do always need
+# though:
+# ```
+# env - "HOME=$HOME" SHELL=sh sh -c '. $HOME/.shenv; env' | sort
+# ```
+#
+# HOME and SHELL are not implicit and have to be passed. Again, see the
+# envupdate function.
 
 paths="
     $HOME/bin
@@ -20,8 +35,6 @@ paths="
     /mnt/c/Windows/System32
     /mnt/c/Windows
 "
-# since we use tr to set our path, we can use the `command` builtin to find tr
-# shellcheck disable=SC2086
 PATH="$(echo $paths | tr ' ' ':')"
 export PATH
 

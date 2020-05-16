@@ -36,7 +36,6 @@ envupdate() {
 
     env - \
 	"HOME=$HOME" \
-	"PATH=$PATH" \
 	"SHELL=$SHELL" | \
 	sh -c '. $HOME/.shenv; env' | while read -r line; do
 		arg="$(echo "$line" | cut -d= -f1)"
