@@ -26,6 +26,7 @@
 !.config/alacritty
 !.config/alacritty/alacritty.tmpl.yml
 
+!.dir_colors
 !.shlogin
 !.shrc
 !.shenv

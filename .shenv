@@ -67,6 +67,6 @@ export _reset='\e[0m'
 
 #
 
-
+eval "$(dircolors.hex "$HOME/.dir_colors")"
 
 #

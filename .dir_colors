@@ -1,0 +1,21 @@
+# vim: ft=dircolors
+# Configuration file for dircolors.hex
+# See https://github.com/andreykaipov/dircolors.hex
+
+FILE           #fff
+NORMAL         #fff
+DIR            #ff0
+EXEC           #0f0
+LINK           #0ff
+#MULTIHARDLINK #000 #f0a
+ORPHAN         #fff #d00
+MISSING        #fff #fa0
+#SOCK          #f0a
+
+# tgz, txz, tar.gz, tar.xz, blah
+*.t*z  #f00
+*.tz  #f00
+*.tgz  #f00
+*.txz  #f00
+*.tar.gz  #f00
+*.tar.xz  #f00

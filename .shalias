@@ -1,15 +1,13 @@
 #!/bin/sh
 
 # setup ls (note: not POSIX)
-#
-command -v dircolors >/dev/null && eval "$(dircolors)"
-export LS_COLORS="$LS_COLORS:di=1;33"
 
 # Wow holy fucking shit you're parsing the output of ls? How careless are you?
 #
 # The ls here without a sort is good enough, but we pipe it into a stable sort,
 # sorting on the colored file names from LS_COLORS. This causes the files in our
-# directory to show up grouped by file type, alphabetically. It's hacky yeah.
+# directory to show up grouped by file type, alphabetically. It's hacky yeah,
+# but it looks good.
 #
 # shellcheck disable=SC2012
 ll() {
