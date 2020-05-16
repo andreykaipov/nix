@@ -110,3 +110,78 @@ weather() {
     fi
     curl -s "wttr.in/$location?$params" | head -n-2
 }
+
+# color text in a terminal, e.g.:
+# usage: color [fg|bg] hex [text]
+# defaults to fg (foreground) and reading from stdin if text is empty or -
+#
+# examples:
+# > echo hi hi | color f00
+# > color f00 'hi hi'
+# > echo hi hi | color bg d0d -
+# > color bg f00 'hi hi'
+color() {
+    if [ "$#" -eq 3 ]; then
+        style="$1"; shift
+        color="$1"; shift
+        text="$1"; shift
+    elif [ "$#" -eq 2 ]; then
+        style='fg'
+        color="$1"; shift
+        text="$1"; shift
+    elif [ "$#" -eq 1 ]; then
+        style='fg'
+        color="$1"; shift
+        text='-'
+    else
+        >&2 echo "todo usage"
+        return
+    fi
+
+    if [ "$text" = "-" ]; then
+        text="$(cat -)"
+    fi
+
+    if [ "$style" = 'fg' ]; then
+        style='38;2'
+    elif [ "$style" = 'bg' ]; then
+        style='48;2'
+    else
+        >&2 echo "invalid style, must be either fg or bg"
+        return 1
+    fi
+
+    rgb="$(hex2rgb "$color")"
+
+    printf '\e[%s;%sm%s\e[0m' "$style" "$rgb" "$text"
+}
+
+hex2rgb() {
+    color="$1"; shift
+
+    if [ -z "$color" ]; then
+        >&2 echo "no color given"
+        return 1
+    fi
+
+    if [ -n "$(printf '%s' "$color" | tr -d '0-9a-fA-F')" ]; then
+        >&2 echo "invalid hex digit in $color"
+        return 1
+    fi
+
+    length="$(printf '%s' "$color" | wc -c)"
+    if [ "$length" -eq 3 ]; then
+        r="$(echo "$color" | cut -c1)"; r="$r$r"
+        g="$(echo "$color" | cut -c2)"; g="$g$g"
+        b="$(echo "$color" | cut -c3)"; b="$b$b"
+    elif [ "$length" -eq 6 ]; then
+        r="$(echo "$color" | cut -c1-2)"
+        g="$(echo "$color" | cut -c3-4)"
+        b="$(echo "$color" | cut -c5-6)"
+    else
+        >&2 echo "hex color $color must have either 3 or 6 digits"
+        return 1
+    fi
+
+    printf '%d;%d;%d\n' "0x$r" "0x$g" "0x$b"
+}
