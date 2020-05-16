@@ -30,4 +30,7 @@ set noshowmode
 let g:colorizer_maxlines = 1000
 let g:colorizer_fgcontrast = 0
 let g:colorizer_no_map = 0
-nmap <leader>c :ColorToggle<cr>
+
+" I want the verb at front of the command
+command! ToggleColor :ColorToggle
+nmap <leader>c :ToggleColor<cr>
