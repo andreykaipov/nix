@@ -107,53 +107,68 @@ scriptencoding=utf-8
 set listchars=tab:→\ ,eol:↲,nbsp:␣,trail:•,extends:⟩,precedes:⟨
 nmap <leader>l :set invlist<cr>
 
-" ToggleNumber toggles some number stuff and the cursorline
+" Customize cursor. See :help guicursor for mode-list.
+" TODO - experiment with removing mode in status line as it's evident what mode
+" we're in based on the cursor. The following settings are pretty much the
+" default, but instead of a block in normal mode, we use a solid bar, and
+" instead of a solid bar in insert mode, we make it blink. blink times don't
+" seem to work on windows terminal, but we'll leave them in.
 "
-function! s:ToggleNumbers()
-    set invnumber
-    set invrelativenumber
-    set numberwidth=5
-    set invcursorline
-endfunction
+set guicursor=n-v-c:ver25
+            \,i-ci-ve:ver25-blinkwait700-blinkoff400-blinkon250
+            \,r-cr-o:hor20
 
-command! ToggleNumbers :call s:ToggleNumbers()
-nmap <leader>n :ToggleNumbers<cr>
-
-" use :XtermColorTable to view available colors.
-" see :help highlight-groups for available highlight groups.
+" override any colorscheme with our custom highlights that are superior
+" anywhere. don't @ me. use :XtermColorTable to view available colors. see :help
+" highlight-groups for available highlight groups.
 "
 function! SetCustomHighlights()
     highlight ColorColumn                            ctermbg=155
-    highlight CursorLine                             ctermbg=black
-    highlight CursorLineNr            ctermfg=yellow ctermbg=black
+    highlight CursorLine                             ctermbg=233
+    highlight CursorLineNr            ctermfg=yellow ctermbg=233
     highlight Normal                  ctermfg=252    ctermbg=black
     highlight MatchParen   cterm=bold ctermfg=208    ctermbg=233
     " highlight highlight-group :cterm=NONE ctermbg=NONE ctermfg=NONE gui=NONE guibg=NONE guifg=NONE
 endfunction
 
-augroup init
-    au!
+exec printf('source %s/numbers.vim', root)
+exec printf('source %s/autosave.vim', root)
 
+" When formatting via gq, vim will try to add two spaces after periods. This is
+" not the late 19th century, and is a silly default.
+set nojoinspaces
+
+" to be used in autocmd events
+" TODO - take out ToggleAutoSave and create autocmds on FileTypes to enable it
+" on specific filetypes only. See autosave.vim for reasoning.
+"
+function s:OnOpenFile()
     " we use an autocmd to set global formatoptions because underlying plugins
-    " may overwrite this value.
+    " may overwrite this value. see :h fo-table
     "
     " c - autowrap comments using the textwidth, inserting the comment leader
     " r - automatically insert comment leader after hitting <cr> during Insert
     " o - automatically insert comment leader after hitting o or O during Normal
     " q - allow comment formatting via gq
+    " maybe w - line ending in non-whitespace character will not be
+    " maybe a - auotmatic formatting of paragraphs (only for comments with c)
     " 1 - don't break lines after one-letter words, if possible
     " j - remove comment leaders when joining lines, if possible
     "
-    autocmd BufNewFile,BufRead * set formatoptions=croq1j
+    set formatoptions=croq1j
 
-    " better to put this in an autocmd rather than directly calling it, since
-    " resourcing $MYVIMRC will not toggle numbers this way
+    " better to put in an autocmd rather than directly calling it, since
+    " re-sourcing $MYVIMRC will not trigger our toggles this way
     "
-    autocmd BufNewFile,BufRead * ToggleNumbers
+    ToggleNumbers
+    ToggleAutoSave
+endfunction
 
-    " override any colorscheme with our custom highlights that are superior
-    " anywhere, don't @ me
-    "
+augroup init
+    au!
+
+    autocmd BufNewFile,BufRead * :call s:OnOpenFile()
+
     autocmd ColorScheme * :call SetCustomHighlights()
 
     " go back to last position after closing (see :help restore-cursor)
