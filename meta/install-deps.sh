@@ -18,6 +18,18 @@ install_nvim() {
     nvim --version
 }
 
+install_dircolorshex() {
+    url='https://raw.githubusercontent.com/andreykaipov/dircolors.hex/master/bin/dircolors.hex'
+
+    if ! command -v ~/dircolors.hex; then
+        get dircolors.hex "$url"
+        chmod +x dircolors.hex
+        mv dircolors.hex ~/bin
+    fi
+
+    command -v dircolors.hex
+}
+
 install_win32yank() {
     v='0.0.4'
     url="https://github.com/equalsraf/win32yank/releases/download/v$v/win32yank-x64.zip"
@@ -166,7 +178,7 @@ main() {
     mkdir -p ~/bin
 
     echo
-    for o in nvim win32yank shellcheck jq upx go dockercli; do
+    for o in nvim dircolorshex win32yank shellcheck jq upx go dockercli; do
         echo "Installing $o"
         install_$o
         echo
