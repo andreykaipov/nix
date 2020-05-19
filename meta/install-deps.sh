@@ -6,7 +6,7 @@ install_nvim() {
     v='0.4.3'
     url="https://github.com/neovim/neovim/releases/download/v$v/nvim-linux64.tar.gz"
 
-    if ! command -v ~/bin/nvim; then
+    if ! command -v ~/bin/nvim >/dev/null; then
         echo "Neovim is missing"
         echo "Downloading Neovim"
         get nvim.tz "$url"
@@ -17,6 +17,27 @@ install_nvim() {
     ln -sf ~/local/nvim-linux64/bin/nvim -t ~/bin
     nvim --version
 }
+
+install_win32yank() {
+    v='0.0.4'
+    url="https://github.com/equalsraf/win32yank/releases/download/v$v/win32yank-x64.zip"
+
+    if [ -z "$WSL_DISTRO_NAME" ]; then
+        echo "Not running within WSL distro; skipping"
+    fi
+
+    if ! command -v ~/bin/win32yank.exe >/dev/null; then
+        echo "win32yank.exe is missing"
+        echo "Downloading it"
+        get win32yank.zip "$url"
+        echo "Extracting it"
+        unzip -p win32yank.zip win32yank.exe > ~/bin/win32yank.exe
+        chmod +x ~/bin/win32yank.exe
+    fi
+
+    command -v win32yank.exe
+}
+
 
 install_shellcheck() {
     v='0.7.1'
@@ -145,7 +166,7 @@ main() {
     mkdir -p ~/bin
 
     echo
-    for o in nvim shellcheck jq upx go dockercli; do
+    for o in nvim win32yank shellcheck jq upx go dockercli; do
         echo "Installing $o"
         install_$o
         echo
