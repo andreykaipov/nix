@@ -5,7 +5,7 @@
 # to create environment variables. If sourced from a shell with an empty PATH,
 # it'll fail. Thankfully, shells are smart and shouldn't let you do this. The
 # following starts a shell with an empty environment. It's supposed to mimic our
-# login shell and the envupdate function in ~/.shrc too.
+# login shell and the `promote` function in ~/.shrc too.
 #
 # ```
 # env - sh -c 'env; echo $PATH'
@@ -21,7 +21,7 @@
 # ```
 #
 # HOME and SHELL are not implicit and have to be passed. Again, see the
-# envupdate function.
+# `promote` function.
 
 paths="
     $HOME/bin

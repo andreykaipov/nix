@@ -20,28 +20,30 @@
 # Fortunately, there's a way around this! We can update tmux's global
 # environment from within tmux itself. To do so safely, we source our ~/.shenv
 # from a very limited environment (env - a=b c=d ... sh -c ...) to avoid any
-# potential pollution with our existing environment. Once parsed and updated, we
-# also source the same file from the executing shell.
+# potential pollution with our existing environment. See
+# https://stackoverflow.com/a/61882412/4085283 for more information.
 #
 # The workflow for updating environmental variables is to edit ~/.shenv as
-# usual, and then run envupdate instead of sourcing ~/.shenv from the current
-# shell. Any new tmux windows/panes will have our updated environment!
+# usual, and then run `promote ~/.shenv` instead of `. ~/.shenv` from the
+# current shell. Any new tmux windows/panes will have our updated environment!
+# This will also update the existing environment too to act as a drop-in
+# replacement for `source`.
 #
 # If we want to get really sophisticated in the future, we can set up a watch on
 # ~/.shenv via inotify to run this function on changes to avoid doing so
 # manually! But I'm not too crazy yet!
 
-envupdate() {
-    . ~/.shenv
-
+promote() {
+    sourced="$1"; shift
+    . "$sourced"
     env - \
-	"HOME=$HOME" \
-	"SHELL=$SHELL" | \
-	sh -c '. $HOME/.shenv; env' | while read -r line; do
-		arg="$(echo "$line" | cut -d= -f1)"
-		val="$(echo "$line" | cut -d= -f2-)"
-		tmux set-environment -gt local "$arg" "$val"
-	done
+        "HOME=$HOME" \
+        "SHELL=$SHELL" \
+        | sh -c ". $sourced; env" | while read -r line; do
+            arg="$(echo "$line" | cut -d= -f1)"
+            val="$(echo "$line" | cut -d= -f2-)"
+            tmux set-environment -gt local "$arg" "$val"
+        done
 }
 
 . "$HOME/.shalias"
