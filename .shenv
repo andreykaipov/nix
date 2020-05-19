@@ -38,6 +38,9 @@ paths="
 PATH="$(echo $paths | tr ' ' ':')"
 export PATH
 
+export HISTFILE="$HOME/.bash_history"
+export HISTTIMEFORMAT="%F %T "
+
 export TMPDIR="${TMP:-/tmp}"
 export EDITOR=vi
 
