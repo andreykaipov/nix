@@ -18,31 +18,34 @@
 # over again.
 #
 # Fortunately, there's a way around this! We can update tmux's global
-# environment from within tmux itself. To do so safely, we source our ~/.shenv
-# from a very limited environment (env - a=b c=d ... sh -c ...) to avoid any
-# potential pollution with our existing environment. See
-# https://stackoverflow.com/a/61882412/4085283 for more information.
+# environment from within tmux itself. The `promote` function below does so.
+# See https://stackoverflow.com/a/61882412/4085283 for more information.
 #
 # The workflow for updating environmental variables is to edit ~/.shenv as
 # usual, and then run `promote ~/.shenv` instead of `. ~/.shenv` from the
 # current shell. Any new tmux windows/panes will have our updated environment!
-# This will also update the existing environment too to act as a drop-in
-# replacement for `source`.
+# This will also update the existing environment too, acting as a drop-in
+# replacement for the `source` built-in.
 #
 # If we want to get really sophisticated in the future, we can set up a watch on
 # ~/.shenv via inotify to run this function on changes to avoid doing so
 # manually! But I'm not too crazy yet!
-
+#
+# By sourcing our file from a limited subshell, we avoid promoting any
+# unnecessary env vars to the global tmux environment (e.g. we may have exported
+# a one-time build env var that new shells don't need). Once we have every
+# variable exported by the sourced file, we use indirect variable references to
+# update our environment. The escaped quotes are necessary because of word
+# splitting as values can potentially have leading/trailing spaces.
 promote() {
     sourced="$1"; shift
     . "$sourced"
     env - \
         "HOME=$HOME" \
         "SHELL=$SHELL" \
-        | sh -c ". $sourced; env" | while read -r line; do
-            arg="$(echo "$line" | cut -d= -f1)"
-            val="$(echo "$line" | cut -d= -f2-)"
-            tmux set-environment -gt local "$arg" "$val"
+        | sh -c ". $sourced; env" | cut -d= -f1 | while read -r var; do
+            val="$(eval "echo \"\$$var\"")"
+            tmux set-environment -gt local "$var" "$val"
         done
 }
 
