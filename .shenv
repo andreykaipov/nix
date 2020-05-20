@@ -38,9 +38,6 @@ paths="
 PATH="$(echo $paths | tr ' ' ':')"
 export PATH
 
-export HISTFILE="$HOME/.bash_history"
-export HISTTIMEFORMAT="%F %T "
-
 export TMPDIR="${TMP:-/tmp}"
 export EDITOR=vi
 
@@ -87,3 +84,8 @@ export _reset='\033[0m'
 eval "$(dircolors.hex "$HOME/.dir_colors")"
 
 #
+
+# bash-specific to pretty history
+export HISTFILE="$HOME/.bash_history"
+export HISTTIMEFORMAT="%F %T "
+export HISTCONTROL=ignoredups:ignorespace
