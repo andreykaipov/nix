@@ -53,16 +53,32 @@ promote() {
 . "$HOME/.shfunction"
 . "$HOME/.git-prompt.sh"
 
-# don't export it
-# non-printing chars have to be surrounded by \[\], otherwise Bash will
-# improperly display the prompt especially with reverse searching
-# \e[5 q at the end makes our cursor a blinking vertical line
+# Non-printing chars have to be surrounded by \[...\]; otherwise Bash will
+# improperly display the prompt especially when reverse searching. The \e[5 q at
+# the end makes our cursor a blinking vertical line.
 #
-# path/to/whatever
+# path/to/whatever git-info
 # ❯ vi ~/.shrc
-PS1="
-\[${_brightyellow:?}\]\w\[${_reset:?}\] \$(__git_ps1 '${_brightcyan:?}%s${_reset:?}')
-\$(if [ \$? = 0 ]; then echo -e '\[${_brightgreen:?}\]'; else echo -e '\[${_red:?}\]'; fi)❯\[${_reset:?}\] \[\e[5 q\]"
+
+__prompt_command() {
+    retlastcmd="$?"
+    if [ "$retlastcmd" = 0 ]; then
+        retcolor="\[${_brightgreen?}\]"
+    else
+        retcolor="\[${_brightred?}\]"
+    fi
+    prompt="$retcolor❯\[${_reset?}\] \[\e[5 q\]"
+
+    path="\[${_brightyellow?}\]\w\[${_reset?}\]"
+    gitinfo="$(git_status_condensed "$@")"
+
+    PS1="
+$path $gitinfo
+$prompt"
+}
+
+PROMPT_DIRTRIM=3
+PROMPT_COMMAND=__prompt_command
 
 ###
 
