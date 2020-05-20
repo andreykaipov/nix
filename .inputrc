@@ -1,0 +1,138 @@
+# Reference: https://www.gnu.org/software/bash/manual/html_node/Command-Line-Editing.html
+# For quick context on adding emacs bindings to the vi-insert keymap: https://unix.stackexchange.com/q/303631/152529
+# For quick context on the different input modes: https://unix.stackexchange.com/q/303479/152529
+
+# nice
+set editing-mode vi
+set show-mode-in-prompt on
+
+# for consistency across the different terminals we might use
+set bind-tty-special-chars off
+
+# some UX improvements for completions
+set completion-display-width 80
+set completion-map-case on
+set completion-ignore-case on
+set colored-completion-prefix on
+set menu-complete-display-prefix on
+set show-all-if-ambiguous on
+
+# basically a combo of ls --color --classify during completion
+set colored-stats on
+set visible-stats on
+set mark-directories on
+set mark-symlinked-directories on
+
+# better incremental search through history
+set keymap vi-command
+"k": history-search-backward
+"j": history-search-forward
+"\e[a": history-search-backward
+"\e[b": history-search-forward
+set keymap vi-insert
+"\e[a": history-search-backward
+"\e[b": history-search-forward
+
+# binds for cycling through different modes
+set keymap emacs
+"\ee": vi-editing-mode
+set keymap vi-command
+"\ee": emacs-editing-mode
+set keymap vi-insert
+"\ee": vi-movement-mode
+
+# Add emacs keybindings to vi-insert rather than the other way around because we
+# want to able to easily switch into command mode whenever. See the
+# unix.stackexchange.com answer above for this list.
+#
+# TODO - prune this list to remove bindings we never use at all. Gotta stay
+# neat. :)
+"\C-@": set-mark
+"\C-]": character-search
+"\C-_": undo
+"\C-a": beginning-of-line
+"\C-b": backward-char
+"\C-d": delete-char
+"\C-e": end-of-line
+"\C-f": forward-char
+"\C-g": abort
+
+"\C-h": backward-delete-char
+"\e\C-h": backward-kill-word
+"\e\C-?": backward-kill-word
+
+"\C-i": complete
+"\C-k": kill-line
+"\C-l": clear-screen
+"\C-n": menu-complete
+"\C-o": operate-and-get-next
+"\C-p": menu-complete-backward
+"\C-q": quoted-insert
+"\C-r": reverse-search-history
+"\C-w": unix-word-rubout
+"\C-x!": possible-command-completions
+"\C-x$": possible-variable-completions
+"\C-x(": start-kbd-macro
+"\C-x)": end-kbd-macro
+"\C-x*": glob-expand-word
+"\C-x/": possible-filename-completions
+"\C-x@": possible-hostname-completions
+"\C-x\C-?": backward-kill-line
+"\C-x\C-e": edit-and-execute-command
+"\C-x\C-g": abort
+"\C-x\C-r": re-read-init-file
+"\C-x\C-u": undo
+"\C-x\C-v": display-shell-version
+"\C-x\C-x": exchange-point-and-mark
+"\C-xe": call-last-kbd-macro
+"\C-xg": glob-list-expansions
+"\C-x~": possible-username-completions
+"\e ": set-mark
+"\e#": insert-comment
+"\e$": complete-variable
+"\e&": tilde-expand
+"\e*": insert-completions
+"\e-": digit-argument
+"\e.": insert-last-argument
+"\e.": yank-last-arg
+"\e/": complete-filename
+"\e0": digit-argument
+"\e1": digit-argument
+"\e2": digit-argument
+"\e3": digit-argument
+"\e4": digit-argument
+"\e5": digit-argument
+"\e6": digit-argument
+"\e7": digit-argument
+"\e8": digit-argument
+"\e9": digit-argument
+"\e<": beginning-of-history
+"\e=": possible-completions
+"\e>": end-of-history
+"\e?": possible-completions
+"\e@": complete-hostname
+"\e\C-]": character-search-backward
+"\e\C-e": shell-expand-line
+"\e\C-g": abort
+"\e\C-i": dynamic-complete-history
+"\e\C-r": revert-line
+"\e\C-y": yank-nth-arg
+"\e\\": delete-horizontal-space
+"\e\e": complete
+"\e^": history-expand-line
+"\e_": insert-last-argument
+"\e_": yank-last-arg
+"\eb": backward-word
+"\ec": capitalize-word
+"\ed": kill-word
+"\ef": forward-word
+"\eg": glob-complete-word
+"\el": downcase-word
+"\en": non-incremental-forward-search-history
+"\ep": non-incremental-reverse-search-history
+"\er": revert-line
+"\et": transpose-words
+"\eu": upcase-word
+"\ey": yank-pop
+"\e{": complete-into-braces
+"\e~": complete-username
