@@ -21,7 +21,6 @@
 
 !.gitconfig
 !.gitconfig-work
-!.git-prompt.sh
 
 !.config/alacritty
 !.config/alacritty/alacritty.tmpl.yml
@@ -34,3 +33,9 @@
 !.shfunction
 !.tmux.conf
 !.inputrc
+
+# TODO - consider moving these binaries to separate projects and adding them to
+# the install script instead.
+!bin
+!bin/.gitkeep
+!bin/git-condensed-status

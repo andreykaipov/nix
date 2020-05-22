@@ -51,7 +51,6 @@ promote() {
 
 . "$HOME/.shalias"
 . "$HOME/.shfunction"
-. "$HOME/.git-prompt.sh"
 
 # Non-printing chars have to be surrounded by \[...\]; otherwise Bash will
 # improperly display the prompt especially when reverse searching. \1...\2 is

@@ -49,7 +49,7 @@
 #
 # See https://git-scm.com/docs/git-status#_short_format for the specification of
 # the porcelain output.
-git_status_condensed() {
+main() {
     branch_color="${1:-\033[1;36m}"
 
     if [ -d .git ] && output="$(git status --porcelain -b 2> /dev/null)"; then
@@ -73,3 +73,5 @@ git_status_condensed() {
         '
     fi
 }
+
+main
