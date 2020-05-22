@@ -37,6 +37,9 @@
 # variable exported by the sourced file, we use indirect variable references to
 # update our environment. The escaped quotes are necessary because of word
 # splitting as values can potentially have leading/trailing spaces.
+#
+# Known limitations involve completely removing variables from our sourced file.
+# We'd have to remove any of those from the global tmux environment ourselves.
 promote() {
     sourced="$1"; shift
     . "$sourced"
