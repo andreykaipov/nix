@@ -179,16 +179,18 @@ install_upx() {
     # upx --version
 }
 
-install_yash() {
-    v='2.49'
-    url="https://github.com/magicant/yash/releases/download/$v/yash-$v.tar.xz"
+install_tre() {
+    v='0.3.0'
+    url="https://github.com/dduan/tre/releases/download/$v/tre-v$v-x86_64-unknown-linux-gnu.tar.gz"
 
-    if ! command -v ~/bin/yash >/dev/null; then
-        echo "Downloading yash"
-        get yash.tz "$url"
-        mkdir -p yash
-        tar fx yash.tz -C yash
+    if ! [ -x ~/bin/tre ]; then
+        echo "Downloading tre"
+        get tre.tz "$url"
+        echo "Extracting it"
+        tar fx tre.tz -C ~/bin
     fi
+
+    ~/bin/tre --version
 }
 
 get() {
@@ -211,7 +213,7 @@ main() {
     mkdir -p ~/bin
 
     echo
-    for o in bash_completions nvim dircolorshex win32yank shellcheck jq upx go dockercli; do
+    for o in go dockercli tre jq upx shellcheck win32yank dircolorshex bash_completions nvim; do
         echo "Installing $o"
         install_$o
         echo
