@@ -1,5 +1,14 @@
 #!/bin/sh
 
+sshkey() {
+    f="$1"; shift
+    if [ -z "$f" ]; then
+        >&2 echo "Enter the file name, e.g. ~/.ssh/macos.home.pem"
+        return 1
+    fi
+    ssh-keygen -t rsa -b 4096 -f "$f"
+}
+
 tfvars2json() {
     f="$1"
     neat="$(
