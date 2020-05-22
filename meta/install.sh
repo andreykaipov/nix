@@ -36,15 +36,15 @@ install_nvim() {
     v='0.4.3'
     url="https://github.com/neovim/neovim/releases/download/v$v/nvim-linux64.tar.gz"
 
-    if ! command -v ~/bin/nvim >/dev/null; then
+    if ! [ -x ~/local/opt/nvim-linux64/bin/nvim ]; then
         echo "Neovim is missing"
         echo "Downloading Neovim"
         get nvim.tz "$url"
-        echo "Extracting tarball to ~/local"
-        tar fx nvim.tz -C ~/local
+        echo "Extracting tarball to ~/local/opt"
+        tar fx nvim.tz -C ~/local/opt
     fi
 
-    ln -sf ~/local/nvim-linux64/bin/nvim -t ~/bin
+    ln -sf ~/local/opt/nvim-linux64/bin/nvim -t ~/bin
     nvim --version
 
     echo "Installing VIM plugins"
@@ -117,16 +117,16 @@ install_go() {
     fi
 
     lastfile="$(tar ft go.tz | tail -n1)"
-    if [ -r "$HOME/local/$lastfile" ]; then
+    if [ -r "$HOME/local/opt/$lastfile" ]; then
         echo "Looks like we've already extracted the tarball"
         echo "You might want to verify the Go installation"
     else
-        echo "Extracting tarball to ~/local..."
-        tar fx go.tz -C ~/local/ --totals
+        echo "Extracting tarball to ~/local/opt"
+        tar fx go.tz -C ~/local/opt --totals
     fi
 
-    echo "Creating symlinks from ~/local/go/bin to ~/bin"
-    for b in ~/local/go/bin/*; do
+    echo "Creating symlinks from ~/local/opt/go/bin to ~/bin"
+    for b in ~/local/opt/go/bin/*; do
         ln -sf "$b" -t ~/bin
     done
 
@@ -206,8 +206,8 @@ main() {
     echo "Moving to /tmp"
     cd /tmp || exit
 
-    echo "Creating ~/local and ~/bin directories"
-    mkdir -p ~/local
+    echo "Creating ~/local/opt and ~/bin directories"
+    mkdir -p ~/local/opt
     mkdir -p ~/bin
 
     echo
