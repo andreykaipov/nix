@@ -23,8 +23,16 @@
 # HOME and SHELL are not implicit and have to be passed. Again, see the
 # `promote` function.
 
+export TMP="${TMP:-/tmp}"
+export TMPDIR="${TMPDIR:-$TMP}"
+export GOPATH="$HOME/local/share/go"
+export GOBIN="$HOME/local/share/go/bin"
+export DOCKER_HOST=tcp://localhost:2375
+export EDITOR=vi
+
 paths="
     $HOME/bin
+    $GOBIN
     /usr/local/sbin
     /usr/local/bin
     /usr/sbin
@@ -38,46 +46,21 @@ paths="
 PATH="$(echo $paths | tr ' ' ':')"
 export PATH
 
-export TMPDIR="${TMP:-/tmp}"
-export EDITOR=vi
-
-export DOCKER_HOST=tcp://localhost:2375
-
-export GOBIN="$HOME/bin"
-export GOPATH="$HOME/go"
-
 # ANSI escape codes.
 # https://en.wikipedia.org/wiki/ANSI_escape_code#SGR_parameters
 # https://en.wikipedia.org/wiki/ANSI_escape_code#Colors
 # We could use 24-bit colors but these are fine.
 
+export _reset='\033[0m'
 export _default='\033[39m'
-export _white='\033[97m'
-
-export _black='\033[30m'
-export _red='\033[31m'
-export _green='\033[32m'
-export _yellow='\033[33m'
-export _blue='\033[34m'
-export _purple='\033[35m'
-export _cyan='\033[36m'
-
-export _lightblack='\033[90m'
-export _lightred='\033[91m'
-export _lightgreen='\033[92m'
-export _lightyellow='\033[93m'
-export _lightblue='\033[94m'
-export _lightpurple='\033[95m'
-export _lightcyan='\033[96m'
-
+export _brightblack='\033[1;30m'
 export _brightred='\033[1;31m'
 export _brightgreen='\033[1;32m'
 export _brightyellow='\033[1;33m'
 export _brightblue='\033[1;34m'
 export _brightpurple='\033[1;35m'
 export _brightcyan='\033[1;36m'
-
-export _reset='\033[0m'
+export _brightwhite='\033[1;37m'
 
 #
 
