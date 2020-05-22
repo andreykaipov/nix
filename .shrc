@@ -1,5 +1,5 @@
 #!/bin/sh
-# shellcheck source=/dev/null disable=SC2016,SC2046
+# shellcheck source=/dev/null
 #
 # What should and should not go into this file? Well, since our local tmux
 # session inherits the environment from the login shell that spawned it, any
@@ -77,11 +77,22 @@ __prompt_command() {
 
     path="\[${_brightyellow?}\]\w\[${_reset?}\]"
     gitinfo="$(git condensed-status)"
-    PS1="\n$path $gitinfo\n"
+    PS1="\n$path $gitinfo\n "
 }
 
-PROMPT_DIRTRIM=3
-PROMPT_COMMAND=__prompt_command
+if [ -n "$BASH_VERSION" ]; then
+    . ~/local/share/bash-completion/bash_completion
+    PROMPT_DIRTRIM=3
+    PROMPT_COMMAND=__prompt_command
+    return
+fi
+
+# Fallback for anything but Bash. We use printf to print colors as not every
+# shell supports colors directly in its PS1, e.g. ash or dash or any minimal
+# shell. Why would we ever use ash or dash? Mind your own business.
+path="$(printf "${_brightyellow?}%s${_reset}" "\$PWD")"
+gitinfo="\$(git condensed-status)"
+PS1="$(printf "\n%s %s\n$0$ " "$path" "$gitinfo")"
 
 ###
 
