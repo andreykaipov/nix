@@ -2,6 +2,36 @@
 
 set -eu
 
+install_bash_completions() {
+    v='2.10'
+    url="https://github.com/scop/bash-completion/releases/download/$v/bash-completion-$v.tar.xz"
+
+    if ! [ -r ~/local/share/bash-completion/bash_completion ]; then
+        echo "Bash completion package is missing"
+        echo "Downloading"
+        get bash-completion.tz "$url"
+
+        echo "Extracting"
+        rm -rf bash-completion; mkdir bash-completion
+        tar fx bash-completion.tz --strip-components 1 -C bash-completion
+
+        echo "Compiling"
+        cd bash-completion
+        ./configure --prefix "$HOME/local"
+        make
+        make install
+    fi
+
+    completions_dir="$HOME/local/share/bash-completion/completions"
+
+    if ! [ -r "$completions_dir/git" ]; then
+        git_v="$(git --version | grep -Eo '[0-9]+\.[0-9]+\.[0-9]+')"
+        git_url="https://raw.githubusercontent.com/git/git/v$git_v/contrib/completion/git-completion.bash"
+        get "$completions_dir/git" "$git_url"
+    fi
+}
+
+
 install_nvim() {
     v='0.4.3'
     url="https://github.com/neovim/neovim/releases/download/v$v/nvim-linux64.tar.gz"
@@ -178,7 +208,7 @@ main() {
     mkdir -p ~/bin
 
     echo
-    for o in nvim dircolorshex win32yank shellcheck jq upx go dockercli; do
+    for o in bash_completions nvim dircolorshex win32yank shellcheck jq upx go dockercli; do
         echo "Installing $o"
         install_$o
         echo
