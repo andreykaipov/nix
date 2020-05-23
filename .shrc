@@ -45,7 +45,6 @@ promote() {
     . "$sourced"
     env - \
         "HOME=$HOME" \
-        "SHELL=$SHELL" \
         | sh -c ". $sourced; env" | cut -d= -f1 | while read -r var; do
             val="$(eval "echo \"\$$var\"")"
             tmux set-environment -gt local "$var" "$val"

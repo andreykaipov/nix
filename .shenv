@@ -14,14 +14,14 @@
 # The only env var output will be PWD. However, the PATH printed in this case
 # will be the common **/sbin and **/bin directories. With this, we'll be able to
 # re-export the path with `tr`, and any other dependent binaries like in ~/bin
-# will be found. Having said that, there are a few env vars we do always need
-# though:
+# or $GOBIN will be found. Having said that, there is one env var we do always
+# need though:
+#
 # ```
-# env - "HOME=$HOME" SHELL=sh sh -c '. $HOME/.shenv; env' | sort
+# env - "HOME=$HOME" sh -c '. $HOME/.shenv; env' | sort
 # ```
 #
-# HOME and SHELL are not implicit and have to be passed. Again, see the
-# `promote` function.
+# HOME is not implicit and has to be passed. See the `promote` function.
 
 export TMP="${TMP:-/tmp}"
 export TMPDIR="${TMPDIR:-$TMP}"
@@ -64,6 +64,8 @@ export _brightwhite='\033[1;37m'
 
 #
 
+# As this file will be sourced, we can find our shell via $0.
+export SHELL="$0"
 eval "$(dircolors.hex "$HOME/.dir_colors")"
 
 #
@@ -72,3 +74,5 @@ eval "$(dircolors.hex "$HOME/.dir_colors")"
 export HISTFILE="$HOME/.bash_history"
 export HISTTIMEFORMAT="%F %T "
 export HISTCONTROL=ignoredups:ignorespace
+
+export HI=hello
