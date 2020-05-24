@@ -111,8 +111,9 @@ nmap <leader>l :set invlist<cr>
 " TODO - experiment with removing mode in status line as it's evident what mode
 " we're in based on the cursor. The following settings are pretty much the
 " default, but instead of a block in normal mode, we use a solid bar, and
-" instead of a solid bar in insert mode, we make it blink. blink times don't
-" seem to work on windows terminal, but we'll leave them in.
+" instead of a solid bar in insert mode, we make it blink. Blink times don't
+" seem to work on Windows terminal or a variety of Linux terminals, but we'll
+" leave them in.
 "
 set guicursor=n-v-c:ver25
             \,i-ci-ve:ver25-blinkwait700-blinkoff400-blinkon250
@@ -126,7 +127,7 @@ function! SetCustomHighlights()
     highlight ColorColumn                            ctermbg=155
     highlight CursorLine                             ctermbg=233
     highlight CursorLineNr            ctermfg=yellow ctermbg=233
-    highlight Normal                  ctermfg=252    ctermbg=black
+    highlight Normal                  ctermfg=252    ctermbg=none
     highlight MatchParen   cterm=bold ctermfg=208    ctermbg=233
     " highlight highlight-group :cterm=NONE ctermbg=NONE ctermfg=NONE gui=NONE guibg=NONE guifg=NONE
 endfunction
