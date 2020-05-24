@@ -22,8 +22,8 @@
 !.config/tmux
 !.config/tmux/*.conf
 
-!.gitconfig
-!.gitconfig-work
+!.config/git
+!.config/git/*
 
 !.config/alacritty
 !.config/alacritty/alacritty.tmpl.yml

@@ -1,3 +1,5 @@
+# vim: filetype=gitconfig
+
 [user]
     name = Andrey Kaipov
     email = andreykaipov@users.noreply.github.com
@@ -6,4 +8,4 @@
     helper = cache --timeout=10000
 
 [includeIf "gitdir:~/projects/work/**"]
-    path = .gitconfig-work
+    path = ~/.config/git/work
