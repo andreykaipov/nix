@@ -90,7 +90,7 @@ ensure_tmux() {
             exec tmux attach -t local
         else
             echo "Starting local tmux session"
-            exec tmux new -s local
+            tmux -f ~/.config/tmux/core.conf new -s local
         fi
     else
         echo "We're already inside of a tmux session"

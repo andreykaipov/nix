@@ -19,6 +19,9 @@
 !.config/nvim/tmp/bak
 !.config/nvim/tmp/bak/.gitkeep
 
+!.config/tmux
+!.config/tmux/*.conf
+
 !.gitconfig
 !.gitconfig-work
 
