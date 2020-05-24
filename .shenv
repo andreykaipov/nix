@@ -28,7 +28,8 @@ export TMPDIR="${TMPDIR:-$TMP}"
 export GOPATH="$HOME/local/share/go"
 export GOBIN="$HOME/local/share/go/bin"
 export DOCKER_HOST=tcp://localhost:2375
-export EDITOR=vi
+export VISUAL=nvim
+export EDITOR="$VISUAL"
 
 paths="
     $HOME/bin
@@ -74,5 +75,3 @@ eval "$(dircolors.hex "$HOME/.dir_colors")"
 export HISTFILE="$HOME/.bash_history"
 export HISTTIMEFORMAT="%F %T "
 export HISTCONTROL=ignoredups:ignorespace
-
-export HI=hello
