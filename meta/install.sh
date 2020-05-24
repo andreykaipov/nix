@@ -67,8 +67,9 @@ install_win32yank() {
     v='0.0.4'
     url="https://github.com/equalsraf/win32yank/releases/download/v$v/win32yank-x64.zip"
 
-    if [ -z "$WSL_DISTRO_NAME" ]; then
+    if [ -z "${WSL_DISTRO_NAME:-}" ]; then
         echo "Not running within WSL distro; skipping"
+        return
     fi
 
     if ! command -v ~/bin/win32yank.exe >/dev/null; then
