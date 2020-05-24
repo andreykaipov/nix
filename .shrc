@@ -72,9 +72,9 @@ __prompt_command() {
     fi
 
     : "${_reset?}"
-    bind "set emacs-mode-string  \1\e[6 q\2\1$retcolor\2❯'\1$_reset\2"
-    bind "set vi-ins-mode-string \1\e[6 q\2\1$retcolor\2❯\1$_reset\2"
-    bind "set vi-cmd-mode-string \1\e[5 q\2\1$retcolor\2:\1$_reset\2"
+    bind "set emacs-mode-string  \1\e[5 q\2\1$retcolor\2❯'\1$_reset\2"
+    bind "set vi-ins-mode-string \1\e[5 q\2\1$retcolor\2❯\1$_reset\2"
+    bind "set vi-cmd-mode-string \1\e[6 q\2\1$retcolor\2:\1$_reset\2"
 
     path="\[${_brightyellow?}\]\w\[${_reset?}\]"
     gitinfo="$(git condensed-status)"
