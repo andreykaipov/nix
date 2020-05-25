@@ -55,7 +55,7 @@ install_nvim() {
 install_dircolorshex() {
     url='https://raw.githubusercontent.com/andreykaipov/dircolors.hex/master/bin/dircolors.hex'
 
-    if ! command -v ~/dircolors.hex; then
+    if ! [ -x ~/dircolors.hex ]; then
         get dircolors.hex "$url"
         chmod +x dircolors.hex
         mv dircolors.hex ~/bin
@@ -73,7 +73,7 @@ install_win32yank() {
         return
     fi
 
-    if ! command -v ~/bin/win32yank.exe >/dev/null; then
+    if ! [ -x ~/bin/win32yank.exe ]; then
         echo "win32yank.exe is missing"
         echo "Downloading it"
         get win32yank.zip "$url"
@@ -90,7 +90,7 @@ install_shellcheck() {
     v='0.7.1'
     url="https://github.com/koalaman/shellcheck/releases/download/v$v/shellcheck-v$v.linux.x86_64.tar.xz"
 
-    if ! command -v ~/bin/shellcheck >/dev/null; then
+    if ! [ -x ~/bin/shellcheck ]; then
         echo "shellcheck is either missing or has a mismatched version"
         echo "Downloading shellcheck"
         get shellcheck.tz "$url"
@@ -139,7 +139,7 @@ install_dockercli() {
     v='19.03.8'
     url="https://download.docker.com/linux/static/stable/x86_64/docker-$v.tgz"
 
-    if ! command -v ~/bin/docker >/dev/null; then
+    if ! [ -x ~/bin/docker ]; then
         echo "Downloading Docker tarball"
         get docker.tz "$url"
         tar fx docker.tz --strip-components 1 -C ~/bin --wildcards '*/docker'
@@ -229,6 +229,8 @@ install_yacc() {
         make install
         cd -
     fi
+
+    yacc -V
 }
 
 # variation of https://github.com/tmux/tmux/wiki/Installing
@@ -255,7 +257,7 @@ install_tmux() {
         cd -
     fi
 
-    LD_LIBRARY_PATH="$HOME/local/lib" ~/local/bin/tmux -V
+    LD_LIBRARY_PATH="$HOME/local/lib" tmux -V
 }
 
 install_pyenv() {
@@ -266,7 +268,7 @@ install_jq() {
     v='1.6'
     url="https://github.com/stedolan/jq/releases/download/jq-$v/jq-linux64"
 
-    if ! command -v ~/bin/jq >/dev/null; then
+    if ! [ -x ~/bin/jq ]; then
         echo "Downloading jq"
         get jq "$url"
         chmod +x jq
@@ -280,13 +282,19 @@ install_upx() {
     v='3.96'
     url="https://github.com/upx/upx/releases/download/v$v/upx-$v-amd64_linux.tar.xz"
 
-    if ! command -v ~/bin/upx >/dev/null; then
+    if [ -n "${WSL_DISTRO_NAME:-}" ]; then
+        echo "UPX doesn't work within WSL, so no point in installing it"
+        echo "See https://github.com/upx/upx/issues/201 and https://github.com/microsoft/WSL/issues/3846"
+        return
+    fi
+
+    if ! [ -x ~/bin/upx ]; then
         echo "Downloading UPX"
         get upx.tz "$url"
         tar fx upx.tz --strip-components 1 -C ~/bin --wildcards '*/upx'
     fi
 
-    # upx --version
+    upx --version
 }
 
 install_tre() {
@@ -322,6 +330,12 @@ main() {
     mkdir -p ~/local/opt
     mkdir -p ~/bin
     echo
+
+    # All of the above install scripts install binaries into either ~/bin or
+    # ~/local/bin. We set this PATH here so we can test each binary at the end
+    # of its installation script. As this file is not meant to be sourced, this
+    # is not permanent.
+    export PATH="$HOME/bin:$HOME/local/bin:$PATH"
 
     pkgs='
         dircolorshex
