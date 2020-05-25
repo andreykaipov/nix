@@ -44,4 +44,4 @@
 # the install script instead.
 !bin
 !bin/.gitkeep
-!bin/git-condensed-status
+!bin/git-condensed-status*

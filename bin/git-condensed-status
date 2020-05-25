@@ -1,8 +1,8 @@
 #!/bin/sh
+#
 # Git prompt support for POSIX shells.
 #
 # Requirements: git and awk
-# Author: github.com/andreykaipov/posix-git
 #
 # Reports a condensed version of `git status` for use in a command-line prompt.
 #
@@ -49,6 +49,7 @@
 #
 # See https://git-scm.com/docs/git-status#_short_format for the specification of
 # the porcelain output.
+
 main() {
     branch_color="${1:-\033[1;36m}"
 
@@ -64,9 +65,9 @@ main() {
             $1 ~ /^[CARMD]$/ && $2 != "U" { staged++ }
             $1 != "U" && $2 ~ /^[RADMC]$/ { unstaged++ }
             END {
-                unmerged  = unmerged > 0  ? " \033[1;35m" unmerged "\033[0mx"   : ""
-                staged    = staged > 0    ? " \033[1;32m" staged "\033[0m+"    : ""
-                unstaged  = unstaged > 0  ? " \033[1;31m" unstaged "\033[0m*"  : ""
+                unmerged  = unmerged > 0  ? " \033[1;35m" unmerged  "\033[0mx" : ""
+                staged    = staged > 0    ? " \033[1;32m" staged    "\033[0m+" : ""
+                unstaged  = unstaged > 0  ? " \033[1;31m" unstaged  "\033[0m*" : ""
                 untracked = untracked > 0 ? " \033[1;31m" untracked "\033[0m?" : ""
                 printf "%s%s%s%s%s", branch, unmerged, staged, unstaged, untracked
             }
@@ -74,4 +75,4 @@ main() {
     fi
 }
 
-main
+main "$@"

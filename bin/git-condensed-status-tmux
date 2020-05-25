@@ -1,0 +1,31 @@
+#!/bin/sh
+#
+# Pretty much the same thing as ~/bin/git-condensed-status but modified a bit
+# for tmux status lines, namely no remote
+
+main() {
+    branch_color="${1:-#[fg=brightcyan]}"
+
+    if [ -d .git ] && output="$(git status --porcelain -b 2> /dev/null)"; then
+        echo "$output" | awk -vFS= -vOFS= -v "branch_color=$branch_color" '
+            $1 == "#" {
+                $1=$2=$3=""; branch = branch_color $0 "#[fg=default]"
+                next
+            }
+            $1 == "U" || $2 == "U" ||
+              ($1 ~ /^[AD]$/ && $1 == $2) { unmerged++; next } # last case is AA or DD
+            $1 == "?"                     { untracked++; next }
+            $1 ~ /^[CARMD]$/ && $2 != "U" { staged++ }
+            $1 != "U" && $2 ~ /^[RADMC]$/ { unstaged++ }
+            END {
+                unmerged  = unmerged > 0  ? " #[fg=magenta,bold]" unmerged  "#[fg=default]x" : ""
+                staged    = staged > 0    ? " #[fg=green,bold]"   staged    "#[fg=default]+" : ""
+                unstaged  = unstaged > 0  ? " #[fg=red,bold]"     unstaged  "#[fg=default]*" : ""
+                untracked = untracked > 0 ? " #[fg=red,bold]"     untracked "#[fg=default]?" : ""
+                printf "%s%s%s%s%s", branch, unmerged, staged, unstaged, untracked
+            }
+        '
+    fi
+}
+
+main "$@"
