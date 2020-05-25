@@ -20,6 +20,7 @@ install_bash_completions() {
         ./configure --prefix "$HOME/local"
         make
         make install
+        cd -
     fi
 
     completions_dir="$HOME/local/share/bash-completion/completions"
@@ -148,9 +149,117 @@ install_dockercli() {
     printf "\e[1;35mNOTE: Only the CLI has been installed. For functionality, please set DOCKER_HOST in your environment.\e[0m\n"
 }
 
+install_libevent() {
+    v='2.1.11'
+    url="https://github.com/libevent/libevent/releases/download/release-$v-stable/libevent-$v-stable.tar.gz"
+
+    if ! { [ -r ~/local/lib/libevent.a ] && [ -d ~/local/include/event2 ]; }; then
+        echo "libevent package is missing"
+        echo "Downloading"
+        get libevent.tz "$url"
+
+        echo "Extracting"
+        rm -rf libevent-*
+        tar fx libevent.tz
+
+        echo "Compiling"
+        cd libevent-*
+        ./configure --prefix ~/local \
+            --disable-debug-mode \
+            --disable-samples \
+            --disable-libevent-regress \
+            --enable-silent-rules
+            #--enable-shared
+        make
+        make install
+        cd -
+    fi
+}
+
+install_ncurses() {
+    # no version we bleeding
+    url="https://invisible-island.net/datafiles/release/ncurses.tar.gz"
+
+    if ! { [ -r ~/local/lib/libncurses_g.a ] && [ -d ~/local/include/ncurses ]; }; then
+        echo "ncurses package is missing"
+        echo "Downloading"
+        get ncurses.tz "$url"
+
+        echo "Extracting"
+        rm -rf ncurses-*
+        tar fx ncurses.tz
+
+        echo "Compiling"
+        cd ncurses-*
+        ./configure --prefix ~/local \
+            --without-ada \
+            --without-cxx \
+            --without-cxx-binding \
+            --without-manpages \
+            --without-normal \
+            --without-tests \
+            --without-develop \
+            --disable-echo
+            #--with-termlib
+            #--enable-pc-files
+            #--with-pkg-config-libdir "$HOME/local/lib/pkgconfig"
+        make
+        make install
+        cd -
+    fi
+}
+
+install_yacc() {
+    # no version we bleeding
+    url="https://invisible-island.net/datafiles/release/byacc.tar.gz"
+
+    if ! [ -x ~/local/bin/yacc ]; then
+        echo "yacc is missing"
+        echo "Downloading"
+        get byacc.tz "$url"
+
+        echo "Extracting"
+        rm -rf byacc-*
+        tar fx byacc.tz
+
+        echo "Compiling"
+        cd byacc-*
+        ./configure --prefix ~/local --disable-echo
+        make
+        make install
+        cd -
+    fi
+}
+
+# variation of https://github.com/tmux/tmux/wiki/Installing
+install_tmux() {
+    v='3.1b'
+    url="https://github.com/tmux/tmux/releases/download/$v/tmux-$v.tar.gz"
+
+    if ! [ -x ~/local/bin/tmux ]; then
+        echo "tmux is missing"
+        echo "Downloading"
+        get tmux.tz "$url"
+
+        echo "Extracting"
+        rm -rf tmux-*
+        tar fx tmux.tz
+
+        echo "Compiling"
+        cd tmux-*
+        export LDFLAGS="-L${HOME}/local/lib"
+        export CFLAGS="-I${HOME}/local/include -Wno-unused-result"
+        ./configure --prefix ~/local --enable-silent-rules
+        make
+        make install
+        cd -
+    fi
+
+    LD_LIBRARY_PATH="$HOME/local/lib" ~/local/bin/tmux -V
+}
+
 install_pyenv() {
     curl https://pyenv.run | sh
-
 }
 
 install_jq() {
@@ -212,17 +321,36 @@ main() {
     echo "Creating ~/local/opt and ~/bin directories"
     mkdir -p ~/local/opt
     mkdir -p ~/bin
-
     echo
-    for o in go dockercli tre jq upx shellcheck win32yank dircolorshex bash_completions nvim; do
+
+    pkgs='
+        dircolorshex
+        bash_completions
+
+        win32yank
+        jq
+        shellcheck
+        tre
+        upx
+
+        go
+        nvim
+        dockercli
+
+        libevent
+        ncurses
+        yacc
+        tmux
+    '
+    for o in $pkgs; do
         echo "Installing $o"
-        install_$o
+        eval "install_$o"
         echo
     done
 
     cd -
     echo "Templating Alacritty config"
-    <.config/alacritty/alacritty.tmpl.yml envsubst "\$HOME" > .config/alacritty/alacritty.yml
+    <~/.config/alacritty/alacritty.tmpl.yml envsubst "\$HOME" > ~/.config/alacritty/alacritty.yml
 
     echo "Done"
 }
