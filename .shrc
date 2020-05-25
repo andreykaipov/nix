@@ -1,5 +1,8 @@
-#!/bin/sh
-# shellcheck source=/dev/null
+#!/bin/bash
+# shellcheck shell=sh source=/dev/null
+#
+# NOTE: Our shell of choice is Bash, but this file can be sourced from a POSIX
+# shell.
 #
 # What should and should not go into this file? Well, since our local tmux
 # session inherits the environment from the login shell that spawned it, any
@@ -53,6 +56,18 @@ promote() {
 
 . "$HOME/.shalias"
 . "$HOME/.shfunction"
+: "${_reset?}" "${_brightred?}" "${_brightgreen?}"
+
+# Fallback for anything but Bash. We use printf to print colors as not every
+# shell supports colors directly in its PS1, e.g. ash or dash or any minimal
+# shell. Why would we ever use ash or dash? Mind your own business.
+if [ -z "$BASH_VERSION" ]; then
+    # shellcheck disable=SC2016
+    fnretcolor='if [ "$?" = 0 ]; then printf "${_brightgreen}"; else printf "${_brightred}"; fi'
+    PS1='$(printf "$(eval "$fnretcolor")%s$_reset$ " "$0")'
+    printf "\e]2;%s\e\\" "#[fg=yellow,bold]$PWD#[fg=default] $(git condensed-status-tmux)"
+    return
+fi
 
 # Non-printing chars have to be surrounded by \[...\]; otherwise Bash will
 # improperly display the prompt especially when reverse searching. \1...\2 is
@@ -66,40 +81,34 @@ promote() {
 __prompt_command() {
     retlastcmd="$?"
     if [ "$retlastcmd" = 0 ]; then
-        retcolor="${_brightgreen?}"
+        retcolor="${_brightgreen}"
     else
-        retcolor="${_brightred?}"
+        retcolor="${_brightred}"
     fi
 
-    : "${_reset?}"
     bind "set emacs-mode-string  \1\e[5 q\2\1$retcolor\2❯'\1$_reset\2"
     bind "set vi-ins-mode-string \1\e[5 q\2\1$retcolor\2❯\1$_reset\2"
     bind "set vi-cmd-mode-string \1\e[6 q\2\1$retcolor\2:\1$_reset\2"
+    PS1="\n "
 
-    path="\[${_brightyellow?}\]\w\[${_reset?}\]"
-    gitinfo="$(git condensed-status)"
-    PS1="\n$path $gitinfo\n "
+    # Set window and pane title. See
+    # http://man7.org/linux/man-pages/man1/tmux.1.html#NAMES_AND_TITLES.
+    # printf "\ek%s\e\\" "#[fg=yellow]$PWD#[fg=default]"
+    printf "\e]2;%s\e\\" "#[fg=yellow,bold]${PWD/$HOME/'~'}#[fg=default] $(git condensed-status-tmux)"
+
+    #path="\[${_brightyellow}\]\w\[${_reset}\]"
+    #gitinfo="$(git condensed-status)"
+    #PS1="\n$path $gitinfo\n "
+
+    #mux set -g status-left "#S #P $PWD"
+    #tmux set #{W:#{E:window-status-format} ,#{E:window-status-current-format} }
+    #{W:#{E:window-status-format} ,#{E:window-status-current-format} }
+    #~
+    #tmux set -g window-status-current-format "
+    #tmux rename-window "$PWD $(git condensed-status-tmux)"
 }
 
-if [ -n "$BASH_VERSION" ]; then
-    . ~/local/share/bash-completion/bash_completion
-    PROMPT_DIRTRIM=3
-    PROMPT_COMMAND=__prompt_command
-    return
-fi
-
-# Fallback for anything but Bash. We use printf to print colors as not every
-# shell supports colors directly in its PS1, e.g. ash or dash or any minimal
-# shell. Why would we ever use ash or dash? Mind your own business.
-path="$(printf "${_brightyellow?}%s${_reset}" "\$PWD")"
-gitinfo="\$(git condensed-status)"
-PS1="$(printf "\n%s %s\n$0$ " "$path" "$gitinfo")"
-
-###
-
-#
-# ┌[hh:mm:ss] [path/to/whatever] [n files, m bytes]
-# └▶ vi ~/.shrc
-# PS1="
-# ┌[\$(if [ \$? = 0 ]; then echo '$_green\D{%T}$_reset'; else echo '$_red\D{%T}$_reset'; fi)] [$_brightyellow\w$_reset] \$(__git_ps1 '[$_brightpurple%s\e[0m] ')[$_blue\$(ls | wc -l) files, \$(ls -al | head -n1 | sed 's/total //')$_reset]
-# └▶ "
+shopt -s autocd
+. ~/local/share/bash-completion/bash_completion
+PROMPT_DIRTRIM=3
+PROMPT_COMMAND=__prompt_command
