@@ -25,14 +25,26 @@
 
 export TMP="${TMP:-/tmp}"
 export TMPDIR="${TMPDIR:-$TMP}"
-export GOPATH="$HOME/local/share/go"
-export GOBIN="$HOME/local/share/go/bin"
 export DOCKER_HOST=tcp://localhost:2375
 export VISUAL=nvim
 export EDITOR="$VISUAL"
 
+export GOPATH="$HOME/local/share/go"
+export GOBIN="$HOME/local/share/go/bin"
+
+# For anything we run that was installed from source (e.g. tmux), the runtime
+# linker needs to know where to find the shared libraries via LD_LIBRARY_PATH.
+# CPATH and LIBRARY_PATH help during Autoconf configure scripts, similar to
+# CFLAGS and LDFLAGS. Also see https://unix.stackexchange.com/a/149361/152529
+# for more info.
+export CPATH="$HOME/local/include:$CPATH"
+export LIBRARY_PATH="$HOME/local/lib:$LD_LIBRARY_PATH"
+export LD_LIBRARY_PATH="$HOME/local/lib:$LD_LIBRARY_PATH"
+export MANPATH="$HOME/local/share/man:$MANPATH"
+
 paths="
     $HOME/bin
+    $HOME/local/bin
     $GOBIN
     /usr/local/sbin
     /usr/local/bin
