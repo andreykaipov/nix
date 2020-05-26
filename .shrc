@@ -1,9 +1,6 @@
 #!/bin/bash
 # shellcheck shell=sh source=/dev/null
 #
-# NOTE: Our shell of choice is Bash, but this file can be sourced from a POSIX
-# shell.
-#
 # What should and should not go into this file? Well, since our local tmux
 # session inherits the environment from the login shell that spawned it, any
 # environment variables are available from within child tmux windows/panes too,
@@ -54,9 +51,12 @@ promote() {
         done
 }
 
-. "$HOME/.shalias"
-. "$HOME/.shfunction"
-: "${_reset?}" "${_brightred?}" "${_brightgreen?}"
+. ~/.shalias
+. ~/.shfunction
+. ~/.shooks
+. ~/local/share/bash-completion/bash_completion
+
+: "${_reset?}" "${_brightred?}" "${_brightgreen?}" "${__ret_last_cmd:=0}"
 
 # Fallback for anything but Bash. We use printf to print colors as not every
 # shell supports colors directly in its PS1, e.g. ash or dash or any minimal
@@ -69,33 +69,8 @@ if [ -z "$BASH_VERSION" ]; then
     return
 fi
 
-# Non-printing chars have to be surrounded by \[...\]; otherwise Bash will
-# improperly display the prompt especially when reverse searching. \1...\2 is
-# the readline equivalent of that.
-#
-# For terminals supporting DECSCUSR sequences, we change our cursor between
-# readline modes. See https://invisible-island.net/xterm/ctlseqs/ctlseqs.html.
-#
-# path/to/whatever git-info
-# ❯ vi ~/.shrc
 __prompt_command() {
-    retlastcmd="$?"
-    if [ "$retlastcmd" = 0 ]; then
-        retcolor="${_brightgreen}"
-    else
-        retcolor="${_brightred}"
-    fi
-
-    bind "set emacs-mode-string  \1\e[5 q\2\1$retcolor\2❯'\1$_reset\2"
-    bind "set vi-ins-mode-string \1\e[5 q\2\1$retcolor\2❯\1$_reset\2"
-    bind "set vi-cmd-mode-string \1\e[6 q\2\1$retcolor\2:\1$_reset\2"
-    PS1="\n "
-
-    # Set window and pane title. See
-    # http://man7.org/linux/man-pages/man1/tmux.1.html#NAMES_AND_TITLES.
-    # printf "\ek%s\e\\" "#[fg=yellow]$PWD#[fg=default]"
-    printf "\e]2;%s\e\\" "#[fg=yellow,bold]${PWD/$HOME/'~'}#[fg=default] $(git condensed-status-tmux)"
-
+    echo
     #path="\[${_brightyellow}\]\w\[${_reset}\]"
     #gitinfo="$(git condensed-status)"
     #PS1="\n$path $gitinfo\n "
@@ -108,7 +83,41 @@ __prompt_command() {
     #tmux rename-window "$PWD $(git condensed-status-tmux)"
 }
 
-shopt -s autocd
-. ~/local/share/bash-completion/bash_completion
-PROMPT_DIRTRIM=3
-PROMPT_COMMAND=__prompt_command
+
+precmd() {
+    # lastcmd="$(HISTTIMEFORMAT='' history | awk '{$1=""; print substr($0,2)}' | tail -1)"
+    # echo "in precmd: last command was $lastcmd"
+    printf ""
+}
+
+postcmd() {
+    [ "$__ret_last_cmd" = 0 ] && pcolor="${_brightgreen}" || pcolor="${_brightred}"
+    setprompt "$pcolor"
+    echo
+}
+
+# Surround non-printing chars with \[...\] or \1...\2 in Bash's PS1 or
+# readline's mode strings respectively. Otherwise, our prompt will display
+# incorrectly during navigation with C-[AEUR], for example.
+#
+# For terminals supporting DECSCUSR sequences, we change our cursor between
+# readline modes. See https://invisible-island.net/xterm/ctlseqs/ctlseqs.html.
+setprompt() {
+    promptcolor="$1"; shift
+    bind "set emacs-mode-string  \1\e[5 q\2\1$promptcolor\2❯'\1$_reset\2"
+    bind "set vi-ins-mode-string \1\e[5 q\2\1$promptcolor\2❯\1$_reset\2"
+    bind "set vi-cmd-mode-string \1\e[6 q\2\1$promptcolor\2:\1$_reset\2"
+    PS1=" "
+    #
+    # Set window and pane title. See
+    # http://man7.org/linux/man-pages/man1/tmux.1.html#NAMES_AND_TITLES.
+    # printf "\ek%s\e\\" "#[fg=yellow]$PWD#[fg=default]"
+    printf "\e]2;%s\e\\" "#[fg=yellow,bold]${PWD/$HOME/'~'}#[fg=default] $(git condensed-status-tmux)"
+}
+
+main() {
+    shopt -s autocd
+    setprompt "${_brightgreen}"
+}
+
+main

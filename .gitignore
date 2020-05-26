@@ -30,6 +30,7 @@
 
 !.dir_colors
 !.shlogin
+!.shooks
 !.shrc
 !.shenv
 !.shalias
