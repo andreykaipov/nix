@@ -108,9 +108,10 @@ fi
 # - At this point we clear the entire screen (\e[2J), making the output of
 #   the previous command available in the tmux scrollback.
 # - Even though we cleared the screen, our cursor is at the same point. We
-#   print a temporary prompt glyph and the command to be executed (yes it's
-#   already in the history even though we're still in the precmd). Assign it to
-#   a variable since we use it again it the postcmd.
+#   print a temporary neutrally-colored prompt glyph (❯❯) and the command to be
+#   executed (yes it's already in the history even though we're still in the
+#   precmd). Assign it to a variable since we use it again it the postcmd.
+# - We print a fake prompt (see comments).
 # - The precmd hook ends and our command is executed.
 precmd() {
     printf "\e[H\e[2K"
@@ -124,7 +125,16 @@ precmd() {
     # printf "\e[H\e[2B"
 
     __lastcmd="$(HISTTIMEFORMAT='' history 1 | awk '{$1=""; print $0}')"
-    printf "\e[1;33m❯%s\e[0m\n" "$__lastcmd"
+    printf "\e[1;33m❯❯\e[0m%s" "$__lastcmd"
+    printf "\n"
+
+    # The following adds a fake prompt glyph to our prompt line. Makes the
+    # prompt still visible during long running commands, e.g. sleep 3, so the
+    # overall UX is not jarring.
+    printf "\e[H"
+    printf "\e[1;33m❯\e[0m"
+    printf "\e[2B"
+    printf "\n"
 }
 
 # postcmd workflow:
@@ -132,23 +142,23 @@ precmd() {
 # - The cursor is now somewhere on line 5 or below depending on how large the
 #   output of the command was.
 # - Remedy this by moving to the prompt line and clearing it. (\e[H\e[2K)
-# - Do the same thing for the second line to avoid very large outputs
-#   conflicting with this line. (\e[1B\[e2K)
+# - Do the same thing for the next two lines avoid very large outputs
+#   conflicting with this line. (\e[1B\[e2K) x2
 # - At the third line, recolor the prompt glyph(s) according to the exit status
 #   of the command, by moving the cursor down one more line and rewriting it.
 # - Move back up to the prompt line as that's the dedicated typing area.
 postcmd() {
     printf "\e[H\e[2K"
     printf "\e[1B\e[2K"
-    printf "\e[1B"
+    printf "\e[1B\e[2K"
     [ "$__ret_last_cmd" = 0 ] && color="32" || color="31"
     printf "\e[${color}m❯❯\e[0m%s" "$__lastcmd"
     printf "\e[H"
 }
 
-# Surround non-printing chars with \[...\] or \1...\2 in Bash's PS1 or
-# readline's mode strings respectively. Otherwise, our prompt will display
-# incorrectly during navigation with C-[AEUR], for example.
+# Note: Don't forget to surround non-printing chars with \[...\] (Bash's PS1) or
+# \1...\2 (readline). Otherwise, our prompt will display incorrectly during
+# navigation with C-[AEUR], for example.
 #
 # For terminals supporting DECSCUSR sequences, we change our cursor between
 # readline modes. See https://invisible-island.net/xterm/ctlseqs/ctlseqs.html.
@@ -170,6 +180,39 @@ setprompt() {
 main() {
     shopt -s autocd
     setprompt
+    clear
+}
+
+# do the same for C-c and clearing,
+# and \ee switching modes show as tmux pane title
+
+# Wrap complete functionality between two hooks (precomplete and postcomplete).
+#
+# workflow:
+# - We press <Tab>, precomplete hook fires.
+# - Before each completion, go to the prompt line.
+# - Move the cursor down two lines and clear the line.
+# - Print an extra neutral prompt glyph to indicate tab completion.
+# - With our cursor here, tab completion happens at the third line and below.
+# - Once the completion suggestions have been printed, go to the prompt line and
+#   unset __precmd_start so that we rerun our precmd hook upon each completion.
+#   This makes sure the precmd hook runs once we actually press <Enter> and not
+#   just during the very first completion.
+
+bind -x '"\C-t11": precomplete'
+bind -x '"\C-t12": postcomplete'
+bind    '"\C-t13": complete'
+bind    '"\C-i": "\C-t11\C-t13\C-t12"'
+
+precomplete() {
+    printf "\e[H"
+    printf "\e[2B\e[2K"
+    printf "\e[1;33m❯\e[0m"
+}
+
+postcomplete() {
+    printf "\e[H"
+    unset __precmd_start
 }
 
 main
