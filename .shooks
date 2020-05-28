@@ -73,6 +73,7 @@ export \
 
 __precmd() {
     unset __postcmd_start __postcmd_done
+
     if [ -n "$__precmd_start" ]; then
         return
     fi
@@ -86,7 +87,9 @@ __precmd() {
 
 __postcmd() {
     __ret_last_cmd="$?"
+
     unset __precmd_start __precmd_done
+
     if [ -n "$__new_pts" ]; then
         unset __new_pts
         return
