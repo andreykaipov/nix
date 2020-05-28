@@ -39,7 +39,8 @@
 # splitting as values can potentially have leading/trailing spaces.
 #
 # Known limitations involve completely removing variables from our sourced file.
-# We'd have to remove any of those from the global tmux environment ourselves.
+# We'd have to remove any of those from the global tmux environment ourselves
+# using `tmux set-environment -gt local -u var_name`.
 promote() {
     sourced="$1"; shift
     . "$sourced"
@@ -54,21 +55,19 @@ promote() {
 . ~/.shalias
 . ~/.shfunction
 . ~/.shooks
-. ~/local/share/bash-completion/bash_completion
-
-: "${_reset?}" "${_brightred?}" "${_brightgreen?}" "${__ret_last_cmd:=0}"
 
 # Fallback for anything but Bash. We use printf to print colors as not every
 # shell supports colors directly in its PS1, e.g. ash or dash or any minimal
 # shell. Why would we ever use ash or dash? Mind your own business.
 if [ -z "$BASH_VERSION" ]; then
     # shellcheck disable=SC2016
-    fnretcolor='if [ "$?" = 0 ]; then printf "${_brightgreen}"; else printf "${_brightred}"; fi'
-    PS1='$(printf "$(eval "$fnretcolor")%s$_reset$ " "$0")'
+    fnretcolor='if [ "$?" = 0 ]; then printf "\e[1;32m"; else printf "\e[1;31m"; fi'
+    PS1='$(printf "$(eval "$fnretcolor")%s\e[0m$ " "$0")'
     printf "\e]2;%s\e\\" "#[fg=yellow,bold]$PWD#[fg=default] $(git condensed-status-tmux)"
     return
 fi
 
+. ~/local/share/bash-completion/bash_completion
 
 # Our prompt is a custom top-down Bash prompt, which keeps the prompt line at
 # the very top, while still moving commands up in history using the tmux
@@ -84,13 +83,6 @@ fi
 #
 # Now read through the precmds and postcmds to remember the gorgeous abomination
 # you created Andrey. Hopefully you won't regret it (maybe in 5 years).
-#
-# Limitation: if we execute a multiline command, e.g. cat <<EOF ..., our input
-# will collide with the output of the previous command. Maybe this can be fixed
-# by playing around with our PS2 variable.
-#
-# Limitation: if we do tab completion, it conflicts with the output of the
-# previous command.
 #
 # Note: Maybe we can hack auto pagers with something like
 #    LAST="$(cat /tmp/x)"
@@ -151,7 +143,7 @@ postcmd() {
     printf "\e[H\e[2K"
     printf "\e[1B\e[2K"
     printf "\e[1B\e[2K"
-    [ "$__ret_last_cmd" = 0 ] && color="32" || color="31"
+    [ "${__ret_last_cmd???}" = 0 ] && color="32" || color="31"
     printf "\e[${color}m❯❯\e[0m%s" "$__lastcmd"
     printf "\e[H"
 }
@@ -164,10 +156,10 @@ postcmd() {
 # readline modes. See https://invisible-island.net/xterm/ctlseqs/ctlseqs.html.
 setprompt() {
     PS1=' '
-    promptcolor='\e[1;33m'
-    bind "set emacs-mode-string  \1\e[5 q\2\1$promptcolor\2@\1$_reset\2"
-    bind "set vi-ins-mode-string \1\e[5 q\2\1$promptcolor\2❯\1$_reset\2"
-    bind "set vi-cmd-mode-string \1\e[6 q\2\1$promptcolor\2:\1$_reset\2"
+
+    bind "set emacs-mode-string  \1\e[5 q\2\1\e[1;33m\2@\1\e[0m\2"
+    bind "set vi-ins-mode-string \1\e[5 q\2\1\e[1;33m\2❯\1\e[0m\2"
+    bind "set vi-cmd-mode-string \1\e[6 q\2\1\e[1;33m\2:\1\e[0m\2"
 
     # Set tmux window and pane title. See
     # http://man7.org/linux/man-pages/man1/tmux.1.html#NAMES_AND_TITLES.
@@ -183,8 +175,7 @@ main() {
     clear
 }
 
-# do the same for C-c and clearing,
-# and \ee switching modes show as tmux pane title
+main
 
 ### Multi-line commands ###
 #
@@ -211,23 +202,27 @@ bind '"\C-t23": history-search-backward'
 bind '"\C-t24": history-search-forward'
 bind '"\e[A": "\C-t23\C-t24\C-t23"'
 
+### Tab-completion ###
+#
 # Wrap complete functionality between two hooks (precomplete and postcomplete).
 #
-# workflow:
+# Workflow:
 # - We press <Tab>, precomplete hook fires.
 # - Before each completion, go to the prompt line.
-# - Move the cursor down two lines and clear the line.
-# - Print an extra neutral prompt glyph to indicate tab completion.
-# - With our cursor here, tab completion happens at the third line and below.
-# - Once the completion suggestions have been printed, go to the prompt line and
-#   unset __precmd_start so that we rerun our precmd hook upon each completion.
-#   This makes sure the precmd hook runs once we actually press <Enter> and not
-#   just during the very first completion.
+# - Move the cursor down two lines and clear the line. With our cursor here, tab
+#   completion now happens at the third line and below.
+# - Print an extra neutral prompt glyph to mimic the echoed prompt generated in
+#   our precmd hook.
+# - The precommand hook ends and completion suggests are printed.
+# - In the postcomplete hook, go to the prompt line and unset __precmd_start so
+#   that we rerun our precmd hook upon each completion. This also makes sure the
+#   precmd hook runs once we actually press <Enter> and not just during the very
+#   first completion.
 
 bind -x '"\C-t11": precomplete'
 bind -x '"\C-t12": postcomplete'
-bind    '"\C-t13": complete'
-bind    '"\C-i": "\C-t11\C-t13\C-t12"'
+bind '"\C-t13": complete'
+bind '"\C-i": "\C-t11\C-t13\C-t12"'
 
 precomplete() {
     printf "\e[H"
@@ -238,33 +233,4 @@ precomplete() {
 postcomplete() {
     printf "\e[H"
     unset __precmd_start
-}
-
-main
-
-####
-
-    # trap printprompt SIGWINCH
-    # postcmd
-    
-# Outputs the coordinations of where the cursor currently is, for use with the
-# \e[{row}:${column}f escape sequence.
-get_cursor() {
-    printf "\033[6n"
-    read -srd\[ _
-    read -srdR __ccoords
-}
-
-__prompt_command() {
-    echo
-    #path="\[${_brightyellow}\]\w\[${_reset}\]"
-    #gitinfo="$(git condensed-status)"
-    #PS1="\n$path $gitinfo\n "
-
-    #mux set -g status-left "#S #P $PWD"
-    #tmux set #{W:#{E:window-status-format} ,#{E:window-status-current-format} }
-    #{W:#{E:window-status-format} ,#{E:window-status-current-format} }
-    #~
-    #tmux set -g window-status-current-format "
-    #tmux rename-window "$PWD $(git condensed-status-tmux)"
 }

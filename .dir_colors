@@ -1,6 +1,11 @@
 # vim: ft=dircolors
 # Configuration file for dircolors.hex
 # See https://github.com/andreykaipov/dircolors.hex
+#
+# We can also use traditional ANSI escape codes for our colors.
+# For more info, see:
+# https://en.wikipedia.org/wiki/ANSI_escape_code#SGR_parameters
+# https://en.wikipedia.org/wiki/ANSI_escape_code#Colors
 
 FILE           #fff
 NORMAL         #fff

@@ -59,22 +59,6 @@ paths="
 PATH="$(echo $paths | tr ' ' ':')"
 export PATH
 
-# ANSI escape codes.
-# https://en.wikipedia.org/wiki/ANSI_escape_code#SGR_parameters
-# https://en.wikipedia.org/wiki/ANSI_escape_code#Colors
-# We could use 24-bit colors but these are fine.
-
-export _reset='\033[0m'
-export _default='\033[39m'
-export _brightblack='\033[1;30m'
-export _brightred='\033[1;31m'
-export _brightgreen='\033[1;32m'
-export _brightyellow='\033[1;33m'
-export _brightblue='\033[1;34m'
-export _brightpurple='\033[1;35m'
-export _brightcyan='\033[1;36m'
-export _brightwhite='\033[1;37m'
-
 #
 
 # As this file will be sourced, we can find our shell via $0.
