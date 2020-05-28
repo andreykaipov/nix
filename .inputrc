@@ -15,7 +15,7 @@ set completion-map-case on
 set completion-ignore-case on
 set colored-completion-prefix on
 set menu-complete-display-prefix on
-set show-all-if-ambiguous on
+set show-all-if-unmodified on
 
 # basically a combo of ls --color --classify during completion
 set colored-stats on
@@ -32,6 +32,7 @@ set keymap vi-command
 set keymap vi-insert
 "\e[a": history-search-backward
 "\e[b": history-search-forward
+"\e[Z": menu-complete
 
 # binds for cycling through different modes
 set keymap emacs
