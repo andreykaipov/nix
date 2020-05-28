@@ -27,11 +27,11 @@ set mark-symlinked-directories on
 set keymap vi-command
 "k": history-search-backward
 "j": history-search-forward
-"\e[a": history-search-backward
-"\e[b": history-search-forward
+"\e[A": history-search-backward
+"\e[B": history-search-forward
 set keymap vi-insert
-"\e[a": history-search-backward
-"\e[b": history-search-forward
+"\e[A": history-search-backward
+"\e[B": history-search-forward
 "\e[Z": menu-complete
 
 # binds for cycling through different modes
