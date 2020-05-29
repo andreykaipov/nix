@@ -52,9 +52,11 @@ promote() {
         done
 }
 
-. ~/.shalias
-. ~/.shfunction
-. ~/.shooks
+safesource() { [ -r "$1" ] && . "$1"; }
+
+safesource ~/.shalias
+safesource ~/.shfunction
+safesource ~/.shooks # TODO: consider precmds with PS0 instead of trap .. DEBUG
 
 # Fallback for anything but Bash. We use printf to print colors as not every
 # shell supports colors directly in its PS1, e.g. ash or dash or any minimal
@@ -67,7 +69,8 @@ if [ -z "$BASH_VERSION" ]; then
     return
 fi
 
-. ~/local/share/bash-completion/bash_completion
+safesource ~/local/share/bash-completion/bash_completion
+safesource ~/local/opt/pyenv/completions/pyenv.bash
 
 # Our prompt is a custom top-down Bash prompt, which keeps the prompt line at
 # the very top, while still moving commands up in history using the tmux
@@ -146,6 +149,8 @@ postcmd() {
     [ "${__ret_last_cmd???}" = 0 ] && color="32" || color="31"
     printf "\e[${color}m❯❯\e[0m%s" "$__lastcmd"
     printf "\e[H"
+
+    printf "\e]2;%s\e\\" "#[fg=yellow,bold]${PWD/$HOME/'~'}#[fg=default] $(git condensed-status-tmux)"
 }
 
 # Note: Don't forget to surround non-printing chars with \[...\] (Bash's PS1) or
@@ -201,6 +206,7 @@ PS2='\[\e[2K\]|'
 bind '"\C-t23": history-search-backward'
 bind '"\C-t24": history-search-forward'
 bind '"\e[A": "\C-t23\C-t24\C-t23"'
+bind '"\e[B": "\C-t24"'
 
 ### Tab-completion ###
 #
