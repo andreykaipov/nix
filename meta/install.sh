@@ -261,7 +261,13 @@ install_tmux() {
 }
 
 install_pyenv() {
-    curl https://pyenv.run | sh
+    if ! [ -x ~/local/opt/pyenv/bin/pyenv ]; then
+        rm -rf ~/local/opt/pyenv
+        curl https://pyenv.run | PYENV_ROOT=~/local/opt/pyenv sh
+    fi
+
+    ln -sf ~/local/opt/pyenv/bin/pyenv -t ~/bin
+    pyenv --version
 }
 
 install_jq() {
