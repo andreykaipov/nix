@@ -164,7 +164,7 @@ install_libevent() {
 
         echo "Compiling"
         cd libevent-*
-        ./configure --prefix ~/local \
+        ./configure --quiet --prefix ~/local \
             --disable-debug-mode \
             --disable-samples \
             --disable-libevent-regress \
@@ -191,7 +191,7 @@ install_ncurses() {
 
         echo "Compiling"
         cd ncurses-*
-        ./configure --prefix ~/local \
+        ./configure --quiet --prefix ~/local \
             --without-ada \
             --without-cxx \
             --without-cxx-binding \
@@ -224,7 +224,7 @@ install_yacc() {
 
         echo "Compiling"
         cd byacc-*
-        ./configure --prefix ~/local --disable-echo
+        ./configure --quiet --prefix ~/local --disable-echo
         make
         make install
         cd -
@@ -251,13 +251,37 @@ install_tmux() {
         cd tmux-*
         export LDFLAGS="-L${HOME}/local/lib"
         export CFLAGS="-I${HOME}/local/include -Wno-unused-result"
-        ./configure --prefix ~/local --enable-silent-rules
+        ./configure --quiet --prefix ~/local --enable-silent-rules
         make
         make install
         cd -
     fi
 
     LD_LIBRARY_PATH="$HOME/local/lib" tmux -V
+}
+
+install_bash5() {
+    v='5.0'
+    url="http://ftp.gnu.org/gnu/bash/bash-5.0.tar.gz"
+
+    if ! [ -x ~/local/bin/bash ]; then
+        echo "bash is missing"
+        echo "Downloading"
+        get bash.tz "$url"
+
+        echo "Extracting"
+        rm -rf bash-*
+        tar fx bash.tz
+
+        echo "Compiling"
+        cd bash-*
+        ./configure --quiet --prefix ~/local
+        make
+        make install
+        cd -
+    fi
+
+    bash --version
 }
 
 install_pyenv() {
@@ -344,25 +368,38 @@ main() {
     export PATH="$HOME/bin:$HOME/local/bin:$PATH"
 
     pkgs='
-        dircolorshex
-        bash_completions
-
-        win32yank
-        jq
-        shellcheck
-        tre
-        upx
-
-        go
-        nvim
-        dockercli
-
+        # Built from source using autoconf and make, all prefaced to ~/local.
+        # Follows the FHS: ~/local/{bin,etc,include,lib,opt,share}
         libevent
         ncurses
         yacc
         tmux
+        bash5
+        bash_completions
+
+        # These are like package-thingies with binaries relying on the source
+        # code libraries in the package. Installed to ~/local/opt. Binaries are
+        # symlinked from ~/local/opt/*/bin/* to ~/bin.
+        go
+        nvim
+        pyenv
+
+        # Statically linked binaries intalled to ~/bin directly.
+        dircolorshex
+        dockercli
+        jq
+        shellcheck
+        tre
+        upx
+        win32yank
     '
+
+    nlx="$(printf '\nx')"; nl="${nlx%x}"; IFS="$nl"
     for o in $pkgs; do
+        # trim spaces, and skip comments or empty lines
+        o="${o#${o%%[![:space:]]*}}"
+        case "$o" in ''|\#*) continue; esac
+
         echo "Installing $o"
         eval "install_$o"
         echo
