@@ -1,6 +1,23 @@
-## (neo)vim configuration
+## intro
 
-At a glance, the (neo)vim directory structure looks like:
+Hey - this is my home directory.
+
+WHAT? You've made your home directory a Git repository? Are you crazy?
+
+Crazy is subjective, but yes.
+
+## setup
+
+Are you on a new machine? Run the following.
+
+```console
+$ curl -sLo- https://raw.githubusercontent.com/andreykaipov/home/master/meta/init.sh | sh -
+$ ./meta/install.sh
+```
+
+## neovim configuration
+
+At a glance, the neovim directory structure looks like:
 
 ```console
 .config/
