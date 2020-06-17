@@ -31,7 +31,7 @@
         "list": [{
             "guid": "{00000000-0000-0000-0000-000000000001}",
             "name": "Ubuntu 18.04",
-            "commandline": "wsl.exe -d Ubuntu-18.04 -- cd ~; ENV=.shlogin exec sh"
+            "commandline": "wsl.exe -d Ubuntu-18.04 -- cd ~; ENV=.shlogin sh"
         }]
     },
     "schemes": [{
