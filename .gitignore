@@ -22,6 +22,9 @@
 !.config/tmux
 !.config/tmux/*.conf
 
+!.config/htop
+!.config/htop/htoprc
+
 !.config/git
 !.config/git/*
 
