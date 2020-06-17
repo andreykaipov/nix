@@ -1,0 +1,67 @@
+// See the following for the complete list of settings and context:
+// https://github.com/microsoft/terminal/blob/master/doc/cascadia/SettingsSchema.md
+// https://github.com/microsoft/terminal/blob/master/doc/user-docs/UsingJsonSettings.md
+// https://aka.ms/terminal-documentation
+// To view the default settings, hold "alt" while clicking on the "Settings" button.
+{
+    "$schema": "https://aka.ms/terminal-profiles-schema",
+    "theme": "dark",
+    "rowsToScroll": 0,
+    "copyOnSelect": true,
+    "defaultProfile": "{00000000-0000-0000-0000-000000000001}",
+    "disabledProfileSources": [
+        "Windows.Terminal.Azure",
+        "Windows.Terminal.Wsl"
+    ],
+    "profiles": {
+        "defaults": {
+            "colorScheme" : "Tango Dark Tweaked",
+            "fontFace": "Consolas",
+            "fontSize": 10,
+            "padding": "0",
+            "scrollbarState": "hidden",
+            "historySize": 0,
+            //"useAcrylic": true,
+            //"acrylicOpacity": 0.8,
+            "backgroundImage": "\\\\wsl$/Ubuntu-18.04/home/andrey/spongebob.gif",
+            "dfsdfackgroundImageOpacity": 0.1,
+            "backgroundImageAlignment": "center",
+            "backgroundImageStretchMode": "uniformToFill"
+        },
+        "list": [{
+            "guid": "{00000000-0000-0000-0000-000000000001}",
+            "name": "Ubuntu 18.04",
+            "commandline": "wsl.exe -d Ubuntu-18.04 -- cd ~; ENV=.shlogin exec sh"
+        }]
+    },
+    "schemes": [{
+        "name"         : "Tango Dark Tweaked",
+        "foreground"   : "#f2f2f2",
+        "background"   : "#000000",
+        "cursorColor"  : "#ffffff",
+        "black"        : "#000000",
+        "red"          : "#f51c0c",
+        "green"        : "#199706",
+        "yellow"       : "#c4a000",
+        "blue"         : "#006bff",
+        "purple"       : "#75507b",
+        "cyan"         : "#06989a",
+        "white"        : "#d3d7cf",
+        "brightBlack"  : "#555753",
+        "brightRed"    : "#ef2929",
+        "brightGreen"  : "#8ae234",
+        "brightYellow" : "#f5f422",
+        "brightBlue"   : "#729fcf",
+        "brightPurple" : "#9735de",
+        "brightCyan"   : "#00ffff",
+        "brightWhite"  : "#eeeeee"
+    }],
+    "keybindings": [
+        { "command": "unbound", "keys": "alt+down" },
+        { "command": "unbound", "keys": "alt+left" },
+        { "command": "unbound", "keys": "alt+right" },
+        { "command": "unbound", "keys": "alt+up" },
+        { "command": "unbound", "keys": "alt+j" },
+        { "command": "find", "keys": "ctrl+shift+f" }
+    ]
+}

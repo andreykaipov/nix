@@ -405,9 +405,16 @@ main() {
         echo
     done
 
+    if [ -n "$WSL_DISTRO_NAME" ]; then
+        echo "Running within WSL distro"
+
+        echo "Installing Windows Terminal settings"
+        cp ~/.config/windows.terminal/settings.json /mnt/c/Users/*/AppData/Local/Packages/Microsoft.WindowsTerminal_*/LocalState/
+    fi
+
     cd -
-    echo "Templating Alacritty config"
-    <~/.config/alacritty/alacritty.tmpl.yml envsubst "\$HOME" > ~/.config/alacritty/alacritty.yml
+    #echo "Templating Alacritty config"
+    #<~/.config/alacritty/alacritty.tmpl.yml envsubst "\$HOME" > ~/.config/alacritty/alacritty.yml
 
     echo "Done"
 }

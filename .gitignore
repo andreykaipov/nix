@@ -27,6 +27,8 @@
 
 !.config/alacritty
 !.config/alacritty/alacritty.tmpl.yml
+!.config/windows.terminal
+!.config/windows.terminal/settings.json
 
 !.dir_colors
 !.shlogin
