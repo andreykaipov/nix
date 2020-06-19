@@ -34,10 +34,12 @@ install_bash_completions() {
 
 
 install_nvim() {
-    v='0.4.3'
-    url="https://github.com/neovim/neovim/releases/download/v$v/nvim-linux64.tar.gz"
+    [ "$os" = linux ] && suffix=linux64 || [ "$os" = darwin ] && suffix=macos
 
-    if ! [ -x ~/local/opt/nvim-linux64/bin/nvim ]; then
+    v='0.4.3'
+    url="https://github.com/neovim/neovim/releases/download/v$v/nvim-$suffix.tar.gz"
+
+    if ! [ -x ~/local/opt/nvim-*/bin/nvim ]; then
         echo "Neovim is missing"
         echo "Downloading Neovim"
         get nvim.tz "$url"
@@ -45,7 +47,7 @@ install_nvim() {
         tar fx nvim.tz -C ~/local/opt
     fi
 
-    ln -sf ~/local/opt/nvim-linux64/bin/nvim -t ~/bin
+    ln -sf ~/local/opt/nvim-*/bin/nvim -t ~/bin
     nvim --version
 
     echo "Installing VIM plugins"
@@ -88,13 +90,13 @@ install_win32yank() {
 
 install_shellcheck() {
     v='0.7.1'
-    url="https://github.com/koalaman/shellcheck/releases/download/v$v/shellcheck-v$v.linux.x86_64.tar.xz"
+    url="https://github.com/koalaman/shellcheck/releases/download/v$v/shellcheck-v$v.$os.x86_64.tar.xz"
 
     if ! [ -x ~/bin/shellcheck ]; then
         echo "shellcheck is either missing or has a mismatched version"
         echo "Downloading shellcheck"
         get shellcheck.tz "$url"
-        tar fx shellcheck.tz --strip-components 1 -C ~/bin --wildcards '*/shellcheck'
+        tar fx shellcheck.tz --strip-components 1 -C ~/bin '*/shellcheck'
     fi
 
     shellcheck --version
@@ -102,7 +104,7 @@ install_shellcheck() {
 
 install_go() {
     v='1.14.2'
-    url="https://dl.google.com/go/go$v.linux-amd64.tar.gz"
+    url="https://dl.google.com/go/go$v.$os-amd64.tar.gz"
     checksum="$(curl -sL "$url.sha256")"
 
     if ! [ -r go.tz ]; then
@@ -136,13 +138,15 @@ install_go() {
 }
 
 install_dockercli() {
+    [ "$os" = linux ] && os=linux || [ "$os" = darwin ] && suffix=mac
+
     v='19.03.8'
-    url="https://download.docker.com/linux/static/stable/x86_64/docker-$v.tgz"
+    url="https://download.docker.com/$suffix/static/stable/x86_64/docker-$v.tgz"
 
     if ! [ -x ~/bin/docker ]; then
         echo "Downloading Docker tarball"
         get docker.tz "$url"
-        tar fx docker.tz --strip-components 1 -C ~/bin --wildcards '*/docker'
+        tar fx docker.tz --strip-components 1 -C ~/bin '*/docker'
     fi
 
     docker version -f '{{.Client}}' || true
@@ -287,7 +291,7 @@ install_bash5() {
 install_pyenv() {
     if ! [ -x ~/local/opt/pyenv/bin/pyenv ]; then
         rm -rf ~/local/opt/pyenv
-        curl https://pyenv.run | PYENV_ROOT=~/local/opt/pyenv sh
+        curl -sLk https://pyenv.run | PYENV_ROOT=~/local/opt/pyenv sh
     fi
 
     ln -sf ~/local/opt/pyenv/bin/pyenv -t ~/bin
@@ -295,8 +299,10 @@ install_pyenv() {
 }
 
 install_jq() {
+    [ "$os" = linux ] && suffix=linux64 || [ "$os" = darwin ] && suffix=osx-amd64
+
     v='1.6'
-    url="https://github.com/stedolan/jq/releases/download/jq-$v/jq-linux64"
+    url="https://github.com/stedolan/jq/releases/download/jq-$v/jq-$suffix"
 
     if ! [ -x ~/bin/jq ]; then
         echo "Downloading jq"
@@ -318,6 +324,12 @@ install_upx() {
         return
     fi
 
+    if [ "$os" = darwin ]; then
+        echo "Skipping UPX."
+        echo "TODO: Install from source as binaries are not provided."
+        return
+    fi
+
     if ! [ -x ~/bin/upx ]; then
         echo "Downloading UPX"
         get upx.tz "$url"
@@ -328,8 +340,10 @@ install_upx() {
 }
 
 install_tre() {
+    [ "$os" = linux ] && suffix=unknown-linux-gnu || [ "$os" = darwin ] && suffix=apple-darwin
+
     v='0.3.0'
-    url="https://github.com/dduan/tre/releases/download/$v/tre-v$v-x86_64-unknown-linux-gnu.tar.gz"
+    url="https://github.com/dduan/tre/releases/download/$v/tre-v$v-x86_64-$suffix.tar.gz"
 
     if ! [ -x ~/bin/tre ]; then
         echo "Downloading tre"
@@ -339,6 +353,16 @@ install_tre() {
     fi
 
     ~/bin/tre --version
+}
+
+install_cmake() {
+    if ! [ -x ~/local/bin/cmake ] && ! ls -d ~/local/share/cmake-*; then
+        get cmake.tz https://github.com/Kitware/CMake/releases/download/v3.17.3/cmake-3.17.3-Darwin-x86_64.tar.gz
+        mv ../cmake-*/CMake.app/Contents/share/* ~/local/share
+        mv ../cmake-*/CMake.app/Contents/bin/* ~/local/bin
+    fi
+
+    cmake --version
 }
 
 get() {
@@ -361,6 +385,12 @@ main() {
     mkdir -p ~/bin
     echo
 
+    case "$(uname -s)" in
+    Linux)  os=linux ;;
+    Darwin) os=darwin ;;
+    *)      >&2 echo "Unknown OS"; exit 1;;
+    esac
+
     # All of the above install scripts install binaries into either ~/bin or
     # ~/local/bin. We set this PATH here so we can test each binary at the end
     # of its installation script. As this file is not meant to be sourced, this
@@ -376,6 +406,7 @@ main() {
         tmux
         bash5
         bash_completions
+        # cmake
 
         # These are like package-thingies with binaries relying on the source
         # code libraries in the package. Installed to ~/local/opt. Binaries are
@@ -419,4 +450,7 @@ main() {
     echo "Done"
 }
 
+
+# https://github.com/Homebrew/brew/blob/master/docs/Installation.md#untar-anywhere
+# mkdir homebrew && curl -L https://github.com/Homebrew/brew/tarball/master | tar xz --strip 1 -C homebrew
 main
