@@ -24,5 +24,6 @@ ORPHAN         #fff #d00
 *.txz  #f00
 *.tar.gz  #f00
 *.tar.xz  #f00
+*.tar.bz2  #f00
 
 *README.md  #f0a
