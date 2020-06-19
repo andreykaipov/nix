@@ -7,7 +7,7 @@ main() {
     branch_color="${1:-#[fg=brightcyan]}"
 
     if [ -d .git ] && output="$(git status --porcelain -b 2> /dev/null)"; then
-        echo "$output" | awk -vFS= -vOFS= -v "branch_color=$branch_color" '
+        echo "$output" | awk -v FS= -v OFS= -v "branch_color=$branch_color" '
             $1 == "#" {
                 $1=$2=$3=""; branch = branch_color $0 "#[fg=default]"
                 next
