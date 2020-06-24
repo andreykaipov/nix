@@ -450,7 +450,24 @@ main() {
     echo "Done"
 }
 
-
+# if xcode-select -p >/dev/null; then
+#     echo "XCode CLI tools already installed"
+#     return
+# fi
+#
+# touch /tmp/.com.apple.dt.CommandLineTools.installondemand.in-progress
+# if ! softwareupdate --list --no-scan | grep -q 'Command Line Tools'; then
+#     echo "Can't find the update for the XCode CLI tools. Scanning..."
+#     softwareupdate --list
+# fi
+# if ! softwareupdate --list --no-scan | grep -q 'Command Line Tools'; then
+#     1>&2 echo "Can't find the update for the XCode CLI tools at all... :/"
+#     exit 3
+# fi
+# xcodeclitools="$(softwareupdate --list --no-scan | grep -Eo 'Command Line Tools for Xcode-.+')"
+# softwareupdate --install "$xcodeclitools"
+#
 # https://github.com/Homebrew/brew/blob/master/docs/Installation.md#untar-anywhere
 # mkdir homebrew && curl -L https://github.com/Homebrew/brew/tarball/master | tar xz --strip 1 -C homebrew
+
 main
