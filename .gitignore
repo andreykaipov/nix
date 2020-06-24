@@ -25,6 +25,9 @@
 !.config/iterm2
 !.config/iterm2/com.googlecode.iterm2.plist
 
+!.config/rectangle
+!.config/rectangle/rectangle.plist
+
 !.toprc
 !.config/htop
 !.config/htop/htoprc

@@ -450,6 +450,8 @@ main() {
     echo "Done"
 }
 
+# defaults import com.knollsoft.Rectangle ~/.config/rectangle/rectangle.plist
+#
 # if xcode-select -p >/dev/null; then
 #     echo "XCode CLI tools already installed"
 #     return
