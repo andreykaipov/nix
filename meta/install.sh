@@ -391,6 +391,16 @@ main() {
     *)      >&2 echo "Unknown OS"; exit 1;;
     esac
 
+    if [ "$os" = darwin ]; then
+        echo "Updating macOS domain defaults with our property lists"
+
+        for plist in ~/.config/macos/*.plist; do
+            domain="$(basename "${plist%.*}")"
+            echo "$domain"
+            defaults import "$domain" "$plist"
+        done
+    fi
+
     # All of the above install scripts install binaries into either ~/bin or
     # ~/local/bin. We set this PATH here so we can test each binary at the end
     # of its installation script. As this file is not meant to be sourced, this
@@ -450,7 +460,6 @@ main() {
     echo "Done"
 }
 
-# defaults import com.knollsoft.Rectangle ~/.config/rectangle/rectangle.plist
 #
 # if xcode-select -p >/dev/null; then
 #     echo "XCode CLI tools already installed"
