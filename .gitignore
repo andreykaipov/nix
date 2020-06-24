@@ -22,6 +22,9 @@
 !.config/tmux
 !.config/tmux/*.conf
 
+!.config/iterm2
+!.config/iterm2/com.googlecode.iterm2.plist
+
 !.toprc
 !.config/htop
 !.config/htop/htoprc
