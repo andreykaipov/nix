@@ -22,10 +22,8 @@
 !.config/tmux
 !.config/tmux/*.conf
 
-!.config/macos
-!.config/macos/com.googlecode.iterm2.plist
-!.config/macos/com.knollsoft.Rectangle.plist
-!.config/macos/com.apple.dock.plist
+!.config/macos/
+!.config/macos/*.plist
 
 !.toprc
 !.config/htop
