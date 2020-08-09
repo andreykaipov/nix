@@ -15,6 +15,13 @@ $ curl -sLo- https://raw.githubusercontent.com/andreykaipov/home/master/meta/ini
 $ ./meta/install.sh
 ```
 
+## work
+
+Work environment variables go in `~/.shenv.work`.
+
+Work email for Git goes in `~/.config/git/work`. This only applies to projects
+under `~/projects/work`. See `~/.config/git` for a complete understanding.
+
 ## neovim configuration
 
 At a glance, the neovim directory structure looks like:

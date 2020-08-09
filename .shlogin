@@ -101,6 +101,10 @@ main() {
     umask 0022 # might not always be set, like in WSL distros
     . ~/.shenv
 
+    if [ -r ~/.shenv.work ]; then
+        . ~/.shenv.work
+    fi
+
     ensure_ssh_agent
     ensure_tmux
 }
