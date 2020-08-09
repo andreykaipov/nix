@@ -23,3 +23,9 @@ alias vi='nvim'
 alias vim='nvim'
 
 alias k='kubectl'
+
+# better less
+# N line numbers
+# F quit if one screen
+# RX render escape chars
+alias less='less -NFRX'
