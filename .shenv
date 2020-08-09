@@ -23,9 +23,13 @@
 #
 # HOME is not implicit and has to be passed. See the `promote` function.
 
+# On Windows 10
+if [ -n "${WSL_DISTRO_NAME:-}" ]; then
+    export DOCKER_HOST=tcp://localhost:2375
+fi
+
 export TMP="${TMP:-/tmp}"
 export TMPDIR="${TMPDIR:-$TMP}"
-export DOCKER_HOST=tcp://localhost:2375
 export VISUAL=nvim
 export EDITOR="$VISUAL"
 
