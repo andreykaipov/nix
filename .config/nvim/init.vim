@@ -68,6 +68,12 @@ nmap <C-k> <C-w>k
 nmap <C-l> <C-w>l
 nmap <C-h> <C-w>h
 
+" easier quickfix list navigation
+"
+nmap <A-n> :cnext<cr>
+nmap <A-m> :cprevious<cr>
+nmap <leader>a :cclose<cr>
+
 " double tap v to select the entire line
 "
 nmap vv <S-v>
@@ -162,7 +168,7 @@ function s:OnOpenFile()
     " re-sourcing $MYVIMRC will not trigger our toggles this way
     "
     ToggleNumbers
-    ToggleAutoSave
+    " ToggleAutoSave
 endfunction
 
 augroup init

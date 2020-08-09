@@ -1,3 +1,4 @@
+" automatically save if running :make or :GoBuild for example
 set autowrite
 
 " in milliseconds

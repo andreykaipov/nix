@@ -15,4 +15,4 @@ Plug 'dense-analysis/ale'
 Plug 'lilydjwg/colorizer'
 
 " language specific
-Plug 'fatih/vim-go', { 'do': ':GoInstallBinaries' }
+Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
