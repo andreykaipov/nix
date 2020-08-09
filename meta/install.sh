@@ -32,6 +32,24 @@ install_bash_completions() {
     fi
 }
 
+install_gnucoreutils() {
+    v='8.32'
+    url="https://ftp.gnu.org/gnu/coreutils/coreutils-$v.tar.xz"
+
+    if ! [ -d ~/local/libexec/coreutils ] || ! [ -x ~/local/bin/sha256sum ]; then
+        echo "GNU Core Utilities package is missing"
+        echo "Downloading"
+        get coreutils.tz "$url"
+        tar fx coreutils.tz
+
+        echo "Compiling"
+        cd coreutils-*
+        ./configure --quiet --prefix "$HOME/local" --disable-dependency-tracking
+        make
+        make install
+        cd -
+    fi
+}
 
 install_nvim() {
     [ "$os" = linux ] && suffix=linux64 || [ "$os" = darwin ] && suffix=macos
@@ -410,6 +428,7 @@ main() {
     pkgs='
         # Built from source using autoconf and make, all prefaced to ~/local.
         # Follows the FHS: ~/local/{bin,etc,include,lib,opt,share}
+        gnucoreutils
         libevent
         ncurses
         yacc
@@ -446,7 +465,7 @@ main() {
         echo
     done
 
-    if [ -n "$WSL_DISTRO_NAME" ]; then
+    if [ -n "${WSL_DISTRO_NAME:-}" ]; then
         echo "Running within WSL distro"
 
         echo "Installing Windows Terminal settings"
