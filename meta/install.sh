@@ -2,6 +2,29 @@
 
 set -eu
 
+
+install_gifsicle() {
+    v='1.92'
+    url="http://www.lcdf.org/gifsicle/gifsicle-$v.tar.gz"
+
+    if ! [ -x ~/local/bin/gifsicle ]; then
+        echo "Downloading"
+        get gifsicle.tz "$url"
+
+        echo "Extracting"
+        tar fx gifsicle.tz
+
+        echo "Compiling"
+        cd gifsicle-*
+        ./configure --quiet --prefix "$HOME/local" --disable-gifview
+        make
+        make install
+        cd -
+    fi
+
+    gifsicle --version
+}
+
 install_bash_completions() {
     v='2.10'
     url="https://github.com/scop/bash-completion/releases/download/$v/bash-completion-$v.tar.xz"
@@ -49,6 +72,21 @@ install_gnucoreutils() {
         make install
         cd -
     fi
+}
+
+install_homebrew() {
+    v='master'
+    url="https://github.com/Homebrew/brew/tarball/$v"
+
+    if ! [ -x ~/local/opt/homebrew/bin/brew ]; then
+        get homebrew.tz "$url"
+        rm -rf ~/local/opt/homebrew
+        mkdir -p ~/local/opt/homebrew
+        tar fx homebrew.tz --strip-components 1 -C ~/local/opt/homebrew
+    fi
+
+    ln -sf ~/local/opt/homebrew/bin/brew -t ~/bin
+    brew --version
 }
 
 install_nvim() {
@@ -307,7 +345,7 @@ install_bash5() {
 }
 
 install_pyenv() {
-    if ! [ -x ~/local/opt/pyenv/bin/pyenv ]; then
+    if ! [ -x ~/local/opt/pyenv/bin/pyenv ] || [ -n "${REINSTALL_PYENV:=}" ]; then
         rm -rf ~/local/opt/pyenv
         curl -sLk https://pyenv.run | PYENV_ROOT=~/local/opt/pyenv sh
     fi
@@ -330,6 +368,22 @@ install_jq() {
     fi
 
     jq --version
+}
+
+install_yq() {
+    [ "$os" = linux ] && suffix=linux_amd64 || [ "$os" = darwin ] && suffix=darwin_amd64
+
+    v='3.3.2'
+    url="https://github.com/mikefarah/yq/releases/download/$v/yq_$suffix"
+
+    if ! [ -x ~/bin/yq ]; then
+        echo "Downloading yq"
+        get yq "$url"
+        chmod +x yq
+        mv yq ~/bin
+    fi
+
+    yq --version
 }
 
 install_upx() {
@@ -381,6 +435,18 @@ install_cmake() {
     fi
 
     cmake --version
+}
+
+install_barrier() {
+    v='2.3.3'
+    url="https://github.com/debauchee/barrier/releases/download/v$v/Barrier-$v-release.dmg"
+
+    if ! [ -d /Applications/Barrier.app/ ]; then
+        get barrier.dmg "$url"
+        hdiutil attach barrier.dmg
+        cp -r /Volumes/Barrier/Barrier.app/ /Applications/
+        hdiutil detach /Volumes/Barrier/
+    fi
 }
 
 get() {
@@ -435,6 +501,7 @@ main() {
         tmux
         bash5
         bash_completions
+        gifsicle
         # cmake
 
         # These are like package-thingies with binaries relying on the source
@@ -443,15 +510,20 @@ main() {
         go
         nvim
         pyenv
+        # homebrew
 
         # Statically linked binaries intalled to ~/bin directly.
         dircolorshex
         dockercli
         jq
+        yq
         shellcheck
         tre
         upx
         win32yank
+
+        # Applications
+        barrier
     '
 
     nlx="$(printf '\nx')"; nl="${nlx%x}"; IFS="$nl"
@@ -473,6 +545,7 @@ main() {
     fi
 
     cd -
+
     #echo "Templating Alacritty config"
     #<~/.config/alacritty/alacritty.tmpl.yml envsubst "\$HOME" > ~/.config/alacritty/alacritty.yml
 
