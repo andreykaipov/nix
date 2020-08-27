@@ -49,6 +49,8 @@
 
 !.ssh
 !.ssh/*.pub
+!.ssh/autoadd
+!.ssh/autoadd/*.pub
 
 # TODO - consider moving these binaries to separate projects and adding them to
 # the install script instead.

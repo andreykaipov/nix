@@ -76,7 +76,7 @@ ensure_ssh_agent() {
         echo "Looks like it was already running!"
     fi
 
-    ssh-add ~/.ssh/*.pem
+    ssh-add ~/.ssh/autoadd/*.pem
 }
 
 ensure_tmux() {
