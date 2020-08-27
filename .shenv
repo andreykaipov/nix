@@ -36,6 +36,7 @@ export EDITOR="$VISUAL"
 export GOPATH="$HOME/local/share/go"
 export GOBIN="$HOME/local/share/go/bin"
 export PYENV_ROOT="$HOME/local/opt/pyenv"
+export PYENV_SHELL=bash
 
 # For anything we run that was installed from source (e.g. tmux), the runtime
 # linker needs to know where to find the shared libraries via LD_LIBRARY_PATH.
@@ -51,6 +52,7 @@ paths="
     $HOME/bin
     $HOME/local/bin
     $GOBIN
+    $PYENV_ROOT/shims
     /usr/local/sbin
     /usr/local/bin
     /usr/sbin

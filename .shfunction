@@ -1,5 +1,40 @@
 #!/bin/sh
 
+# Our macOS settings are stored in plists at ~/.config/macos/*.plist. Sometimes
+# we might update our settings via the settings GUI outside of this
+# configuration, so to keep our new settings in source control, we have to sync
+# them up. That's what this does. This must be manually ran and does not detect
+# plists that are not already in source control.
+#
+# TODO maybe make this a precommit git hook so it's done every time
+sync_plists() {
+    case "$(uname -s)" in
+    Darwin2) ;;
+    *)      >&2 echo "syncing plists is only valid on macOS"; return 1 ;;
+    esac
+
+    for plist in ~/.config/macos/*.plist; do
+        domain="$(basename "${plist%.*}")"
+        echo "$domain"
+        defaults export "$domain" "$plist"
+    done
+}
+
+# pyenv shim, from `pyenv init -` to make it work
+pyenv() {
+    command="${1:-}"
+    if [ "$#" -gt 0 ]; then
+        shift
+    fi
+
+    case "$command" in
+        activate|deactivate|rehash|shell)
+            eval "$(pyenv "sh-$command" "$@")" ;;
+        *)
+            command pyenv "$command" "$@" ;;
+    esac
+}
+
 sshkey() {
     f="$1"; shift
     if [ -z "$f" ]; then
