@@ -159,9 +159,14 @@ install_shellcheck() {
 }
 
 install_go() {
-    v='1.14.2'
+    v='1.15.2'
     url="https://dl.google.com/go/go$v.$os-amd64.tar.gz"
-    checksum="$(curl -sL "$url.sha256")"
+    checksum="$(get - "$url.sha256")"
+
+    if command -v go >/dev/null && [ -z "${REINSTALL_GO:=}" ]; then
+        echo "nothing to do"
+        return
+    fi
 
     if ! [ -r go.tz ]; then
         echo "Downloading Go tarball..."
@@ -177,7 +182,7 @@ install_go() {
     fi
 
     lastfile="$(tar ft go.tz | tail -n1)"
-    if [ -r "$HOME/local/opt/$lastfile" ]; then
+    if [ -r "$HOME/local/opt/$lastfile" ] && [ -z "${REINSTALL_GO}" ]; then
         echo "Looks like we've already extracted the tarball"
         echo "You might want to verify the Go installation"
     else
