@@ -359,6 +359,25 @@ install_pyenv() {
     pyenv --version
 }
 
+install_gradle() {
+    v='6.6.1'
+    url="https://services.gradle.org/distributions/gradle-$v-bin.zip"
+
+    if ! [ -x ~/local/opt/gradle/bin/gradle ]; then
+        rm -rf ~/local/opt/gradle
+        mkdir ~/local/opt/gradle
+        get gradle.zip "$url"
+
+        rm -rf junk; mkdir junk
+        unzip gradle.zip -d junk
+        mv junk/*/* ~/local/opt/gradle
+        rm -rf junk
+    fi
+
+    ln -sf ~/local/opt/gradle/bin/gradle -t ~/bin
+    gradle --version
+}
+
 install_jq() {
     [ "$os" = linux ] && suffix=linux64 || [ "$os" = darwin ] && suffix=osx-amd64
 
@@ -410,7 +429,7 @@ install_upx() {
     if ! [ -x ~/bin/upx ]; then
         echo "Downloading UPX"
         get upx.tz "$url"
-        tar fx upx.tz --strip-components 1 -C ~/bin --wildcards '*/upx'
+        tar fx upx.tz --strip-components 1 -C ~/bin '*/upx'
     fi
 
     upx --version
@@ -442,6 +461,28 @@ install_cmake() {
     cmake --version
 }
 
+install_java() {
+    # 11
+    url='https://download.oracle.com/otn-pub/java/jdk/11.0.8+10/dc5cf74f97104e8eac863698146a7ac3/jdk-11.0.8_osx-x64_bin.tar.gz'
+
+    if command -v java >/dev/null && [ -z "${REINSTALL_JAVA:=}" ]; then
+        echo "nothing to do"
+        return
+    fi
+
+    #java -XshowSettings:properties -version 2>&1 | awk '/java.home/ {print $3}'
+
+    rm -rf ~/local/opt/java
+    mkdir -p ~/local/opt/java
+    get jdk.tz "$url" -b 'oraclelicense=420xxx'
+    tar fx jdk.tz --strip-components 4 -C ~/local/opt/java '*/Contents/Home'
+
+    for b in java javac jar; do
+        ln -sf ~/local/opt/java/bin/$b -t ~/bin
+        $b --version
+    done
+}
+
 install_barrier() {
     v='2.3.3'
     url="https://github.com/debauchee/barrier/releases/download/v$v/Barrier-$v-release.dmg"
@@ -455,6 +496,8 @@ install_barrier() {
 }
 
 get() {
+    echo "Downloading $*"
+
     if command -v wget >/dev/null; then
         wget -qO "$@"
     elif command -v curl >/dev/null; then
@@ -515,6 +558,8 @@ main() {
         go
         nvim
         pyenv
+        java
+        gradle
         # homebrew
 
         # Statically linked binaries intalled to ~/bin directly.
