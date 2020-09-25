@@ -352,7 +352,7 @@ install_bash5() {
 install_pyenv() {
     if ! [ -x ~/local/opt/pyenv/bin/pyenv ] || [ -n "${REINSTALL_PYENV:=}" ]; then
         rm -rf ~/local/opt/pyenv
-        curl -sLk https://pyenv.run | PYENV_ROOT=~/local/opt/pyenv sh
+        get - https://pyenv.run | PYENV_ROOT=~/local/opt/pyenv sh
     fi
 
     ln -sf ~/local/opt/pyenv/bin/pyenv -t ~/bin
