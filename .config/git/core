@@ -8,4 +8,6 @@
     helper = cache --timeout=10000
 
 [includeIf "gitdir:~/projects/work/**"]
-    path = ~/.config/git/work
+    email = andrey_kaipov@ultimatesoftware.com
+[includeIf "gitdir:~/projects/work/gh/**"]
+    email = andreykaipov@users.noreply.github.com

@@ -19,8 +19,7 @@ $ ./meta/install.sh
 
 _Secret_ work environment variables go in `~/.shenv.work`.
 
-Work email for Git goes in `~/.config/git/work`. This only applies to projects
-under `~/projects/work`. See `~/.config/git` for a complete understanding.
+Set the Git emails accordingly in `~/.config/git/core`.
 
 ## neovim configuration
 
