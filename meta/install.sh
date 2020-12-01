@@ -421,9 +421,24 @@ install_upx() {
     fi
 
     if [ "$os" = darwin ]; then
-        echo "Skipping UPX."
-        echo "TODO: Install from source as binaries are not provided."
-        return
+        url="https://github.com/upx/upx/releases/download/v$v/upx-$v-src.tar.xz"
+
+        if ! [ -x ~/local/bin/bash ]; then
+            echo "upx"
+            echo "Downloading"
+            get upx.tz "$url"
+
+            echo "Extracting"
+            rm -rf upx-*
+            tar fx upx.tz
+
+            echo "Compiling"
+            cd upx-*
+            ./configure --quiet --prefix ~/local
+            make
+            make install
+            cd -
+        fi
     fi
 
     if ! [ -x ~/bin/upx ]; then
@@ -434,6 +449,51 @@ install_upx() {
 
     upx --version
 }
+
+install_ucl() {
+    url="https://www.oberhumer.com/opensource/ucl/download/ucl-1.03.tar.gz"
+
+    if ! { [ -r ~/local/lib/libncurses_g.a ] && [ -d ~/local/include/ucl ]; }; then
+        echo "ucl package is missing"
+        echo "Downloading"
+        get ucl.tz "$url"
+
+        echo "Extracting"
+        rm -rf ucl-*
+        tar fx ucl.tz
+
+        echo "Compiling"
+        cd ucl-*
+        ./configure --quiet --prefix ~/local \
+            --disable-debug \
+            --disable-dependency-tracking
+        make
+        make install
+        cd -
+    fi
+}
+
+install_zlib() {
+    url="https://zlib.net/zlib-1.2.11.tar.gz"
+
+    if ! [ -r ~/local/include/zlib.h ]; then
+        echo "zlib package is missing"
+        echo "Downloading"
+        get zlib.tz "$url"
+
+        echo "Extracting"
+        rm -rf zlib-*
+        tar fx zlib.tz
+
+        echo "Compiling"
+        cd zlib-*
+        ./configure --prefix ~/local
+        make
+        make install
+        cd -
+    fi
+}
+
 
 install_tre() {
     [ "$os" = linux ] && suffix=unknown-linux-gnu || [ "$os" = darwin ] && suffix=apple-darwin
