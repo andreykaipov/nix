@@ -77,6 +77,8 @@ fi
 
 safesource ~/local/share/bash-completion/bash_completion
 safesource ~/local/opt/pyenv/completions/pyenv.bash
+safesource ~/Downloads/google-cloud-sdk/completion.bash.inc
+safesource ~/Downloads/google-cloud-sdk/path.bash.inc
 
 precmd() { :; }
 postcmd() {
