@@ -16,3 +16,7 @@ Plug 'lilydjwg/colorizer'
 
 " language specific
 Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
+
+" fix yaml highlighting. sometimes it's weird especially for ansible roles
+Plug 'stephpy/vim-yaml'
+Plug 'pearofducks/ansible-vim'
