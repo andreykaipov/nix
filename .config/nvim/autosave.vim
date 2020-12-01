@@ -1,13 +1,9 @@
 " automatically save if running :make or :GoBuild for example
 set autowrite
 
-" in milliseconds
+" CursorHold(I) time in milliseconds
 set updatetime=10000
 
-" TODO - opt in to autosaving specific filetypes rather than opting out. don't
-" really want to edit something in /etc/, step away from the computer, and bork
-" everything.
-"
 " TODO - look into disabling history and swp files since we're autosaving
 "
 " We manually issue a BufWritePost event for any autocmds that would listen for
@@ -33,9 +29,17 @@ function! s:ToggleAutoSave()
         augroup AutoSave
             autocmd!
             autocmd CursorHold,CursorHoldI * :call s:AutoSave()
+            autocmd InsertLeave * :call s:AutoSave()
         augroup END
     endif
 endfunction
 
 command! ToggleAutoSave :call s:ToggleAutoSave()
 nmap <leader>s :ToggleAutoSave<cr>
+
+" Turn it on by default
+"
+" TODO - opt in to autosaving specific filetypes rather than opting out. don't
+" really want to edit something in /etc/, step away from the computer, and bork
+" everything.
+:ToggleAutoSave
