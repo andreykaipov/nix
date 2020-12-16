@@ -1,0 +1,4 @@
+# vim: filetype=gitconfig
+
+[user]
+email = andrey_kaipov@ultimatesoftware.com
