@@ -5,6 +5,8 @@
 !README.md
 !meta
 !meta/*.sh
+!.meta
+!.meta/*
 # endmetaf
 
 !.config
