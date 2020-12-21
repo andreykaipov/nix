@@ -9,6 +9,10 @@
 !.meta/*
 # endmetaf
 
+!.nixpkgs
+!.nixpkgs/*
+!.nixpkgs/**/*
+
 !.config
 !.config/nvim
 !.config/nvim/*.vim
