@@ -27,6 +27,9 @@
 !.config/tmux
 !.config/tmux/*.conf
 
+!.config/readline
+!.config/readline/inputrc
+
 !.config/macos/
 !.config/macos/*.plist
 
@@ -50,7 +53,6 @@
 !.shalias
 !.shfunction
 !.tmux.conf
-!.inputrc
 
 !.ssh
 !.ssh/*.pub
