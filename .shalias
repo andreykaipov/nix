@@ -29,3 +29,5 @@ alias k='kubectl'
 # F quit if one screen
 # RX render escape chars
 alias less='less -NFRX'
+
+alias tree='tree --dirsfirst'
