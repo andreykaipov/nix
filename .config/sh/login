@@ -1,5 +1,4 @@
 #!/bin/sh
-# shellcheck disable=SC1090
 #
 # .shlogin contains commands to bootstrap our login shell. How do we invoke this
 # file if we don't use the traditional .profile naming convention for login
@@ -99,10 +98,10 @@ ensure_tmux() {
 
 main() {
     umask 0022 # might not always be set, like in WSL distros
-    . ~/.shenv
+    . ~/.config/sh/env
 
-    if [ -r ~/.shenv.work ]; then
-        . ~/.shenv.work
+    if [ -r ~/.config/sh/env.work ]; then
+        . ~/.config/sh/env.work
     fi
 
     ensure_ssh_agent

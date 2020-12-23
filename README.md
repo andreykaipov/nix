@@ -17,6 +17,6 @@ $ ./.meta/install.sh
 
 ## work
 
-_Secret_ work environment variables go in `~/.shenv.work`.
+_Secret_ work environment variables go in `~/.config/sh/env.work`.
 
 Set the Git email accordingly in `~/.config/git/work`.

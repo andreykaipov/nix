@@ -56,11 +56,9 @@ unsetg() {
     tmux set-environment -gt local -u "$var"
 }
 
-safesource() { [ -r "$1" ] && . "$1"; }
-
-safesource ~/.shalias
-safesource ~/.shfunction
-safesource ~/.shooks # TODO: consider precmds with PS0 instead of trap .. DEBUG
+. ~/.config/sh/aliases
+. ~/.config/sh/functions
+. ~/.config/sh/hooks # TODO: consider precmds with PS0 instead of trap .. DEBUG
 
 # Fallback for anything but Bash. We use printf to print colors as not every
 # shell supports colors directly in its PS1, e.g. ash or dash or any minimal

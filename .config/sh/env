@@ -52,7 +52,7 @@ export NIX_SSL_CERT_FILE="/etc/ssl/certs/ca-certificates.crt"
 # Set up secure multi-user builds: non-root users build through the Nix daemon.
 if [ ! -w /nix/var/nix/db ]; then export NIX_REMOTE=daemon; fi
 
-. ~/.shfunction # for pathify
+. ~/.config/sh/functions # for pathify
 
 NIX_PROFILES="$(echo "
     /run/current-system/sw
@@ -104,6 +104,7 @@ export HISTTIMEFORMAT="%F %T "
 export HISTCONTROL=ignoredups:ignorespace
 
 # Miscellaneous
+export INPUTRC="$HOME/.config/readline/inputrc"
 export PAGER="less -R"
 export TMP="${TMP:-/tmp}"
 export TMPDIR="${TMPDIR:-$TMP}"
