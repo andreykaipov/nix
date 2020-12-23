@@ -1,24 +1,25 @@
 { stdenv, fetchurl, undmg }:
 
 stdenv.mkDerivation rec {
-  name = "Spotify";
+  pname = "Docker";
+  version = "stable";
 
   src = fetchurl {
-    url = "https://download.scdn.co/Spotify.dmg";
+    url = "https://desktop.docker.com/mac/stable/Docker.dmg";
     sha256 = null;
   };
 
-  sourceRoot = "${name}.app";
+  sourceRoot = "${pname}.app";
 
   buildInputs = [ undmg ];
   installPhase = ''
     mkdir -p "$out/Applications/${sourceRoot}"
     cp -R . "$out/Applications/${sourceRoot}"
-    chmod a+x "$out/Applications/${sourceRoot}/Contents/MacOS/${name}"
+    chmod a+x "$out/Applications/${sourceRoot}/Contents/MacOS/${pname}"
   '';
 
   meta = with stdenv.lib; {
-    homepage = "https://spotify.com";
+    homepage = "https://docker.com";
     platforms = platforms.darwin;
   };
 }

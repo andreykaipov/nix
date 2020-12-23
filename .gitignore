@@ -7,11 +7,12 @@
 !.meta/*
 # endmetaf
 
-!.nixpkgs
-!.nixpkgs/*
-!.nixpkgs/**/*
-
 !.config
+
+!.config/nix
+!.config/nix/**
+.config/nix/links
+
 !.config/nvim
 !.config/nvim/*.vim
 !.config/nvim/ft*

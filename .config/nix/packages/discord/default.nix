@@ -1,7 +1,7 @@
 { stdenv, fetchurl, undmg }:
 
 stdenv.mkDerivation rec {
-  name = "Discord";
+  pname = "Discord";
   version = "0.0.260";
 
   src = fetchurl {
@@ -9,13 +9,13 @@ stdenv.mkDerivation rec {
     sha256 = "9cddabb13d862e45a0287591b38c13fde9b372edee7f7a538ba7e375c8b32088";
   };
 
-  sourceRoot = "${name}.app";
+  sourceRoot = "${pname}.app";
 
   buildInputs = [ undmg ];
   installPhase = ''
     mkdir -p "$out/Applications/${sourceRoot}"
     cp -R . "$out/Applications/${sourceRoot}"
-    chmod a+x "$out/Applications/${sourceRoot}/Contents/MacOS/${name}"
+    chmod a+x "$out/Applications/${sourceRoot}/Contents/MacOS/${pname}"
   '';
 
   meta = with stdenv.lib; {

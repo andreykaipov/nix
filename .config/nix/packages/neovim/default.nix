@@ -8,7 +8,6 @@ pkgs.neovim.override {
     customRC = builtins.readFile ~/.config/nvim/init.vim;
     packages.darwin.start = with pkgs.vimPlugins; [
       vim-nix
-      vim-go
     ];
   };
 }
