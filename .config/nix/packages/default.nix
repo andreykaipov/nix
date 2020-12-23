@@ -25,6 +25,7 @@
     tre-command
     tree
     gifsicle
+    htop
     (callPackage ./neovim {})
     (callPackage ./dircolors.hex {})
   ];

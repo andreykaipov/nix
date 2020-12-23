@@ -33,7 +33,6 @@
 !.config/macos/
 !.config/macos/*.plist
 
-!.toprc
 !.config/htop
 !.config/htop/htoprc
 
