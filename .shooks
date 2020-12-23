@@ -4,6 +4,8 @@
 # its PROMPT_COMMAND. The following was inspired by the following post:
 # https://jichu4n.com/posts/debug-trap-and-prompt_command-in-bash.
 #
+# TODO: consider precmds with PS0 instead of trap .. DEBUG
+#
 # Usage:
 #
 # - Source this file (. ~/.shooks).
@@ -12,24 +14,26 @@
 #   exit code of the "last ran" command or function. For context on what "last
 #   ran" means between the precmd and postcmd hooks, see the following snippet:
 #
-#   ❯ sh -c 'exit 0'
+#   ❯ sh -c 'echo hi; exit 0'
 #   in precmd: return of last command was 0
+#   hi
 #   in postcmd: return of last command was 0
-#
-#   ❯ sh -c 'exit 1'
+#   ❯ sh -c 'echo hey; exit 1'
 #   in precmd: return of last command was 0
+#   hey
 #   in postcmd: return of last command was 1
-#
-#   ❯ sh -c 'exit 2'
+#   ❯ sh -c 'echo bye; exit 2'
 #   in precmd: return of last command was 1
+#   bye
 #   in postcmd: return of last command was 2
 #
-#   The following rc file was used to generate the above snippet:
-#     # in ~/.bashrc:
-#     . ~/.shooks
-#     PS1='❯ '
-#     precmd() { echo "in precmd: return of last command was $__ret_last_cmd"; }
-#     postcmd() { echo "in precmd: return of last command was $__ret_last_cmd"; }
+# The following rc file was used to generate the above snippet:
+#
+#   # in ~/.bashrc:
+#   . ~/.shooks
+#   PS1='❯ '
+#   precmd() { echo "in precmd: return of last command was $__ret_last_cmd"; }
+#   postcmd() { echo "in precmd: return of last command was $__ret_last_cmd"; }
 #
 # Implementation:
 #
