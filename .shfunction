@@ -9,7 +9,7 @@
 # TODO maybe make this a precommit git hook so it's done every time
 sync_plists() {
     case "$(uname -s)" in
-    Darwin2) ;;
+    Darwin) ;;
     *)      >&2 echo "syncing plists is only valid on macOS"; return 1 ;;
     esac
 
@@ -18,6 +18,28 @@ sync_plists() {
         echo "$domain"
         defaults export "$domain" "$plist"
     done
+}
+
+# Creates and navigates into a new empty temporary directory
+tmp() {
+    cd "$(mktemp -d)" || return
+}
+
+# takes \n delimited output and creates a path-formatted string.
+# strips leading whitespace and skips empty lines and lines starting with #.
+# e.g. `echo $'a\n   b\n c\n' | pathify` outputs `a:b:c`
+# optionally takes an argument to specify the joining delimiter.
+pathify() { grep -Ev '(^\s*#)|^$' | sed -E 's/^ +//' | tr '\n' "${1:-:}" | sed 's/.$//'; }
+
+get() {
+    if command -v wget >/dev/null; then
+        wget -qO "$@"
+    elif command -v curl >/dev/null; then
+        curl -sLo "$@"
+    else
+        echo "How does this system not have neither wget nor curl?"
+        exit 1
+    fi
 }
 
 # pyenv shim, from `pyenv init -` to make it work
@@ -108,7 +130,11 @@ todo() {
     touch ~/.todo
     case "$1" in
         ""|l|list)
-            cat ~/.todo
+            if [ -s ~/.todo ]; then
+                cat ~/.todo
+            else
+                echo "no todos"
+            fi
             ;;
         p|progress|w|work)
             shift
