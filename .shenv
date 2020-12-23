@@ -2,80 +2,113 @@
 # shellcheck disable=SC2086
 #
 # Note this file uses a few commands like `tr` and `dircolors.hex` on our PATH
-# to create environment variables. If sourced from a shell with an empty PATH,
-# it'll fail. Thankfully, shells are smart and shouldn't let you do this. The
-# following starts a shell with an empty environment. It's supposed to mimic our
-# login shell and the `promote` function in ~/.shrc too.
+# to create environment variables, specifically the PATH var too. At first
+# glance, this might be an issue from shells with an empty PATH. Thankfully,
+# shells are smart and don't let you do this (unless you export PATH='' of
+# course). For example, the following starts a shell with an empty environment,
+# and prints out the environment:
 #
 # ```
-# env - sh -c 'env; echo $PATH'
+# $ env - sh -c 'env; echo $PATH'
+# PWD=/Users/andreyk
+# SHLVL=1
+# _=/usr/bin/env
+# /usr/gnu/bin:/usr/local/bin:/bin:/usr/bin:.
 # ```
 #
-# The only env var output will be PWD. However, the PATH printed in this case
-# will be the common **/sbin and **/bin directories. With this, we'll be able to
-# re-export the path with `tr`, and any other dependent binaries like in ~/bin
-# or $GOBIN will be found. Having said that, there is one env var we do always
-# need though:
+# This "empty" shell mimics our login shell and the `sourceg` function in
+# ~/.shrc too. Note how among the environment variables printed, PATH is not
+# among them. However, it still has a value. Nice. The above example is from
+# a macOS 1.15+ machine. With this, we're able to use common tools to generate
+# our other env vars. And once we generate our PATH, we can use it further in
+# the script (for things outside of system paths, like ~/bin/dircolors.hex)!
+#
+# To test out all the env vars available from this file, run it from an empty
+# shell and source it:
 #
 # ```
 # env - "HOME=$HOME" sh -c '. $HOME/.shenv; env' | sort
 # ```
 #
-# HOME is not implicit and has to be passed. See the `promote` function.
+# Note HOME is not implicit and has to be passed. See the `sourceg` function.
+#
+# Further, as this file contains subshell logic to form env vars, it's not
+# recommended to source this file from every child shell. As it's only for env
+# vars, it's enough to just let tmux inherit the login shell's environment, and
+# expose that to each tmux pane. If changes to this file are necessary, and
+# restarting tmux is a bitch because you've got 10 windows open, then that's
+# what the `sourceg` function in ~/.shrc is for. However, at best, you're saving
+# like 30ms each time you source this directly, so ehh who cares.
 
-# On Windows 10
-if [ -n "${WSL_DISTRO_NAME:-}" ]; then
-    export DOCKER_HOST=tcp://localhost:2375
-fi
+########
 
-export TMP="${TMP:-/tmp}"
-export TMPDIR="${TMPDIR:-$TMP}"
-export VISUAL=nvim
-export EDITOR="$VISUAL"
+# We start with Nix stuff and then our PATH
 
-export GOPATH="$HOME/local/share/go"
-export GOBIN="$HOME/local/share/go/bin"
-export PYENV_ROOT="$HOME/local/opt/pyenv"
-export PYENV_SHELL=bash
-export JAVA_HOME="$HOME/local/opt/java"
+# Taken from the /nix/store/<hash>-set-environment script called from
+# /etc/static/bashrc that Nix-Darwin puts in our system.
+export NIX_USER_PROFILE_DIR="/nix/var/nix/profiles/per-user/$USER"
+export NIX_SSL_CERT_FILE="/etc/ssl/certs/ca-certificates.crt"
 
-# For anything we run that was installed from source (e.g. tmux), the runtime
-# linker needs to know where to find the shared libraries via LD_LIBRARY_PATH.
-# CPATH and LIBRARY_PATH help during Autoconf configure scripts, similar to
-# CFLAGS and LDFLAGS. Also see https://unix.stackexchange.com/a/149361/152529
-# for more info.
-export CPATH="$HOME/local/include:$CPATH"
-export LIBRARY_PATH="$HOME/local/lib:$LD_LIBRARY_PATH"
-export LD_LIBRARY_PATH="$HOME/local/lib:$LD_LIBRARY_PATH"
-export MANPATH="$HOME/local/share/man:$MANPATH"
+# Set up secure multi-user builds: non-root users build through the Nix daemon.
+if [ ! -w /nix/var/nix/db ]; then export NIX_REMOTE=daemon; fi
 
-paths="
+. ~/.shfunction # for pathify
+
+NIX_PROFILES="$(echo "
+    /run/current-system/sw
+    /nix/var/nix/profiles/default
+    $HOME/.nix-profile
+" | pathify ' ')"; export NIX_PROFILES
+
+NIX_PATH="$(echo "
+    darwin-config=$HOME/.config/nix/config.nix
+    nixpkgs=/nix/var/nix/profiles/per-user/root/channels/nixpkgs
+    /nix/var/nix/profiles/per-user/root/channels
+    $HOME/.nix-defexpr/channels
+" | pathify)"; export NIX_PATH
+
+PATH="$(echo "
+    $(for profile in $NIX_PROFILES; do echo "$profile/bin"; done)
+
     $HOME/bin
-    $HOME/local/bin
-    $GOBIN
-    $PYENV_ROOT/shims
     /usr/local/sbin
     /usr/local/bin
     /usr/sbin
     /usr/bin
     /sbin
     /bin
-    /mnt/c/Windows/System32/WindowsPowerShell/v1.0
-    /mnt/c/Windows/System32
-    /mnt/c/Windows
-"
-PATH="$(echo $paths | tr ' ' ':')"
-export PATH
 
-#
+    #$HOME/local/bin
+    #$GOBIN
+    #$PYENV_ROOT/shims
 
-# As this file will be sourced, we can find our shell via $0.
-export SHELL="$0"
+    #/mnt/c/Windows/System32/WindowsPowerShell/v1.0
+    #/mnt/c/Windows/System32
+    #/mnt/c/Windows
+" | pathify)"; export PATH
+
+# For macOS 1.15+; is that what being a stubborn old dude feels like?
+export BASH_SILENCE_DEPRECATION_WARNING=1;
+
+# "wow he must be a really cool dude"
+export VISUAL=nvim
+export EDITOR="$VISUAL"
+
+# As this file is sourced, we can find our shell via $0. Required by dircolors.
+SHELL="$0"; export SHELL
 eval "$(dircolors.hex "$HOME/.dir_colors")"
 
-#
-
-# bash-specific to pretty history
+# Bash-specific stuff for pretty history
 export HISTFILE="$HOME/.bash_history"
 export HISTTIMEFORMAT="%F %T "
 export HISTCONTROL=ignoredups:ignorespace
+
+# Miscellaneous
+export PAGER="less -R"
+export TMP="${TMP:-/tmp}"
+export TMPDIR="${TMPDIR:-$TMP}"
+
+# On Windows 10... if this new Nix shit even works on WSL
+if [ -n "${WSL_DISTRO_NAME:-}" ]; then
+    export DOCKER_HOST=tcp://localhost:2375
+fi
