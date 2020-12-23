@@ -7,7 +7,11 @@
 [credential]
     helper = cache --timeout=10000
 
+[diff "plist"]
+    textconv = plutil -convert xml1 -o -
+
 [includeIf "gitdir:~/projects/work/**"]
     path = work
+
 [includeIf "gitdir:~/projects/work/gh/**"]
     path = github
