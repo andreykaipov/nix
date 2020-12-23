@@ -96,7 +96,7 @@ export EDITOR="$VISUAL"
 
 # As this file is sourced, we can find our shell via $0. Required by dircolors.
 SHELL="$0"; export SHELL
-eval "$(dircolors.hex "$HOME/.dir_colors")"
+eval "$(dircolors.hex "$HOME/.config/dircolors/dircolors")"
 
 # Bash-specific stuff for pretty history
 export HISTFILE="$HOME/.bash_history"

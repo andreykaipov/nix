@@ -40,6 +40,9 @@
 !.config/htop
 !.config/htop/htoprc
 
+!.config/dircolors
+!.config/dircolors/dircolors
+
 !.config/git
 !.config/git/*
 
