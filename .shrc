@@ -1,5 +1,5 @@
 #!/bin/bash
-# shellcheck shell=sh source=/dev/null
+# shellcheck shell=sh
 #
 # What should and should not go into this file? Well, since our local tmux
 # session inherits the environment from the login shell that spawned it, any
@@ -10,12 +10,12 @@
 # evaluated.
 #
 # But wait -- what happens if I want to update the environment during my tmux
-# session? Shouldn't we also source ~/.shenv? No, because once everything is set
-# up, the environment doesn't change often nor dynamically enough, so it doesn't
-# merit exporting them as often as we create new tmux panes. However, when they
-# they do change, it'd be very cumbersome relying on tmux inheriting the login
-# shell's environment as it means us having to restart tmux and "logging in" all
-# over again.
+# session? Shouldn't we also source ~/.shenv for that use-case? No, because once
+# everything is set up, the environment doesn't change often nor dynamically
+# enough, so it doesn't merit exporting them as often as we create new tmux
+# panes. However, when they they do change, it'd be very cumbersome relying only
+# on tmux inheriting the login shell's environment as it means us having to
+# restart tmux with our many open windows and "logging in" all over again.
 #
 # Fortunately, there's a way around this! We can update tmux's global
 # environment from within tmux itself. The `sourceg` function below does so. See
@@ -68,17 +68,14 @@ safesource ~/.shooks # TODO: consider precmds with PS0 instead of trap .. DEBUG
 if [ -z "$BASH_VERSION" ]; then
     # shellcheck disable=SC2016
     fnretcolor='if [ "$?" = 0 ]; then printf "\e[1;32m"; else printf "\e[1;31m"; fi'
-    PS1='$(printf "$(eval "$fnretcolor")%s\e[0m$ " "$0")'
+    PS1='$(printf "$(eval "$fnretcolor")%s\[\e[0m\]$ " "$0")'
     printf "\e]2;%s\e\\" "#[fg=yellow,bold]$PWD#[fg=default] $(git condensed-status-tmux)"
     return
 fi
 
 # Anything below is Bash specific
 
-safesource ~/local/share/bash-completion/bash_completion
-safesource ~/local/opt/pyenv/completions/pyenv.bash
-safesource ~/Downloads/google-cloud-sdk/completion.bash.inc
-safesource ~/Downloads/google-cloud-sdk/path.bash.inc
+. ~/.config/nix/links/bash-completion/etc/profile.d/bash_completion.sh
 
 precmd() { :; }
 postcmd() {
@@ -87,7 +84,13 @@ postcmd() {
 
     # paneindex="$(tmux display -pt "${TMUX_PANE:?}" '#{pane_index}')"
 
-    smiley="$([ "${__ret_last_cmd???}" = 0 ] && retcolor 'c;' || retcolor ');')"
+    smiley="$(
+        if [ "${__ret_last_cmd???}" = 0 ]; then
+            retcolor 'c;'
+        else
+            retcolor ');'
+        fi
+    )"
     path="#[fg=yellow,bold]${PWD/$HOME/'~'}#[default]"
     git="$(git condensed-status-tmux)"
 
