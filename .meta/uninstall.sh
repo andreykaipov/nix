@@ -1,5 +1,9 @@
 #!/bin/sh
 
+# Change the shell back to regular Bash
+
+chsh -s /bin/bash
+
 # Uninstall Nix modules for macOS
 
 nix-build https://github.com/LnL7/nix-darwin/archive/master.tar.gz -A uninstaller
@@ -12,6 +16,9 @@ sudo rm /Library/LaunchDaemons/org.nixos.nix-daemon.plist
 sudo mv /etc/bashrc.backup-before-nix /etc/bashrc
 sudo mv /etc/zshrc.backup-before-nix /etc/zshrc
 sudo rm -rf /etc/nix /nix /var/root/.nix-profile /var/root/.nix-defexpr /var/root/.nix-channels ~/.nix-profile ~/.nix-defexpr ~/.nix-channels ~/.nixpkgs
+
+sudo rm -rf ~/.config/nix/links      # created by ~/.config/nix/shell
+sudo rm -rf ~/Applications/Nix\ Apps # created by ~/.config/nix/packages
 
 # Delete the APFS volume created by the macOS installation for the Nix store at /nix
 

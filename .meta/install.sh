@@ -26,5 +26,8 @@ if ! [ -L "$usernixchannels/darwin" ]; then
     sudo mv /etc/nix/nix.conf /etc/nix/nix.conf.backup-before-nix-darwin
 
     . /etc/static/bashrc
-    darwin-rebuild switch
+    darwin-rebuild switch -I "darwin-config=$HOME/.config/nix/config.nix"
+
+    # delete default location of the nix-darwin config
+    rm -rf ~/.nixpkgs
 fi
