@@ -16,7 +16,7 @@ sync_plists() {
     for plist in ~/.config/macos/*.plist; do
         domain="$(basename "${plist%.*}")"
         echo "$domain"
-        defaults export "$domain" "$plist"
+        defaults export "$domain" - > "$plist"
     done
 }
 
