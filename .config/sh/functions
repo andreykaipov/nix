@@ -7,16 +7,23 @@
 # plists that are not already in source control.
 #
 # TODO maybe make this a precommit git hook so it's done every time
-sync_plists() {
-    case "$(uname -s)" in
-    Darwin) ;;
-    *)      >&2 echo "syncing plists is only valid on macOS"; return 1 ;;
-    esac
+pull_plists() {
+    echo "Syncing our local plist config with the following domains:"
 
     for plist in ~/.config/macos/*.plist; do
         domain="$(basename "${plist%.*}")"
         echo "$domain"
         defaults export "$domain" - > "$plist"
+    done
+}
+
+push_plists() {
+    echo "Updating the following domains with our local plist config:"
+
+    for plist in ~/.config/macos/*.plist; do
+        domain="$(basename "${plist%.*}")"
+        echo "$domain"
+        defaults import "$domain" "$plist"
     done
 }
 

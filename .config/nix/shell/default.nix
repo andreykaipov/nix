@@ -1,6 +1,9 @@
-{ config, pkgs, ... }:
+{ config, pkgs, lib, ... }:
 
-{
+let
+  inherit (lib) optional flatten;
+  inherit (lib.systems.elaborate { system = builtins.currentSystem; }) isLinux isDarwin;
+in {
   nixpkgs.overlays = [
     (self: super: {
       bashInteractive = super.bashInteractive_5;
@@ -22,7 +25,8 @@
 
     mkdir -p ~/.config/nix/links
     ln -sf "${pkgs.bash-completion}" ~/.config/nix/links/bash-completion
-  '';
+  ''
+    + (if isDarwin then ". ~/.config/sh/functions; push_plists" else {});
 
   programs.bash.interactiveShellInit = ''
     reexec() {
