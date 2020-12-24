@@ -7,27 +7,29 @@
   #
   environment.systemPackages = with pkgs; [
     # The *.app kind of applications
-    iterm2
-    (callPackage ./discord {})
-    (callPackage ./spotify {})
-    (callPackage ./rectangle {})
     (callPackage ./1password {})
-    (callPackage ./docker {})
     (callPackage ./barrier {})
+    (callPackage ./discord {})
+    (callPackage ./docker {})
+    (callPackage ./rectangle {})
+    (callPackage ./spotify {})
+    iterm2
 
     # The other stuff
-    tmux
+    (callPackage ./dircolors.hex {})
+    (callPackage ./neovim {})
     coreutils
-    shellcheck
+    gifsicle
+    go
+    go-2fa
+    htop
     jq
-    yq
-    upx
+    shellcheck
+    tmux
     tre-command
     tree
-    gifsicle
-    htop
-    (callPackage ./neovim {})
-    (callPackage ./dircolors.hex {})
+    upx
+    yq
   ];
 
   # Copy applications installed via Nix to ~ so Spotlight can index them
