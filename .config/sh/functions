@@ -1,5 +1,9 @@
 #!/bin/sh
 
+serve() {
+  http-server "${1:-.}" --port "${2:-9000}" --cors
+}
+
 # Our macOS settings are stored in plists at ~/.config/macos/*.plist. Sometimes
 # we might update our settings via the settings GUI outside of this
 # configuration, so to keep our new settings in source control, we have to sync

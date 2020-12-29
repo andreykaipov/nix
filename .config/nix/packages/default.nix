@@ -24,11 +24,14 @@
     go-2fa
     htop
     jq
+    nodejs-14_x
+    nodePackages.http-server
     shellcheck
     tmux
     tre-command
     tree
     upx
+    yarn
     yq
   ];
 
