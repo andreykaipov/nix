@@ -9,6 +9,9 @@
 
 !.config
 
+!.nixpkgs
+!.nixpkgs/**
+
 !.config/nix
 !.config/nix/**
 .config/nix/links
