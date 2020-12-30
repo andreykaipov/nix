@@ -6,6 +6,7 @@ let
     (callPackage ./cli/neovim {})
 
     bashInteractive_5
+    bash-completion
     go
     go-2fa
     htop

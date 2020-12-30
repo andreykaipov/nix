@@ -44,28 +44,15 @@
 
 # We start with Nix stuff and then our PATH
 
-# Taken from the /nix/store/<hash>-set-environment script called from
-# /etc/static/bashrc that Nix-Darwin puts in our system.
-export NIX_USER_PROFILE_DIR="/nix/var/nix/profiles/per-user/$USER"
-export NIX_SSL_CERT_FILE="/etc/ssl/certs/ca-certificates.crt"
-
-# Set up secure multi-user builds: non-root users build through the Nix daemon.
-if [ ! -w /nix/var/nix/db ]; then export NIX_REMOTE=daemon; fi
-
 . ~/.config/sh/functions # for pathify
 
+# Taken from the ~/.nix-profile/etc/profile.d/nix.sh script
 NIX_PROFILES="$(echo "
-    /run/current-system/sw
     /nix/var/nix/profiles/default
     $HOME/.nix-profile
 " | pathify ' ')"; export NIX_PROFILES
-
-NIX_PATH="$(echo "
-    darwin-config=$HOME/.config/nix/config.nix
-    nixpkgs=/nix/var/nix/profiles/per-user/root/channels/nixpkgs
-    /nix/var/nix/profiles/per-user/root/channels
-    $HOME/.nix-defexpr/channels
-" | pathify)"; export NIX_PATH
+export NIX_SSL_CERT_FILE="$HOME/.nix-profile/etc/ssl/certs/ca-bundle.crt"
+export NIX_PATH="$HOME/.nix-defexpr/channels"
 
 PATH="$(echo "
     $(for profile in $NIX_PROFILES; do echo "$profile/bin"; done)
@@ -94,8 +81,9 @@ export BASH_SILENCE_DEPRECATION_WARNING=1;
 export VISUAL=nvim
 export EDITOR="$VISUAL"
 
-# As this file is sourced, we can find our shell via $0. Required by dircolors.
-SHELL="$0"; export SHELL
+# Find our shell via $0 for dircolors. This var might be overriden by something
+# else (I guess login(1) or AD on macOS), unless we run chsh.
+SHELL="$(command -v bash)"; export SHELL
 eval "$(dircolors.hex "$HOME/.config/dircolors/dircolors")"
 
 # Bash-specific stuff for pretty history

@@ -73,7 +73,7 @@ fi
 
 # Anything below is Bash specific
 
-. ~/.config/nix/links/bash-completion/etc/profile.d/bash_completion.sh
+. ~/.nix-profile/etc/profile.d/bash_completion.sh
 
 precmd() { :; }
 postcmd() {
