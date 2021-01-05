@@ -43,6 +43,8 @@ ensure_nix() {
 ensure_apps() {
     echo "Ensuring apps"
 
+    nix-collect-garbage -d
+
     IFS=$'\n'
     hashApp() {
         path="$1/Contents/MacOS"; shift
@@ -62,8 +64,8 @@ ensure_apps() {
         hash2="$(hashApp "$dst")"
         if [ "$hash1" != "$hash2" ]; then
             echo "Current hash of '$name' differs than the Nix store's. Overwriting..."
+            rm -rf "$dst"
             cp -R "$src" ~/Applications/Nix\ Apps
-            echo "Done"
         fi
     done
 }

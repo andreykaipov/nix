@@ -7,7 +7,9 @@ chsh -s /bin/bash
 # Uninstall Nix
 
 rm -rf ~/.nix-profile ~/.nix-defexpr ~/.nix-channels
-rm -rf /Applications/Nix\ Apps # created by the configs in ~/.nixpkgs/apps
+
+# Don't remove the apps installed by Nix from the configs in ~/.nixpkgs/apps
+# rm -rf ~/Applications/Nix\ Apps
 
 # Delete the APFS volume created by the macOS installation for the Nix store at /nix
 
