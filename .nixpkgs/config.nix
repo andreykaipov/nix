@@ -1,9 +1,12 @@
-{ pkgs }:
+{ pkgs ? import <nixpkgs> {} }:
 
 let
   common = with pkgs; [
     (callPackage ./cli/dircolors.hex {})
     (callPackage ./cli/neovim {})
+
+    (callPackage ./cli/safe-v0.9.9 {})
+    vault
 
     bashInteractive_5
     bash-completion
@@ -14,6 +17,8 @@ let
     nodePackages.http-server
     nodejs-14_x
     shellcheck
+    terraform_0_14
+    terragrunt
     tmux
     tre-command
     tree
