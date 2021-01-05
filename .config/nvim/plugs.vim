@@ -9,28 +9,29 @@ Plug 'godlygeek/tabular'
 Plug 'plasticboy/vim-markdown'
 Plug 'guns/xterm-color-table.vim'
 
-" for general text editing
+" detect buffer options and set them automatically per file
 Plug 'tpope/vim-sleuth'
-Plug 'dense-analysis/ale'
+
+" colorize text in hex form
 Plug 'lilydjwg/colorizer'
 
-" language specific
+" async linting
+Plug 'dense-analysis/ale'
+
+" async completion
+Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+
+" go
 Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
 
-" fix yaml highlighting. sometimes it's weird especially for ansible roles
+" yaml
+" fixes yaml highlighting. sometimes it's weird especially for ansible roles
 Plug 'stephpy/vim-yaml'
 Plug 'pearofducks/ansible-vim'
 
 " terraform
 Plug 'hashivim/vim-terraform'
 Plug 'juliosueiras/vim-terraform-completion'
-
-" syntax linting
-Plug 'vim-syntastic/syntastic'
-" async linting and make framework
-Plug 'neomake/neomake'
-" async completion and make framework
-Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
 
 " nix
 Plug 'LnL7/vim-nix'

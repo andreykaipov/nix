@@ -12,6 +12,13 @@ let g:ale_fixers = {
 let g:ale_sign_error = ' ●'
 let g:ale_sign_warning = ' .'
 
+" deoplete
+" https://github.com/juliosueiras/vim-terraform-completion#deoplete-config
+let g:deoplete#omni_patterns = {}
+let g:deoplete#omni_patterns.terraform = '[^ *\t"{=$]\w*'
+let g:deoplete#enable_at_startup = 1
+call deoplete#initialize()
+
 " markdown
 "
 let g:vim_markdown_folding_disabled = 1
