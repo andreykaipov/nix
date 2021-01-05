@@ -19,6 +19,7 @@ let
     shellcheck
     terraform_0_14
     terragrunt
+    tflint
     tmux
     tre-command
     tree
