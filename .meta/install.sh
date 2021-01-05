@@ -64,7 +64,7 @@ ensure_apps() {
         hash2="$(hashApp "$dst")"
         if [ "$hash1" != "$hash2" ]; then
             echo "Current hash of '$name' differs than the Nix store's. Overwriting..."
-            rm -rf "$dst"
+            sudo rm -rf "$dst"
             cp -R "$src" ~/Applications/Nix\ Apps
         fi
     done
