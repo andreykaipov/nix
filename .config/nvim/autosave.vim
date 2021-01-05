@@ -20,12 +20,12 @@ endfunction
 
 function! s:ToggleAutoSave()
     if exists('#AutoSave#CursorHold')
-        echo 'Disabed autosave'
+        echo 'Disabled autosave'
         augroup AutoSave
             autocmd!
         augroup END
     else
-        echo 'Enabled autosave'
+        echo "Enabled autosave"
         augroup AutoSave
             autocmd!
             autocmd CursorHold,CursorHoldI * :call s:AutoSave()
@@ -43,3 +43,8 @@ nmap <leader>s :ToggleAutoSave<cr>
 " really want to edit something in /etc/, step away from the computer, and bork
 " everything.
 :ToggleAutoSave
+
+" We only want to show the "(Dis|Ena)bled autosave" message when toggling, so we
+" move the cursor to the first column to erase the message when Vim first opens
+echon "\r"
+echon ""
