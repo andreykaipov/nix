@@ -140,6 +140,7 @@ endfunction
 
 exec printf('source %s/numbers.vim', root)
 exec printf('source %s/autosave.vim', root)
+exec printf('source %s/autocomplete.vim', root)
 
 " When formatting via gq, vim will try to add two spaces after periods. This is
 " not the late 19th century, and is a silly default.
