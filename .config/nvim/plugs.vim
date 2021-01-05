@@ -20,3 +20,20 @@ Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
 " fix yaml highlighting. sometimes it's weird especially for ansible roles
 Plug 'stephpy/vim-yaml'
 Plug 'pearofducks/ansible-vim'
+
+" terraform
+Plug 'hashivim/vim-terraform'
+Plug 'juliosueiras/vim-terraform-completion'
+
+" syntax linting
+Plug 'vim-syntastic/syntastic'
+" async linting and make framework
+Plug 'neomake/neomake'
+" async completion and make framework
+Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+
+" nix
+Plug 'LnL7/vim-nix'
+
+" javascript
+Plug 'pangloss/vim-javascript'

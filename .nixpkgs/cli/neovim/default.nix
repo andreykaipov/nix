@@ -10,9 +10,5 @@ pkgs.neovim.override {
   vimAlias = true;
   configure = {
     customRC = builtins.readFile ~/.config/nvim/init.vim;
-    packages.darwin.start = with pkgs.vimPlugins; [
-      vim-nix
-      vim-javascript
-    ];
   };
 }
