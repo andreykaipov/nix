@@ -23,7 +23,6 @@ stdenv.mkDerivation rec {
     mkdir -p "$out/Applications/${sourceRoot}"
     cp -R . "$out/Applications/${sourceRoot}"
     chmod a+x "$out/Applications/${sourceRoot}/Contents/MacOS/${appname}"
-    cp -R "$out/Applications/${sourceRoot}" "/Applications/Nix Apps/"
   '';
 
   dontStrip = stdenv.isDarwin;

@@ -16,7 +16,6 @@ stdenv.mkDerivation rec {
     mkdir -p "$out/Applications/${sourceRoot}"
     cp -R . "$out/Applications/${sourceRoot}"
     chmod a+x "$out/Applications/${sourceRoot}/Contents/MacOS/${pname}"
-    cp -R "$out/Applications/${sourceRoot}" "/Applications/Nix Apps/"
   '';
 
   meta = with stdenv.lib; {
