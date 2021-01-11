@@ -5,22 +5,20 @@ let
     (callPackage ./cli/dircolors.hex {})
     (callPackage ./cli/neovim {})
 
-    (callPackage ./cli/safe-v0.9.9 {})
-    vault
+    tmux
+    (callPackage ./cli/tmux-mem-cpu-load {})
 
+    bat
     bashInteractive_5
     bash-completion
     go
     go-2fa
     htop
     jq
-    nodePackages.http-server
-    nodejs-14_x
     shellcheck
     terraform_0_14
     terragrunt
     tflint
-    tmux
     tre-command
     tree
     upx
@@ -38,6 +36,14 @@ let
 
     coreutils
     gifsicle
+    nodePackages.http-server
+    nodejs-14_x
+
+    vault
+    (callPackage ./cli/safe-v0.9.9 {})
+
+    # todo maybe make this a platform-agnostic script
+    (callPackage ./cli/tmux-spotify-info {})
   ];
 
   forLinux = with pkgs; [];
