@@ -71,19 +71,21 @@ if [ -z "$BASH_VERSION" ]; then
     return
 fi
 
+###
 # Anything below is Bash specific
+###
 
 . ~/.nix-profile/etc/profile.d/bash_completion.sh
 
-precmd() { :; }
-postcmd() {
-    [ "${__ret_last_cmd???}" = 0 ] && color="#[fg=green,bold]" || color="#[fg=red,bold]"
-    retcolor() { printf "$color%s#[default]" "$1"; }
-
+# Set tmux window and pane title. See
+# http://man7.org/linux/man-pages/man1/tmux.1.html#NAMES_AND_TITLES.
+setpanetitle() {
     # paneindex="$(tmux display -pt "${TMUX_PANE:?}" '#{pane_index}')"
 
+    [ "${__ret_last_cmd:-0}" = 0 ] && color="#[fg=green,bold]" || color="#[fg=red,bold]"
+    retcolor() { printf "$color%s#[default]" "$1"; }
     smiley="$(
-        if [ "${__ret_last_cmd???}" = 0 ]; then
+        if [ "${__ret_last_cmd:-0}" = 0 ]; then
             retcolor 'c;'
         else
             retcolor ');'
@@ -95,6 +97,24 @@ postcmd() {
     printf "\e]2;%s\e\\" "$smiley $path $git"
 }
 
+# the escape sequence doesn't work, so we just invoke tmux directly
+# printf "\ek%s\e\\" "#[fg=yellow]$PWD#[fg=default]"
+setwindowtitle() {
+    if [ "$PWD" = "$HOME" ]; then
+        tmux rename-window -t local '~'
+    else
+        shortened="$(dirname "${PWD/$HOME/'~'}" | sed -e "s:\(/.\)[^/]*:\1:g")"
+        last="$(basename "$PWD")"
+        tmux rename-window -t local "$shortened/$last"
+    fi
+}
+
+precmd() { :; }
+postcmd() {
+    setpanetitle
+    setwindowtitle
+}
+
 # Note: Don't forget to surround non-printing chars with \[...\] (Bash's PS1) or
 # \1...\2 (readline). Otherwise, our prompt will display incorrectly during
 # navigation with C-[AEUR], for example.
@@ -104,16 +124,12 @@ postcmd() {
 setprompt() {
     PS1=' '
 
+    # readline_keymap="$(bind -v | awk '$2 == "keymap" {print $3}')"
     bind "set emacs-mode-string  \1\e[5 q\2\1\e[1;33m\2@\1\e[0m\2"
     bind "set vi-ins-mode-string \1\e[5 q\2\1\e[1;33m\2❯\1\e[0m\2"
     bind "set vi-cmd-mode-string \1\e[6 q\2\1\e[1;33m\2:\1\e[0m\2"
 
-    # Set tmux window and pane title. See
-    # http://man7.org/linux/man-pages/man1/tmux.1.html#NAMES_AND_TITLES.
-    # printf "\ek%s\e\\" "#[fg=yellow]$PWD#[fg=default]"
-    printf "\e]2;%s\e\\" "#[fg=yellow,bold]${PWD/$HOME/'~'}#[fg=default] $(git condensed-status-tmux)"
-
-    # readline_keymap="$(bind -v | awk '$2 == "keymap" {print $3}')"
+    postcmd
 }
 
 main() {
