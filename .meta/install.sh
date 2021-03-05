@@ -16,6 +16,8 @@ main() {
 # see https://nixos.org/manual/nix/stable/#sect-single-user-installation
 # and https://nixos.org/manual/nix/stable/#sect-macos-installation
 ensure_nix() {
+    echo "Ensuring Nix"
+
     case "$(uname -s)" in
         Linux)  os=linux ;;
         Darwin) os=darwin ;;
@@ -40,11 +42,9 @@ ensure_nix() {
         nix-shell -p nix-info --run "nix-info -m"
     fi
 
-    echo "Nix is installed"
-
-    nix-env -iA nixpkgs.mine
-
-    nix-collect-garbage -d
+    nix-channel --update     # update
+    nix-env -iA nixpkgs.mine # install
+    nix-collect-garbage -d   # cleanup
 }
 
 ensure_apps() {

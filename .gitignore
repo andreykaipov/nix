@@ -9,6 +9,7 @@
 
 !.config
 
+!.nix-channels
 !.nixpkgs
 !.nixpkgs/**
 
