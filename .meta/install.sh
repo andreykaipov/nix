@@ -1,12 +1,15 @@
-#!/bin/bash
+#!/bin/sh
+# shellcheck disable=SC1090
 
 set -e
 
+nl="$(printf '\nx')"; nl="${nl%x}"
+
 main() {
     ensure_nix
-    nix-env -iA nixpkgs.mine
-    nvim +PlugInstall +qa
     ensure_apps
+    ensure_nvim
+    ensure_tpm
     echo "Done"
 }
 
@@ -38,24 +41,26 @@ ensure_nix() {
     fi
 
     echo "Nix is installed"
+
+    nix-env -iA nixpkgs.mine
+
+    nix-collect-garbage -d
 }
 
 ensure_apps() {
     echo "Ensuring apps"
 
-    nix-collect-garbage -d
-
-    IFS=$'\n'
+    IFS="$nl"
     hashApp() {
         path="$1/Contents/MacOS"; shift
-        for bin in $(find "$path" -perm +111 -type f -maxdepth 1 2>/dev/null); do
+        find "$path" -perm +111 -type f -maxdepth 1 2>/dev/null | while read -r bin; do
             md5sum "$bin" | cut -b-32
         done | md5sum | cut -b-32
     }
 
     mkdir -p ~/Applications/Nix\ Apps
 
-    for app in $(find /nix/store/*my-packages/Applications/*.app -maxdepth 1 -type l); do
+    find /nix/store/*my-packages/Applications/*.app -maxdepth 1 -type l | while read -r app; do
         echo "$app"
         name="$(basename "$app")"
         src="$(/usr/bin/stat -f%Y "$app")"
@@ -68,6 +73,29 @@ ensure_apps() {
             cp -R "$src" ~/Applications/Nix\ Apps
         fi
     done
+}
+
+ensure_nvim() {
+    echo "Ensuring Neovim plugins"
+
+    # nvim itself is installed through nix
+
+    nvim +PlugInstall +qa
+}
+
+ensure_tpm() {
+    echo "Ensuring TPM for Tmux"
+
+    tpm="$HOME/.tmux/plugins/tpm"
+    if [ -d "$tpm" ]; then
+        cd "$tpm"
+        git pull
+    else
+        mkdir -p "$tpm"
+        git clone https://github.com/tmux-plugins/tpm "$tpm"
+    fi
+
+    "$tpm/bin/install_plugins"
 }
 
 main
