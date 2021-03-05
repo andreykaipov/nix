@@ -96,11 +96,17 @@ vmap > >gv
 vmap J :m '>+1<cr>gv=gv
 vmap K :m '<-2<cr>gv=gv
 
+" easier buffer switches
+"
+map gn :bn<cr>
+map gp :bp<cr>
+map gd :bd<cr>
+
 " show 81 char line. ideally our code won't go past it.
 " because of this, we don't need to wrap lines.
 "
 set textwidth=80
-set colorcolumn=81
+let &colorcolumn=join(range(81,120),",")
 set nowrap
 
 " scroll offset sets the number of context lines we see whenever we scroll
@@ -130,7 +136,7 @@ set guicursor=n-v-c:ver25
 " highlight-groups for available highlight groups.
 "
 function! SetCustomHighlights()
-    highlight ColorColumn                            ctermbg=155
+    highlight ColorColumn                            ctermbg=235
     highlight CursorLine                             ctermbg=233
     highlight CursorLineNr            ctermfg=yellow ctermbg=233
     highlight Normal                  ctermfg=252    ctermbg=none

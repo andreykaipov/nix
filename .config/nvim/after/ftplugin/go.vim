@@ -4,6 +4,17 @@ let g:go_fmt_command = "goimports"
 let g:go_fmt_autosave = 1
 let g:go_metalinter_command = 'golangci-lint run'
 
+let g:go_info_mode='gopls'
+let g:go_def_mode='gopls'
+
+" let g:go_debug = ["shell-commands"] # lsp
+
+nmap <Leader>ds <Plug>(go-def-split)
+nmap <Leader>dv <Plug>(go-def-vertical)
+nmap <Leader>dt <Plug>(go-def-tab)
+
+let g:go_def_reuse_buffer = 1
+
 let g:go_highlight_functions = 1
 let g:go_highlight_methods = 1
 let g:go_highlight_structs = 1
