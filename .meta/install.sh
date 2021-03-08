@@ -28,23 +28,20 @@ ensure_nix() {
         nixargs="--darwin-use-unencrypted-nix-store-volume";
     fi
 
-    nixsh="$HOME/.nix-profile/etc/profile.d/nix.sh"
-
     if [ -n "$FORCE_REINSTALL" ]; then
-        nix-env -e '*'
-        rm -f "$nixsh"
+        nix-env --uninstall '*' || true
     fi
 
-    if ! command -v nix >/dev/null || ! [ -r "$nixsh" ]; then
+    if ! command -v nix >/dev/null; then
         export NIX_INSTALLER_NO_MODIFY_PROFILE=1
         curl -sL https://nixos.org/nix/install | sh -s -- --no-daemon $nixargs
-        . "$nixsh"
+        . "$HOME/.nix-profile/etc/profile.d/nix.sh"
         nix-shell -p nix-info --run "nix-info -m"
     fi
 
     nix-channel --update     # update
-    nix-env -iA nixpkgs.mine # install
-    nix-collect-garbage -d   # cleanup
+    nix-env --install --attr nixpkgs.mine # install
+    # nix-collect-garbage -d   # cleanup
 }
 
 ensure_apps() {

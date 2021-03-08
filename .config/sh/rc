@@ -1,5 +1,6 @@
 #!/bin/bash
 # shellcheck shell=sh
+# shellcheck disable=SC1090
 #
 # What should and should not go into this file? Well, since our local tmux
 # session inherits the environment from the login shell that spawned it, any
@@ -75,7 +76,9 @@ fi
 # Anything below is Bash specific
 ###
 
-. ~/.nix-profile/etc/profile.d/bash_completion.sh
+safesource() { [ -r "$1" ] && . "$1"; }
+safesource ~/.nix-profile/etc/profile.d/bash_completion.sh
+safesource ~/.nix-profile/etc/bash_completion.d/gcloud.inc
 
 # Set tmux window and pane title. See
 # http://man7.org/linux/man-pages/man1/tmux.1.html#NAMES_AND_TITLES.
