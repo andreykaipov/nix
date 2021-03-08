@@ -54,6 +54,9 @@ NIX_PROFILES="$(echo "
 export NIX_SSL_CERT_FILE="$HOME/.nix-profile/etc/ssl/certs/ca-bundle.crt"
 export NIX_PATH="$HOME/.nix-defexpr/channels"
 
+export GOBIN="$HOME/go/bin"
+export GOFLAGS=-mod=vendor
+
 PATH="$(echo "
     $(for profile in $NIX_PROFILES; do echo "$profile/bin"; done)
 
@@ -65,8 +68,8 @@ PATH="$(echo "
     /sbin
     /bin
 
+    $GOBIN
     #$HOME/local/bin
-    #$GOBIN
     #$PYENV_ROOT/shims
 
     #/mnt/c/Windows/System32/WindowsPowerShell/v1.0
