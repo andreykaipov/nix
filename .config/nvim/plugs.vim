@@ -38,3 +38,6 @@ Plug 'LnL7/vim-nix'
 
 " javascript
 Plug 'pangloss/vim-javascript'
+
+" dope
+Plug 'timburgess/extempore.vim'

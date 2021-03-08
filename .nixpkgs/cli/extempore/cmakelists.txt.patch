@@ -1,0 +1,13 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 20d77eac..61bf6749 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -113,7 +113,7 @@ if(APPLE)
+   execute_process(COMMAND sw_vers -productVersion
+     OUTPUT_VARIABLE EXTEMPORE_SYSTEM_VERSION
+     OUTPUT_STRIP_TRAILING_WHITESPACE)
+-  string(REGEX MATCH "^10.[0-9]+" EXTEMPORE_SYSTEM_VERSION ${EXTEMPORE_SYSTEM_VERSION})
++  string(REGEX MATCH "^10.[0-9]+" EXTEMPORE_SYSTEM_VERSION "${EXTEMPORE_SYSTEM_VERSION}")
+   set(EXTEMPORE_SYSTEM_ARCHITECTURE ${UNAME_MACHINE_NAME})
+ elseif(UNIX)
+   # try lsb_release first - better at giving the distro name
