@@ -1,7 +1,29 @@
 #!/bin/sh
 
+gowatchlint() {
+    reflex -r '\.go' -- sh -c "golangci-lint run ./... --out-format tab; echo"
+}
+
+gowatchtest() {
+    reflex -r '\.go' -- sh -c "go test -coverprofile cover.out ./... -coverpkg ./... $*; echo"
+}
+
+yamlappend() {
+    f="$1"; shift
+    arraykey="$1"; shift
+    entry="$1"; shift
+    yq w -i "$f" "$arraykey"[+] "$entry"
+}
+
 serve() {
-  http-server "${1:-.}" --port "${2:-9000}" --cors
+    http-server "${1:-.}" --port "${2:-9000}" --cors
+}
+
+# runs a debug container in k8s
+kdebug() {
+    img="${1:-alpine}"
+    namespace="${2:-default}"
+    kubectl -n "$namespace" run -i --tty --rm debug --image="$img" --restart=Never -- sh
 }
 
 # Our macOS settings are stored in plists at ~/.config/macos/*.plist. Sometimes
@@ -40,7 +62,9 @@ tmp() {
 # strips leading whitespace and skips empty lines and lines starting with #.
 # e.g. `echo $'a\n   b\n c\n' | pathify` outputs `a:b:c`
 # optionally takes an argument to specify the joining delimiter.
-pathify() { grep -Ev '(^\s*#)|^$' | sed -E 's/^ +//' | tr '\n' "${1:-:}" | sed 's/.$//'; }
+pathify() {
+    grep -Ev '(^\s*#)|^$' | sed -E 's/^ +//' | tr '\n' "${1:-:}" | sed 's/.$//'
+}
 
 get() {
     if command -v wget >/dev/null; then
@@ -93,8 +117,38 @@ tfvars2json() {
     rm -rf "$t"
 }
 
+gsremoveemptytfstates() {
+    gsutil ls -lh gs://d-ce-terraform/** | awk '$1 ~ /^15[67]$/ {print $NF}' | xargs gsutil -m rm
+}
+
+# easily browse gcp gs buckets
+gsedit() {
+    bucket="${1:-d-ce-terraform}"
+    project="${1:-d-ulti-cs-cloudengine-9561}"
+    tmpf="$(mktemp)"
+    trap 'rm -f "$tmpf"' EXIT INT HUP
+
+    selected="$(
+      gsutil ls -p "$project" -lh "gs://$bucket/**" | \
+      fzf --pointer=* --border --header-lines=1 --header "Bucket \`$bucket\` in \`$project\`"
+    )"
+    f="$(echo "$selected" | awk '{print $NF}')"
+    if [ -z "$f" ]; then return 1; fi
+
+    gsutil cp "$f" "$tmpf"
+    hashbefore="$(md5sum "$tmpf")"
+    "${EDITOR:-vi}" "$tmpf"
+    hashafter="$(md5sum "$tmpf")"
+
+    if [ "$hashbefore" != "$hashafter" ]; then
+        echo "Detected changes"
+        gsutil cp "$tmpf" "$f"
+    else
+        echo "Detected no changes" 2>/dev/null
+    fi
+}
+
 # easily browse s3 buckets
-# requires fzf
 vims3() {
     tmpfile=$(mktemp)
     bucket=$(aws "$@" s3 ls | awk '{ print $3 }' | fzf)
@@ -120,21 +174,20 @@ vims3() {
 
 # opens up an incognito window from our aws session token
 aws_login() {
-  if [ -z "${AWS_SESSION_TOKEN}" ]; then
-    echo "no AWS session token found"
-  fi
+    if [ -z "${AWS_SESSION_TOKEN}" ]; then
+        echo "no AWS session token found"
+    fi
 
-  jq -cn --arg session_id "${AWS_ACCESS_KEY_ID}" \
-         --arg session_key "${AWS_SECRET_ACCESS_KEY}" \
-         --arg session_token "${AWS_SESSION_TOKEN}" \
-         '{"sessionId": $session_id, "sessionKey": $session_key, "sessionToken": $session_token}' \
-    | curl -s -G \
-           --data "Action=getSigninToken" \
-           --data "SessionDuration=43200" \
-           --data-urlencode "Session@-" \
-           https://signin.aws.amazon.com/federation \
-    | jq -r '"https://signin.aws.amazon.com/federation?Action=login&Destination=https://console.aws.amazon.com/&SigninToken=\(.SigninToken)"' \
-    | xargs open -na "Google Chrome" --args --incognito
+    jq -cn --arg session_id "${AWS_ACCESS_KEY_ID}" \
+        --arg session_key "${AWS_SECRET_ACCESS_KEY}" \
+        --arg session_token "${AWS_SESSION_TOKEN}" \
+        '{"sessionId": $session_id, "sessionKey": $session_key, "sessionToken": $session_token}' \
+        | curl -s -G \
+          --data "Action=getSigninToken" \
+          --data "SessionDuration=43200" \
+          --data-urlencode "Session@-" https://signin.aws.amazon.com/federation \
+        | jq -r '"https://signin.aws.amazon.com/federation?Action=login&Destination=https://console.aws.amazon.com/&SigninToken=\(.SigninToken)"' \
+        | xargs open -na "Google Chrome" --args --incognito
 }
 
 todo() {
