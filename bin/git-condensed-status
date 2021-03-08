@@ -1,4 +1,4 @@
-m!/bin/sh
+#!/bin/sh
 #
 # Git prompt support for POSIX shells.
 #
