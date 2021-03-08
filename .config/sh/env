@@ -42,10 +42,9 @@
 
 ########
 
-# We start with Nix stuff and then our PATH
-
 . ~/.config/sh/functions # for pathify
 
+# Nix stuff
 # Taken from the ~/.nix-profile/etc/profile.d/nix.sh script
 NIX_PROFILES="$(echo "
     /nix/var/nix/profiles/default
@@ -54,9 +53,11 @@ NIX_PROFILES="$(echo "
 export NIX_SSL_CERT_FILE="$HOME/.nix-profile/etc/ssl/certs/ca-bundle.crt"
 export NIX_PATH="$HOME/.nix-defexpr/channels"
 
+# Go stuff
 export GOBIN="$HOME/go/bin"
 export GOFLAGS=-mod=vendor
 
+# Our marvelous path
 PATH="$(echo "
     $(for profile in $NIX_PROFILES; do echo "$profile/bin"; done)
 
@@ -76,6 +77,9 @@ PATH="$(echo "
     #/mnt/c/Windows/System32
     #/mnt/c/Windows
 " | pathify)"; export PATH
+
+# Force Git to only work from our home directory
+export GIT_CEILING_DIRECTORIES="$HOME"
 
 # For macOS 1.15+; is that what being a stubborn old dude feels like?
 export BASH_SILENCE_DEPRECATION_WARNING=1;
