@@ -83,9 +83,9 @@ ensure_tmux() {
     if [ -z "$TMUX" ]; then
         if tmux ls -F '#{session_name}' | grep -qx local; then
             echo "Local tmux session already exists"
-            echo "If you'd really like to, we'll attach into it in 10 seconds"
+            echo "If you'd really like to, we'll attach into it in 3 seconds"
             echo "Otherwise, send ^C"
-            sleep 10
+            sleep 3
             exec tmux attach -t local
         else
             echo "Starting local tmux session"
