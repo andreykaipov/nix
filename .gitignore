@@ -34,6 +34,8 @@
 
 !.config/tmux
 !.config/tmux/*.conf
+!.config/tmux/plugins
+!.config/tmux/plugins/.gitkeep
 
 !.config/readline
 !.config/readline/inputrc

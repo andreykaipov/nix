@@ -81,9 +81,11 @@ ensure_nvim() {
 }
 
 ensure_tpm() {
-    echo "Ensuring TPM for Tmux"
+    echo "Ensuring Tmux plugins"
 
-    tpm="$HOME/.tmux/plugins/tpm"
+    tmux="$HOME/.config/tmux"
+    tpm="$tmux/plugins/tpm"
+
     if [ -d "$tpm" ]; then
         cd "$tpm"
         git pull
@@ -92,7 +94,7 @@ ensure_tpm() {
         git clone https://github.com/tmux-plugins/tpm "$tpm"
     fi
 
-    "$tpm/bin/install_plugins"
+    TMUX='' tmux -f "$tmux/plugins.conf" new-session -s temp "$tpm/bin/install_plugins"
 }
 
 main
