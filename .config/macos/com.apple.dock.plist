@@ -7,13 +7,13 @@
 	<key>largesize</key>
 	<real>68</real>
 	<key>last-messagetrace-stamp</key>
-	<real>635719359.99523497</real>
+	<real>636928959.92563903</real>
 	<key>loc</key>
 	<string>en_US:US</string>
 	<key>magnification</key>
 	<true/>
 	<key>mod-count</key>
-	<integer>79</integer>
+	<integer>92</integer>
 	<key>orientation</key>
 	<string>bottom</string>
 	<key>persistent-apps</key>
@@ -127,8 +127,8 @@
 				AAAAAAAAAAAAAAAAAAAATAEAAAQAAAADAwAAAAAAIAwA
 				AAABAQAAQXBwbGljYXRpb25zCQAAAAEBAABTbGFjay5h
 				cHAAAAAIAAAAAQYAABAAAAAkAAAACAAAAAQDAACgPEwB
-				AAAAAAgAAAAEAwAAAWR4AQAAAAAIAAAAAQYAAEgAAABY
-				AAAACAAAAAAEAABBwtSVFwAAABgAAAABAgAAAgAAAAAA
+				AAAAAAgAAAAEAwAAIzT1AQAAAAAIAAAAAQYAAEgAAABY
+				AAAACAAAAAAEAABBwuobYgAAABgAAAABAgAAAgAAAAAA
 				AAAPAAAAAAAAAAAAAAAAAAAACAAAAAEJAABmaWxlOi8v
 				LwwAAAABAQAATWFjaW50b3NoIEhECAAAAAQDAAAAoCBo
 				dAAAAAgAAAAABAAAQcG7GSvaZqUkAAAAAQEAAERCMjJG
@@ -155,11 +155,11 @@
 				<key>file-label</key>
 				<string>Slack</string>
 				<key>file-mod-date</key>
-				<integer>3692995374</integer>
+				<integer>3695816644</integer>
 				<key>file-type</key>
 				<integer>41</integer>
 				<key>parent-mod-date</key>
-				<integer>28371955367351</integer>
+				<integer>260764047518538</integer>
 			</dict>
 			<key>tile-type</key>
 			<string>file-tile</string>
@@ -359,6 +359,58 @@
 				<integer>41</integer>
 				<key>parent-mod-date</key>
 				<integer>3656093106</integer>
+			</dict>
+			<key>tile-type</key>
+			<string>file-tile</string>
+		</dict>
+		<dict>
+			<key>tile-data</key>
+			<dict>
+				<key>book</key>
+				<data>
+				Ym9va+QCAAAAAAQQMAAAAAAAAAAAAAAAAAAAAAAAAAAA
+				AAAAAAAAAAAAAAAAAAAA4AEAAAQAAAADAwAAAAAAIAUA
+				AAABAQAAVXNlcnMAAAAHAAAAAQEAAGFuZHJleWsADAAA
+				AAEBAABBcHBsaWNhdGlvbnMIAAAAAQEAAE5peCBBcHBz
+				CQAAAAEBAABpVGVybS5hcHAAAAAUAAAAAQYAABAAAAAg
+				AAAAMAAAAEQAAABUAAAACAAAAAQDAACdUwAAAAAAAAgA
+				AAAEAwAAybYGAAAAAAAIAAAABAMAABpWKgEAAAAACAAA
+				AAQDAABGg00BAAAAAAgAAAAEAwAAErERAgAAAAAUAAAA
+				AQYAAIQAAACUAAAApAAAALQAAADEAAAACAAAAAAEAABB
+				wv1VALZYXhgAAAABAgAAAgAAAAAAAAAPAAAAAAAAAAAA
+				AAAAAAAACAAAAAQDAAADAAAAAAAAAAQAAAADAwAArmGK
+				EwgAAAABCQAAZmlsZTovLy8MAAAAAQEAAE1hY2ludG9z
+				aCBIRAgAAAAEAwAAAKAgaHQAAAAIAAAAAAQAAEHBuxkr
+				2malJAAAAAEBAABEQjIyRjVBMi1FMEIzLTRGOEItOUVD
+				RS1DN0ZFMDE4RDM2NjMYAAAAAQIAAIEAAAABAAAA7xMA
+				AAEAAAAAAAAAAAAAAAEAAAABAQAALwAAAAAAAAABBQAA
+				zAAAAP7///8BAAAAAAAAABAAAAAEEAAAaAAAAAAAAAAF
+				EAAA1AAAAAAAAAAQEAAAAAEAAAAAAABAEAAA8AAAAAAA
+				AAACIAAAzAEAAAAAAAAFIAAAPAEAAAAAAAAQIAAATAEA
+				AAAAAAARIAAAgAEAAAAAAAASIAAAYAEAAAAAAAATIAAA
+				cAEAAAAAAAAgIAAArAEAAAAAAAAwIAAA2AEAAAAAAAAB
+				wAAAIAEAAAAAAAARwAAAIAAAAAAAAAASwAAAMAEAAAAA
+				AAAQ0AAABAAAAAAAAAA=
+				</data>
+				<key>bundle-identifier</key>
+				<string>com.googlecode.iterm2</string>
+				<key>dock-extra</key>
+				<false/>
+				<key>file-data</key>
+				<dict>
+					<key>_CFURLString</key>
+					<string>file:///Users/andreyk/Applications/Nix%20Apps/iTerm.app/</string>
+					<key>_CFURLStringType</key>
+					<integer>15</integer>
+				</dict>
+				<key>file-label</key>
+				<string>iTerm</string>
+				<key>file-mod-date</key>
+				<integer>119549818053377</integer>
+				<key>file-type</key>
+				<integer>41</integer>
+				<key>parent-mod-date</key>
+				<integer>119511163347713</integer>
 			</dict>
 			<key>tile-type</key>
 			<string>file-tile</string>
