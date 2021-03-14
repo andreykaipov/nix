@@ -5,7 +5,14 @@ set -e
 
 nl="$(printf '\nx')"; nl="${nl%x}"
 
+case "$(uname -s)" in
+    Linux)  os=linux ;;
+    Darwin) os=darwin ;;
+    *)      >&2 echo "Unknown OS"; exit 1;;
+esac
+
 main() {
+    ensure_prereqs
     ensure_nix
     ensure_apps
     ensure_nvim
@@ -13,16 +20,16 @@ main() {
     echo "Done"
 }
 
+ensure_prereqs() {
+    if [ -n "${WSL_DISTRO_NAME:-}" ]; then
+        ~/.meta/install.wsl.sh
+    fi
+}
+
 # see https://nixos.org/manual/nix/stable/#sect-single-user-installation
 # and https://nixos.org/manual/nix/stable/#sect-macos-installation
 ensure_nix() {
     echo "Ensuring Nix"
-
-    case "$(uname -s)" in
-        Linux)  os=linux ;;
-        Darwin) os=darwin ;;
-        *)      >&2 echo "Unknown OS"; exit 1;;
-    esac
 
     if [ "$os" = darwin ]; then
         nixargs="--darwin-use-unencrypted-nix-store-volume";
@@ -46,6 +53,8 @@ ensure_nix() {
 
 ensure_apps() {
     echo "Ensuring apps"
+
+    if [ "$os" != darwin ]; then return; fi
 
     IFS="$nl"
     hashApp() {
@@ -97,4 +106,4 @@ ensure_tpm() {
     TMUX='' tmux -f "$tmux/plugins.conf" new-session -s temp "$tpm/bin/install_plugins"
 }
 
-main
+main "$@"
