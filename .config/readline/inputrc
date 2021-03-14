@@ -2,7 +2,7 @@
 # For quick context on adding emacs bindings to the vi-insert keymap: https://unix.stackexchange.com/q/303631/152529
 # For quick context on the different input modes: https://unix.stackexchange.com/q/303479/152529
 
-# nice
+# vi mode by default but emacs keybindings are added in below
 set editing-mode vi
 set show-mode-in-prompt on
 
@@ -30,6 +30,11 @@ set keymap vi-command
 "\e[A": history-search-backward
 "\e[B": history-search-forward
 set keymap vi-insert
+# can't decide
+"\eK": history-search-backward
+"\eJ": history-search-forward
+"\C-k": history-search-backward
+"\C-j": history-search-forward
 "\e[A": history-search-backward
 "\e[B": history-search-forward
 "\e[Z": menu-complete
@@ -63,7 +68,6 @@ set keymap vi-insert
 "\e\C-?": backward-kill-word
 
 "\C-i": complete
-"\C-k": kill-line
 "\C-l": clear-screen
 "\C-n": menu-complete
 "\C-o": operate-and-get-next
@@ -137,3 +141,14 @@ set keymap vi-insert
 "\ey": yank-pop
 "\e{": complete-into-braces
 "\e~": complete-username
+
+# remove default (?) bindings that get in the way my butter fingers
+set keymap emacs
+"\ex": ''
+"\ev": ''
+set keymap vi-command
+"\ex": ''
+"\ev": ''
+set keymap vi-insert
+"\ex": ''
+"\ev": ''
