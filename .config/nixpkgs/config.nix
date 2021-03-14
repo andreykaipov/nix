@@ -51,6 +51,12 @@ let
 
   forLinux = with stable; [];
 
+  forWSL = with stable; [
+    gcc
+    unzip
+    (import ./cli/win32yank)
+  ];
+
   forWork = with stable; [
     (callPackage ./cli/fly-v4.2.5 {})
     (callPackage ./cli/safe-v0.9.9 {})
@@ -67,6 +73,7 @@ let
   inherit (stable.lib) optional flatten;
   inherit (stable.stdenv) isDarwin isLinux;
   isWork = builtins.pathExists ~/.config/sh/env.work;
+  isWSL = (builtins.getEnv "WSL_DISTRO_NAME") != "";
 in
 {
   packageOverrides = pkgs: with stable; {
@@ -76,6 +83,7 @@ in
         common
         (optional isDarwin forDarwin)
         (optional isLinux forLinux)
+        (optional isWSL forWSL)
         (optional isWork forWork)
       ];
     };
