@@ -46,6 +46,7 @@ ensure_nix() {
         nix-shell -p nix-info --run "nix-info -m"
     fi
 
+    git checkout -- ~/.nix-channels
     nix-channel --update     # update
     nix-env --install --attr nixpkgs.mine # install
     # nix-collect-garbage -d   # cleanup
