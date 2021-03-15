@@ -21,8 +21,12 @@ main() {
 }
 
 ensure_prereqs() {
-    if [ -n "${WSL_DISTRO_NAME:-}" ]; then
+    if [ "$os" = linux ] && [ -n "${WSL_DISTRO_NAME:-}" ]; then
         ~/.meta/install.wsl.sh
+    fi
+
+    if [ "$os" = darwin ]; then
+        ~/.meta/install.macos.sh
     fi
 }
 
