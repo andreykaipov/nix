@@ -45,13 +45,7 @@
 . ~/.config/sh/functions # for pathify
 
 # Nix stuff
-# Taken from the ~/.nix-profile/etc/profile.d/nix.sh script
-NIX_PROFILES="$(echo "
-    /nix/var/nix/profiles/default
-    $HOME/.nix-profile
-" | pathify ' ')"; export NIX_PROFILES
-export NIX_SSL_CERT_FILE="$HOME/.nix-profile/etc/ssl/certs/ca-bundle.crt"
-export NIX_PATH="$HOME/.nix-defexpr/channels"
+. ~/.nix-profile/etc/profile.d/nix.sh
 
 # Go stuff
 export GOBIN="$HOME/go/bin"
