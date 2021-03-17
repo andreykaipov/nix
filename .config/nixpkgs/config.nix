@@ -47,6 +47,7 @@ let
     (callPackage ./apps/rectangle {})
     (callPackage ./apps/spotify {})
     coreutils
+    (import ./cli/iproute2mac)
   ];
 
   forLinux = with stable; [];
