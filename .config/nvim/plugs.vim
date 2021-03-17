@@ -40,4 +40,4 @@ Plug 'LnL7/vim-nix'
 Plug 'pangloss/vim-javascript'
 
 " dope
-Plug 'timburgess/extempore.vim'
+" Plug 'timburgess/extempore.vim'
