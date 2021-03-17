@@ -57,6 +57,9 @@
 !.config/windows.terminal
 !.config/windows.terminal/settings.json
 
+!.config/dnsproxy
+!.config/dnsproxy/*.conf
+
 !.dir_colors
 !.shlogin
 !.shooks
@@ -75,4 +78,4 @@
 # the install script instead.
 !bin
 !bin/.gitkeep
-!bin/git-condensed-status*
+!bin/*

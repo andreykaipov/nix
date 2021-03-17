@@ -54,7 +54,9 @@ let
 
   forWSL = with stable; [
     gcc
+    gnumake
     unzip
+    (import ./cli/dns-tcp-socks-proxy)
     (import ./cli/win32yank)
   ];
 
