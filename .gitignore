@@ -79,3 +79,5 @@
 !bin
 !bin/.gitkeep
 !bin/*
+!bin/lib
+!bin/lib/*

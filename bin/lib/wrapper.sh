@@ -1,11 +1,38 @@
 #!/bin/sh
+#
+# This script has two halves, and they're separated by a large turd.
+#
+# The first time this script is sourced, only the second half is relevant. It
+# preprocesses the script that sourced this file, and then exec's it in a new
+# shell, adding in the `__wrapper "$@"` invocation.
+#
+# The second time this script is sourced, the first half is relevant. It defines
+# functions that could be used in our original script (e.g. argr and argo).
+#
+#     - Technically these functions are also available during the first source,
+#       since well... it comes first, but they're not really relevant. Overhead
+#       is minimal since it's mostly just function definitions, apart from the
+#       conditional logic to stop the second source from bleeding into the
+#       second half.
 
-wrapper() {
-        #parseargs "$@"
-        trap exit INT TERM
-        trap __cleanup EXIT
-        main "$@"
-        wait
+debug() {
+        if [ -z "$DEBUG" ]; then return; fi
+        if [ -n "$shitval" ]; then name="*$f*"; fi
+        # current pid, parent pid
+        >&2 echo "| ${name-$f} [$$,$PPID] | $*"
+}
+
+usage() {
+        positionalargs="$(
+                awk -vORS=' ' '
+                        /^argr/ { print "<" $2 ">" }
+                        /^argo/ { print "[" $2 "]" }
+                ' "$0"
+        )"
+
+        cat <<EOF
+Usage: $0 $positionalargs
+EOF
 }
 
 argr() {
@@ -25,71 +52,82 @@ argo() {
         eval "$name=\"\$1\""
 }
 
-# shellcheck disable=SC2154
-usage() {
-        positionalargs="$(
-                awk -vORS=' ' '
-                        /^argr/ { print "<" $2 ">" }
-                        /^argo/ { print "[" $2 "]" }
-                ' "$0"
-        )"
-
-        cat <<EOF
-Usage: $0 $positionalargs
-EOF
-
-}
-
-__cleanup() {
-        cleanup 2>/dev/null
-        echo
-        kill -- -$$
-}
-
 fullpath() {
         echo "$(cd "$(dirname "$1")" && pwd -P)/$(basename "$1")"
 }
 
-# sourced from the silly exec'd shell below
-# shellcheck disable=SC2154
-if [ -n "$__lmao" ]; then
-        # echo 5: $$
-        # echo 6: $PPID
+__wrapper() {
+        #parseargs "$@"
+        trap exit INT TERM
+        trap __cleanup EXIT
+        main "$@"
+        wait
+}
+
+__cleanup() {
+        echo
+        debug "running provided cleanup, if any"
+        cleanup 2>/dev/null
+
+        pgid="$(ps -o pgid= $$ | tr -d ' ')"
+        debug "killing pgid '$pgid'"
+        kill -- -"$pgid"
+}
+
+
+# The variable we use to check if our script has been shittified depends on the
+# script name, in case our shit script ever calls more shit scripts. We can't
+# carelessly mix up our shit!
+
+f="$0"
+fname="$(basename "$f")"
+fslug="$(printf "%s" "$fname" | tr -c -- 'a-zA-Z0-9_' _)"
+shitvar="__shittified_$fslug"
+shitval="$(eval "echo \"\$$shitvar\"")"
+
+debug "sourced this lib"
+
+if [ -n "$shitval" ]; then
+        debug "but it was already shit"
         return
 fi
 
-# sourced from running our parent script
-if (return 2>/dev/null); then
-        # echo 1: $$
-        # echo 2: $PPID
+################################################################################
+######################################turd######################################
+################################################################################
 
-        f="$(ps -o cmd= "$$" | awk '{print $2}')" # or maybe just use $0?
-        fdir="$(dirname "$f")"
-        name="$(basename "$f")"
+# fullf="$(fullpath "$f")"
+# name="$(basename "$fullf")"
+# this="$(dirname "$fullf")/lib/wrapper.sh"
+# argscontent="$(awk '/^args\(\) {$/ {f=1; next} /^}$/ {f=0} f' "$sourcedby")"
+# usage="$(awk '/^usage "$/ {f=1; next} /^"$/ {f=0} f' "$sourcedby")"
+# '"$(awk '!/\/lib\/wrapper.sh/' "$sourcedby")"'
+# '"$(awk '1; /^# shit$/ {exit}' "$this")"'
 
-        # fullf="$(fullpath "$f")"
-        # name="$(basename "$fullf")"
-        # this="$(dirname "$fullf")/lib/wrapper.sh"
-        # argscontent="$(awk '/^args\(\) {$/ {f=1; next} /^}$/ {f=0} f' "$sourcedby")"
-        # usage="$(awk '/^usage "$/ {f=1; next} /^"$/ {f=0} f' "$sourcedby")"
-        # '"$(awk '!/\/lib\/wrapper.sh/' "$sourcedby")"'
-        # '"$(awk '1; /^# lmao$/ {exit}' "$this")"'
+# modify original script contents
+scriptmod="$(
+        2>/dev/null awk '
+                /^argr/ { $3="\"\$@\"; shift"; print; next }
+                /^argo/ { $3="\"\$@\"; shift 2>/dev/null"; print; next }
+                1
+        ' "$f"
+)"
 
-        # modify original script contents
-        scriptmod="$(
-                2>/dev/null awk '
-                        /^argr/ { $3="\"\$@\"; shift"; print; next }
-                        /^argo/ { $3="\"\$@\"; shift 2>/dev/null"; print; next }
-                        1
-                ' "$f"
-        )"
+fdir="$(dirname "$f")"
 
-        cd "$fdir" || return
-        __lmao=1 exec sh -c '
-                '"$scriptmod"'
-                wrapper "$@"
-        ' "$name" "$@"
-else
-        echo "This script isn't executable"
-        exit 1
-fi
+debug "modified contents of '$f'"
+debug "changing into '$fdir' and exec'ing wrapper"
+
+# so that our (modified) script can properly source this lib
+cd "$fdir" || return
+
+# shellcheck disable=SC2016
+exec env "$shitvar=1" sh -c '
+        if [ -n "$DEBUG" ]; then
+                >&2 echo "| *$0* [$$,$PPID] | running modified script inside exec'\''ed shell"
+        fi
+
+        '"$scriptmod"'
+
+        __wrapper "$@"
+' "$fname" "$@"
