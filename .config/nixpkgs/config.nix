@@ -23,6 +23,7 @@ let
       imagemagick
       jq
       shellcheck
+      sshuttle
       terraform-docs
       tflint
       tmux

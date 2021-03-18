@@ -1,0 +1,36 @@
+#!/bin/sh
+# shellcheck disable=SC2086
+
+main() {
+    # sshuttle can parse our SSH config, but we also need the IP to exclude it
+    # from our connection, so parse it out
+
+    if ! grep -qE '^Host smart-toaster$' ~/.ssh/config; then
+        >&2 echo "There's no smart-toaster defined in our ~/.ssh/config :("
+        exit 1
+    fi
+
+    smart_toaster_ip="$(
+        awk '
+            /Host smart-toaster/,/HostName/ { ip=$2 }
+            1 { next }
+            END { print ip }
+        ' ~/.ssh/config
+    )"
+
+    ranges='
+        10.48.0.0/12
+        10.64.0.0/10
+        10.128.0.0/9
+    '
+    sshuttle \
+        -v \
+        --ssh-cmd "ssh -F $HOME/.ssh/config" \
+        --dns \
+        --remote smart-toaster --exclude "$smart_toaster_ip" \
+        $ranges
+
+    echo
+}
+
+main "$@"
