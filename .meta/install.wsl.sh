@@ -11,8 +11,10 @@ main() {
 }
 
 fix_resolvconf() {
-    if grep -q '# added by install.wsl.sh' /etc/resolv.conf; then return; fi
-    if grep -q 'generateResolvConf = false' /etc/wsl.conf; then return; fi
+    if grep -q '# added by install.wsl.sh' /etc/resolv.conf &&
+       grep -q 'generateResolvConf = false' /etc/wsl.conf; then
+       return
+    fi
 
     sudo chattr -i /etc/resolv.conf 2>/dev/null || true
     sudo rm /etc/resolv.conf
