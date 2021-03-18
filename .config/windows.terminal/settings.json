@@ -25,7 +25,7 @@
         "defaults": {
             "colorScheme" : "Tango Dark Tweaked",
             "fontFace": "Consolas",
-            "fontSize": 10,
+            "fontSize": 14,
             "padding": "0",
             "scrollbarState": "hidden",
             "historySize": 0,
@@ -36,8 +36,8 @@
         },
         "list": [{
             "guid": "{00000000-0000-0000-0000-000000000001}",
-            "name": "Ubuntu 18.04",
-            "commandline": "wsl.exe -d Ubuntu-18.04 -- cd ~; ENV=.shlogin exec sh"
+            "name": "Ubuntu 20.04",
+            "commandline": "wsl.exe -d Ubuntu-20.04 -- cd ~; ENV=~/.config/sh/login exec sh"
         }]
     },
     "schemes": [{
@@ -63,11 +63,12 @@
         "brightWhite"  : "#eeeeee"
     }],
     "keybindings": [
+        { "command": "find", "keys": "ctrl+shift+f" },
         { "command": "unbound", "keys": "alt+down" },
         { "command": "unbound", "keys": "alt+left" },
         { "command": "unbound", "keys": "alt+right" },
         { "command": "unbound", "keys": "alt+up" },
         { "command": "unbound", "keys": "alt+j" },
-        { "command": "find", "keys": "ctrl+shift+f" }
+        {}
     ]
 }
