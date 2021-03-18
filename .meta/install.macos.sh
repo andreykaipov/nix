@@ -23,7 +23,7 @@ enable_remote_login() {
 }
 
 fix_dns() {
-    if [ "$(scutil --dns | grep -Ec '1.1.1.1|8.8.8.8')" -eq 2 ]; then return; fi
+    if [ "$(scutil --dns | grep -E '1.1.1.1|8.8.8.8' | sort | uniq | wc -l)" -eq 2 ]; then return; fi
 
     # networksetup -listallnetworkservices
     sudo networksetup -setsearchdomains Wi-Fi empty
@@ -55,11 +55,14 @@ augment_sudoers() {
 # added by install.macos.sh
 
 # passwordless sudo things
+$(if [ -r ~/.config/sh/env.work ]; then echo '
+%admin ALL=(ALL:ALL) NOPASSWD: ALL'; else echo "
 %admin ALL=(ALL:ALL) NOPASSWD: \\
                                $(command -v pmset) ,\\
                                $(command -v cat)   ,\\
                                $(command -v grep)  ,\\
-                               $(command -v rm) -rf "$HOME/Applications/Nix Apps/*"
+                               $(command -v rm) -rf $HOME/Applications/Nix Apps/*
+"; fi)
 EOF
     visudo -cf /tmp/sudoers.augment || exit 1
 
