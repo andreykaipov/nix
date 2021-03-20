@@ -7,8 +7,8 @@
 let
   common = flatten [
     (with stable; [
-      (callPackage ./cli/dircolors.hex {})
-      (callPackage ./cli/neovim {})
+      dircolors_hex
+      neovim
       asciinema
       bash-completion
       bashInteractive_5
@@ -64,7 +64,7 @@ let
   forWork = with stable; [
     (callPackage ./cli/fly-v4.2.5 {})
     (callPackage ./cli/safe-v0.9.9 {})
-    (callPackage ./cli/spruce-v1.18.2 {})
+    spruce-v1_18_2
     google-cloud-sdk
     kubectl
     kubernetes-helm
