@@ -15,6 +15,12 @@ $ curl -sLo- https://raw.githubusercontent.com/andreykaipov/home/master/.meta/in
 $ ~/.meta/install.sh
 ```
 
+Want to reinstall for whatever reason?
+
+```console
+$ FORCE_REINSTALL=1 ~/.meta/install.sh
+```
+
 ## work
 
 _Secret_ work environment variables go in `~/.config/sh/env.work`. When this
@@ -33,3 +39,13 @@ Set the Git email accordingly in `~/.config/git/work`.
 - Setting `GIT_CEILING_DIRECTORIES=$HOME` prevents Git from working inside
   non-Git subdirectories, so accidentally mucking around with this repo is
   practically impossible unless we're in `$HOME`.
+
+---
+
+## nix oops?
+
+```console
+$ nix-collect-garbage -d
+$ nix-store --verify --repair --check-contents
+$ FORCE_REINSTALL=1 ~/.meta/install.sh`
+```
