@@ -14,7 +14,8 @@ main() {
 }
 
 enable_remote_login() {
-    if nc -z localhost 22 >/dev/null; then return; fi
+    if [ -z "$FORCE_REINSTALL" ] &&
+       nc -z localhost 22 >/dev/null; then return; fi
 
     sudo systemsetup -getremotelogin
     sudo systemsetup -setremotelogin on || {
@@ -23,7 +24,10 @@ enable_remote_login() {
 }
 
 fix_dns() {
-    if [ "$(scutil --dns | grep -E '1.1.1.1|8.8.8.8' | sort | uniq | wc -l)" -eq 2 ]; then return; fi
+    if [ -z "$FORCE_REINSTALL" ] &&
+       [ "$(scutil --dns | grep -E '1.1.1.1|8.8.8.8' | sort | uniq | wc -l)" -eq 2 ]; then
+       return
+    fi
 
     # networksetup -listallnetworkservices
     sudo networksetup -setsearchdomains Wi-Fi empty
@@ -33,7 +37,8 @@ fix_dns() {
 }
 
 fix_hosts() {
-    if grep -q '# added by install.macos.sh' /etc/hosts; then return; fi
+    if [ -z "$FORCE_REINSTALL" ] &&
+       grep -q '# added by install.macos.sh' /etc/hosts; then return; fi
 
     sudo tee /etc/hosts >/dev/null <<EOF
 # added by install.macos.sh
@@ -49,7 +54,8 @@ EOF
 }
 
 augment_sudoers() {
-    if [ -r /etc/sudoers.d/extra ] && [ -z "$FORCE_REINSTALL" ]; then return; fi
+    if [ -z "$FORCE_REINSTALL" ] &&
+       [ -r /etc/sudoers.d/extra ]; then return; fi
 
     tee /tmp/sudoers.augment >/dev/null <<EOF
 # added by install.macos.sh
@@ -74,6 +80,7 @@ EOF
     sudo chown root /etc/sudoers.d/extra
 }
 
+# not used
 augment_pamd_sudo() {
     if grep -q '# added by install.macos.sh' /etc/pam.d/sudo; then return; fi
 
