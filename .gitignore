@@ -12,6 +12,7 @@
 !.nix-channels
 !.config/nixpkgs
 !.config/nixpkgs/**
+.config/nixpkgs/**/result
 
 !.config/nix
 !.config/nix/**
