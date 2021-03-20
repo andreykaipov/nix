@@ -19,9 +19,6 @@ alias l='ll'
 # gotta stay safe
 alias rm='rm -i'
 
-alias vi='nvim'
-alias vim='nvim'
-
 alias k='kubectl'
 
 # better less
