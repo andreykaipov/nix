@@ -88,17 +88,14 @@ SHELL="$(command -v bash)"; export SHELL
 eval "$(dircolors.hex "$HOME/.config/dircolors/dircolors")"
 
 # Bash-specific stuff for pretty history
+export HISTSIZE=1000 # in memory
+export HISTFILESIZE=5000
 export HISTFILE="$HOME/.bash_history"
-export HISTTIMEFORMAT="%F %T "
-export HISTCONTROL=ignoredups:ignorespace
+export HISTTIMEFORMAT="%F %T  "
+export HISTCONTROL=ignoredups:erasedups:ignorespace
 
 # Miscellaneous
 export INPUTRC="$HOME/.config/readline/inputrc"
 export PAGER="less -R"
 export TMP="${TMP:-/tmp}"
 export TMPDIR="${TMPDIR:-$TMP}"
-
-# On Windows 10... if this new Nix shit even works on WSL
-if [ -n "${WSL_DISTRO_NAME:-}" ]; then
-    export DOCKER_HOST=tcp://localhost:2375
-fi
