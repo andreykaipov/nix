@@ -3,7 +3,7 @@
 # For quick context on the different input modes: https://unix.stackexchange.com/q/303479/152529
 
 # vi mode by default but emacs keybindings are added in below
-set editing-mode vi
+set editing-mode emacs
 set show-mode-in-prompt on
 
 # for consistency across the different terminals we might use
@@ -23,132 +23,139 @@ set visible-stats on
 set mark-directories on
 set mark-symlinked-directories on
 
-# better incremental search through history
-set keymap vi-command
-"k": history-search-backward
-"j": history-search-forward
-"\e[A": history-search-backward
-"\e[B": history-search-forward
-set keymap vi-insert
-# can't decide
+# \e can be either Escape or the Alt/Option/Meta key
+set keymap emacs
+# these bother me, i've no clue how they work, and can't be bothered to learn
+"\e-": nop
+"\e0": nop
+"\e1": nop
+"\e2": nop
+"\e3": nop
+"\e4": nop
+"\e5": nop
+"\e6": nop
+"\e7": nop
+"\e8": nop
+"\e9": nop
+
+# misc
+"\C-x\C-r": re-read-init-file
+"\C-m": accept-line  # enter
+"\C-j": accept-line  # different enter?
+"\C-l": clear-screen
+
+# like the original \C-x\C-e but way better
+"\e1":" edit-and-execute-command.sh\C-m"
+
+# completion things
+"\C-i": complete
+"\e[Z": nop
+"\C-n": menu-complete
+"\C-p": menu-complete-backward
+
+# history things
+"\C-r": reverse-search-history
+"\C-s": forward-search-history
+#
 "\eK": history-search-backward
 "\eJ": history-search-forward
 "\C-k": history-search-backward
 "\C-j": history-search-forward
 "\e[A": history-search-backward
 "\e[B": history-search-forward
-"\e[Z": menu-complete
 
-# binds for cycling through different modes
-set keymap emacs
-"\ee": vi-editing-mode
-set keymap vi-command
-"\ee": emacs-editing-mode
-set keymap vi-insert
-"\ee": vi-movement-mode
-
-# Add emacs keybindings to vi-insert rather than the other way around because we
-# want to able to easily switch into command mode whenever. See the
-# unix.stackexchange.com answer above for this list.
-#
-# TODO - prune this list to remove bindings we never use at all. Gotta stay
-# neat. :)
-"\C-@": set-mark
-"\C-]": character-search
-"\C-_": undo
+# line, word, and character traversals
 "\C-a": beginning-of-line
-"\C-b": backward-char
-"\C-d": delete-char
 "\C-e": end-of-line
-"\C-f": forward-char
-"\C-g": abort
-
-"\C-h": backward-delete-char
-"\e\C-h": backward-kill-word
-"\e\C-?": backward-kill-word
-
-"\C-i": complete
-"\C-l": clear-screen
-"\C-n": menu-complete
-"\C-o": operate-and-get-next
-"\C-p": menu-complete-backward
-"\C-q": quoted-insert
-"\C-r": reverse-search-history
-"\C-w": unix-word-rubout
-"\C-x!": possible-command-completions
-"\C-x$": possible-variable-completions
-"\C-x(": start-kbd-macro
-"\C-x)": end-kbd-macro
-"\C-x*": glob-expand-word
-"\C-x/": possible-filename-completions
-"\C-x@": possible-hostname-completions
-"\C-x\C-?": backward-kill-line
-"\C-x\C-e": edit-and-execute-command
-"\C-x\C-g": abort
-"\C-x\C-r": re-read-init-file
-"\C-x\C-u": undo
-"\C-x\C-v": display-shell-version
-"\C-x\C-x": exchange-point-and-mark
-"\C-xe": call-last-kbd-macro
-"\C-xg": glob-list-expansions
-"\C-x~": possible-username-completions
-"\e ": set-mark
-"\e#": insert-comment
-"\e$": complete-variable
-"\e&": tilde-expand
-"\e*": insert-completions
-"\e-": digit-argument
-"\e.": insert-last-argument
-"\e.": yank-last-arg
-"\e/": complete-filename
-"\e0": digit-argument
-"\e1": digit-argument
-"\e2": digit-argument
-"\e3": digit-argument
-"\e4": digit-argument
-"\e5": digit-argument
-"\e6": digit-argument
-"\e7": digit-argument
-"\e8": digit-argument
-"\e9": digit-argument
-"\e<": beginning-of-history
-"\e=": possible-completions
-"\e>": end-of-history
-"\e?": possible-completions
-"\e@": complete-hostname
-"\e\C-]": character-search-backward
-"\e\C-e": shell-expand-line
-"\e\C-g": abort
-"\e\C-i": dynamic-complete-history
-"\e\C-r": revert-line
-"\e\C-y": yank-nth-arg
-"\e\\": delete-horizontal-space
-"\e\e": complete
-"\e^": history-expand-line
-"\e_": insert-last-argument
-"\e_": yank-last-arg
-"\eb": backward-word
-"\ec": capitalize-word
-"\ed": kill-word
 "\ef": forward-word
-"\eg": glob-complete-word
-"\el": downcase-word
-"\en": non-incremental-forward-search-history
-"\ep": non-incremental-reverse-search-history
-"\er": revert-line
-"\et": transpose-words
-"\eu": upcase-word
-"\ey": yank-pop
-"\e{": complete-into-braces
-"\e~": complete-username
+"\eb": backward-word
+"\C-f": forward-char
+"\C-b": backward-char
 
-# remove default (?) bindings that get in the way my butter fingers
-set keymap emacs
-"\ex": ''
-"\ev": ''
-set keymap vi-command
-"\ex": ''
-"\ev": ''
-set keymap vi-insert
-"\ex": ''
-"\ev": ''
+# line, word, and character removals
+"\C-u": unix-line-discard
+"\C-w": unix-word-rubout
+"\e\C-?": backward-kill-word # alt-backspace on WSL
+"\e\C-h": backward-kill-word # alt-backspace
+"\ed": kill-word
+"\C-d": delete-char
+"\C-?": backward-delete-char # backspace on WSL
+"\C-h": backward-delete-char # different backspace?
+
+######################################################################
+
+# find default list for emacs with
+# INPUTRC=- bind -pm emacs | grep -vE '^#|: (do-lowercase-version|self-insert)$'
+#
+# find list of functions with bind -l
+#
+# remove things from this list when i actually adapt them above
+
+# "\C-g": abort
+# "\C-x\C-g": abort
+# "\e\C-g": abort
+# "\e<": beginning-of-history
+# "\e[200~": bracketed-paste-begin
+# "\C-xe": call-last-kbd-macro
+# "\ec": capitalize-word
+# "\C-]": character-search
+# "\e\C-]": character-search-backward
+# "\C-l": clear-screen
+# "\e!": complete-command
+# "\e/": complete-filename
+# "\e@": complete-hostname
+# "\e{": complete-into-braces
+# "\e~": complete-username
+# "\e$": complete-variable
+# "\e\\": delete-horizontal-space
+# "\C-x\C-v": display-shell-version
+# "\el": downcase-word
+# "\e\C-i": dynamic-complete-history
+# "\C-x\C-e": edit-and-execute-command
+# "\C-x)": end-kbd-macro
+# "\e>": end-of-history
+# "\C-x\C-x": exchange-point-and-mark
+# "\eg": glob-complete-word
+# "\C-x*": glob-expand-word
+# "\C-xg": glob-list-expansions
+# "\e^": history-expand-line
+# "\e#": insert-comment
+# "\e*": insert-completions
+# "\e.": insert-last-argument
+# "\e_": insert-last-argument
+# "\C-n": next-history
+# "\eOB": next-history
+# "\e[B": next-history
+# "\en": non-incremental-forward-search-history
+# "\ep": non-incremental-reverse-search-history
+# "\C-o": operate-and-get-next
+# "\e[2~": overwrite-mode
+# "\C-x!": possible-command-completions
+# "\e=": possible-completions
+# "\e?": possible-completions
+# "\C-x/": possible-filename-completions
+# "\C-x@": possible-hostname-completions
+# "\C-x~": possible-username-completions
+# "\C-x$": possible-variable-completions
+# "\C-p": previous-history
+# "\eOA": previous-history
+# "\e[A": previous-history
+# "\C-q": quoted-insert
+# "\C-v": quoted-insert
+# "\e\C-r": revert-line
+# "\er": revert-line
+# "\C-@": set-mark
+# "\e ": set-mark
+# "\e\C-e": shell-expand-line
+# "\C-x(": start-kbd-macro
+# "\e&": tilde-expand
+# "\C-t": transpose-chars
+# "\et": transpose-words
+# "\C-x\C-u": undo
+# "\C-_": undo
+# "\eu": upcase-word
+# "\C-y": yank
+# "\e.": yank-last-arg
+# "\e_": yank-last-arg
+# "\e\C-y": yank-nth-arg
+# "\ey": yank-pop
