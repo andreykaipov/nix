@@ -16,6 +16,7 @@
     "theme": "dark",
     "rowsToScroll": 0,
     "copyOnSelect": true,
+    "wordDelimiters": "()':,;<>~!@#$%^&*|+=[]{}~?",
     "defaultProfile": "{00000000-0000-0000-0000-000000000001}",
     "disabledProfileSources": [
         "Windows.Terminal.Azure",

@@ -1,0 +1,13 @@
+#!/bin/sh
+# shellcheck disable=SC2086
+
+winhome="$(wslpath "$(wslvar USERPROFILE)")"
+settings="$winhome/AppData/Local/Packages/Microsoft.WindowsTerminal*/LocalState/settings.json"
+
+if ! [ -r $settings ]; then
+	echo "Couldn't find Windows Terminal settings at $settings"
+	exit 1
+fi
+
+cp $settings "$HOME/.config/windows.terminal/settings.json"
+echo OK
