@@ -11,7 +11,8 @@ main() {
 }
 
 fix_resolvconf() {
-    if grep -q '# added by install.wsl.sh' /etc/resolv.conf &&
+    if [ -z "$FORCE_REINSTALL" ] &&
+       grep -q '# added by install.wsl.sh' /etc/resolv.conf &&
        grep -q 'generateResolvConf = false' /etc/wsl.conf; then
        return
     fi
@@ -25,7 +26,7 @@ nameserver 8.8.8.8
 EOF
     sudo chattr +i /etc/resolv.conf
 
-    sudo tee -a /etc/wsl.conf <<EOF
+    sudo tee /etc/wsl.conf <<EOF
 [network]
 generateResolvConf = false
 EOF
