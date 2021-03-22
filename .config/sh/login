@@ -80,20 +80,32 @@ ensure_ssh_agent() {
 
 ensure_tmux() {
     echo "Setting up tmux..."
-    if [ -z "$TMUX" ]; then
-        if tmux ls -F '#{session_name}' | grep -qx local; then
-            echo "Local tmux session already exists"
-            echo "If you'd really like to, we'll attach into it in 3 seconds"
-            echo "Otherwise, send ^C"
-            sleep 3
-            exec tmux attach -t local
-        else
-            echo "Starting local tmux session"
-            exec tmux -f ~/.config/tmux/core.conf new -s local
-        fi
-    else
+
+    if [ -n "$TMUX" ]; then
         echo "We're already inside of a tmux session"
+        return
     fi
+
+    if tmux ls -F '#{session_name}' | grep -qx local; then
+        echo "Local tmux session already exists"
+        echo "If you'd really like to, we'll attach into it in 3 seconds"
+        echo "Otherwise, send ^C"
+        sleep 3
+        exec tmux attach -t local
+    else
+        echo "Starting local tmux session"
+        exec tmux -f ~/.config/tmux/core.conf new -s local
+    fi
+}
+
+ensure_ssh() {
+    echo "We're connected over SSH; skipping tmux"
+    echo "It's likely you've already got a local tmux session going"
+
+    # same as the default-command within our tmux config
+    # TODO maybe figure out a neat way to set the tmux setting
+    # from this script to not duplicate this command
+    ENV=~/.config/sh/rc exec bash --noprofile --norc --posix
 }
 
 main() {
@@ -105,7 +117,12 @@ main() {
     fi
 
     ensure_ssh_agent
-    ensure_tmux
+
+    if [ -n "$SSH_TTY" ]; then
+        ensure_ssh
+    else
+        ensure_tmux
+    fi
 }
 
 main
