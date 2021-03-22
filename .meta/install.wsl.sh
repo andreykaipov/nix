@@ -6,11 +6,20 @@ set -e
 main() {
     echo "Running within a WSL distro"
     fix_resolvconf
+    fix_wslconf
     prep_nix
     echo "WSL configuration good"
 }
 
 fix_resolvconf() {
+    if pgrep -f proxy-socks >/dev/null; then
+        echo "!!!"
+        echo "Looks like you've got a proxy open"
+        echo "Won't touch /etc/resolv.conf"
+        echo "!!!"
+        return
+    fi
+
     if [ -z "$FORCE_REINSTALL" ] &&
        grep -q '# added by install.wsl.sh' /etc/resolv.conf &&
        grep -q 'generateResolvConf = false' /etc/wsl.conf; then
@@ -24,9 +33,16 @@ fix_resolvconf() {
 nameserver 1.1.1.1
 nameserver 8.8.8.8
 EOF
-    sudo chattr +i /etc/resolv.conf
+    #sudo chattr +i /etc/resolv.conf
+}
+
+fix_wslconf() {
+    if [ -z "$FORCE_REINSTALL" ] &&
+        grep -q '# added by install.wsl.sh' /etc/wsl.conf; then return; fi
 
     sudo tee /etc/wsl.conf <<EOF
+# added by install.wsl.sh
+
 [network]
 generateResolvConf = false
 EOF
