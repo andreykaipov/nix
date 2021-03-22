@@ -12,6 +12,8 @@ case "$(uname -s)" in
 esac
 
 main() {
+    trap 'cd -' EXIT
+    cd "$HOME"
     ensure_prereqs
     ensure_nix
     ensure_apps
@@ -92,6 +94,8 @@ ensure_nvim() {
     # nvim itself is installed through nix
 
     nvim +PlugInstall +qa
+
+    echo "You're good"
 }
 
 ensure_tpm() {
