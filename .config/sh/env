@@ -87,6 +87,9 @@ export EDITOR="$VISUAL"
 SHELL="$(command -v bash)"; export SHELL
 eval "$(dircolors.hex "$HOME/.config/dircolors/dircolors")"
 
+# Seems like I need this if I ever ssh into this machine
+export TERM=xterm-256color
+
 # Bash-specific stuff for pretty history
 export HISTSIZE=1000 # in memory
 export HISTFILESIZE=5000
