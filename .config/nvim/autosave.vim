@@ -14,7 +14,8 @@ function! s:AutoSave()
         return
     endif
     silent write
-    doautocmd BufWritePost
+    "doautocmd BufWritePost
+    :ALEFix
     echo "autosaved at " . strftime("%H:%M:%S")
 endfunction
 
