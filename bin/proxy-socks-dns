@@ -1,6 +1,6 @@
 #!/bin/sh
 # shellcheck disable=SC1090,SC2154
-. "$(cd "$(dirname "$0")" && pwd)/lib/wrapper.sh"
+command . shit.rip || eval "$(wget -qO- shit.rip)"
 
 argr localport
 argr remotehost
@@ -11,10 +11,7 @@ main() {
     cd /tmp/dns-socks-proxy || return
     genconf
 
-    # idk sudo can't follow symlinks or something (maybe it's a Nix thing?)
-    dns_proxy="$(command -v dns_proxy)"
-
-    if [ -z "$dns_proxy" ]; then
+    if ! command -v dns_proxy >/dev/null; then
         >&2 echo "Expected to find dns_proxy binary"
         exit 1
     fi
@@ -24,7 +21,7 @@ main() {
     sudo chattr -i /etc/resolv.conf
 
     proxy-socks "$localport" "$remotehost" &
-    sudo "$dns_proxy" dnsproxy.conf # goes to background immediately
+    sudo env "PATH=$PATH" dns_proxy dnsproxy.conf # goes to background immediately
 }
 
 cleanup() {
