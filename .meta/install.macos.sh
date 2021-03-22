@@ -5,12 +5,35 @@ set -e
 
 main() {
     echo "Running macOS configuration"
+    augment_sudoers
+    set_power_schedule
     enable_remote_login
     fix_dns
     fix_hosts
-    augment_sudoers
     # augment_pamd_sudo
     echo "macOS configuration good"
+}
+
+set_power_schedule() {
+    # only for work
+    # we want to power it on so we can SSH into it
+
+    if ! [ -r ~/.config/sh/env.work ]; then return; fi
+
+    output="$(pmset -g sched)"
+    expected='Repeating power events:
+  wakepoweron at 8:00AM weekdays only
+  sleep at 6:00PM weekdays only'
+
+    if [ "$output" = "$expected" ]; then return; fi
+
+    echo "Adjusting work power/sleep schedule"
+
+    sudo pmset repeat \
+        wakeorpoweron MTWRF 08:00:00 \
+        sleep MTWRF 18:00:00
+
+    pmset -g sched
 }
 
 enable_remote_login() {
@@ -60,7 +83,6 @@ augment_sudoers() {
     tee /tmp/sudoers.augment >/dev/null <<EOF
 # added by install.macos.sh
 
-# passwordless sudo things
 $(if [ -r ~/.config/sh/env.work ]; then echo '
 %admin ALL=(ALL:ALL) NOPASSWD: ALL'; else echo "
 %admin ALL=(ALL:ALL) NOPASSWD: \\
