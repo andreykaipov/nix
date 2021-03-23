@@ -53,6 +53,9 @@
 !.config/git
 !.config/git/*
 
+!.config/npm
+!.config/npm/*
+
 !.config/alacritty
 !.config/alacritty/alacritty.tmpl.yml
 !.config/windows.terminal
