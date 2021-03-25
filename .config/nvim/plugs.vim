@@ -12,8 +12,14 @@ Plug 'guns/xterm-color-table.vim'
 " detect buffer options and set them automatically per file
 Plug 'tpope/vim-sleuth'
 
-" colorize text in hex form
-Plug 'lilydjwg/colorizer'
+" colorize text in hex
+" TODO: maybe get rid of lilydjwg's colorizer?
+" I'll see if it gives me issues
+" Plug 'lilydjwg/colorizer'
+"
+" chrisbra's colorizes text in ansi-escaped colors too
+"
+Plug 'chrisbra/Colorizer'
 
 " async linting
 Plug 'dense-analysis/ale'

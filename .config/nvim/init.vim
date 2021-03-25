@@ -148,6 +148,10 @@ exec printf('source %s/numbers.vim', root)
 exec printf('source %s/autosave.vim', root)
 exec printf('source %s/autocomplete.vim', root)
 
+" we want to tell our plugin to colorize these files BEFORE we open them, so
+" this variable has to be set here, and not in after/plugin
+let g:colorizer_auto_filetype = 'css,html,dircolors'
+
 " When formatting via gq, vim will try to add two spaces after periods. This is
 " not the late 19th century, and is a silly default.
 set nojoinspaces

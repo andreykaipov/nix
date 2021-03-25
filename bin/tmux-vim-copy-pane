@@ -37,7 +37,7 @@ new_id="$(
 	-P -F '#{session_name}:#{window_index}.#{pane_index}' '
 		tmux show-buffer -b output |
 		sed -e :a -e "/^$/{\$d;N;ba" -e "}" |
-		nvim -R +ColorToggle +
+		nvim -R +ColorHighlight +
 	'
 )"
 

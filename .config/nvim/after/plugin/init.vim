@@ -36,9 +36,10 @@ set noshowmode
 " don't colorize larger files
 " https://github.com/lilydjwg/colorizer#known-issues
 "
-let g:colorizer_maxlines = 1000
-let g:colorizer_fgcontrast = 0
-let g:colorizer_no_map = 0
+" lilydjwg's colorizer, maybe don't get rid of it just yet
+"let g:colorizer_maxlines = 1000
+"let g:colorizer_fgcontrast = 0
+"let g:colorizer_no_map = 0
 
 " I want the verb at front of the command
 command! ToggleColor :ColorToggle
