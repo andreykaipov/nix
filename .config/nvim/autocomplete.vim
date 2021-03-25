@@ -31,10 +31,11 @@ inoremap <expr> <C-p> pumvisible() ? '<C-p>' :
   \ '<C-p><C-r>=pumvisible() ? "\<lt>Up>" : ""<CR>'
 
 " hide preview window after completions
+" only relevant for preview windows in normal buffers
 augroup closepumpreview
-    au!
-    autocmd CursorMovedI * if pumvisible() == 0|pclose|endif
-    autocmd InsertLeave * if pumvisible() == 0|pclose|endif
+    autocmd!
+    autocmd CursorMovedI,InsertLeave *
+    \ if &buftype == '' && pumvisible() == 0 | pclose | endif
 augroup END
 
 " new shortcuts:

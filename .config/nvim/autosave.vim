@@ -10,9 +10,10 @@ set updatetime=10000
 " that to actually mimic a manual `:w`. For example, ALE listens for it to run
 " fixers on save.
 function! s:AutoSave()
-    if &filetype == 'help'
-        return
-    endif
+    if @% == '' | return | endif             " no file name
+    if &write == 0 | return | endif          " writes disabled (nvim -m)
+    if &readonly == 1 | return | endif       " readonly (nvim -R)
+    if &buftype != '' | return | endif       " :h buftype to read up on this
     silent write
     "doautocmd BufWritePost
     :ALEFix
@@ -30,7 +31,7 @@ function! s:ToggleAutoSave()
         augroup AutoSave
             autocmd!
             autocmd CursorHold,CursorHoldI * :call s:AutoSave()
-            autocmd InsertLeave * :call s:AutoSave()
+            autocmd TextChanged,InsertLeave * :call s:AutoSave()
         augroup END
     endif
 endfunction
