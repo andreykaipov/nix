@@ -101,7 +101,8 @@ export HISTSIZE=1000 # in memory
 export HISTFILESIZE=5000
 export HISTFILE="$HOME/.bash_history"
 export HISTTIMEFORMAT="%F %T  "
-export HISTCONTROL=ignoredups:erasedups:ignorespace
+export HISTCONTROL=ignoredups:erasedups
+export HISTIGNORE='\:;*:'
 
 # Miscellaneous
 export INPUTRC="$HOME/.config/readline/inputrc"
