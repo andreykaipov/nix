@@ -145,6 +145,7 @@ setprompt() {
     # \011 tab
     PS4='+\011'
 
+    prompt=''
     if [ -n "$SSH_TTY" ]; then
         prompt="\1\e[0;31m\2${HOSTNAME:=$(hostname)}\1\e[0m\2"
     fi
