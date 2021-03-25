@@ -17,7 +17,7 @@
 # ~/.config/readline/inputrc to see how I invoke this.
 
 # delete two minutes later in case we want to save our temp thing
-trap '{ sleep 120; unlink "$f"; } &' INT TERM EXIT
+trap '{ sleep 120; unlink "$f" 2>/dev/null; } &' INT TERM EXIT
 
 f="$(mktemp).sh"
 

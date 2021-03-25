@@ -44,9 +44,6 @@ set keymap emacs
 "\C-j": accept-line  # different enter?
 "\C-l": clear-screen
 
-# like the original \C-x\C-e but way better
-"\e1":" edit-and-execute-command.sh\C-m"
-
 # completion things
 "\C-i": complete
 "\e[Z": nop

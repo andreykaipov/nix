@@ -161,6 +161,8 @@ reset_readline_bindings() {
     for f in $readline_functions; do bind -u "$f"; done
     bind -f ~/.config/readline/inputrc
 
+    bind -x '"\ee":edit-and-execute-command'
+
     # enables \C-s to be sent for our forward-search-history binding
     stty -ixon
 }
