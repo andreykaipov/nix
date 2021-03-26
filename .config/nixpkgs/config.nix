@@ -7,13 +7,12 @@
 let
   common = flatten [
     (with stable; [
-      dircolors_hex
-      neovim
       asciinema
       bash-completion
       bashInteractive_5
       bat
       cmake
+      dircolors_hex
       ffmpeg
       fzf
       gifsicle
@@ -23,7 +22,6 @@ let
       imagemagick
       jq
       shellcheck
-      sshuttle
       terraform-docs
       tflint
       tmux
@@ -34,6 +32,8 @@ let
     ])
 
     (with latest; [
+      neovim
+      sshuttle
       terraform_0_14
       terragrunt
     ])
@@ -48,7 +48,7 @@ let
     (callPackage ./apps/rectangle {})
     (callPackage ./apps/spotify {})
     coreutils
-    (import ./cli/iproute2mac)
+    iproute2mac
   ];
 
   forLinux = with stable; [];
@@ -57,14 +57,11 @@ let
     gcc
     gnumake
     unzip
-    (import ./cli/dns-tcp-socks-proxy)
-    (import ./cli/win32yank)
+    dns-tcp-socks-proxy
+    win32yank
   ];
 
   forWork = with stable; [
-    (callPackage ./cli/fly-v4.2.5 {})
-    (callPackage ./cli/safe-v0.9.9 {})
-    spruce-v1_18_2
     google-cloud-sdk
     kubectl
     kubernetes-helm
@@ -72,6 +69,10 @@ let
     nodejs-14_x
     vault
     yarn
+
+    fly-v4_2_5
+    safe-v0_9_9
+    spruce-v1_18_2
   ];
 
   inherit (stable.lib) optional flatten;

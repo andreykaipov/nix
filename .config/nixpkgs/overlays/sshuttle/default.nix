@@ -27,7 +27,7 @@ with super.python3Packages; {
     nativeBuildInputs = old.nativeBuildInputs ++ [psutil];
 
     # Python runtime dependencies
-    propagatedBuildInputs = [ psutil ];
+    propagatedBuildInputs = [psutil];
 
   });
 

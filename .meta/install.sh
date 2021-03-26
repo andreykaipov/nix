@@ -56,6 +56,11 @@ ensure_nix() {
     nix-channel --update     # update
     nix-env --install --attr nixpkgs.mine # install
     # nix-collect-garbage -d   # cleanup
+
+    # hard link a common shell.nix for each of our custom derivations
+    for dir in ~/.config/nixpkgs/cli/*/; do
+        ln -f ~/.config/nixpkgs/cli/shell.nix -t "$dir"
+    done
 }
 
 ensure_apps() {

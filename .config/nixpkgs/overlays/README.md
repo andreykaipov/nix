@@ -83,6 +83,10 @@ We put each overlay in its own directory. Since Nix recursively traverses
 at all. However, it's neater than having all of our overlays in just one
 directory since they may include additional files like patches or configuration.
 
+Any derivations we've built for custom packages go into the root `overlays.nix`
+file, so that we don't have to import them in our
+`~/.config/nixpkgs/config.nix`, and can make that look neat. :)
+
 ### info
 
 Within an overlay:
