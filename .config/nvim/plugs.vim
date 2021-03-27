@@ -45,5 +45,8 @@ Plug 'LnL7/vim-nix'
 " javascript
 Plug 'pangloss/vim-javascript'
 
+" powershell
+Plug 'zigford/vim-powershell'
+
 " dope
 " Plug 'timburgess/extempore.vim'
