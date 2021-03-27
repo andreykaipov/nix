@@ -1,87 +1,35 @@
+# ignore everything
 *
 
-# metaf
+# except these
 !.gitignore
 !README.md
-!.meta
-!.meta/*
-# endmetaf
-
-!.config
-
 !.nix-channels
-!.config/nixpkgs
-!.config/nixpkgs/**
+!.meta
+!.meta/**
+!bin
+!bin/**
+
+# liberally include everything in our .config
+!.config
+!.config/**
+
+# and then ignore things we don't want
+.config/configstore
+.config/dnsproxy/debug.log
+.config/gcloud
 .config/nixpkgs/**/result
-
-!.config/nix
-!.config/nix/**
-.config/nix/links
-
-!.config/sh
-!.config/sh/*
+.config/nvim/.netrwhist
+.config/nvim/autoload
+.config/nvim/tmp/bak/*~
+.config/nvim/tmp/swp
+.config/nvim/tmp/undo
 .config/sh/env.work
+.config/tmux/plugins
+.config/wslu
 
-!.config/nvim
-!.config/nvim/*.vim
-!.config/nvim/ft*
-!.config/nvim/ft*/*.vim
-!.config/nvim/after
-!.config/nvim/after/*plugin
-!.config/nvim/after/*plugin/*.vim
-!.config/nvim/tmp
-!.config/nvim/tmp/bak
-!.config/nvim/tmp/bak/.gitkeep
-
-!.config/tmux
-!.config/tmux/*.conf
-!.config/tmux/plugins
-!.config/tmux/plugins/.gitkeep
-
-!.config/readline
-!.config/readline/inputrc
-
-!.config/macos/
-!.config/macos/*.plist
-
-!.config/htop
-!.config/htop/htoprc
-
-!.config/dircolors
-!.config/dircolors/dircolors
-
-!.config/git
-!.config/git/*
-
-!.config/npm
-!.config/npm/*
-
-!.config/alacritty
-!.config/alacritty/alacritty.tmpl.yml
-!.config/windows.terminal
-!.config/windows.terminal/settings.json
-
-!.config/dnsproxy
-!.config/dnsproxy/*.conf
-
-!.dir_colors
-!.shlogin
-!.shooks
-!.shrc
-!.shenv
-!.shalias
-!.shfunction
-!.tmux.conf
-
+# TODO generate authorized_keys out of all my public keys
 !.ssh
-!.ssh/*.pub
+!.ssh/authorized_keys
 !.ssh/autoadd
 !.ssh/autoadd/*.pub
-
-# TODO - consider moving these binaries to separate projects and adding them to
-# the install script instead.
-!bin
-!bin/.gitkeep
-!bin/*
-!bin/lib
-!bin/lib/*

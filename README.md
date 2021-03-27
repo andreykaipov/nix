@@ -36,6 +36,10 @@ Set the Git email accordingly in `~/.config/git/work`.
 - Every tracked file must explicitly exist in our `.gitignore`, so we can't
   accidentally add a file we don't want.
 
+  _edit_: Since I've neatly organized everything under `.config` now, I'm now
+  liberally including everything under `.config`, excluding things that pop up
+  during the occasional `git status`.
+
 - Setting `GIT_CEILING_DIRECTORIES=$HOME` prevents Git from working inside
   non-Git subdirectories, so accidentally mucking around with this repo is
   practically impossible unless we're in `$HOME`.
