@@ -1,5 +1,5 @@
 #!/bin/sh
-# Tmux has the option of setting it's copy mode to have Vi-like bindings, but
+# Tmux has the option of setting its copy mode to have Vi-like bindings, but
 # let's be honest... it's not really Vim. However, we can harness all the power
 # of Vim by copying our pane output into Vim!
 #

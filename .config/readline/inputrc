@@ -38,6 +38,8 @@ set keymap emacs
 "\e8": nop
 "\e9": nop
 
+"\ep": nop # our tmux's paste
+
 # misc
 "\C-x\C-r": re-read-init-file
 "\C-m": accept-line  # enter
