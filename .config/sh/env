@@ -70,12 +70,10 @@ PATH="$(echo "
 
     $GOBIN
     $HOME/npm/bin
-    #$HOME/local/bin
-    #$PYENV_ROOT/shims
 
-    #/mnt/c/Windows/System32/WindowsPowerShell/v1.0
-    #/mnt/c/Windows/System32
-    #/mnt/c/Windows
+    /mnt/c/Windows/System32/WindowsPowerShell/v1.0
+    /mnt/c/Windows/System32
+    /mnt/c/Windows
 " | pathify)"; export PATH
 
 # Force Git to only work from our home directory
