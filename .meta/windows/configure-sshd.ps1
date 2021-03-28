@@ -46,7 +46,7 @@ function patch {
     cp .meta\windows\sshd_config C:\ProgramData\ssh\sshd_config
     Restart-Service sshd
 
-    Write-Output "Updating default shell to our WSL distro"
+    Write-Output 'Updating default shell to our WSL distro'
 
     # not sure how to pass any flags to wsl.exe here,
     # or the difference between using wsl.exe and bash.exe
@@ -57,6 +57,10 @@ function patch {
         -Value 'C:\Windows\System32\wsl.exe' `
         -PropertyType String `
         -Force
+
+    Write-Output "Copying authorized_keys to $HOME\.ssh"
+
+    cp .ssh\authorized_keys "$HOME\.ssh\"
 }
 
 main

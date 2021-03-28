@@ -1,0 +1,10 @@
+#!/bin/sh
+
+cd "$HOME/.ssh" || exit
+
+rm -f authorized_keys
+
+for pub in autoadd/*.pub; do
+	echo "# $pub" >> authorized_keys
+	cat "$pub"    >> authorized_keys
+done
