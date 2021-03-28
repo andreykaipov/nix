@@ -1,0 +1,16 @@
+#!/bin/sh
+
+f="$1"
+name="$2"
+
+if [ -z "$f" ]; then
+    >&2 echo "Enter the file name, e.g. ~/.ssh/macos.home.pem"
+    exit 1
+fi
+
+if [ -z "$name" ]; then
+    name="$USER"
+    >&2 echo "Name was empty, so defaulting to '$name'"
+fi
+
+ssh-keygen -t rsa -b 4096 -f "$f" -C "$name"
