@@ -2,21 +2,28 @@
 set autowrite
 
 " CursorHold(I) time in milliseconds
-set updatetime=10000
+set updatetime=3000
 
 " TODO - look into disabling history and swp files since we're autosaving
 "
-" We manually issue a BufWritePost event for any autocmds that would listen for
-" that to actually mimic a manual `:w`. For example, ALE listens for it to run
-" fixers on save.
 function! s:AutoSave()
     if @% == '' | return | endif             " no file name
     if &write == 0 | return | endif          " writes disabled (nvim -m)
     if &readonly == 1 | return | endif       " readonly (nvim -R)
     if &buftype != '' | return | endif       " :h buftype to read up on this
-    silent write
-    "doautocmd BufWritePost
-    :ALEFix
+    if &modified == 0 | return | endif       " file wasn't modified
+
+    " An update won't touch our file if we haven't changed it. Probably doesn't
+    " matter since we already check for &modified above. We also temporarily
+    " unset our undofile before updating, because an unnecessary "0 changes"
+    " entry would be written into the undofile otherwise. Not sure why!
+    set noundofile | update | set undofile
+
+    " Issue a BufWritePost event for any autocmds that would listen for it. This
+    " way we actual mimic a manual `:update`. For example, ALE listens for it to
+    " run fixers on save.
+    doautocmd BufWritePost
+
     echo "autosaved at " . strftime("%H:%M:%S")
 endfunction
 
