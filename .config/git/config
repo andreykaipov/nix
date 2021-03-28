@@ -12,3 +12,6 @@
 
 [includeIf "gitdir:~/work/**"]
     path = work
+
+[includeIf "gitdir:~/work/github/**"]
+    path = github
