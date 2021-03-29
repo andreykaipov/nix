@@ -19,6 +19,7 @@ main() {
     ensure_apps
     ensure_nvim
     ensure_tpm
+    ssh-generate-authorized-keys
     echo "Done"
 }
 

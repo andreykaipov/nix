@@ -1,4 +1,5 @@
 #!/bin/sh
+# shellcheck disable=SC1090,SC1091
 #
 # .shlogin contains commands to bootstrap our login shell. How do we invoke this
 # file if we don't use the traditional .profile naming convention for login
@@ -44,13 +45,16 @@
 # saved!
 
 # 1. If there's more than one agent running, terminate them all.
-# 2. Read ~/.ssh-agent for the connection info.
+# 2. Read ~/.cache/ssh/vars for the connection info.
 # 3. If `ssh-add -l` exits 2, we've failed to connect.
-#    either the socket has been cleaned up, the process was killed, or the agent
-#    is just not running. in any case, kill the remaining agent process if any,
-#    and start up a new agent, writing its connection info to ~/.ssh-agent.
+#    Either the socket has been cleaned up, the process was killed, or the agent
+#    is just not running. In any case, kill the remaining agent process if any,
+#    and start up a new agent, writing its connection info to
+#    ~/.cache/ssh/vars.
 # 4. Otherwise, we're good and we add our keys.
 ensure_ssh_agent() {
+    mkdir -p ~/.cache/ssh; cd ~/.cache/ssh || return
+
     ssh_agent_pids="$(ps -e | awk '$NF == "ssh-agent" {print $1}')"
     if [ "$(echo "$ssh_agent_pids" | wc -l)" -gt 1 ]; then
         echo "More than one SSH agent is running. Terminating them all."
@@ -58,8 +62,9 @@ ensure_ssh_agent() {
     fi
 
     echo "Setting up SSH agent..."
-    if [ -r ~/.ssh-agent ]; then
-        . ~/.ssh-agent
+    if [ -r ./vars ]; then
+        echo "Previous SSH agent vars exist, using them..."
+        . ./vars
     fi
 
     # see http://man7.org/linux/man-pages/man1/ssh-add.1.html#EXIT_STATUS
@@ -67,15 +72,18 @@ ensure_ssh_agent() {
     ssh_status="$?"
 
     if [ "$ssh_status" -eq 2 ]; then
+        echo "Was unable to contact the SSH agent, restarting..."
         kill -TERM "$ssh_agent_pids" 2> /dev/null
         echo "Starting ssh-agent"
-        (umask 0066; ssh-agent -s > ~/.ssh-agent)
-        . ~/.ssh-agent
+        (umask 0066; ssh-agent -s > vars)
+        . ./vars
     else
         echo "Looks like it was already running!"
     fi
 
-    ssh-add ~/.ssh/autoadd/*.pem
+    cd - || return
+
+    ssh-add ~/.config/ssh/autoadd/*.pem
 }
 
 ensure_tmux() {
@@ -83,6 +91,12 @@ ensure_tmux() {
 
     if [ -n "$TMUX" ]; then
         echo "We're already inside of a tmux session"
+
+        # If this login init script was ran again, make sure our Tmux session
+        # has got the latest SSH agent vars for any new panes
+        tmux set-environment -gt local SSH_AUTH_SOCK "$SSH_AUTH_SOCK"
+        tmux set-environment -gt local SSH_AGENT_PID "$SSH_AGENT_PID"
+
         return
     fi
 

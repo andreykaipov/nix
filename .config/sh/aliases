@@ -14,6 +14,11 @@ ll() {
     ls -AlGFh --group-directories-first --color "$@" | sort -s -k8,8
 }
 
+# SSH doesn't really support XDG config paths, so these are workarounds
+# See https://wiki.archlinux.org/index.php/XDG_Base_Directory
+alias ssh='ssh -F ~/.config/ssh/config'
+alias scp='scp -F ~/.config/ssh/config'
+
 alias l='ll'
 
 # gotta stay safe

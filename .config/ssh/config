@@ -1,0 +1,15 @@
+# vim: ft=sshconfig
+#
+# To workaround SSH's lack of XDG path support, we have to specify full paths
+# below, e.g. ~/.config/ssh/<blah>
+
+Host *
+    # keys will still be added to our known hosts, and we'll still get the
+    # warning, so calm yourself
+    StrictHostKeyChecking no
+
+    HashKnownHosts no
+
+    UserKnownHostsFile ~/.cache/ssh/known_hosts
+
+Include ~/.config/ssh/config.d/*

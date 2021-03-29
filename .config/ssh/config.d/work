@@ -1,0 +1,29 @@
+# vim: ft=sshconfig
+
+Host smart-toaster work
+    User andreyk
+    HostName 10.0.0.67
+
+# Interactive variant of above
+Host work
+    RemoteCommand ENV=~/.config/sh/login exec sh
+    RequestTTY yes
+
+Host mia atl tor dlas1 plas1
+    User andreyk
+    SendEnv VAULT_*
+Host mia
+    ProxyJump smart-toaster
+    HostName jumpbox-dev00.mia.ucloud.int
+Host dlas1
+    ProxyJump smart-toaster
+    HostName jumpbox-dlas100.dlas1.ucloud.int
+Host tor
+    ProxyJump smart-toaster
+    HostName jumpbox-tor200.tor.ucloud.int
+Host atl
+    ProxyJump mia
+    HostName jumpbox-atl200.atl.ucloud.int
+Host plas1
+    ProxyJump mia
+    HostName jumpbox-plas100.plas1.ucloud.int
