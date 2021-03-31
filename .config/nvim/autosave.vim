@@ -17,7 +17,8 @@ function! s:AutoSave()
     " matter since we already check for &modified above. We also temporarily
     " unset our undofile before updating, because an unnecessary "0 changes"
     " entry would be written into the undofile otherwise. Not sure why!
-    set noundofile | update | set undofile
+    "set noundofile | update | set undofile
+    update
 
     " Issue a BufWritePost event for any autocmds that would listen for it. This
     " way we actual mimic a manual `:update`. For example, ALE listens for it to
