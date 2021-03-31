@@ -84,7 +84,7 @@ safesource ~/.nix-profile/etc/bash_completion.d/gcloud.inc
 # http://man7.org/linux/man-pages/man1/tmux.1.html#NAMES_AND_TITLES.
 # shellcheck disable=SC2039
 setpanetitle() {
-    # paneindex="$(tmux display -pt "${TMUX_PANE:?}" '#{pane_index}')"
+    paneindex="$(tmux display-message -pt "${TMUX_PANE:?}" '#{pane_index}')"
 
     [ "${__ret_last_cmd:-0}" = 0 ] && color="#[fg=green,bold]" || color="#[fg=red,bold]"
     retcolor() { printf "$color%s#[default]" "$1"; }
@@ -98,7 +98,7 @@ setpanetitle() {
     path="#[fg=yellow,bold]${PWD/$HOME/'~'}#[default]"
     git="$(git condensed-status-tmux)"
 
-    printf "\e]2;%s\e\\" "$smiley $path $git"
+    printf "\e]2;%s\e\\" "[$paneindex] $smiley $path $git"
 }
 
 # the escape sequence doesn't work, so we just invoke tmux directly
