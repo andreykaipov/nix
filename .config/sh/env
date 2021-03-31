@@ -95,8 +95,8 @@ eval "$(dircolors.hex "$HOME/.config/dircolors/dircolors")"
 export TERM=xterm-256color
 
 # Bash-specific stuff for pretty history
-export HISTSIZE=1000 # in memory
-export HISTFILESIZE=5000
+export HISTSIZE=10000 # in memory
+export HISTFILESIZE=20000
 export HISTFILE="$HOME/.bash_history"
 export HISTTIMEFORMAT="%F %T  "
 export HISTCONTROL=ignoredups:erasedups
