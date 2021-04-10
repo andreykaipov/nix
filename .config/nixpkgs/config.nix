@@ -40,13 +40,6 @@ let
   ];
 
   forDarwin = with stable; [
-    (callPackage ./apps/1password {})
-    (callPackage ./apps/barrier {})
-    (callPackage ./apps/discord {})
-    (callPackage ./apps/docker {})
-    (callPackage ./apps/iterm2 {})
-    (callPackage ./apps/rectangle {})
-    (callPackage ./apps/spotify {})
     coreutils
     iproute2mac
   ];
@@ -90,6 +83,19 @@ in
         (optional isLinux forLinux)
         (optional isWSL forWSL)
         (optional isWork forWork)
+      ];
+    };
+
+    macos-apps = buildEnv {
+      name = "my-macos-apps";
+      paths = [
+        (callPackage ./apps/1password {})
+        (callPackage ./apps/barrier {})
+        (callPackage ./apps/discord {})
+        (callPackage ./apps/docker {})
+        (callPackage ./apps/iterm2 {})
+        (callPackage ./apps/rectangle {})
+        (callPackage ./apps/spotify {})
       ];
     };
   };

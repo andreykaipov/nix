@@ -65,9 +65,11 @@ ensure_nix() {
 }
 
 ensure_apps() {
+    if [ "$os" != darwin ]; then return; fi
+
     echo "Ensuring apps"
 
-    if [ "$os" != darwin ]; then return; fi
+    nix-env --install --attr nixpkgs.macos-apps
 
     IFS="$nl"
     hashApp() {
@@ -79,13 +81,19 @@ ensure_apps() {
 
     mkdir -p ~/Applications/Nix\ Apps
 
-    find /nix/store/*my-packages/Applications/*.app -maxdepth 1 -type l | while read -r app; do
+    appspath="$(nix eval --raw nixpkgs.macos-apps.outPath)"
+
+    find "$appspath"/Applications/*.app -maxdepth 1 -type l | while read -r app; do
         echo "$app"
+
         name="$(basename "$app")"
+
         src="$(/usr/bin/stat -f%Y "$app")"
         dst="$HOME/Applications/Nix Apps/$name"
+
         hash1="$(hashApp "$src")"
         hash2="$(hashApp "$dst")"
+
         if [ "$hash1" != "$hash2" ]; then
             echo "Current hash of '$name' differs than the Nix store's. Overwriting..."
             sudo rm -rf "$dst"
