@@ -1,4 +1,5 @@
 {
+  master ? import <master> {},
   latest ? import <unstable> {},
   stable ? import <stable> {},
   ...
@@ -9,7 +10,6 @@ let
     (with stable; [
       asciinema
       bash-completion
-      bashInteractive_5
       bat
       cmake
       dircolors_hex
@@ -21,21 +21,27 @@ let
       htop
       imagemagick
       jq
+      shfmt
       shellcheck
-      terraform-docs
-      tflint
       tmux
       tre-command
       tree
       upx
       yq-go
+      mysql-client
     ])
 
     (with latest; [
+      bashInteractive_5
       neovim
       sshuttle
-      terraform_0_14
+      terraform-docs
+      tflint
+    ])
+
+    (with master; [
       terragrunt
+      terraform_0_15
     ])
   ];
 
@@ -44,7 +50,9 @@ let
     iproute2mac
   ];
 
-  forLinux = with stable; [];
+  forLinux = with stable; [
+    neofetch
+  ];
 
   forWSL = with stable; [
     gcc
