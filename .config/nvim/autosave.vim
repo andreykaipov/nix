@@ -39,7 +39,7 @@ function! s:ToggleAutoSave()
         augroup AutoSave
             autocmd!
             autocmd CursorHold,CursorHoldI * :call s:AutoSave()
-            autocmd TextChanged,InsertLeave * :call s:AutoSave()
+            "autocmd TextChanged,InsertLeave * :call s:AutoSave()
         augroup END
     endif
 endfunction
