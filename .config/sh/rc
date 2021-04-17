@@ -85,6 +85,7 @@ safesource ~/.nix-profile/etc/bash_completion.d/gcloud.inc
 # shellcheck disable=SC2039
 setpanetitle() {
     paneindex="$(tmux display-message -pt "${TMUX_PANE:?}" '#{pane_index}')"
+    #paneindex="#[fg=white][$paneindex]#[default]"
 
     [ "${__ret_last_cmd:-0}" = 0 ] && color="#[fg=green,bold]" || color="#[fg=red,bold]"
     retcolor() { printf "$color%s#[default]" "$1"; }
