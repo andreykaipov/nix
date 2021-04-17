@@ -48,7 +48,7 @@ set keymap emacs
 
 # completion things
 "\C-i": complete
-"\e[Z": nop
+"\e[Z": dynamic-complete-history
 "\C-n": menu-complete
 "\C-p": menu-complete-backward
 
