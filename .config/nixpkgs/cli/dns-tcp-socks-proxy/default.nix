@@ -3,14 +3,14 @@ with import <nixpkgs> {};
 let
   pname = "dns-tcp-socks-proxy";
   version = "0.0.0";
-  bin = "dns_proxy";
+  bin = "dns-proxy";
 in
   stdenv.mkDerivation {
     inherit pname version;
 
     src = fetchgit {
-      url = "https://github.com/cookiengineer/dns-tcp-socks-proxy.git";
-      sha256 = "0zki83wr4skil604k6q49ljdszv6cba68bzmws3ski96dvy7zscg";
+      url = "https://github.com/cookiengineer/dns-proxy.git";
+      sha256 = "1035g8c05cvaxnxxfv1g562asyrwia8p281ns4lxxwmqbjz3w9m6";
     };
 
     inherit bin;

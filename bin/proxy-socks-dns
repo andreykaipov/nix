@@ -11,8 +11,8 @@ main() {
     cd /tmp/dns-socks-proxy || return
     genconf
 
-    if ! command -v dns_proxy >/dev/null; then
-        >&2 echo "Expected to find dns_proxy binary"
+    if ! command -v dns-proxy >/dev/null; then
+        >&2 echo "Expected to find dns-proxy binary"
         exit 1
     fi
 
@@ -21,7 +21,7 @@ main() {
     sudo chattr -i /etc/resolv.conf
 
     proxy-socks "$localport" "$remotehost" &
-    sudo env "PATH=$PATH" dns_proxy dnsproxy.conf # goes to background immediately
+    sudo env "PATH=$PATH" dns-proxy dnsproxy.conf # goes to background immediately
 }
 
 cleanup() {
@@ -32,7 +32,7 @@ cleanup() {
 genconf() {
     # the resolvers to proxy through our SOCKS proxy
     # TODO make this an argument
-    tee resolv.conf >/dev/null <<EOF
+    tee resolv.conf <<EOF
 10.51.10.195
 10.51.10.196
 EOF
@@ -51,8 +51,8 @@ set_user  = nobody
 set_group = nogroup
 
 # file to read as resolv.conf
-resolv_conf          = resolv.conf
-rewrite_resolve_conf = true
+resolv_conf         = resolv.conf
+rewrite_resolv_conf = true
 
 # file to log to, should be /dev/null unless debugging
 log_file = debug.log
