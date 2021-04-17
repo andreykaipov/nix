@@ -26,6 +26,8 @@ alias rm='rm -i'
 
 alias k='kubectl'
 
+alias safe='safe -k'
+
 # better less
 # N line numbers
 # F quit if one screen
