@@ -136,7 +136,7 @@ set guicursor=n-v-c:ver25
 " highlight-groups for available highlight groups.
 "
 function! SetCustomHighlights()
-    highlight ColorColumn                            ctermbg=235
+    highlight ColorColumn                            ctermbg=233
     highlight CursorLine                             ctermbg=233
     highlight CursorLineNr            ctermfg=yellow ctermbg=233
     highlight Normal                  ctermfg=252    ctermbg=none
