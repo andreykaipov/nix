@@ -7,6 +7,6 @@ if [ -z "${IN_NIX_SHELL-}" ]; then
 fi
 
 git submodule update --init moderncv
-ln -f ../resume.tex -t moderncv
 cd moderncv
-tectonic resume.tex -o ../
+ln -sf ../resume.tex -t .
+tectonic resume.tex -o ../out
