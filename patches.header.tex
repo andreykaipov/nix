@@ -1,0 +1,64 @@
+\makeatletter
+
+% Get rid of the following error when trying to put \code{} inside an \email or
+% \homepage:
+%
+% ```
+% TeX capacity exceeded, sorry [input stack size=5000]
+% ```
+%
+% Have to put code in ourselves then...
+
+%% for classic
+\xpatchcmd{\makecvhead}
+  {\ifthenelse{\isundefined{\@email}}{}{\makenewline\emailsymbol\emaillink{\@email}}}
+  {\ifthenelse{\isundefined{\@email}}{}{\makenewline\code{\emailsymbol\emaillink{\@email}}}}
+  {}{}
+\xpatchcmd{\makecvhead}
+  {\ifthenelse{\isundefined{\@homepage}}{}{\makenewline\homepagesymbol\httpslink{\@homepage}}}
+  {\ifthenelse{\isundefined{\@homepage}}{}{\makenewline\code{\homepagesymbol\httpslink{\@homepage}}}}
+  {}{}
+
+%% for banking
+\xpatchcmd{\makehead}
+  {\ifthenelse{\isundefined{\@email}}{}{\addtomakeheaddetails{\emailsymbol\emaillink{\@email}}}}
+  {\ifthenelse{\isundefined{\@email}}{}{\addtomakeheaddetails{\code{\emailsymbol\emaillink{\@email}}}} }
+  {}{}
+\xpatchcmd{\makehead}
+  {\ifthenelse{\isundefined{\@homepage}}{}{\addtomakeheaddetails{\homepagesymbol\httpslink{\@homepage}}}}
+  {\ifthenelse{\isundefined{\@homepage}}{}{\addtomakeheaddetails{\code{\homepagesymbol\httpslink{\@homepage}}}}}
+  {}{}
+
+%% for undertow (same as above but different cmd)
+\xpatchcmd{\makecvhead}
+  {\ifthenelse{\isundefined{\@email}}{}{\addtomakeheaddetails{\emailsymbol\emaillink{\@email}}}}
+  {\ifthenelse{\isundefined{\@email}}{}{\addtomakeheaddetails{\code{\emailsymbol\emaillink{\@email}}}}}
+  {}{}
+\xpatchcmd{\makecvhead}
+  {\ifthenelse{\isundefined{\@homepage}}{}{\addtomakeheaddetails{\homepagesymbol\httpslink{\@homepage}}}}
+  {\ifthenelse{\isundefined{\@homepage}}{}{\addtomakeheaddetails{\code{\homepagesymbol\httpslink{\@homepage}}}}}
+  {}{}
+
+%% for banking and undertow; don't add bullet points between our info
+\xpatchcmd{\makeheaddetailssymbol}
+  {~~~{\rmfamily\textbullet}~~~}
+  {~~~~~} % five spaces
+  {}{}
+
+% Get rid of the following warnings when calling \makecvtitle:
+%
+% ```
+% Underfull \hbox (badness 10000) in paragraph
+% ```
+
+\xpatchcmd{\makehead}
+  {\\[2.5em]}
+  {\\\null}
+  {}{}
+
+\xpatchcmd{\makecvhead}
+  {\\[2.5em]}
+  {\\\null}
+  {}{}
+
+\makeatother
