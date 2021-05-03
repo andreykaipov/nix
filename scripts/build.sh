@@ -1,4 +1,8 @@
 #!/bin/sh
+#
+# This script builds our resume by symlinking the files at the root into the
+# moderncv submodule. Why use a submodule? Because we're bleeding edge dude.
+
 set -eu
 
 if [ -z "${CI-}" ] && [ -z "${IN_NIX_SHELL-}" ]; then
