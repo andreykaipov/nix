@@ -2,8 +2,8 @@
 % Resume
 % Adapated from https://github.com/moderncv/moderncv/blob/master/template.tex
 
-\documentclass[10pt,a4,sans]{moderncv} % choose a4 or letterpaper
-\usepackage[vscale=.85,hscale=.80]{geometry} % page margins
+\documentclass[10pt,letterpaper,sans]{moderncv} % choose a4 or letterpaper
+\usepackage[vscale=.89,hscale=.80]{geometry} % page margins
 
 \input{patches/preamble}
 \moderncvstylecustom[black][awesome]{classic}{banking}
@@ -23,34 +23,34 @@
   \item
       Develop and maintain internal Terraform modules abstracting development
       teams' access to public cloud services, integrating with our private cloud
-      services API, and helping them seamlessly transition into the public
-      cloud.
+      services API, and helping them transition into the public cloud.
   \item
       Developed a CLI and workflow system to automate the management of volume
       snapshots and backups for our MySQL and MongoDB services to meet our audit
-      deadlines, as they were nonexistent at the time.
+      deadlines, which were actually nonexistent at the time.
   \end{itemize}
+  %
   Developer Experience
   \begin{itemize}
   \item
       Worked closely with traditional Windows sysadmins and application owners
       to automate the heavily involved and manual configuration of our core
-      products, teaching SRE principles along the way.
+      products via Ansible playbooks, teaching SRE principles along the way.
   \end{itemize}
 }
 \cventryoneline{Jan 2020 -- Apr 2020}{Site Reliability Engineer}{Magic Leap}{Plantation, FL}{}{
   Launch Coordination
   \begin{itemize}
   \item
-      Wrote Kubernetes operators to manage GCP resources, extending our internal
-      PaaS to help our product teams transition from AWS to GCP.
+      Developed Kubernetes operators to manage GCP resources, extending our
+      internal PaaS to help our product teams transition from AWS to GCP.
   \item
-      Evangelize the technologies of our SRE sister-squads to our product teams,
-      while helping them transition to newer company-wide standards.
+      Evangelized the technologies of our SRE sister-squads to our product
+      teams, while helping them transition to newer company-wide standards.
   \item
       Performed housekeeping across the SRE organization -- upgraded Terraform
       AWS and GCP modules and projects to use the latest versions, upgraded
-      Concourse pipelines, transitioned images from ECR and GCR to our private
+      Concourse pipelines, migrated images from ECR and GCR to our private
       Docker registry, and added reusable features to our internal tooling for
       our product teams.
   \end{itemize}
@@ -59,16 +59,15 @@
   Cloud Platform \& Observability
   \begin{itemize}
   \item
-      Developed and managed a centralized logging and metrics collection
-      platform for company-wide use to support ingestion of over 5TB/day of logs
-      and metrics into our Elasticsearch and InfluxDB clusters across multiple
-      datacenters.
+      Developed and managed a centralized logging, metrics, and alerting
+      platform for company-wide, ingesting over 5TB/day of logs and metrics into
+      our multi-datacenter Elasticsearch and InfluxDB clusters.
   \item
       Managed several VM and container-based orchestration platforms for product
-      teams to leverage, including a homegrown PaaS, Pivotal Cloud Foundry, and
-      Kubernetes.
+      teams to leverage, including a homegrown PaaS, on-prem Pivotal Cloud
+      Foundry, and on-prem Kubernetes clusters.
   \item
-      Partnered with product teams to help developers understand our
+      Partnered with product teams to help developers learn about our
       infrastructure and internal tooling, and to help productionalize their
       applications and processes.
   \end{itemize}
