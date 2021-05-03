@@ -20,6 +20,10 @@
       {#3}
       {#4\hfill\raggedleft\href{https://#2/#3}{\code{#2/\hintstyle{#3}}}}
   }
+
+  \newcommand*{\cventryoneline}[7][.25em]{
+    \cventry[#1]{#2}{#3}{#4}{#5}{#6}{#7}
+  }
 } {}
 
 \ifboolexpr{
@@ -41,6 +45,22 @@
       {>{\hsize=.32\textwidth}X X}
       \href{https://#2/#3}{\code{#2/\hintstyle{#3}}} & #4
     \end{tabularx}
+    \par\addvspace{#1}}
+
+  % Reminiscent of classic
+  \newcommand*{\cventryoneline}[7][.25em]{
+      {\bfseries#3}%
+      \ifthenelse{\equal{#4}{}}{}{, {\slshape#4}}%
+      \ifthenelse{\equal{#5}{}}{}{, #5}%
+      \ifthenelse{\equal{#6}{}}{}{, #6}%
+      .\strut%
+      \hfill%
+      {\slshape#2}%
+    \ifx&#7&%
+    \else{\\%
+      \begin{minipage}{\maincolumnwidth}%
+        \normalsize#7%
+      \end{minipage}}\fi%
     \par\addvspace{#1}}
 } {}
 
