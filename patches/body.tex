@@ -95,4 +95,27 @@
     \par\nobreak\addvspace{1ex}\@afterheading}% to avoid a pagebreak after the heading
 \fi
 
+% Redefine \section for banking to expose distances between each section.
+% Example usage: \setlength{\sectiondistance}{1.5ex}
+\ifboolexpr{
+  test {\expandafter\ifstrequal\expandafter{\metamoderncvbody}{banking}}
+} {
+  \newlength{\sectiondistance}
+  \setlength{\sectiondistance}{2.5ex}
+  \RenewDocumentCommand{\section}{sm}{%
+    \par\addvspace{\sectiondistance}%
+    \phantomsection{}% reset the anchor for hyperrefs
+    \addcontentsline{toc}{section}{#2}%
+    \if@left\else\if@fullrules\else\if@mixedrules\else%
+      \sectionrule\fi\fi\fi%
+    \strut\sectionstyle{#2}%
+    \if@fullrules%
+      \sectionrule%
+    \else\if@mixedrules%
+      \sectionrule%
+    \else\if@right\else%
+      \sectionrule\fi\fi\fi%
+    \par\nobreak\addvspace{1ex}\@afterheading}
+} {}
+
 \makeatother
