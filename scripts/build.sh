@@ -11,5 +11,5 @@ printf "\e[1;33m%s\e[0m\n" "Running in nix-shell or in CI"
 mkdir -p out
 git submodule update --init moderncv
 cd moderncv
-ln -sf ../resume.tex ../custom -t .
+ln -sf ../resume.tex ../patches -t .
 tectonic resume.tex -o ../out
