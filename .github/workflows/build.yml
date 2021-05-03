@@ -7,16 +7,28 @@ on:
   pull_request:
     branches: [master]
 
+env:
+  tectonic_version: 0.4.1
+
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
       uses: actions/checkout@v2
-    - uses: wtfjoke/setup-tectonic@main
+    - name: Cache
+      uses: actions/cache@v2
       with:
+        path: ~/.cache/Tectonic
+        key: ${{ runner.os }}-tectonic-${{ hashFiles('**/*.tex') }}
+        restore-keys: |
+          ${{ runner.os }}-tectonic-
+    - name: Download Tectonic
+      uses: wtfjoke/setup-tectonic@main
+      with:
+        tectonic-version: ${{ env.tectonic_version }}
         github-token: ${{ secrets.GITHUB_TOKEN }}
-    - name: Run Tectonic
+    - name: Build our resume
       run: ./scripts/build.sh
     - name: Upload PDF
       uses: actions/upload-artifact@v2
