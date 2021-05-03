@@ -1,8 +1,19 @@
 % Smaller and squarer bullet points
 \def\labelitemi{\textopenbullet}
 
-% classic: Tweak column width
-\setlength{\hintscolumnwidth}{0.12\textwidth}
+\ifboolexpr{
+  test {\expandafter\ifstrequal\expandafter{\metamoderncvbody}{classic}}
+} {
+  % Tweak column width
+  \setlength{\hintscolumnwidth}{0.12\textwidth}
 
-% classic: Tweak thickness of section lines
-\setlength{\hintscolumnthickness}{0.55ex}
+  % Tweak thickness of section lines
+  \setlength{\hintscolumnthickness}{0.55ex}
+} {}
+
+\ifboolexpr{
+  test {\expandafter\ifstrequal\expandafter{\metamoderncvbody}{banking}}
+} {
+  %
+  \setlength{\sectiondistance}{2.5ex}
+} {}
