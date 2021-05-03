@@ -2,11 +2,11 @@
 % Resume
 % Adapated from https://github.com/moderncv/moderncv/blob/master/template.tex
 
-\documentclass[10pt,a4paper,sans]{moderncv} % or maybe letterpaper?
-\usepackage[vscale=.92,hscale=.85]{geometry} % page margins
+\documentclass[10pt,a4,sans]{moderncv} % choose a4 or letterpaper
+\usepackage[vscale=.85,hscale=.80]{geometry} % page margins
 
 \input{patches/preamble}
-\moderncvstylecustom[black][marvosym]{classic}{classic}
+\moderncvstylecustom[black][marvosym]{classic}{banking}
 
 \name{Andrey}{Kaipov}
 \email{andrey@kaipov.com}
@@ -17,7 +17,7 @@
 \vspace{-2mm}
 
 \section{Experience}
-\cventry{June 2020 -- Present}{Senior Site Reliability Engineer}{Ultimate Kronos Group}{Weston, FL}{}{
+\cventryoneline{June 2020 -- Present}{Sr Site Reliability Engineer}{Ultimate Kronos Group}{Weston, FL}{}{
   Cloud Services
   \begin{itemize}
   \item
@@ -38,7 +38,7 @@
       products, teaching SRE principles along the way.
   \end{itemize}
 }
-\cventry{Jan 2020 -- Apr 2020}{Site Reliability Engineer}{Magic Leap}{Plantation, FL}{}{
+\cventryoneline{Jan 2020 -- Apr 2020}{Site Reliability Engineer}{Magic Leap}{Plantation, FL}{}{
   Launch Coordination
   \begin{itemize}
   \item
@@ -55,43 +55,36 @@
       our product teams.
   \end{itemize}
 }
-\cventry{Jan 2017 -- Jan 2020}{Site Reliability Engineer}{Ultimate Software}{Weston, FL}{}{
-  \normalsize
+\cventryoneline{Jan 2017 -- Jan 2020}{Site Reliability Engineer}{Ultimate Software}{Weston, FL}{}{
   Cloud Platform \& Observability
   \begin{itemize}
   \item
-      Developed and operated a centralized logging and metrics collection
+      Developed and managed a centralized logging and metrics collection
       platform for company-wide use to support ingestion of over 5TB/day of logs
       and metrics into our Elasticsearch and InfluxDB clusters across multiple
       datacenters.
   \item
-      Developed and operated several VM and container-based orchestration
-      platforms for product teams to leverage, including a homegrown PaaS,
-      Pivotal Cloud Foundry, and Kubernetes.
+      Managed several VM and container-based orchestration platforms for product
+      teams to leverage, including a homegrown PaaS, Pivotal Cloud Foundry, and
+      Kubernetes.
   \item
       Partnered with product teams to help developers understand our
       infrastructure and internal tooling, and to help productionalize their
       applications and processes.
-  \item
-      Participated in an on-call rotation responding to any escalations from
-      production teams or from our NOC.
-  \item
-      Automated toil away, tracked outages, conducted postmortems, troubleshot
-      all kinds of systems, and followed SRE best practices -- the usual.
   \end{itemize}
 }
-\cventry{2016}{Software Engineer Intern}{Best Buy}{Richfield, MN}{}{}
+\cventryoneline{Summer 2016}{Software Engineer Intern}{Best Buy}{Richfield, MN}{}{}
 
 \section{Skills}
 \cventryskill{Languages}
   {Go, Shell, JavaScript, TypeScript, Python, Ruby, Java, \LaTeX.}
 \cventryskill{Tooling}
   {Docker, Terraform, Packer, Vault, Ansible, Chef, Bosh, Concourse, GitLab.}
-\cventryskill{Services.}
+\cventryskill{Services}
   {MySQL, MongoDB, Redis, RabbitMQ.}
 \cventryskill{Platforms}
   {Linux, Kubernetes, Cloud Foundry, OpenStack, GCP, AWS.}
-\cventryskill{Observability.}
+\cventryskill{Observability}
   {Elasticsearch, Logstash, Kibana, Fluent Bit, InfluxDB, Telegraf, Grafana, Sensu.}
 
 \section{Projects}
@@ -111,7 +104,7 @@
   {An over-engineered resume; you're reading it right now!}
 
 \section{Education}
-\cventry{Aug 2013 -- Dec 2016}{BS in Mathematics \& Computer Science}{Florida International University}{Miami}{FL}{
+\cventryoneline{Aug 2013 -- Dec 2016}{BS in Mathematics \& Computer Science}{Florida International University}{Miami}{FL}{
   Honors: Summa Cum Laude, Phi Beta Kappa, FIU Ambassador Scholar, Florida Academic Scholar.
 }
 
