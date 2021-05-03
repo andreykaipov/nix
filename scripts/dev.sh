@@ -6,4 +6,4 @@ if [ -z "${IN_NIX_SHELL-}" ]; then
 	exit
 fi
 
-find resume.tex custom/ -name '*.tex' | entr -cap "./scripts/build.sh"
+find resume.tex patches/ -name '*.tex' | entr -cap "./scripts/build.sh"
