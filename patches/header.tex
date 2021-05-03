@@ -8,35 +8,38 @@
 % ```
 %
 % Have to put code in ourselves then...
+%
+% We also swap the email with the homepage because I want that first, so it
+% might get confusing to read later. Sorry future Andrey. Loser!
 
 %% for classic
 \xpatchcmd{\makecvhead}
   {\ifthenelse{\isundefined{\@email}}{}{\makenewline\emailsymbol\emaillink{\@email}}}
-  {\ifthenelse{\isundefined{\@email}}{}{\makenewline\code{\emailsymbol\emaillink{\@email}}}}
+  {\ifthenelse{\isundefined{\@homepage}}{}{\makenewline\code{\homepagesymbol\httpslink{\@homepage}}}}
   {}{}
 \xpatchcmd{\makecvhead}
   {\ifthenelse{\isundefined{\@homepage}}{}{\makenewline\homepagesymbol\httpslink{\@homepage}}}
-  {\ifthenelse{\isundefined{\@homepage}}{}{\makenewline\code{\homepagesymbol\httpslink{\@homepage}}}}
+  {\ifthenelse{\isundefined{\@email}}{}{\makenewline\code{\emailsymbol\emaillink{\@email}}}}
   {}{}
 
 %% for banking
 \xpatchcmd{\makehead}
   {\ifthenelse{\isundefined{\@email}}{}{\addtomakeheaddetails{\emailsymbol\emaillink{\@email}}}}
-  {\ifthenelse{\isundefined{\@email}}{}{\addtomakeheaddetails{\code{\emailsymbol\emaillink{\@email}}}} }
+  {\ifthenelse{\isundefined{\@homepage}}{}{\addtomakeheaddetails{\code{\homepagesymbol\httpslink{\@homepage}}}}}
   {}{}
 \xpatchcmd{\makehead}
   {\ifthenelse{\isundefined{\@homepage}}{}{\addtomakeheaddetails{\homepagesymbol\httpslink{\@homepage}}}}
-  {\ifthenelse{\isundefined{\@homepage}}{}{\addtomakeheaddetails{\code{\homepagesymbol\httpslink{\@homepage}}}}}
+  {\ifthenelse{\isundefined{\@email}}{}{\addtomakeheaddetails{\code{\emailsymbol\emaillink{\@email}}}} }
   {}{}
 
 %% for undertow (same as above but different cmd)
 \xpatchcmd{\makecvhead}
   {\ifthenelse{\isundefined{\@email}}{}{\addtomakeheaddetails{\emailsymbol\emaillink{\@email}}}}
-  {\ifthenelse{\isundefined{\@email}}{}{\addtomakeheaddetails{\code{\emailsymbol\emaillink{\@email}}}}}
+  {\ifthenelse{\isundefined{\@homepage}}{}{\addtomakeheaddetails{\code{\homepagesymbol\httpslink{\@homepage}}}}}
   {}{}
 \xpatchcmd{\makecvhead}
   {\ifthenelse{\isundefined{\@homepage}}{}{\addtomakeheaddetails{\homepagesymbol\httpslink{\@homepage}}}}
-  {\ifthenelse{\isundefined{\@homepage}}{}{\addtomakeheaddetails{\code{\homepagesymbol\httpslink{\@homepage}}}}}
+  {\ifthenelse{\isundefined{\@email}}{}{\addtomakeheaddetails{\code{\emailsymbol\emaillink{\@email}}}}}
   {}{}
 
 %% for banking and undertow; don't add bullet points between our info
