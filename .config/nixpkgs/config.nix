@@ -1,6 +1,6 @@
 {
   master ? import <master> {},
-  latest ? import <unstable> {},
+  unstable ? import <unstable> {},
   stable ? import <stable> {},
   ...
 }:
@@ -16,7 +16,6 @@ let
       ffmpeg
       fzf
       gifsicle
-      go
       go-2fa
       htop
       imagemagick
@@ -31,7 +30,8 @@ let
       mysql-client
     ])
 
-    (with latest; [
+    (with unstable; [
+      go
       bashInteractive_5
       neovim
       sshuttle
