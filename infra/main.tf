@@ -23,7 +23,7 @@ resource "cloudflare_zone_settings_override" "kaipov" {
     always_use_https         = "on"
     min_tls_version          = "1.0"
     opportunistic_encryption = "on"
-    tls_1_3                  = "on"
+    tls_1_3                  = "zrt" # zero rtt below
     automatic_https_rewrites = "on"
 
     # Speed
@@ -38,6 +38,17 @@ resource "cloudflare_zone_settings_override" "kaipov" {
     cache_level       = "aggressive"
     browser_cache_ttl = 0
     always_online     = "off"
+
+    # Network
+    http3               = "on"
+    zero_rtt            = "on"
+    websockets          = "on"
+    opportunistic_onion = "on"
+    ip_geolocation      = "on"
+
+    # Scrape shield
+    email_obfuscation   = "on"
+    server_side_exclude = "on"
   }
 }
 
