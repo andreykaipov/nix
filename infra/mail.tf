@@ -38,7 +38,7 @@ resource "cloudflare_record" "zoho" {
   for_each = local.zoho_records
 
   zone_id  = cloudflare_zone.kaipov.id
-  name     = try(each.value.name, local.zone)
+  name     = try(each.value.name, cloudflare_zone.kaipov.zone)
   type     = each.value.type
   value    = each.value.value
   priority = try(each.value.priority, null)
