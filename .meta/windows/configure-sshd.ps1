@@ -60,7 +60,7 @@ function patch {
 
     Write-Output "Copying authorized_keys to $HOME\.ssh"
 
-    cp .ssh\authorized_keys "$HOME\.ssh\"
+    cp .config\ssh\authorized_keys "$HOME\.ssh\"
 }
 
 main
