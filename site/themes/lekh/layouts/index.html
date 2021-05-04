@@ -10,15 +10,15 @@
 	<div>{{ .Content }}</div>
 
 	<table>
-		{{ range .Site.Params.profiles }}
-		{{ partial "profile_link.html" . }}
-		{{ end }}
 		<tr>
 			{{ if ne .Site.Params.Resume "" }}
 			<td><i class="fas fa-file-alt" aria-hidden="true"></i></td>
-			<td>&nbsp;<a href="/resume/{{ .Site.Params.Resume }}" target="_blank">Resume</a></td>
+			<td>&nbsp;<a href="/{{ .Site.Params.Resume }}" target="_blank">Resume</a></td>
 			{{ end }}
 		</tr>
+		{{ range .Site.Params.profiles }}
+		{{ partial "profile_link.html" . }}
+		{{ end }}
 		<tr>
 			{{ if ne .Site.Params.Email "" }}
 			<td><i class="fas fa-envelope" aria-hidden="true"></i></td>
