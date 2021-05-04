@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+{{ partial "head.html" . }}
+
+<body>
+
+	<h1>{{ .Site.Params.Name }}</h1>
+	<h4>{{ .Site.Params.About| markdownify }}</h4>
+
+	<div>{{ .Content }}</div>
+
+	<table>
+		{{ range .Site.Params.profiles }}
+		{{ partial "profile_link.html" . }}
+		{{ end }}
+		<tr>
+			{{ if ne .Site.Params.Resume "" }}
+			<td><i class="fas fa-file-alt" aria-hidden="true"></i></td>
+			<td>&nbsp;<a href="/resume/{{ .Site.Params.Resume }}" target="_blank">Resume</a></td>
+			{{ end }}
+		</tr>
+		<tr>
+			{{ if ne .Site.Params.Email "" }}
+			<td><i class="fas fa-envelope" aria-hidden="true"></i></td>
+			<td>&nbsp;<code>{{ .Site.Params.Email }}</code></td>
+			{{ end }}
+		</tr>
+	</table>
+
+	<h3>Posts</h3>
+
+	<div>
+
+		<!-- orders content according to the "publishdate" field in front matter -->
+		{{ range first (.Site.Params.PostLimit | default 4) (where .Site.RegularPages.ByPublishDate "Section" "posts") }}
+		<div>
+			<a href="{{ .Permalink }}">{{ .Title }}</a><br />
+			<time>{{ .Date.Format "January 2, 2006" }}</time>
+		</div>
+		<br />
+		{{ end }}
+
+
+		<h3><a href="posts/">View all posts</a></h3>
+	</div>
+	{{ if ne .Site.Params.GoatCounterCode "" }}
+	<script data-goatcounter="{{ .Site.Params.GoatCounterCode }}" async src="//gc.zgo.at/count.js"></script>
+	{{ end }}
+</body>
+
+</html>
