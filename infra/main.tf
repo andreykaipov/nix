@@ -7,12 +7,8 @@ terraform {
   }
 }
 
-locals {
-  zone = "kaipov.com"
-}
-
 resource "cloudflare_zone" "kaipov" {
-  zone       = local.zone
+  zone       = "kaipov.com"
   plan       = "free"
   type       = "full"
   paused     = false
@@ -47,7 +43,7 @@ resource "cloudflare_zone_settings_override" "kaipov" {
 
 resource "cloudflare_record" "pages" {
   zone_id = cloudflare_zone.kaipov.id
-  name    = local.zone
+  name    = cloudflare_zone.kaipov.zone
   type    = "CNAME"
   value   = "kaipov.pages.dev"
   proxied = true
