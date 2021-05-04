@@ -10,8 +10,8 @@
 [diff "plist"]
     textconv = plutil -convert xml1 -o -
 
-[includeIf "gitdir:~/work/**"]
+[includeIf "gitdir:~/projects/work/**"]
     path = work
 
-[includeIf "gitdir:~/work/github/**"]
+[includeIf "gitdir:~/projects/work/github/**"]
     path = github
