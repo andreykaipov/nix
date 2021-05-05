@@ -1,0 +1,28 @@
+---
+title: Andrey Kaipov
+baseURL: https://kaipov.com
+theme: leekh
+
+params:
+  name: Andrey Kaipov
+  resume: resume.pdf
+  favicon: images/face-flipped.png
+  about: |
+    Hello!
+
+    I like cloud things, dev tooling, and SRE or whatever you wanna call it.
+
+    Check out the links below if you'd like to reach me.
+  profiles:
+  - name: GitHub
+    url: https://github.com/andreykaipov
+  - name: LinkedIn
+    url: https://linkedin.com/in/kaipov
+  - name: Twitter
+    url: https://twitter.com/andreykaipov
+
+disableKinds:
+- taxonomy
+- term
+- RSS
+- sitemap
