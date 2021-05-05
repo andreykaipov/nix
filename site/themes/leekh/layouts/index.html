@@ -3,9 +3,7 @@
     {{ partial "head.html" . }}
 
     <body>
-        <h1>{{ .Site.Params.Name }}</h1>
-
-        <p>{{ .Site.Params.About | markdownify }}</p>
+        <h1>{{ .Site.Title }}</h1>
 
         <div>{{ .Content }}</div>
 
@@ -13,7 +11,7 @@
             <tr>
                 {{ if ne .Site.Params.Resume "" }}
                 <td><i class="fas fa-file-alt" aria-hidden="true"></i></td>
-                <td>&nbsp;<a href="/{{ .Site.Params.Resume }}" target="_blank">Resume</a></td>
+                <td>&nbsp;<a href="{{ .Site.Params.Resume | relURL }}" target="_blank">Resume</a></td>
                 {{ end }}
             </tr>
             {{ range .Site.Params.profiles }}
