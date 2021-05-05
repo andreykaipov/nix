@@ -1,3 +1,5 @@
+// Source: https://www.gwern.net/static/js/darkmode.js
+
 // darkmode.js: Javascript library for controlling page appearance, toggling between regular white and 'dark mode'
 // Author: Said Achmiz
 // Date: 2020-03-20
@@ -121,6 +123,13 @@ GW.modeStyles = `
     }
     #mode-selector:hover {
         background-color: #fff;
+    }
+`;
+GW.modeStylesLight = `
+    ${GW.modeStyles}
+    body::before,
+    body > * {
+        filter: invert(0%)
     }
 `;
 
@@ -435,7 +444,7 @@ function setMode(modeOption) {
     } else if (modeOption == 'dark') {
         modeStyles.innerHTML = GW.modeStyles;
     } else {
-        modeStyles.innerHTML = "";
+        modeStyles.innerHTML = GW.modeStylesLight;
     }
 
     // Update selector state.
