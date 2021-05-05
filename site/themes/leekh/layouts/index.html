@@ -11,7 +11,7 @@
             <tr>
                 {{ if ne .Site.Params.Resume "" }}
                 <td><i class="fas fa-file-alt" aria-hidden="true"></i></td>
-                <td>&nbsp;<a href="/{{ .Site.Params.Resume }}" target="_blank">Resume</a></td>
+                <td>&nbsp;<a href="{{ .Site.Params.Resume | relURL }}" target="_blank">Resume</a></td>
                 {{ end }}
             </tr>
             {{ range .Site.Params.profiles }}

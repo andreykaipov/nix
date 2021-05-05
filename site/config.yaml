@@ -4,8 +4,8 @@ baseURL: https://kaipov.com
 theme: leekh
 
 params:
-  resume: resume.pdf
-  favicon: images/face-flipped.png
+  resume: /resume.pdf
+  favicon: /images/face-flipped.png
   profiles:
   - name: GitHub
     url: https://github.com/andreykaipov
