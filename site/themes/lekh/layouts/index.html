@@ -27,22 +27,26 @@
 		</tr>
 	</table>
 
-	<h3>Posts</h3>
+	<hr>
 
 	<div>
+		<h3>Recent Posts</h3>
 
-		<!-- orders content according to the "publishdate" field in front matter -->
-		{{ range first (.Site.Params.PostLimit | default 4) (where .Site.RegularPages.ByPublishDate "Section" "posts") }}
-		<div>
+		{{ range first (.Site.Params.PostLimit | default 3) (where .Site.RegularPages.ByPublishDate.Reverse "Section" "posts") }}
+		<p>
 			<a href="{{ .Permalink }}">{{ .Title }}</a><br />
-			<time>{{ .Date.Format "January 2, 2006" }}</time>
-		</div>
-		<br />
+      			<time itemprop="datePublished">{{ .Date.Format "January 2, 2006" }}</time>
+		</p>
 		{{ end }}
 
-
-		<h3><a href="posts/">View all posts</a></h3>
+		{{ $postCount := len (where .Site.RegularPages "Section" "posts") }}
+		{{ if ne 0 $postCount }}
+		<h4><a href="posts/">View all posts ({{ $postCount }})</a></h4>
+		{{ else }}
+		<p>There are none yet! :)</p>
+		{{ end }}
 	</div>
+
 	{{ if ne .Site.Params.GoatCounterCode "" }}
 	<script data-goatcounter="{{ .Site.Params.GoatCounterCode }}" async src="//gc.zgo.at/count.js"></script>
 	{{ end }}

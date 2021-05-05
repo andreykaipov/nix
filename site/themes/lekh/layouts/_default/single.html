@@ -3,9 +3,13 @@
 
 <html>
 {{ partial "page_header.html" . }}
-<h1>{{ .Title }}</h1>
-<p class="post-meta"><time itemprop="datePublished">{{ .Date.Format "January 2, 2006" }}</time>
+
+<h3>{{ .Title }}</h3>
+
+<p class="post-meta">
+  <time itemprop="datePublished">{{ .Date.Format "Monday, January 2, 2006, 3:04 MST" }}</time>
 </p>
+
 {{ .Content }}
 
 {{ partial "footer.html" . }}
