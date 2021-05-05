@@ -20,7 +20,7 @@
             {{ partial "profile_link.html" . }}
             {{ end }}
             <tr>
-                {{ if ne .Site.Params.Email "" }}
+                {{ if .Site.Params.Email }}
                 <td><i class="fas fa-envelope" aria-hidden="true"></i></td>
                 <td>&nbsp;<code>{{ .Site.Params.Email }}</code></td>
                 {{ end }}
