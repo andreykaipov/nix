@@ -3,9 +3,7 @@
     {{ partial "head.html" . }}
 
     <body>
-        <h1>{{ .Site.Params.Name }}</h1>
-
-        <p>{{ .Site.Params.About | markdownify }}</p>
+        <h1>{{ .Site.Title }}</h1>
 
         <div>{{ .Content }}</div>
 
