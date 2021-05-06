@@ -52,6 +52,18 @@ resource "cloudflare_zone_settings_override" "kaipov" {
   }
 }
 
+# Gonna try out Vercel instead of Cloudflare pages
+
+resource "cloudflare_record" "pages" {
+  zone_id = cloudflare_zone.kaipov.id
+  name    = cloudflare_zone.kaipov.zone
+  type    = "CNAME"
+  value   = "cname.vercel-dns.com"
+  proxied = true
+  ttl     = 1
+}
+
+/*
 resource "cloudflare_record" "pages" {
   zone_id = cloudflare_zone.kaipov.id
   name    = cloudflare_zone.kaipov.zone
@@ -60,3 +72,4 @@ resource "cloudflare_record" "pages" {
   proxied = true
   ttl     = 1
 }
+*/
