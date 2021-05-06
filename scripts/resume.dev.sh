@@ -11,4 +11,6 @@ if [ -z "${IN_NIX_SHELL-}" ]; then
 	exit
 fi
 
-find resume.tex patches/ -name '*.tex' | entr -cap "./scripts/build.sh"
+root="$(git rev-parse --show-toplevel)"
+cd resume
+find resume.tex patches/ -name '*.tex' | entr -cap "$root/scripts/resume.build.sh"
