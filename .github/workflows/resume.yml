@@ -1,5 +1,5 @@
 ---
-name: main
+name: resume
 
 on:
   push:
@@ -29,9 +29,17 @@ jobs:
         tectonic-version: ${{ env.tectonic_version }}
         github-token: ${{ secrets.GITHUB_TOKEN }}
     - name: Build our resume
-      run: ./scripts/build.sh
-    - name: Upload PDF
-      uses: actions/upload-artifact@v2
+      id: build
+      run: |
+        ./scripts/resume.build.sh
+        mv resume.pdf site/static
+        echo "::set-output name=msg::gh-actions: add resume.pdf"
+    - name: Push that bitch up
+      uses: EndBug/add-and-commit@v7
+      if: ${{ success() && steps.build.outputs.msg != '' }}
       with:
-        name: resume # it'll be zipped :(
-        path: out/resume.pdf
+        add: site/static
+        push: true
+        author_name: GitHub Actions
+        author_email: 41898282+github-actions[bot]@users.noreply.github.com
+        message: ${{ steps.build.outputs.msg }}
