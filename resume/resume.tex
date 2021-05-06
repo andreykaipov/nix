@@ -1,0 +1,110 @@
+% Andrey Kaipov
+% Resume
+% Adapated from https://github.com/moderncv/moderncv/blob/master/template.tex
+
+\documentclass[10pt,letterpaper,sans]{moderncv} % choose a4 or letterpaper
+\usepackage[vscale=.89,hscale=.80]{geometry} % page margins
+
+\input{patches/preamble}
+\moderncvstylecustom[black][awesome]{classic}{banking}
+
+\name{Andrey}{Kaipov}
+\homepage{kaipov.com}
+\email{andrey@kaipov.com}
+
+\begin{document}
+\makecvtitle
+\vspace{-2mm}
+
+\section{Experience}
+\cventryoneline{June 2020 -- Present}{Sr Site Reliability Engineer}{Ultimate Kronos Group}{Weston, FL}{}{
+  Cloud Services
+  \begin{itemize}
+  \item
+      Develop and maintain internal Terraform modules abstracting development
+      teams' access to public cloud services, integrating with our private cloud
+      services API, and helping them transition into the public cloud.
+  \item
+      Developed a CLI and workflow system to automate the management of volume
+      snapshots and backups for our MySQL and MongoDB services to meet our audit
+      deadlines, which were actually nonexistent at the time.
+  \end{itemize}
+  %
+  Developer Experience
+  \begin{itemize}
+  \item
+      Worked closely with traditional Windows sysadmins and application owners
+      to automate the heavily involved and manual configuration of our core
+      products via Ansible playbooks, teaching SRE principles along the way.
+  \end{itemize}
+}
+\cventryoneline{Jan 2020 -- Apr 2020}{Site Reliability Engineer}{Magic Leap}{Plantation, FL}{}{
+  Launch Coordination
+  \begin{itemize}
+  \item
+      Developed Kubernetes operators to manage GCP resources, extending our
+      internal PaaS to help our product teams transition from AWS to GCP.
+  \item
+      Evangelized the technologies of our SRE sister-squads to our product
+      teams, while helping them transition to newer company-wide standards.
+  \item
+      Performed housekeeping across the SRE organization -- upgraded Terraform
+      AWS and GCP modules and projects to use the latest versions, upgraded
+      Concourse pipelines, migrated images from ECR and GCR to our private
+      Docker registry, and added reusable features to our internal tooling for
+      our product teams.
+  \end{itemize}
+}
+\cventryoneline{Jan 2017 -- Jan 2020}{Site Reliability Engineer}{Ultimate Software}{Weston, FL}{}{
+  Cloud Platform \& Observability
+  \begin{itemize}
+  \item
+      Developed and managed a centralized logging, metrics, and alerting
+      platform for company-wide, ingesting over 5TB/day of logs and metrics into
+      our multi-datacenter Elasticsearch and InfluxDB clusters.
+  \item
+      Managed several VM and container-based orchestration platforms for product
+      teams to leverage, including a homegrown PaaS, on-prem Pivotal Cloud
+      Foundry, and on-prem Kubernetes clusters.
+  \item
+      Partnered with product teams to help developers learn about our
+      infrastructure and internal tooling, and to help productionalize their
+      applications and processes.
+  \end{itemize}
+}
+\cventryoneline{Summer 2016}{Software Engineer Intern}{Best Buy}{Richfield, MN}{}{}
+
+\section{Skills}
+\cventryskill{Languages}
+  {Go, Shell, JavaScript, TypeScript, Python, Ruby, Java, \LaTeX.}
+\cventryskill{Tooling}
+  {Docker, Terraform, Packer, Vault, Ansible, Chef, Bosh, Concourse, GitLab.}
+\cventryskill{Services}
+  {MySQL, MongoDB, Redis, RabbitMQ.}
+\cventryskill{Platforms}
+  {Linux, Kubernetes, Cloud Foundry, OpenStack, GCP, AWS.}
+\cventryskill{Observability}
+  {Elasticsearch, Logstash, Kibana, Fluent Bit, InfluxDB, Telegraf, Grafana, Sensu.}
+
+\section{Projects}
+\cventryproject{kaipov.com}{goobs}
+  {Go client library for an OBS Studio websockets server.}
+\cventryproject{kaipov.com}{funcopgen}
+  {Generate functional options for your Go structs.}
+\cventryproject{kaipov.com}{env2conf}
+  {Convert environment variables into configuration.}
+\cventryproject{kaipov.com}{active-standby}
+  {K8s controller supporting active-standby services.}
+\cventryproject{kaipov.com}{mongodb-pool}
+  {Conveniently manage MongoDB connection pools.}
+\cventryproject{kaipov.com}{tf-chef-solo}
+  {Chef Solo provisioner for Terraform.}
+\cventryproject{kaipov.com}{resume}
+  {An over-engineered resume; you're reading it right now!}
+
+\section{Education}
+\cventryoneline{Aug 2013 -- Dec 2016}{BS in Mathematics \& Computer Science}{Florida International University}{Miami}{FL}{
+  Honors: Summa Cum Laude, Phi Beta Kappa, FIU Ambassador Scholar, Florida Academic Scholar.
+}
+
+\end{document}

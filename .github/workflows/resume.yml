@@ -1,0 +1,74 @@
+---
+name: resume
+
+on:
+  push:
+    branches: [master]
+    push:
+      paths:
+      - resume/**
+# Builds from Tectonic aren't actually idempotent (TODO investigate), so we
+# can't build and push up our resume to the same PR because when it's merged,
+# it's going to want to push again on master (since the PDF was different).
+# That's silly, so we may as well only push up our resume on pushes to master
+# (i.e. when our PR is merged in).
+#
+  pull_request:
+    branches: [master]
+    push:
+      paths:
+      - resume/**
+
+env:
+  tectonic_version: 0.4.1
+  commit_message_resume: "gh-actions: add resume.pdf"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    outputs:
+      pushed: ${{ steps.push.outputs.pushed }}
+    steps:
+    - uses: actions/checkout@v2
+    - name: Cache
+      uses: actions/cache@v2
+      with:
+        path: ~/.cache/Tectonic
+        key: ${{ runner.os }}-tectonic-${{ hashFiles('**/*.tex') }}
+        restore-keys: |
+          ${{ runner.os }}-tectonic-
+    - name: Download Tectonic
+      uses: wtfjoke/setup-tectonic@main
+      with:
+        tectonic-version: ${{ env.tectonic_version }}
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+    - name: Build our resume
+      id: build
+      run: |
+        ./scripts/resume.build.sh
+        mv resume.pdf site/static
+        echo "::set-output name=msg::${{ env.commit_message_resume }}"
+    - name: Push that bitch up
+      id: push
+      uses: EndBug/add-and-commit@v7.1.2
+      if: ${{ success() && steps.build.outputs.msg != '' }}
+      with:
+        add: site/static
+        push: true
+        message: ${{ steps.build.outputs.msg }}
+        author_name: github-actions
+        author_email: 41898282+github-actions[bot]@users.noreply.github.com
+  comment-on-pr:
+    runs-on: ubuntu-latest
+    needs: [build]
+    if: ${{ success() && needs.build.outputs.pushed }}
+    steps:
+    - name: Leave a comment on the PR
+      uses: icy95/comment-on-pr@master
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        check_for_duplicate_msg: true
+        delete_prev_regex_msg: 'gh-actions:'
+        msg: |
+          ${{ env.commit_message_resume }}
