@@ -4,10 +4,10 @@ name: resume
 on:
   push:
     branches: [master]
-    #paths: [resume/**]
+    paths: [resume/**]
   pull_request:
     branches: [master]
-    #paths: [resume/**]
+    paths: [resume/**]
 
 env:
   tectonic_version: 0.4.1
