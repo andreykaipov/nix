@@ -1,4 +1,3 @@
-
 locals {
   subdomain_routes = merge(
     local.resume_routes,
@@ -12,9 +11,17 @@ locals {
 
   # For the neat links in our resume, used in both subdomain and path routes
   # since I can't decide which one I like yet.
+  #
+  # TODO make this dynamic by reading resume.tex for this info. would probably
+  # be best to incorporate terragrunt at that point.
   resume_routes = {
-    "goobs"     = { to = "https://github.com/andreykaipov/goobs" }
-    "funcopgen" = { to = "https://github.com/andreykaipov/funcopgen" }
+    "goobs"          = { to = "https://github.com/andreykaipov/goobs" }
+    "funcopgen"      = { to = "https://github.com/andreykaipov/funcopgen" }
+    "env2conf"       = { to = "https://github.com/andreykaipov/env2conf" }
+    "active-standby" = { to = "https://github.com/andreykaipov/active-standby-controller" }
+    "mongodb-pool"   = { to = "https://github.com/andreykaipov/mongodb-pool" }
+    "tf-chef-solo"   = { to = "https://github.com/andreykaipov/terraform-provisioner-chef-solo" }
+    "website"        = { to = "https://github.com/andreykaipov/website" }
   }
 }
 
