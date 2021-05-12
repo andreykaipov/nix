@@ -1,12 +1,23 @@
-// https://developers.cloudflare.com/workers/examples/redirect#redirect-requests-from-one-domain-to-another
+// vim: ft=javascript
 
-const base = "https://kaipov.com"
+// Templated version of both examples from
+// https://developers.cloudflare.com/workers/examples/redirect
+
+const base = "${base}"
 const statusCode = 301
 
 async function handleRequest(request) {
+${
+  preserve_path ?
+<<EOF
   const url = new URL(request.url)
   const { pathname, search } = url
   const destinationURL = base + pathname + search
+EOF
+: <<EOF
+  const destinationURL = base
+EOF
+}
   return Response.redirect(destinationURL, statusCode)
 }
 
