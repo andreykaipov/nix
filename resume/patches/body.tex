@@ -18,7 +18,7 @@
   \newcommand*{\cventryproject}[4][.25em]{
     \cvitem
       {#3}
-      {#4\hfill\raggedleft\href{https://#2/#3}{\code{#2/\hintstyle{#3}}}}
+      {#4\hfill\raggedleft\href{https://#3.#2}{\code{\hintstyle{#3}.#2}}}
   }
 
   \newcommand*{\cventryoneline}[7][.25em]{
@@ -42,12 +42,13 @@
   \newcommand*{\cventryproject}[4][.25em]{
     \begin{tabularx}
       {\textwidth}
-      {>{\hsize=.32\textwidth}X X}
-      \href{https://#2/#3}{\code{#2/\hintstyle{#3}}} & #4
+      {>{\hsize=.70\textwidth}X >{\raggedleft}X}
+      \listitemsymbol #4 & \href{https://#3.#2}{\code{\hintstyle{#3}.#2}}
     \end{tabularx}
     \par\addvspace{#1}}
 
-  % Reminiscent of classic
+  % Reminiscent of classic. Here the role, company, location, and date are all
+  % on one line, rather than being broken up across two lines.
   \newcommand*{\cventryoneline}[7][.25em]{
       {\bfseries#3}%
       \ifthenelse{\equal{#4}{}}{}{, {\slshape#4}}%
