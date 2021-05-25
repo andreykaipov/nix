@@ -70,6 +70,8 @@ set keymap emacs
 "\eb": backward-word
 "\C-f": forward-char
 "\C-b": backward-char
+"\e[C": forward-char     # arrow right
+"\e[D": backward-char    # arrow left
 
 # line, word, and character removals
 "\C-u": unix-line-discard
@@ -78,6 +80,7 @@ set keymap emacs
 "\e\C-h": backward-kill-word # alt-backspace
 "\ed": kill-word
 "\C-d": delete-char
+"\e[3~": delete-char         # delete key
 "\C-?": backward-delete-char # backspace on WSL
 "\C-h": backward-delete-char # different backspace?
 
