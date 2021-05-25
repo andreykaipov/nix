@@ -32,6 +32,7 @@ let
 
     (with unstable; [
       go
+      exiftool
       bashInteractive_5
       neovim
       sshuttle
