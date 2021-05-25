@@ -8,4 +8,5 @@ self: super: {
   fly-v4_2_5 = import ../cli/fly-v4.2.5;
   safe-v0_9_9 = import ../cli/safe-v0.9.9;
   spruce-v1_18_2 = import ../cli/spruce-v1.18.2;
+  bosh-v5_2_2 = import ../cli/bosh-v5.2.2;
 }
