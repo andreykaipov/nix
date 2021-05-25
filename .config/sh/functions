@@ -256,3 +256,12 @@ hex2rgb() {
 
     printf '%d;%d;%d\n' "0x$r" "0x$g" "0x$b"
 }
+
+up() {
+    cdstr=''
+    i=0; while [ $i -lt "${1-1}" ]; do
+        cdstr="../$cdstr"
+        i=$((i+1))
+    done
+    cd "$cdstr" || return
+}
