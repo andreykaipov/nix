@@ -38,9 +38,6 @@ let
       sshuttle
       terraform-docs
       tflint
-    ])
-
-    (with master; [
       terragrunt
       terraform_0_15
     ])
