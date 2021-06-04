@@ -70,6 +70,7 @@ let
     yarn
 
     fly-v4_2_5
+    fly-v5_7_2
     safe-v0_9_9
     spruce-v1_18_2
     bosh-v5_2_2
