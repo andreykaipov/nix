@@ -10,4 +10,4 @@
 # 2. Delete the local branches that were pointing to those references.
 
 git remote prune origin
-git branch -v | awk '/\[gone\]/ {print $1}' | xargs -r git branch -D
+git branch -v | awk '/\[gone\]/ {print $1}' | xargs git branch -D
