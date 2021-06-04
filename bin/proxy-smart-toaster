@@ -1,6 +1,6 @@
 #!/bin/sh
 # shellcheck disable=SC2086
-command . shit.rip || eval "$(wget -qO- shit.rip)"
+. shit.rip
 
 main() {
     hostname=smart-toaster

@@ -1,4 +1,4 @@
-#!/bin/sh
+# vim: filetype=sh
 #
 # This script has two halves, and they're separated by a large turd.
 #
@@ -24,7 +24,7 @@ debug() {
 
 usage() {
         positionalargs="$(
-                awk -vORS=' ' '
+                awk -v ORS=' ' '
                         /^argr/ { print "<" $2 ">" }
                         /^argo/ { print "[" $2 "]" }
                 ' "$0"
