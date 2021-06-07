@@ -19,7 +19,7 @@ Host dlas1
     ProxyJump smart-toaster
     HostName jumpbox-dlas100.dlas1.ucloud.int
 Host tor
-    ProxyJump smart-toaster
+    ProxyJump mia
     HostName jumpbox-tor200.tor.ucloud.int
 Host atl
     ProxyJump mia
