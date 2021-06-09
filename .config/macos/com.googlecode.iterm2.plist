@@ -21,7 +21,7 @@
 	<key>BootstrapDaemon</key>
 	<true/>
 	<key>CopySelection</key>
-	<false/>
+	<true/>
 	<key>Default Bookmark Guid</key>
 	<string>E551DF73-FE27-4B49-AD7B-4F9977412F4F</string>
 	<key>DisableWindowSizeSnap</key>
