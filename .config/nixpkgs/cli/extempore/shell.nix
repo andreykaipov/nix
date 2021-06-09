@@ -1,10 +1,10 @@
-with import <nixpkgs> {};
+with import <nixpkgs> { };
 
 let
   derivation = (import ./default.nix);
   name = derivation.drvAttrs.name;
 in
-  stdenv.mkDerivation {
-    name = "${name}-environment";
-    buildInputs = [derivation];
-  }
+stdenv.mkDerivation {
+  name = "${name}-environment";
+  buildInputs = [ derivation ];
+}

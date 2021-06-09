@@ -1,8 +1,7 @@
-{
-  master ? import <master> {},
-  unstable ? import <unstable> {},
-  stable ? import <stable> {},
-  ...
+{ master ? import <master> { }
+, unstable ? import <unstable> { }
+, stable ? import <stable> { }
+, ...
 }:
 
 let
@@ -20,26 +19,28 @@ let
       htop
       imagemagick
       jq
-      shfmt
+      mysql-client
       shellcheck
+      shfmt
       tmux
       tre-command
       tree
       upx
       yq-go
-      mysql-client
     ])
 
     (with unstable; [
-      go
-      exiftool
       bashInteractive_5
+      exiftool
+      go
+      neofetch
       neovim
+      nixpkgs-fmt
       sshuttle
       terraform-docs
-      tflint
-      terragrunt
       terraform_0_15
+      terragrunt
+      tflint
     ])
   ];
 
@@ -49,14 +50,13 @@ let
   ];
 
   forLinux = with stable; [
-    neofetch
   ];
 
   forWSL = with stable; [
+    dns-tcp-socks-proxy
     gcc
     gnumake
     unzip
-    dns-tcp-socks-proxy
     win32yank
   ];
 
@@ -69,11 +69,11 @@ let
     vault
     yarn
 
+    bosh-v5_2_2
     fly-v4_2_5
     fly-v5_7_2
     safe-v0_9_9
     spruce-v1_18_2
-    bosh-v5_2_2
   ];
 
   inherit (stable.lib) optional flatten;
@@ -97,13 +97,13 @@ in
     macos-apps = buildEnv {
       name = "my-macos-apps";
       paths = [
-        (callPackage ./apps/1password {})
-        (callPackage ./apps/barrier {})
-        (callPackage ./apps/discord {})
-        (callPackage ./apps/docker {})
-        (callPackage ./apps/iterm2 {})
-        (callPackage ./apps/rectangle {})
-        (callPackage ./apps/spotify {})
+        (callPackage ./apps/1password { })
+        (callPackage ./apps/barrier { })
+        (callPackage ./apps/discord { })
+        (callPackage ./apps/docker { })
+        (callPackage ./apps/iterm2 { })
+        (callPackage ./apps/rectangle { })
+        (callPackage ./apps/spotify { })
       ];
     };
   };

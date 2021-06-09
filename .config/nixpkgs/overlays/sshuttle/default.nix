@@ -5,7 +5,7 @@ self: super:
 with super.python3Packages; {
 
   # can use overrideAttrs but some attributes like `doCheck` are Python-specific
-  sshuttle = super.sshuttle.overridePythonAttrs(old: rec {
+  sshuttle = super.sshuttle.overridePythonAttrs (old: rec {
 
     pname = old.pname;
     version = "1.0.5";
@@ -16,7 +16,7 @@ with super.python3Packages; {
     };
 
     # see https://github.com/sshuttle/sshuttle/issues/563#issuecomment-789693694
-    patches = old.patches ++ [./pf.patch];
+    patches = old.patches ++ [ ./pf.patch ];
 
     # our new patch breaks some pf firewall tests
     setuptoolsCheckPhase = ''
@@ -24,10 +24,10 @@ with super.python3Packages; {
     '';
 
     # Python build-time dependencies
-    nativeBuildInputs = old.nativeBuildInputs ++ [psutil];
+    nativeBuildInputs = old.nativeBuildInputs ++ [ psutil ];
 
     # Python runtime dependencies
-    propagatedBuildInputs = [psutil];
+    propagatedBuildInputs = [ psutil ];
 
   });
 

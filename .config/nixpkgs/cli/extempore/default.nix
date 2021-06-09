@@ -1,6 +1,6 @@
 { stdenv, fetchFromGitHub }:
 
-with import <nixpkgs> {};
+with import <nixpkgs> { };
 
 stdenv.mkDerivation rec {
   pname = "extempore";
@@ -13,19 +13,19 @@ stdenv.mkDerivation rec {
     sha256 = null;
   };
 
-  patches = [./cmakelists.txt.patch];
+  patches = [ ./cmakelists.txt.patch ];
 
-  nativeBuildInputs = [cmake python3];
+  nativeBuildInputs = [ cmake python3 ];
 
   cmakeFlags = [
     "-DASSETS=ON"
   ];
 
-#  configurePhase = ''
-#    mkdir build
-#    cd build
-#    cmake ..
-#  '';
+  #  configurePhase = ''
+  #    mkdir build
+  #    cd build
+  #    cmake ..
+  #  '';
 
   buildPhase = ''
     make

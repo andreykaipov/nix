@@ -8,7 +8,7 @@
 # https://github.com/NixOS/nixpkgs/blob/master/pkgs/misc/vim-plugins/generated.nix
 
 self: super: {
-  neovim = super.neovim.override(old: rec {
+  neovim = super.neovim.override (old: rec {
     viAlias = true;
     vimAlias = true;
     # configure = {
