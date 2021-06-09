@@ -218,6 +218,8 @@
 			<true/>
 			<key>ASCII Ligatures</key>
 			<false/>
+			<key>Allow Paste Bracketing</key>
+			<false/>
 			<key>Ambiguous Double Width</key>
 			<false/>
 			<key>Ansi 0 Color</key>
@@ -814,6 +816,7 @@
 	<key>NoSyncAllAppVersions</key>
 	<array>
 		<string>3.3.20210311</string>
+		<string>3.3.20210409</string>
 		<string>3.3.20201229</string>
 		<string>3.3.20201223</string>
 		<string>3.3.20210105</string>
@@ -847,7 +850,7 @@
 	<key>NoSyncInstallationId</key>
 	<string>28165073-A8C0-4A9E-A559-BAB3D5C5A608</string>
 	<key>NoSyncLaunchExperienceControllerRunCount</key>
-	<integer>33</integer>
+	<integer>39</integer>
 	<key>NoSyncNeverRemindPrefsChangesLostForFile</key>
 	<true/>
 	<key>NoSyncNeverRemindPrefsChangesLostForFile_selection</key>
@@ -1634,6 +1637,6 @@
 	<key>findMode_iTerm</key>
 	<integer>0</integer>
 	<key>iTerm Version</key>
-	<string>3.3.20210320</string>
+	<string>3.3.20210409</string>
 </dict>
 </plist>

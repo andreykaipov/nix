@@ -7,13 +7,13 @@
 	<key>largesize</key>
 	<real>83</real>
 	<key>last-messagetrace-stamp</key>
-	<real>639348159.93972504</real>
+	<real>644792503.35186994</real>
 	<key>loc</key>
 	<string>en_US:US</string>
 	<key>magnification</key>
 	<true/>
 	<key>mod-count</key>
-	<integer>117</integer>
+	<integer>135</integer>
 	<key>orientation</key>
 	<string>bottom</string>
 	<key>persistent-apps</key>
@@ -78,7 +78,7 @@
 				Ym9vaywCAAAAAAQQMAAAAAAAAAAAAAAAAAAAAAAAAAAA
 				AAAAAAAAAAAAAAAAAAAATAEAAAQAAAADAwAAAAAAIAwA
 				AAABAQAAQXBwbGljYXRpb25zCwAAAAEBAABGaXJlZm94
-				LmFwcAAIAAAAAQYAABAAAAAkAAAACAAAAAQDAAAsYEgC
+				LmFwcAAIAAAAAQYAABAAAAAkAAAACAAAAAQDAADpMr8C
 				AAAAAAgAAAAEAwAAp4QzAgAAAAAIAAAAAQYAAEgAAABY
 				AAAACAAAAAAEAABBwvydhAAAABgAAAABAgAAAgAAAAAA
 				AAAPAAAAAAAAAAAAAAAAAAAACAAAAAEJAABmaWxlOi8v
@@ -107,11 +107,11 @@
 				<key>file-label</key>
 				<string>Firefox</string>
 				<key>file-mod-date</key>
-				<integer>3698242568</integer>
+				<integer>132847043546843</integer>
 				<key>file-type</key>
 				<integer>41</integer>
 				<key>parent-mod-date</key>
-				<integer>15474171918977</integer>
+				<integer>247776073319983</integer>
 			</dict>
 			<key>tile-type</key>
 			<string>file-tile</string>
@@ -126,9 +126,9 @@
 				Ym9vaywCAAAAAAQQMAAAAAAAAAAAAAAAAAAAAAAAAAAA
 				AAAAAAAAAAAAAAAAAAAATAEAAAQAAAADAwAAAAAAIAwA
 				AAABAQAAQXBwbGljYXRpb25zCQAAAAEBAABTbGFjay5h
-				cHAAAAAIAAAAAQYAABAAAAAkAAAACAAAAAQDAAAsYEgC
-				AAAAAAgAAAAEAwAAVQtkAgAAAAAIAAAAAQYAAEgAAABY
-				AAAACAAAAAAEAABBwwB1gAAAABgAAAABAgAAAgAAAAAA
+				cHAAAAAIAAAAAQYAABAAAAAkAAAACAAAAAQDAACiFfkC
+				AAAAAAgAAAAEAwAAN9YIAwAAAAAIAAAAAQYAAEgAAABY
+				AAAACAAAAAAEAABBwzPdCAAAABgAAAABAgAAAgAAAAAA
 				AAAPAAAAAAAAAAAAAAAAAAAACAAAAAEJAABmaWxlOi8v
 				LwwAAAABAQAATWFjaW50b3NoIEhECAAAAAQDAAAAoCBo
 				dAAAAAgAAAAABAAAQcG7GSvaZqUkAAAAAQEAAERCMjJG
@@ -155,11 +155,11 @@
 				<key>file-label</key>
 				<string>Slack</string>
 				<key>file-mod-date</key>
-				<integer>3698746368</integer>
+				<integer>3705484048</integer>
 				<key>file-type</key>
 				<integer>41</integer>
 				<key>parent-mod-date</key>
-				<integer>275925284748982</integer>
+				<integer>214644696650718</integer>
 			</dict>
 			<key>tile-type</key>
 			<string>file-tile</string>
@@ -205,7 +205,7 @@
 				<key>file-label</key>
 				<string>Messages</string>
 				<key>file-mod-date</key>
-				<integer>236463123496344</integer>
+				<integer>45719337080965</integer>
 				<key>file-type</key>
 				<integer>41</integer>
 				<key>parent-mod-date</key>
@@ -228,9 +228,9 @@
 				CQAAAAEBAABpVGVybS5hcHAAAAAUAAAAAQYAABAAAAAg
 				AAAAMAAAAEQAAABUAAAACAAAAAQDAACdUwAAAAAAAAgA
 				AAAEAwAAybYGAAAAAAAIAAAABAMAABpWKgEAAAAACAAA
-				AAQDAABGg00BAAAAAAgAAAAEAwAA3mGJAgAAAAAUAAAA
+				AAQDAABGg00BAAAAAAgAAAAEAwAAQruJAgAAAAAUAAAA
 				AQYAAIQAAACUAAAApAAAALQAAADEAAAACAAAAAAEAABB
-				wxCpsvvmpxgAAAABAgAAAgAAAAAAAAAPAAAAAAAAAAAA
+				wxCqvICVwxgAAAABAgAAAgAAAAAAAAAPAAAAAAAAAAAA
 				AAAAAAAACAAAAAQDAAADAAAAAAAAAAQAAAADAwAArmGK
 				EwgAAAABCQAAZmlsZTovLy8MAAAAAQEAAE1hY2ludG9z
 				aCBIRAgAAAAEAwAAAKAgaHQAAAAIAAAAAAQAAEHBuxkr
@@ -259,16 +259,18 @@
 				<key>file-label</key>
 				<string>iTerm</string>
 				<key>file-mod-date</key>
-				<integer>272510785866853</integer>
+				<integer>1330845765241</integer>
 				<key>file-type</key>
 				<integer>41</integer>
 				<key>parent-mod-date</key>
-				<integer>272467836193893</integer>
+				<integer>121877697523992</integer>
 			</dict>
 			<key>tile-type</key>
 			<string>file-tile</string>
 		</dict>
 		<dict>
+			<key>GUID</key>
+			<integer>1989666130</integer>
 			<key>tile-data</key>
 			<dict>
 				<key>book</key>
@@ -277,7 +279,7 @@
 				AAAAAAAAAAAAAAAAAAAAUAEAAAQAAAADAwAAAAAAIAwA
 				AAABAQAAQXBwbGljYXRpb25zDwAAAAEBAABxYml0dG9y
 				cmVudC5hcHAACAAAAAEGAAAQAAAAJAAAAAgAAAAEAwAA
-				LGBIAgAAAAAIAAAABAMAAEIiVQIAAAAACAAAAAEGAABM
+				6TK/AgAAAAAIAAAABAMAAEIiVQIAAAAACAAAAAEGAABM
 				AAAAXAAAAAgAAAAABAAAQcMF6UkAAAAYAAAAAQIAAAIA
 				AAAAAAAADwAAAAAAAAAAAAAAAAAAAAgAAAABCQAAZmls
 				ZTovLy8MAAAAAQEAAE1hY2ludG9zaCBIRAgAAAAEAwAA
@@ -305,11 +307,11 @@
 				<key>file-label</key>
 				<string>qBittorrent</string>
 				<key>file-mod-date</key>
-				<integer>0</integer>
+				<integer>3699461010</integer>
 				<key>file-type</key>
-				<integer>1</integer>
+				<integer>41</integer>
 				<key>parent-mod-date</key>
-				<integer>0</integer>
+				<integer>189209897971446</integer>
 			</dict>
 			<key>tile-type</key>
 			<string>file-tile</string>
@@ -434,7 +436,7 @@
 	<key>tilesize</key>
 	<real>63</real>
 	<key>trash-full</key>
-	<true/>
+	<false/>
 	<key>version</key>
 	<integer>1</integer>
 </dict>
