@@ -32,6 +32,7 @@ let
     (with unstable; [
       bashInteractive_5
       exiftool
+      gh
       go
       neofetch
       neovim
