@@ -18,9 +18,9 @@ rm -rf ~/.nix-profile ~/.nix-defexpr ~/.nix-channels
 # diskutil apfs deleteVolume 'Nix Store'
 
 if grep -q LABEL=Nix /etc/fstab; then
-    echo "Hey! Remove the Nix Store entry from /etc/fstab using 'sudo vifs'"
+        echo "Hey! Remove the Nix Store entry from /etc/fstab using 'sudo vifs'"
 fi
 
 if grep -q ^nix$ /etc/synthetic.conf; then
-    echo "Hey! Remove the nix entry from /etc/synthetic.conf"
+        echo "Hey! Remove the nix entry from /etc/synthetic.conf"
 fi
