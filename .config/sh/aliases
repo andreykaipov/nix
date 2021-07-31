@@ -11,7 +11,7 @@
 #
 # shellcheck disable=SC2012
 ll() {
-    ls -AlGFh --group-directories-first --color "$@" | sort -s -k8,8
+        ls -AlGFh --group-directories-first --color "$@" | sort -s -k8,8
 }
 
 # SSH doesn't really support XDG config paths, so these are workarounds

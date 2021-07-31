@@ -56,56 +56,62 @@
 # will unset __precmd_done again. Crazy, yes, just for a special case. :-)
 
 if [ -z "$__precmd_done" ]; then
-    __new_pts=1
+        __new_pts=1
 fi
 
 unset \
-    __precmd_start \
-    __precmd_done \
-    __postcmd_start \
-    __postcmd_done \
-    __ret_last_cmd
+        __precmd_start \
+        __precmd_done \
+        __postcmd_start \
+        __postcmd_done \
+        __ret_last_cmd
 
 __precmd_start=1
 
 export \
-    __precmd_start \
-    __precmd_done \
-    __postcmd_start \
-    __postcmd_done \
-    __ret_last_cmd
+        __precmd_start \
+        __precmd_done \
+        __postcmd_start \
+        __postcmd_done \
+        __ret_last_cmd
 
 __precmd() {
-    unset __postcmd_start __postcmd_done
+        unset __postcmd_start __postcmd_done
 
-    if [ -n "$__precmd_start" ]; then
-        return
-    fi
+        if [ -n "$__precmd_start" ]; then
+                return
+        fi
 
-    __precmd_start=1
-    [ -n "$DEBUG_SHOOKS" ] && { printf "\033[1;36m%s\033[0m\n" "START precmd"; set -x; }
-    precmd
-    { [ -n "$DEBUG_SHOOKS" ] && set +x; } 2>/dev/null
-    [ -n "$DEBUG_SHOOKS" ] && { printf "\033[1;36m%s\033[0m\n" "DONE  precmd"; }
-    __precmd_done=1
+        __precmd_start=1
+        [ -n "$DEBUG_SHOOKS" ] && {
+                printf "\033[1;36m%s\033[0m\n" "START precmd"
+                set -x
+        }
+        precmd
+        { [ -n "$DEBUG_SHOOKS" ] && set +x; } 2>/dev/null
+        [ -n "$DEBUG_SHOOKS" ] && { printf "\033[1;36m%s\033[0m\n" "DONE  precmd"; }
+        __precmd_done=1
 }
 
 __postcmd() {
-    __ret_last_cmd="$?"
+        __ret_last_cmd="$?"
 
-    unset __precmd_start __precmd_done
+        unset __precmd_start __precmd_done
 
-    if [ -n "$__new_pts" ]; then
-        unset __new_pts
-        return
-    fi
+        if [ -n "$__new_pts" ]; then
+                unset __new_pts
+                return
+        fi
 
-    __postcmd_start=1
-    [ -n "$DEBUG_SHOOKS" ] && { printf "\033[1;36m%s\033[0m\n" "START postcmd"; set -x; }
-    postcmd
-    { [ -n "$DEBUG_SHOOKS" ] && set +x; } 2>/dev/null
-    [ -n "$DEBUG_SHOOKS" ] && { printf "\033[1;36m%s\033[0m\n" "DONE  postcmd"; }
-    __postcmd_done=1
+        __postcmd_start=1
+        [ -n "$DEBUG_SHOOKS" ] && {
+                printf "\033[1;36m%s\033[0m\n" "START postcmd"
+                set -x
+        }
+        postcmd
+        { [ -n "$DEBUG_SHOOKS" ] && set +x; } 2>/dev/null
+        [ -n "$DEBUG_SHOOKS" ] && { printf "\033[1;36m%s\033[0m\n" "DONE  postcmd"; }
+        __postcmd_done=1
 }
 
 trap __precmd DEBUG

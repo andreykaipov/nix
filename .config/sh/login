@@ -53,90 +53,94 @@
 #    ~/.cache/ssh/vars.
 # 4. Otherwise, we're good and we add our keys.
 ensure_ssh_agent() {
-    mkdir -p ~/.cache/ssh; cd ~/.cache/ssh || return
+        mkdir -p ~/.cache/ssh
+        cd ~/.cache/ssh || return
 
-    ssh_agent_pids="$(ps -e | awk '$NF == "ssh-agent" {print $1}')"
-    if [ "$(echo "$ssh_agent_pids" | wc -l)" -gt 1 ]; then
-        echo "More than one SSH agent is running. Terminating them all."
-        echo "$ssh_agent_pids" | xargs kill -TERM
-    fi
+        ssh_agent_pids="$(ps -e | awk '$NF == "ssh-agent" {print $1}')"
+        if [ "$(echo "$ssh_agent_pids" | wc -l)" -gt 1 ]; then
+                echo "More than one SSH agent is running. Terminating them all."
+                echo "$ssh_agent_pids" | xargs kill -TERM
+        fi
 
-    echo "Setting up SSH agent..."
-    if [ -r ./vars ]; then
-        echo "Previous SSH agent vars exist, using them..."
-        . ./vars
-    fi
+        echo "Setting up SSH agent..."
+        if [ -r ./vars ]; then
+                echo "Previous SSH agent vars exist, using them..."
+                . ./vars
+        fi
 
-    # see http://man7.org/linux/man-pages/man1/ssh-add.1.html#EXIT_STATUS
-    ssh-add -l >/dev/null
-    ssh_status="$?"
+        # see http://man7.org/linux/man-pages/man1/ssh-add.1.html#EXIT_STATUS
+        ssh-add -l >/dev/null
+        ssh_status="$?"
 
-    if [ "$ssh_status" -eq 2 ]; then
-        echo "Was unable to contact the SSH agent, restarting..."
-        kill -TERM "$ssh_agent_pids" 2> /dev/null
-        echo "Starting ssh-agent"
-        (umask 0066; ssh-agent -s > vars)
-        . ./vars
-    else
-        echo "Looks like it was already running!"
-    fi
+        if [ "$ssh_status" -eq 2 ]; then
+                echo "Was unable to contact the SSH agent, restarting..."
+                kill -TERM "$ssh_agent_pids" 2>/dev/null
+                echo "Starting ssh-agent"
+                (
+                        umask 0066
+                        ssh-agent -s >vars
+                )
+                . ./vars
+        else
+                echo "Looks like it was already running!"
+        fi
 
-    cd - || return
+        cd - || return
 
-    ssh-add ~/.config/ssh/autoadd/*.pem
+        ssh-add ~/.config/ssh/autoadd/*.pem
 }
 
 ensure_tmux() {
-    echo "Setting up tmux..."
+        echo "Setting up tmux..."
 
-    if [ -n "$TMUX" ]; then
-        echo "We're already inside of a tmux session"
+        if [ -n "$TMUX" ]; then
+                echo "We're already inside of a tmux session"
 
-        # If this login init script was ran again, make sure our Tmux session
-        # has got the latest SSH agent vars for any new panes
-        tmux set-environment -gt local SSH_AUTH_SOCK "$SSH_AUTH_SOCK"
-        tmux set-environment -gt local SSH_AGENT_PID "$SSH_AGENT_PID"
+                # If this login init script was ran again, make sure our Tmux session
+                # has got the latest SSH agent vars for any new panes
+                tmux set-environment -gt local SSH_AUTH_SOCK "$SSH_AUTH_SOCK"
+                tmux set-environment -gt local SSH_AGENT_PID "$SSH_AGENT_PID"
 
-        return
-    fi
+                return
+        fi
 
-    if tmux ls -F '#{session_name}' | grep -qx local; then
-        echo "Local tmux session already exists"
-        echo "If you'd really like to, we'll attach into it in 3 seconds"
-        echo "Otherwise, send ^C"
-        sleep 3
-        exec tmux attach -t local
-    else
-        echo "Starting local tmux session"
-        exec tmux -f ~/.config/tmux/core.conf new -s local
-    fi
+        if tmux ls -F '#{session_name}' | grep -qx local; then
+                echo "Local tmux session already exists"
+                echo "If you'd really like to, we'll attach into it in 3 seconds"
+                echo "Otherwise, send ^C"
+                sleep 3
+                exec tmux attach -t local
+        else
+                echo "Starting local tmux session"
+                exec tmux -f ~/.config/tmux/core.conf new -s local
+        fi
 }
 
 ensure_ssh() {
-    echo "We're connected over SSH; skipping tmux"
-    echo "It's likely you've already got a local tmux session going"
+        echo "We're connected over SSH; skipping tmux"
+        echo "It's likely you've already got a local tmux session going"
 
-    # same as the default-command within our tmux config
-    # TODO maybe figure out a neat way to set the tmux setting
-    # from this script to not duplicate this command
-    ENV=~/.config/sh/rc exec bash --noprofile --norc --posix
+        # same as the default-command within our tmux config
+        # TODO maybe figure out a neat way to set the tmux setting
+        # from this script to not duplicate this command
+        ENV=~/.config/sh/rc exec bash --noprofile --norc --posix
 }
 
 main() {
-    umask 0022 # might not always be set, like in WSL distros
-    . ~/.config/sh/env
+        umask 0022 # might not always be set, like in WSL distros
+        . ~/.config/sh/env
 
-    if [ -r ~/.config/sh/env.work ]; then
-        . ~/.config/sh/env.work
-    fi
+        if [ -r ~/.config/sh/env.work ]; then
+                . ~/.config/sh/env.work
+        fi
 
-    ensure_ssh_agent
+        ensure_ssh_agent
 
-    if [ -n "$SSH_TTY" ]; then
-        ensure_ssh
-    else
-        ensure_tmux
-    fi
+        if [ -n "$SSH_TTY" ]; then
+                ensure_ssh
+        else
+                ensure_tmux
+        fi
 }
 
 main

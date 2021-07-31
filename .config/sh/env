@@ -74,13 +74,14 @@ PATH="$(echo "
     /mnt/c/Windows/System32/WindowsPowerShell/v1.0
     /mnt/c/Windows/System32
     /mnt/c/Windows
-" | pathify)"; export PATH
+" | pathify)"
+export PATH
 
 # Force Git to only work from our home directory
 export GIT_CEILING_DIRECTORIES="$HOME"
 
 # For macOS 1.15+; is that what being a stubborn old dude feels like?
-export BASH_SILENCE_DEPRECATION_WARNING=1;
+export BASH_SILENCE_DEPRECATION_WARNING=1
 
 # "wow he must be a really cool dude"
 export VISUAL=nvim
@@ -88,7 +89,8 @@ export EDITOR="$VISUAL"
 
 # Find our shell via $0 for dircolors. This var might be overriden by something
 # else (I guess login(1) or AD on macOS), unless we run chsh.
-SHELL="$(command -v bash)"; export SHELL
+SHELL="$(command -v bash)"
+export SHELL
 eval "$(dircolors.hex "$HOME/.config/dircolors/dircolors")"
 
 # Seems like I need this if I ever ssh into this machine
