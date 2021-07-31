@@ -112,3 +112,31 @@ export TMPDIR="${TMPDIR:-$TMP}"
 # https://github.com/npm/npm/issues/6675
 # https://github.com/npm/cli/issues/654
 export NPM_CONFIG_USERCONFIG="$HOME/.config/npm/npmrc"
+
+if [ -n "${WSL_DISTRO_NAME:-}" ]; then
+        # WSL_INSTANCE is the IP address of our WSL VM. We can use this IP from
+        # Windows to access to services running within WSL.
+        # WSL_HOST is the IP address of our Windows host. We can use this IP
+        # from within WSL to access services runnig on our Windows host.
+        #
+        # If they're already defined, no point in doing it again since these IP
+        # addresses only change when we reboot our Windows machine.
+
+        if [ -n "$WSL_INSTANCE" ] && [ -n "$WSL_HOST" ]; then
+                return
+        fi
+
+        # For this to be usable within Docker, see
+        # https://www.beyondjava.net/docker-wsl-network.
+        echo >&2 "Finding WSL instance IP..."
+        WSL_INSTANCE="$(ip -4 addr show eth0 | awk -F'[/ ]+' '/inet/ {print $3}')"
+        export WSL_INSTANCE
+
+        echo >&2 "Finding WSL host..."
+        WSL_HOST="$(powershell.exe "
+                Get-NetAdapter 'vEthernet (WSL)' |
+                Get-NetIPAddress -AddressFamily IPv4 |
+                Select -Expand IPAddress
+        " | tr -d '\r')"
+        export WSL_HOST
+fi
