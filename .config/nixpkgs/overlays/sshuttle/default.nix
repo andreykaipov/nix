@@ -19,7 +19,7 @@ with super.python3Packages; {
     patches = old.patches ++ [ ./pf.patch ];
 
     # our new patch breaks some pf firewall tests
-    setuptoolsCheckPhase = ''
+    checkPhase = ''
       pytest -k 'not (test_setup_firewall_darwin or test_setup_firewall_freebsd or test_setup_firewall_openbsd)'
     '';
 
