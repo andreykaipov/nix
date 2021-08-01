@@ -19,6 +19,7 @@ let
       htop
       imagemagick
       jq
+      k2tf
       mysql-client
       shellcheck
       shfmt
