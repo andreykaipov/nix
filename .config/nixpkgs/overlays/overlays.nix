@@ -4,6 +4,7 @@ self: super: {
   extempore = import ../cli/extempore;
   iproute2mac = import ../cli/iproute2mac;
   win32yank = import ../cli/win32yank;
+  wudo = import ../cli/wsl-sudo;
 
   fly-v4_2_5 = import ../cli/fly-v4.2.5;
   fly-v5_7_2 = import ../cli/fly-v5.7.2;

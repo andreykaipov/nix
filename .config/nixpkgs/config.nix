@@ -59,6 +59,7 @@ let
     gnumake
     unzip
     win32yank
+    wudo
   ];
 
   forWork = with stable; [
