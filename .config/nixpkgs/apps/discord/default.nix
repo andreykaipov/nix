@@ -2,7 +2,7 @@
 
 stdenv.mkDerivation rec {
   pname = "Discord";
-  version = "0.0.261";
+  version = "0.0.263";
 
   src = fetchurl {
     url = "https://dl.discordapp.net/apps/osx/${version}/Discord.dmg";
