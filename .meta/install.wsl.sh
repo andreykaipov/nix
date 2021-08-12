@@ -47,7 +47,7 @@ fix_wslconf() {
 generateResolvConf = false
 
 [wsl2]
-localhostForwarding=true
+localhostForwarding = true
 EOF
 }
 
