@@ -21,12 +21,14 @@ let
       jq
       k2tf
       mysql-client
+      nmap
       shellcheck
       shfmt
       tmux
       tre-command
       tree
       upx
+      whois
       yq-go
     ])
 
