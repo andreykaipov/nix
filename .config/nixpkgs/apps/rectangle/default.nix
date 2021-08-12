@@ -2,7 +2,7 @@
 
 stdenv.mkDerivation rec {
   pname = "Rectangle";
-  version = "0.40";
+  version = "0.48";
 
   src = fetchurl {
     url = "https://github.com/rxhanson/Rectangle/releases/download/v${version}/Rectangle${version}.dmg";
