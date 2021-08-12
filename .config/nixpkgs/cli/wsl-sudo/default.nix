@@ -14,8 +14,6 @@ stdenv.mkDerivation rec {
     sha256 = null;
   };
 
-  patches = [ ./patch ];
-
   installPhase = ''
     mkdir -p "$out/bin"
     cp wsl-sudo.py "$out/bin/wudo"
