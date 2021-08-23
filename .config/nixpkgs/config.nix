@@ -42,7 +42,7 @@ let
       nixpkgs-fmt
       sshuttle
       terraform-docs
-      terraform_0_15
+      terraform
       terragrunt
       tflint
     ])
