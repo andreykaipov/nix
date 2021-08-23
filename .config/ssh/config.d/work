@@ -9,7 +9,7 @@ Host work
     RemoteCommand ENV=~/.config/sh/login exec sh
     RequestTTY yes
 
-Host mia atl tor dlas1 plas1
+Host mia atl tor dlas1 plas1 us-east1 na-northeast1
     User andreyk
     SendEnv VAULT_*
 Host mia
@@ -27,3 +27,9 @@ Host atl
 Host plas1
     ProxyJump mia
     HostName jumpbox-plas100.plas1.ucloud.int
+Host us-east1
+    ProxyJump atl
+    Hostname jumpbox-100.us-east1.prod.gcp.int
+Host na-northeast1
+    ProxyJump tor
+    Hostname jumpbox-100.northamerica-northeast1.prod.gcp.int
