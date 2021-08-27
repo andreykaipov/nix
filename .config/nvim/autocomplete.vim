@@ -2,7 +2,9 @@
 " https://vim.fandom.com/wiki/Make_Vim_completion_popup_menu_work_just_like_in_an_IDE
 " https://vim.fandom.com/wiki/Improve_completion_popup_menu
 
-set completeopt=menuone,longest,preview
+"set completeopt=menuone,noselect,preview ",longest,preview
+set completeopt=menuone,longest,noinsert,preview
+"set splitbelow
 
 " use tab and shift+tab to scroll through the popup window
 " S-Tab is overriden further below, but left here for completeness
@@ -40,18 +42,13 @@ augroup END
 
 " new shortcuts:
 "
-" ctrl+space to open omni completion menu, closing previous if open and opening
-" new menu without changing the text, with the pseudo-selection trick above
-inoremap <expr> <C-Space>
-    \ (pumvisible() ? (col('.') > 1 ? '<Esc>i<Right>' : '<Esc>i') : '') .
-    \ '<C-x><C-o><C-r>=pumvisible() ? "\<lt>C-n>\<lt>C-p>\<lt>Down>" : ""<CR>'
-" alt+space same thing as above
-inoremap <expr> <M-Space>
-    \ (pumvisible() ? (col('.') > 1 ? '<Esc>i<Right>' : '<Esc>i') : '') .
+" shift+tab for omni completion, shift+tab again for user completion
+inoremap <expr> <S-Tab>
+    \ pumvisible() ?
+    \ '<C-x><C-n><C-r>=pumvisible() ? "\<lt>C-n>\<lt>C-p>\<lt>Down>" : ""<CR>' :
     \ '<C-x><C-o><C-r>=pumvisible() ? "\<lt>C-n>\<lt>C-p>\<lt>Down>" : ""<CR>'
 
-" shift+tab to start ins-menu-completion, same tricks as above.
-" however, instead of closing any current menu open, shift+tab navigates up.
-inoremap <expr> <S-Tab>
-    \ (pumvisible() ? "\<C-p>" :
-    \ '<C-x><C-p><C-r>=pumvisible() ? "\<lt>C-n>\<lt>C-p>\<lt>Down>" : ""<CR>')
+inoremap <expr> <C-Space>
+    \ pumvisible() ?
+    \ '<C-x><C-n><C-r>=pumvisible() ? "\<lt>C-n>\<lt>C-p>\<lt>Down>" : ""<CR>' :
+    \ '<C-x><C-o><C-r>=pumvisible() ? "\<lt>C-n>\<lt>C-p>\<lt>Down>" : ""<CR>'

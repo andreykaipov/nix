@@ -21,11 +21,14 @@ Plug 'tpope/vim-sleuth'
 "
 Plug 'chrisbra/Colorizer'
 
+" LSP
+Plug 'neovim/nvim-lspconfig'
+
 " async linting
 Plug 'dense-analysis/ale'
 
 " async completion
-Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+" Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
 
 " go
 Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }

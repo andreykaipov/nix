@@ -147,6 +147,7 @@ endfunction
 exec printf('source %s/numbers.vim', root)
 exec printf('source %s/autosave.vim', root)
 exec printf('source %s/autocomplete.vim', root)
+exec printf('source %s/lsp.vim', root)
 
 " we want to tell our plugin to colorize these files BEFORE we open them, so
 " this variable has to be set here, and not in after/plugin
