@@ -9,6 +9,6 @@ main() {
     ssh -N -D "0.0.0.0:$localport" "$remotehost" \
         -o PermitLocalCommand=yes \
         -o LocalCommand="
-            echo 'SOCKS proxy on localhost:$localport via $remotehost'
+            echo 'SOCKS proxy on 0.0.0.0:$localport via $remotehost'
         "
 }

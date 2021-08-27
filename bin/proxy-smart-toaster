@@ -3,23 +3,24 @@
 . shit.rip
 
 main() {
-    hostname=smart-toaster
-    ip="$(ssh -G "$hostname" | awk '/^hostname/ {print $2}')"
+        hostname=smart-toaster
+        ip="$(ssh -G "$hostname" | awk '/^hostname/ {print $2}')"
 
-    if [ -z "$ip" ]; then
-        >&2 echo "Couldn't find an IP for $hostname"
-        exit 1
-    fi
+        if [ -z "$ip" ]; then
+                echo >&2 "Couldn't find an IP for $hostname"
+                exit 1
+        fi
 
-    ranges='
+        ranges='
+        10.21.0.0/16
         10.48.0.0/12
         10.64.0.0/10
         10.128.0.0/9
     '
 
-    sshuttle \
-        -v \
-        --ssh-cmd "ssh -F $HOME/.ssh/config" \
-        --remote "$hostname" --exclude "$ip" \
-        $ranges
+        sshuttle \
+                -v \
+                --ssh-cmd "ssh -F $HOME/.ssh/config" \
+                --remote "$hostname" --exclude "$ip" \
+                $ranges
 }
