@@ -40,9 +40,11 @@ let
       neofetch
       neovim
       nixpkgs-fmt
+      nodePackages.bash-language-server
       sshuttle
-      terraform-docs
       terraform
+      terraform-docs
+      terraform-ls
       terragrunt
       tflint
     ])
