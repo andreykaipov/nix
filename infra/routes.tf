@@ -11,21 +11,13 @@ locals {
 
   # For the neat links in our resume, used in both subdomain and path routes
   # since I can't decide which one I like yet.
-  #
-  # TODO make this dynamic by reading resume.tex for this info. would probably
-  # be best to incorporate terragrunt at that point.
   resume_routes = {
-    "goobs"          = { to = "https://github.com/andreykaipov/goobs" }
-    "funcopgen"      = { to = "https://github.com/andreykaipov/funcopgen" }
-    "env2conf"       = { to = "https://github.com/andreykaipov/env2conf" }
-    "active-standby" = { to = "https://github.com/andreykaipov/active-standby-controller" }
-    "mongodb-pool"   = { to = "https://github.com/andreykaipov/mongodb-pool" }
-    "tf-chef-solo"   = { to = "https://github.com/andreykaipov/terraform-provisioner-chef-solo" }
-    "website"        = { to = "https://github.com/andreykaipov/website" }
+    for k, v in var.resume_project_routes :
+    k => { to = v }
   }
 }
 
-###
+### subdomain routes, e.g. blah.kaipov.com/*
 
 resource "cloudflare_worker_script" "subdomain_routes" {
   for_each = local.subdomain_routes
@@ -53,7 +45,7 @@ resource "cloudflare_record" "subdomain_routes" {
   ttl      = 1
 }
 
-###
+### path routes, e.g. kaipov.com/blah*
 
 resource "cloudflare_worker_script" "path_routes" {
   for_each = local.path_routes
