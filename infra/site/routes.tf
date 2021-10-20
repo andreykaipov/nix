@@ -21,7 +21,7 @@ locals {
 
 resource "cloudflare_worker_script" "subdomain_routes" {
   for_each = local.subdomain_routes
-  name     = "${each.key}-301"
+  name     = "301-${each.key}"
   content = templatefile("js/redirect-301.js.tmpl", {
     base          = each.value.to
     preserve_path = try(each.value.preserve_path, false)
@@ -49,7 +49,7 @@ resource "cloudflare_record" "subdomain_routes" {
 
 resource "cloudflare_worker_script" "path_routes" {
   for_each = local.path_routes
-  name     = "path-${each.key}-301"
+  name     = "301-${each.key}-path"
   content = templatefile("js/redirect-301.js.tmpl", {
     base          = each.value.to
     preserve_path = try(each.value.preserve_path, false)
