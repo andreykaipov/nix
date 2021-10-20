@@ -1,26 +1,27 @@
 locals {
   git_dir = run_cmd("git", "rev-parse", "--show-toplevel")
 
-  resume_tex = "${local.git_dir}/resume/resume.tex"
+  // path_relative_to_include
+  tfstate_kv_path = "kaipov.com/infra/${path_relative_to_include()}"
+}
 
-  resume = {
-    projects = split("\n", run_cmd("--terragrunt-quiet", "sh", "-c", <<EOF
-      awk -F'[{}]' '/cventryproject/ {print $4}' ${local.resume_tex}
-    EOF
-    ))
-    links = split("\n", run_cmd("--terragrunt-quiet", "sh", "-c", <<EOF
-      awk -F'%' '/cventryproject/ {print $2}' ${local.resume_tex} |
-        grep -Eo 'repo:[^ ]+?' |
-        cut -c6- |
-        awk '{printf "https://github.com/"; print}'
-    EOF
-    ))
+inputs = {}
+
+remote_state {
+  generate = {
+    path      = "backend.tf"
+    if_exists = "overwrite_terragrunt"
+  }
+
+  backend = "http"
+  config = {
+    username       = get_env("TF_BACKEND_USERNAME")
+    password       = get_env("TF_BACKEND_PASSWORD")
+    address        = "https://tf.kaipov.com/${local.tfstate_kv_path}"
+    lock_address   = "https://tf.kaipov.com/${local.tfstate_kv_path}"
+    unlock_address = "https://tf.kaipov.com/${local.tfstate_kv_path}"
   }
 }
 
-inputs = {
-  resume_project_routes = zipmap(
-    local.resume.projects,
-    local.resume.links,
-  )
-}
+retry_max_attempts       = 3
+retry_sleep_interval_sec = 10
