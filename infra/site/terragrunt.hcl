@@ -7,11 +7,11 @@ locals {
   resume_tex = "${include.root.locals.git_dir}/resume/resume.tex"
 
   resume = {
-    projects = split("\n", run_cmd("--terragrunt-quiet", "sh", "-c", <<EOF
+    projects = split("\n", run_cmd("sh", "-c", <<EOF
       awk -F'[{}]' '/cventryproject/ {print $4}' ${local.resume_tex}
     EOF
     ))
-    links = split("\n", run_cmd("--terragrunt-quiet", "sh", "-c", <<EOF
+    links = split("\n", run_cmd("sh", "-c", <<EOF
       awk -F'%' '/cventryproject/ {print $2}' ${local.resume_tex} |
         grep -Eo 'repo:[^ ]+?' |
         cut -c6- |
