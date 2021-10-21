@@ -1,0 +1,4 @@
+infra/**/backend.tf
+infra/**/terragrunt-debug.tfvars.json
+infra/**/.terraform
+infra/**/.terraform.lock.hcl
