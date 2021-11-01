@@ -49,6 +49,7 @@ let
       terraform-ls
       terragrunt
       tflint
+      twitch
     ])
   ];
 
