@@ -169,7 +169,8 @@ reset_readline_bindings() {
 
     bind -x '"\ee":edit-and-execute-command'
 
-    # enables \C-s to be sent for our forward-search-history binding
+    # prevents \C-s from pausing the terminal, allowing for \C-s to be sent for
+    # our forward-search-history binding
     stty -ixon
 }
 
