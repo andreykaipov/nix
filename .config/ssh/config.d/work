@@ -2,7 +2,7 @@
 
 Host smart-toaster work
     User andreyk
-    HostName 10.0.0.67
+    HostName 192.168.0.67
 
 # Interactive variant of above
 Host work
