@@ -37,6 +37,12 @@ main() {
                     10.151.0.0/16
                     '
                         ;;
+                us-east1)
+                        ranges='
+                10.214.0.0/16
+                10.220.0.0/16
+                    '
+                        ;;
         esac
 
         trap cleanup EXIT
