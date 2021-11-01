@@ -23,7 +23,7 @@ stdenv.mkDerivation rec {
 
   installPhase = ''
     mkdir -p $out/bin
-    mv fly $out/bin/${pname}${version}
+    mv ${pname} $out/bin/${pname}${version}
     chmod +x $out/bin/*
   '';
 }
