@@ -10,6 +10,7 @@ let
       asciinema
       bash-completion
       bat
+      binutils
       cmake
       dircolors_hex
       ffmpeg
@@ -34,6 +35,7 @@ let
 
     (with unstable; [
       bashInteractive_5
+      cloudflared
       exiftool
       gh
       go
