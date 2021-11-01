@@ -45,6 +45,7 @@ set keymap emacs
 "\C-m": accept-line  # enter
 "\C-j": accept-line  # different enter?
 "\C-l": clear-screen
+"\e[200~": bracketed-paste-begin
 
 # completion things
 "\C-i": complete
@@ -97,7 +98,6 @@ set keymap emacs
 # "\C-x\C-g": abort
 # "\e\C-g": abort
 # "\e<": beginning-of-history
-# "\e[200~": bracketed-paste-begin
 # "\C-xe": call-last-kbd-macro
 # "\ec": capitalize-word
 # "\C-]": character-search
