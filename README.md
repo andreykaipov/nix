@@ -2,7 +2,9 @@
 
 ## what is this?
 
-It's an over-engineered repo for my personal website and included resume.
+It's an overengineered and bundled monorepo for my personal website, resume, the
+infrastructure behind that, and the CI for all of it. If we want to get all
+metaphoric about it, it's a representation of self.
 
 ## contents
 
