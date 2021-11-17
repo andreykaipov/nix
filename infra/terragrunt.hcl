@@ -2,7 +2,7 @@ locals {
   git_dir = run_cmd("git", "rev-parse", "--show-toplevel")
 
   // path_relative_to_include
-  tfstate_kv_path = "kaipov.com/infra/${path_relative_to_include()}"
+  tfstate_kv_path = "self/infra/${path_relative_to_include()}"
 }
 
 inputs = {}

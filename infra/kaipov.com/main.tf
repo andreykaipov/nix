@@ -26,6 +26,11 @@ resource "cloudflare_zone_settings_override" "kaipov" {
     tls_1_3                  = "zrt" # zero rtt below
     automatic_https_rewrites = "on"
 
+    # Other security things
+    challenge_ttl  = 1800
+    security_level = "high"
+    privacy_pass   = "on"
+
     # Speed
     minify {
       css  = "on"
