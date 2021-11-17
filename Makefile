@@ -1,9 +1,9 @@
 define usage
 \e[1;35m|\e[0m Usage:
-\e[1;35m|\e[0m    make .................... : why would you use make won't somebody please help me!
-\e[1;35m|\e[0m    make infra/* <tf-command> : manage my infra
-\e[1;35m|\e[0m    make resume ............. : build my resume
-\e[1;35m|\e[0m    make resume watch ....... : build my resume interactively
+\e[1;35m|\e[0m    make .................... : won't somebody please help him!
+\e[1;35m|\e[0m    make infra/* <tf-command> : manage his infra
+\e[1;35m|\e[0m    make resume ............. : build his resume
+\e[1;35m|\e[0m    make resume watch ....... : build his resume interactively
 \e[1;35m|\e[0m    make site ............... : serve Hugo site locally
 endef
 export usage
@@ -23,12 +23,6 @@ export TERRAGRUNT_WORKING_DIR = $@
 $(infra_modules):
 	@terragrunt $(terragrunt_args)
 
-# Adapted from https://stackoverflow.com/a/14061796/4085283.
-ifeq (infra/,$(findstring infra/,$(firstword $(MAKECMDGOALS))))
-    terragrunt_args := $(wordlist 2,$(words $(MAKECMDGOALS)),$(MAKECMDGOALS))
-    $(eval $(terragrunt_args):;@:)
-endif
-
 ## resume
 
 .PHONY: resume
@@ -40,11 +34,6 @@ resume:
 	    *)     exit 1 ;; \
 	esac
 
-ifeq (resume,$(firstword $(MAKECMDGOALS)))
-    resume_args := $(wordlist 2,$(words $(MAKECMDGOALS)),$(MAKECMDGOALS))
-    $(eval $(resume_args):;@:)
-endif
-
 ## website
 
 .PHONY: website
@@ -54,6 +43,25 @@ website:
 	    "")    ./scripts/website.serve.sh ;; \
 	    *)     exit 1 ;; \
 	esac
+
+#
+# The following snippets allow us to pass arguments to `make <task>`, as if we
+# were actually using a fully-fledged CLI with subcommands. This could probably
+# be more maintainable as a shell script, but to be able to use `make` is just
+# too neat!
+#
+# Adapated from https://stackoverflow.com/a/14061796/4085283.
+#
+
+ifeq (infra/,$(findstring infra/,$(firstword $(MAKECMDGOALS))))
+    terragrunt_args := $(wordlist 2,$(words $(MAKECMDGOALS)),$(MAKECMDGOALS))
+    $(eval $(terragrunt_args):;@:)
+endif
+
+ifeq (resume,$(firstword $(MAKECMDGOALS)))
+    resume_args := $(wordlist 2,$(words $(MAKECMDGOALS)),$(MAKECMDGOALS))
+    $(eval $(resume_args):;@:)
+endif
 
 ifeq (website,$(firstword $(MAKECMDGOALS)))
     website_args := $(wordlist 2,$(words $(MAKECMDGOALS)),$(MAKECMDGOALS))
