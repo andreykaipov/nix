@@ -10,7 +10,7 @@ on:
     paths: [resume/**]
 
 env:
-  tectonic_version: 0.4.1
+  tectonic_version: 0.8.0
   commit_message_resume: 'gh-actions: add resume.pdf'
 
 jobs:
