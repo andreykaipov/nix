@@ -36,13 +36,15 @@ Set the Git email accordingly in `~/.config/git/work`.
 - Every tracked file must explicitly exist in our `.gitignore`, so we can't
   accidentally add a file we don't want.
 
-  _edit_: Since I've neatly organized everything under `.config` now, I'm now
-  liberally including everything under `.config`, excluding things that pop up
-  during the occasional `git status`.
+  Since I've neatly organized all the actual configuration under `.config`,
+  I take quite a liberal approach by including it all, and just exclude things
+  we definitely wouldn't want to commit. Since most programs should recognize
+  the XDG base dir, an added benefit now is easily finding any new configuration
+  that might have changed or been added recently.
 
-- Setting `GIT_CEILING_DIRECTORIES=$HOME` prevents Git from working inside
-  non-Git subdirectories, so accidentally mucking around with this repo is
-  practically impossible unless we're in `$HOME`.
+- Setting `GIT_CEILING_DIRECTORIES="$HOME"` prevents Git from working inside
+  any non-Git subdirectories within our home directory, so accidentally mucking
+  around with this repo is practically impossible unless we're in `$HOME` only.
 
 ---
 
