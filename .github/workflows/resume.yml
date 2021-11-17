@@ -45,7 +45,7 @@ jobs:
       if: ${{ success() && steps.build.outputs.msg != '' }}
       uses: EndBug/add-and-commit@v7.1.2
       with:
-        add: site/static
+        add: website/static
         push: true
         message: ${{ steps.build.outputs.msg }}
         author_name: github-actions
