@@ -1,7 +1,7 @@
 with import <nixpkgs> { };
 
 let
-  name = "resume";
+  name = "self";
 in
 stdenv.mkDerivation {
   name = "${name}-environment";
@@ -14,5 +14,5 @@ stdenv.mkDerivation {
     terragrunt
   ];
   shellHook = ''
-    '';
+  '';
 }
