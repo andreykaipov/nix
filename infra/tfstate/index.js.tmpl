@@ -50,7 +50,7 @@ async function handleRequest(request) {
 async function authenticate(request) {
   const authHeader = request.headers.get('Authorization');
   if (!authHeader || typeof authHeader !== 'string') {
-    return new Response('Missing credentials', {
+    return new Response('Eat more tomatoes', {
       status: 401,
       headers: {
         'WWW-Authenticate': 'Basic realm="Terraform State"',
