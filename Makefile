@@ -4,10 +4,11 @@ define usage
 \e[1;35m|\e[0m    make infra/* <tf-command> : manage my infra
 \e[1;35m|\e[0m    make resume ............. : build my resume
 \e[1;35m|\e[0m    make resume watch ....... : build my resume interactively
+\e[1;35m|\e[0m    make site ............... : serve Hugo site locally
 endef
 export usage
 usage:
-	@echo "$$usage"
+	@printf "$$usage\n"
 
 ## infra
 
@@ -42,4 +43,19 @@ resume:
 ifeq (resume,$(firstword $(MAKECMDGOALS)))
     resume_args := $(wordlist 2,$(words $(MAKECMDGOALS)),$(MAKECMDGOALS))
     $(eval $(resume_args):;@:)
+endif
+
+## website
+
+.PHONY: website
+
+website:
+	@case "$(website_args)" in \
+	    "")    ./scripts/website.serve.sh ;; \
+	    *)     exit 1 ;; \
+	esac
+
+ifeq (website,$(firstword $(MAKECMDGOALS)))
+    website_args := $(wordlist 2,$(words $(MAKECMDGOALS)),$(MAKECMDGOALS))
+    $(eval $(website_args):;@:)
 endif
