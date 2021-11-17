@@ -1,8 +1,9 @@
 locals {
   git_dir = run_cmd("git", "rev-parse", "--show-toplevel")
 
-  // path_relative_to_include
-  tfstate_kv_path = "self/infra/${path_relative_to_include()}"
+  project_name = reverse(split("/", local.git_dir))[0]
+
+  tfstate_kv_path = substr(get_terragrunt_dir(), length(local.git_dir) - length(local.project_name), -1)
 }
 
 inputs = {}
