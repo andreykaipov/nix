@@ -27,6 +27,6 @@ jobs:
       with:
         terragrunt_version: ${{ env.terragrunt_version }}
     - run: terragrunt --version
-    - run: curl -v https://tf.kaipov.com/kaipov.com/infra/tfstate
+    - run: curl -v https://tf.kaipov.com/self/infra/tfstate
     - run: make infra/tfstate plan
-    - run: make infra/site plan
+    - run: make infra/kaipov.com plan
