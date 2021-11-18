@@ -5,7 +5,7 @@ on:
   workflow_dispatch:
   push:
     branches: [master]
-    paths: [infra/**]
+    paths: [infra/**, resume/**]
 
 env:
   terragrunt_version: 0.35.4
@@ -13,7 +13,6 @@ env:
   CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
   TF_BACKEND_USERNAME: ${{ secrets.TF_BACKEND_USERNAME }}
   TF_BACKEND_PASSWORD: ${{ secrets.TF_BACKEND_PASSWORD }}
-  TF_LOG: 1
 
 jobs:
   deployment:
