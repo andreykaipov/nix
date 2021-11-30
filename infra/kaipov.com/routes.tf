@@ -3,7 +3,8 @@ locals {
     local.resume_routes,
     {
       # www redirect with workers to conserve page rules :)
-      "www" = { to = "https://${cloudflare_zone.kaipov.zone}", preserve_path = true }
+      "www"  = { to = "https://${cloudflare_zone.kaipov.zone}", preserve_path = true }
+      "call" = { to = "https://calendly.com/kaipov/call", preserve_path = true }
     }
   )
 
