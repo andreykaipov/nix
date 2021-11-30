@@ -5,14 +5,15 @@ theme: leekh
 
 params:
   resume: /resume.pdf
+  calendar: https://calendly.com/kaipov/call
   favicon: /images/face-flipped.png
   profiles:
   - name: GitHub
     url: https://github.com/andreykaipov
-  - name: LinkedIn
-    url: https://linkedin.com/in/kaipov
   - name: Twitter
     url: https://twitter.com/andreykaipov
+  - name: LinkedIn
+    url: https://linkedin.com/in/kaipov
 
 disableKinds:
 - taxonomy
