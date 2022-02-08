@@ -73,6 +73,7 @@ PATH="$(echo "
     /mnt/c/Windows/System32/WindowsPowerShell/v1.0
     /mnt/c/Windows/System32
     /mnt/c/Windows
+    /mnt/c/Program Files/Git/cmd
 " | pathify)"
 export PATH
 
