@@ -92,6 +92,8 @@ let
   isWSL = (builtins.getEnv "WSL_DISTRO_NAME") != "";
 in
 {
+  allowUnfree = true;
+
   packageOverrides = pkgs: with stable; {
     mine = buildEnv {
       name = "my-packages";
