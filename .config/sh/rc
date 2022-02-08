@@ -101,7 +101,12 @@ setpanetitle() {
         fi
     )"
     path="#[fg=yellow,bold]${PWD/$HOME/'~'}#[default]"
-    git="$(git condensed-status-tmux)"
+
+    git=
+    # todo maybe just put this check into the git subcommand
+    if ! pwd -P | grep -q "^/mnt/c/"; then
+        git="$(git condensed-status-tmux)"
+    fi
 
     printf "\e]2;%s\e\\" "[$paneindex] $smiley $path $git"
 }
