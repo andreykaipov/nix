@@ -39,6 +39,7 @@ let
       exiftool
       gh
       go
+      go-tools
       neofetch
       neovim
       nixpkgs-fmt
