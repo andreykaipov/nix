@@ -54,7 +54,6 @@ export XDG_RUNTIME_DIR=/tmp
 
 # Go stuff
 export GOBIN="$HOME/go/bin"
-export GOFLAGS=-mod=vendor
 
 # Our marvelous path
 PATH="$(echo "
