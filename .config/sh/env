@@ -115,7 +115,15 @@ export TMPDIR="${TMPDIR:-$TMP}"
 # https://github.com/npm/cli/issues/654
 export NPM_CONFIG_USERCONFIG="$HOME/.config/npm/npmrc"
 
+# TODO use -z and return early instead
+#
+# also the following env vars don't work with `sourceg` because the bare shell
+# sourceg uses won't have WSL_DISTRO_NAME set...
 if [ -n "${WSL_DISTRO_NAME:-}" ]; then
+        # HOME equivalent, but for the Windows host
+        WINHOME="$(wslpath "$(wslvar USERPROFILE)")"
+        export WINHOME
+
         # WSL_INSTANCE is the IP address of our WSL VM. We can use this IP from
         # Windows to access to services running within WSL.
         # WSL_HOST is the IP address of our Windows host. We can use this IP
