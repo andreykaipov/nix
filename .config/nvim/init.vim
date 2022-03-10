@@ -131,6 +131,8 @@ set guicursor=n-v-c:ver25
             \,i-ci-ve:ver25-blinkwait700-blinkoff400-blinkon250
             \,r-cr-o:hor20
 
+" set termguicolors
+
 " override any colorscheme with our custom highlights that are superior
 " anywhere. don't @ me. use :XtermColorTable to view available colors. see :help
 " highlight-groups for available highlight groups.
@@ -139,8 +141,9 @@ function! SetCustomHighlights()
     highlight ColorColumn                            ctermbg=233
     highlight CursorLine                             ctermbg=233
     highlight CursorLineNr            ctermfg=yellow ctermbg=233
-    highlight Normal                  ctermfg=252    ctermbg=none
+    highlight Normal                  ctermfg=252    ctermbg=none guibg=none
     highlight MatchParen   cterm=bold ctermfg=208    ctermbg=233
+    highlight StatusLine                                          guifg=yellow guibg=none
     " highlight highlight-group :cterm=NONE ctermbg=NONE ctermfg=NONE gui=NONE guibg=NONE guifg=NONE
 endfunction
 

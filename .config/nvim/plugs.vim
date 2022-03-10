@@ -53,3 +53,7 @@ Plug 'zigford/vim-powershell'
 
 " dope
 " Plug 'timburgess/extempore.vim'
+"
+
+" embed vim status line into tmux
+Plug 'vimpostor/vim-tpipeline'

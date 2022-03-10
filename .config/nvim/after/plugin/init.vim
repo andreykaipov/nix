@@ -30,8 +30,10 @@ set background=dark
 
 " lightline
 "
-let g:lightline = {'colorscheme': 'one'}
-set noshowmode
+"let g:lightline = {'colorscheme': 'one'}
+"set noshowmode
+"set laststatus=0
+"set noruler
 
 " don't colorize larger files
 " https://github.com/lilydjwg/colorizer#known-issues
@@ -44,3 +46,19 @@ set noshowmode
 " I want the verb at front of the command
 command! ToggleColor :ColorToggle
 nmap <leader>c :ToggleColor<cr>
+
+let g:tpipeline_autoembed = 0
+let g:tpipeline_tabline = 0
+let g:tpipeline_restore = 0
+let g:tpipeline_clearstl = 1
+let g:tpipeline_split = 1
+let g:tpipeline_usepane = 1
+let g:tpipeline_fillcentre = 1
+"
+"let g:tpipeline_statusline = '%!tpipeline#stl#line()'
+"
+let g:tpipeline_statusline = ''
+let g:tpipeline_statusline .= '%F%h%w%m%r'
+let g:tpipeline_statusline .= '%='
+let g:tpipeline_statusline .= '[%{&fileformat} %{&fileencoding?&fileencoding:&encoding}]'
+let g:tpipeline_statusline .= '%y'
