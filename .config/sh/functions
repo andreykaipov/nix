@@ -1,5 +1,15 @@
 #!/bin/sh
 
+# https://github.com/containers/podman/issues/6800
+refresh_rootless_podman_after_reboot() {
+        libpod_tmp="$XDG_RUNTIME_DIR/libpod/tmp"
+        if [[ /proc/1 -nt "$libpod_tmp" ]]; then
+                rm -rf "$libpod_tmp"
+        fi
+}
+
+#refresh_rootless_podman_after_reboot
+
 gowatchlint() {
         reflex -r '\.go' -- sh -c "golangci-lint run ./... --out-format tab; echo"
 }
