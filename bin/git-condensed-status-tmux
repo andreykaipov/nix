@@ -18,10 +18,10 @@ main() {
             $1 ~ /^[CARMD]$/ && $2 != "U" { staged++ }
             $1 != "U" && $2 ~ /^[RADMC]$/ { unstaged++ }
             END {
-                unmerged  = unmerged > 0  ? " #[fg=magenta,bold]" unmerged  "#[fg=default]x" : ""
-                staged    = staged > 0    ? " #[fg=green,bold]"   staged    "#[fg=default]+" : ""
-                unstaged  = unstaged > 0  ? " #[fg=red,bold]"     unstaged  "#[fg=default]*" : ""
-                untracked = untracked > 0 ? " #[fg=red,bold]"     untracked "#[fg=default]?" : ""
+                unmerged  = unmerged > 0  ? " #[fg=magenta,bold]" unmerged  "#[fg=white]x" : ""
+                staged    = staged > 0    ? " #[fg=green,bold]"   staged    "#[fg=white]+" : ""
+                unstaged  = unstaged > 0  ? " #[fg=red,bold]"     unstaged  "#[fg=white]*" : ""
+                untracked = untracked > 0 ? " #[fg=red,bold]"     untracked "#[fg=white]?" : ""
                 printf "%s%s%s%s%s", branch, unmerged, staged, unstaged, untracked
             }
         '
