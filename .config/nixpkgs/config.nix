@@ -1,5 +1,6 @@
 { master ? import <master> { }
 , unstable ? import <unstable> { }
+, pkgs ? import <unstable> { }
 , stable ? import <stable> { }
 , ...
 }:
@@ -16,6 +17,7 @@ let
       ffmpeg
       fzf
       gifsicle
+      git-lfs
       go-2fa
       htop
       imagemagick
@@ -25,21 +27,28 @@ let
       nmap
       shellcheck
       shfmt
-      tmux
       tre-command
       tree
       upx
       whois
-      yq-go
     ])
 
     (with unstable; [
       bashInteractive_5
       cloudflared
       exiftool
+      #docker
+      #docker-client
+      #runc
+      #containerd
+      #colima
+      #podman
+      podman-compose
+      #lima
       gh
       go
       go-tools
+      k3s
       neofetch
       neovim
       nixpkgs-fmt
@@ -50,7 +59,10 @@ let
       terraform-ls
       terragrunt
       tflint
+      tmux
       twitch
+      yq-go
+      expect
     ])
   ];
 
@@ -76,15 +88,16 @@ let
     kubectl
     kubernetes-helm
     nodePackages.http-server
-    nodejs-14_x
+    nodePackages.typescript
+    nodejs-17_x
     vault
     yarn
 
-    bosh-v5_2_2
-    fly-v4_2_5
-    fly-v5_7_2
-    safe-v0_9_9
-    spruce-v1_18_2
+    safe
+    #bosh-v5_2_2
+    #fly-v4_2_5
+    #fly-v5_7_2
+    #spruce-v1_18_2
   ];
 
   inherit (stable.lib) optional flatten;
@@ -95,7 +108,7 @@ in
 {
   allowUnfree = true;
 
-  packageOverrides = pkgs: with stable; {
+  packageOverrides = _: with pkgs; {
     mine = buildEnv {
       name = "my-packages";
       paths = flatten [
@@ -120,4 +133,6 @@ in
       ];
     };
   };
+
+  #virtualisation.podman.dockerCompat = true;
 }
