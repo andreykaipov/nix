@@ -26,8 +26,6 @@ alias rm='rm -i'
 
 alias k='kubectl'
 
-alias safe='safe -k'
-
 # better less
 # N line numbers
 # F quit if one screen
@@ -35,3 +33,7 @@ alias safe='safe -k'
 alias less='less -NFRX'
 
 alias tree='tree --dirsfirst'
+
+alias podman='podman --cgroup-manager cgroupfs'
+alias docker='podman --cgroup-manager cgroupfs'
+alias docker-compose=podman-compose

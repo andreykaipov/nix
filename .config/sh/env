@@ -45,7 +45,7 @@
 export XDG_CONFIG_HOME="$HOME/.config"
 export XDG_DATA_HOME="$HOME/.local/share"
 export XDG_CACHE_HOME="$HOME/.cache"
-export XDG_RUNTIME_DIR=/tmp
+export XDG_RUNTIME_DIR="$HOME/.run"
 
 . ~/.config/sh/functions # for pathify
 
@@ -139,14 +139,12 @@ if [ -n "${WSL_DISTRO_NAME:-}" ]; then
         # For this to be usable within Docker, see
         # https://www.beyondjava.net/docker-wsl-network.
         echo >&2 "Finding WSL instance IP..."
-        WSL_INSTANCE="$(ip -4 addr show eth0 | awk -F'[/ ]+' '/inet/ {print $3}')"
-        export WSL_INSTANCE
+        WSLHOST="$(ip -4 addr show eth0 | awk -F'[/ ]+' '/inet/ {print $3}')"
+        export WSLHOST
 
-        echo >&2 "Finding WSL host..."
-        WSL_HOST="$(powershell.exe "
-                Get-NetAdapter 'vEthernet (WSL)' |
-                Get-NetIPAddress -AddressFamily IPv4 |
-                Select -Expand IPAddress
-        " | tr -d '\r')"
-        export WSL_HOST
+        # Our windows host is just the default gateway
+        #
+        echo >&2 "Finding Windows host..."
+        WINHOST="$(ip r show default | awk '{print $3}')"
+        export WINHOST
 fi
