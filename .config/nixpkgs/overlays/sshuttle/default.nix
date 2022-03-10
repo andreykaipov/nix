@@ -8,15 +8,15 @@ with super.python3Packages; {
   sshuttle = super.sshuttle.overridePythonAttrs (old: rec {
 
     pname = old.pname;
-    version = "1.0.5";
+    version = "1.1.0";
 
     src = fetchPypi {
       inherit pname version;
-      sha256 = "1gd14sj0vagi10sffj2wzh7846i7ksflvyg7m8rhkf1cmhd6k37x";
+      sha256 = "IfuRvfOStQ5422uNdelbc6ydr9Nh4mV+eE5nRWEhkxU=";
     };
 
     # see https://github.com/sshuttle/sshuttle/issues/563#issuecomment-789693694
-    patches = old.patches ++ [ ./pf.patch ];
+    patches = [ ./sudo.patch ./pf.patch ];
 
     # our new patch breaks some pf firewall tests
     checkPhase = ''
