@@ -26,7 +26,13 @@
 .config/nvim/tmp/bak/*~
 .config/nvim/tmp/swp
 .config/nvim/tmp/undo
-.config/sh/env.work
-.config/ssh/autoadd/*.pem
+.config/ssh/keys/*.pem
 .config/tmux/plugins
 .config/wslu
+
+# work things
+.config/sh/env.work
+.config/sh/functions.work
+.config/ssh/config.d/work
+.config/git/work
+bin/work/**
