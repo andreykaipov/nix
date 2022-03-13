@@ -102,7 +102,6 @@ setpanetitle() {
             retcolor ');'
         fi
     )"
-    path="#[fg=yellow,bold]${PWD/$HOME/'~'}#[default]"
 
     git=
     # todo maybe just put this check into the git subcommand
@@ -110,7 +109,30 @@ setpanetitle() {
         git="$(git condensed-status-tmux)"
     fi
 
-    printf "\e]2;%s\e\\" "[$paneindex] $smiley $path $git"
+    case "$PWD" in
+        "$HOME") path='~' ;;
+        "$HOME"*)
+            path="$(
+                dirs=$(IFS=/; printf '%s\n' ${PWD/$HOME/'~'})
+                i="$(echo "$dirs" | wc -l)"
+                for p in $dirs; do
+                    i=$((i-1))
+                    if [ $i -lt 2 ]; then
+                        echo "$p"
+                        continue
+                    fi
+                    echo "${p:0:1}"
+                done | paste -sd /
+            )"
+            ;;
+        *)
+            path="$PWD"
+            ;;
+    esac
+
+    path="#[fg=yellow,bold]$path#[default]"
+
+    printf "\e]2;%s\e\\" "#[align=right] $smiley $path $git #[fg=white][$paneindex]#[fg=default] "
 }
 
 # the escape sequence doesn't work, so we just invoke tmux directly
