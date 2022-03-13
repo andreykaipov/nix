@@ -87,7 +87,7 @@ ensure_ssh_agent() {
 
         cd - || return
 
-        ssh-add ~/.config/ssh/autoadd/*.pem
+        ssh-add ~/.config/ssh/keys/*.pem
 }
 
 ensure_tmux() {

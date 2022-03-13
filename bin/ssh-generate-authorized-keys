@@ -4,9 +4,9 @@ cd "$HOME/.config/ssh" || exit
 
 rm -f authorized_keys
 
-for pub in autoadd/*.pub; do
-	echo "# $pub" >> authorized_keys
-	cat "$pub"    >> authorized_keys
+for pub in keys/*.pub; do
+        echo "# $pub" >>authorized_keys
+        cat "$pub" >>authorized_keys
 done
 
 # The following works around SSH's lack of support for XDG config paths. Could
@@ -14,6 +14,7 @@ done
 # but I'd rather not...
 
 if ! [ -L ~/.ssh/authorized_keys ]; then
-    rm -rf ~/.ssh; mkdir -p ~/.ssh
-    ln -sf ~/.config/ssh/authorized_keys ~/.ssh/authorized_keys
+        rm -rf ~/.ssh
+        mkdir -p ~/.ssh
+        ln -sf ~/.config/ssh/authorized_keys ~/.ssh/authorized_keys
 fi
