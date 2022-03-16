@@ -17,14 +17,12 @@
 [ "$(id -u)" != 0 ] && exec sudo env \
         "PATH=$PATH" \
         "SSH_AUTH_SOCK=$SSH_AUTH_SOCK" \
-        "JANK_VPN_RANGES=$JANK_VPN_RANGES" \
+        "JANK_VPN_SUBNETS=$JANK_VPN_SUBNETS" \
         "JANK_VPN_DNS_SERVERS=$JANK_VPN_DNS_SERVERS" \
         "$0" "$@"
 
 user="${SUDO_USER-$USER}"
 HOME="/home/$user"
-
-alias ssh='ssh -F "$HOME/.config/ssh/config"'
 
 start_sshuttle() {
         hostname="$remotehost"
@@ -112,7 +110,7 @@ cleanup_dnsproxy() {
 main() {
         remotehost="${1?}"
         localport="${2-2001}"
-        ranges="$JANK_VPN_RANGES"
+        ranges="$JANK_VPN_SUBNETS"
         dnsservers="$JANK_VPN_DNS_SERVERS"
         start_sshuttle &
         start_dnsproxy &
