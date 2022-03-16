@@ -18,3 +18,8 @@ if ! [ -L ~/.ssh/authorized_keys ]; then
         mkdir -p ~/.ssh
         ln -sf ~/.config/ssh/authorized_keys ~/.ssh/authorized_keys
 fi
+
+if ! [ -L ~/.ssh/config ]; then
+        rm -rf ~/.ssh/config
+        ln -sf ~/.config/ssh/config ~/.ssh/config
+fi
