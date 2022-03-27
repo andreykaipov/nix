@@ -1,0 +1,67 @@
+#!/bin/bash
+# shellcheck disable=SC2154
+
+getshortenedpath() {
+        arg="$1"
+
+        case "$arg" in
+                "$HOME") shortenedpath=' ~ ' ;; # details must be >= 2 chars
+                "$HOME"*)
+                        shortenedpath="$(
+                                # shellcheck disable=SC2086
+                                dirs=$(
+                                        IFS=/
+                                        printf '%s\n' ${arg/$HOME/'~'}
+                                )
+                                i="$(echo "$dirs" | wc -l)"
+                                for p in $dirs; do
+                                        i=$((i - 1))
+                                        if [ $i -lt 2 ]; then
+                                                echo "$p"
+                                                continue
+                                        fi
+                                        echo "${p:0:1}"
+                                done | paste -sd /
+                        )"
+                        ;;
+                *)
+                        shortenedpath="$arg"
+                        ;;
+        esac
+
+        echo "$shortenedpath"
+}
+
+main() {
+        kind="$1"
+        shift
+        details="$(tmux id)"
+
+        case "$kind" in
+                vi)
+                        state="vi $*"
+                        ;;
+                sh)
+                        state="bash $(getshortenedpath "$PWD")"
+                        #state="$(tmux display -p '#{pane_current_command}')"
+                        ;;
+                pane-focus-in)
+                        state="$(tmux display -p '#{pane_current_command}')"
+                        #state="..."
+                        #state="$__previous_rich_previous_state"
+                        ;;
+                *)
+                        details="unknown"
+                        state="unknown"
+                        ;;
+        esac
+
+        export __previous_rich_presence_state="$state"
+
+        rich-presence update \
+                --details "$details" \
+                --state "$state"
+}
+
+set -eu
+main "$@"

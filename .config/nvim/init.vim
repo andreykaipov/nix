@@ -199,4 +199,7 @@ augroup init
         \ if line("'\"") >= 1 && line("'\"") <= line("$") && &ft !~# 'commit'
         \ |   exe "normal! g`\""
         \ | endif
+
+    autocmd FocusGained,BufReadPost,FileReadPost,BufNewFile * :call system("sleep 0.1s; rich-presence-update vi " . expand("%:t"))
+    " autocmd FocusLost * :call system("tmux rename-window " . expand("%"))
 augroup END

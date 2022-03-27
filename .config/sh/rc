@@ -82,6 +82,29 @@ fi
 safesource ~/.nix-profile/etc/profile.d/bash_completion.sh
 safesource ~/.nix-profile/etc/bash_completion.d/gcloud.inc
 
+findshortenedpath() {
+    case "$PWD" in
+        "$HOME") shortenedpath='~' ;;
+        "$HOME"*)
+            shortenedpath="$(
+                dirs=$(IFS=/; printf '%s\n' ${PWD/$HOME/'~'})
+                i="$(echo "$dirs" | wc -l)"
+                for p in $dirs; do
+                    i=$((i-1))
+                    if [ $i -lt 2 ]; then
+                        echo "$p"
+                        continue
+                    fi
+                    echo "${p:0:1}"
+                done | paste -sd /
+            )"
+            ;;
+        *)
+            shortenedpath="$PWD"
+            ;;
+    esac
+}
+
 # Set tmux window and pane title. See
 # http://man7.org/linux/man-pages/man1/tmux.1.html#NAMES_AND_TITLES.
 # shellcheck disable=SC2039
@@ -109,28 +132,7 @@ setpanetitle() {
         git="$(git condensed-status-tmux)"
     fi
 
-    case "$PWD" in
-        "$HOME") path='~' ;;
-        "$HOME"*)
-            path="$(
-                dirs=$(IFS=/; printf '%s\n' ${PWD/$HOME/'~'})
-                i="$(echo "$dirs" | wc -l)"
-                for p in $dirs; do
-                    i=$((i-1))
-                    if [ $i -lt 2 ]; then
-                        echo "$p"
-                        continue
-                    fi
-                    echo "${p:0:1}"
-                done | paste -sd /
-            )"
-            ;;
-        *)
-            path="$PWD"
-            ;;
-    esac
-
-    path="#[fg=yellow,bold]$path#[default]"
+    path="#[fg=yellow,bold]$shortenedpath#[default]"
 
     printf "\e]2;%s\e\\" "#[align=right] $smiley $path $git #[fg=white][$paneindex]#[fg=default] "
 }
@@ -149,8 +151,18 @@ setwindowtitle() {
 }
 
 settitles() {
+    findshortenedpath
+    setrichpresence
     setpanetitle
     setwindowtitle
+}
+
+setrichpresence() {
+    details="$shortenedpath"
+    if [ "$shortenedpath" = '~' ]; then
+        details="home"
+    fi
+    rich-presence-update sh
 }
 
 # can use $BASH_COMMAND to get the last command here
