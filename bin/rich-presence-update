@@ -35,32 +35,63 @@ getshortenedpath() {
 main() {
         kind="$1"
         shift
-        details="$(tmux id)"
+        details="tmux $(tmux id)"
+        since=cached
+        cache_key=local
+        cache_write=if_not_present
+        small_image=
 
         case "$kind" in
-                vi)
-                        state="vi $*"
+                init-rp-session)
+                        state=
+                        since=now
+                        cache_key=local
+                        cache_write=always
                         ;;
-                sh)
-                        state="bash $(getshortenedpath "$PWD")"
-                        #state="$(tmux display -p '#{pane_current_command}')"
+                vi-open)
+                        since=now
+                        state="$*"
+                        small_image=vim_square
+                        cache_key="$*"
+                        cache_write=always
+                        ;;
+                vi-move)
+                        linecol="$1"
+                        shift
+                        cache_key="$*"
+                        small_image=cached
+                        state="👀 $* $linecol"
+                        ;;
+                vi-movei)
+                        linecol="$1"
+                        shift
+                        cache_key="$*"
+                        small_image=cached
+                        state="✍🏽 $* $linecol"
+                        ;;
+                vi-quit)
+                        state="❯ "
+                        ;;
+                bash-command)
+                        state="❯ $*"
                         ;;
                 pane-focus-in)
-                        state="$(tmux display -p '#{pane_current_command}')"
-                        #state="..."
-                        #state="$__previous_rich_previous_state"
+                        state="❯ "
                         ;;
                 *)
+                        return
                         details="unknown"
                         state="unknown"
                         ;;
         esac
 
-        export __previous_rich_presence_state="$state"
-
-        rich-presence update \
+        ~/projects/personal/rich-presence-cli/bin/release/rich-presence-linux-amd64 update \
                 --details "$details" \
-                --state "$state"
+                --state "$state" \
+                --small-image "$small_image" \
+                --since "$since" \
+                --cache-key "$cache_key" \
+                --cache-write "$cache_write"
 }
 
 set -eu
