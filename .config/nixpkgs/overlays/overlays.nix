@@ -3,6 +3,8 @@ self: super: {
   dns-tcp-socks-proxy = import ../cli/dns-tcp-socks-proxy;
   extempore = import ../cli/extempore;
   iproute2mac = import ../cli/iproute2mac;
+  rich-presence-cli-windows = import ../cli/rich-presence-cli-windows;
+  rich-presence-cli-linux = import ../cli/rich-presence-cli-linux;
   twitch = import ../cli/twitch;
   win32yank = import ../cli/win32yank;
   wudo = import ../cli/wsl-sudo;

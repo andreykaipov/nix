@@ -78,6 +78,8 @@ let
     dns-tcp-socks-proxy
     gcc
     gnumake
+    rich-presence-cli-windows
+    rich-presence-cli-linux
     unzip
     win32yank
     wudo
