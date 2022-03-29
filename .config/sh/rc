@@ -134,7 +134,7 @@ setpanetitle() {
 
     path="#[fg=yellow,bold]$shortenedpath#[default]"
 
-    printf "\e]2;%s\e\\" "#[align=right] $smiley $path $git #[fg=white][$paneindex]#[fg=default] "
+    printf "\e]2;%s\e\\" "#[align=right] $smiley $path $git#[fg=white][$paneindex]#[fg=default] "
 }
 
 # the escape sequence doesn't work, so we just invoke tmux directly
@@ -146,7 +146,7 @@ setwindowtitle() {
     else
         shortened="$(dirname "${PWD/$HOME/'~'}" | sed -e "s:\(/.\)[^/]*:\1:g")"
         last="$(basename "$PWD")"
-        tmux rename-window -t local "$shortened/$last"
+        tmux rename-window -t local "$shortenedpath"
     fi
 }
 
