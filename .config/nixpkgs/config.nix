@@ -31,6 +31,7 @@ let
       tree
       upx
       whois
+      git-filter-repo
     ])
 
     (with unstable; [
