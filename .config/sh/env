@@ -115,6 +115,11 @@ export TMPDIR="${TMPDIR:-$TMP}"
 # https://github.com/npm/cli/issues/654
 export NPM_CONFIG_USERCONFIG="$HOME/.config/npm/npmrc"
 
+# Shares env vars with Windows exes when we run them from within WSL. See
+# https://devblogs.microsoft.com/commandline/share-environment-vars-between-wsl-and-windows
+# for more deets
+export WSLENV=HOME/w
+
 # TODO use -z and return early instead
 #
 # also the following env vars don't work with `sourceg` because the bare shell
