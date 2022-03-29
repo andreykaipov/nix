@@ -167,6 +167,8 @@ setrichpresence() {
 
 # can use $BASH_COMMAND to get the last command here
 precmd() {
+    rich-presence-update bash-command "$BASH_COMMAND"
+    #echo $BASH_COMMAND
     :
 }
 
