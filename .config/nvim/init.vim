@@ -200,6 +200,9 @@ augroup init
         \ |   exe "normal! g`\""
         \ | endif
 
-    autocmd FocusGained,BufReadPost,FileReadPost,BufNewFile * :call system("sleep 0.1s; rich-presence-update vi " . expand("%:t"))
-    " autocmd FocusLost * :call system("tmux rename-window " . expand("%"))
+    autocmd BufNewFile,BufReadPost * :call system("rich-presence-update vi-open " . expand("%:t"))
+    autocmd CursorMoved * :call system("rich-presence-update vi-move"   ." ".line(".").":".col(".")." ".expand("%:t"))
+    autocmd CursorMovedI * :call system("rich-presence-update vi-movei" ." ".line(".").":".col(".")." ".expand("%:t"))
+    autocmd FocusGained * :call system("rich-presence-update vi-move"   ." ".line(".").":".col(".")." ".expand("%:t"))
+    autocmd QuitPre * :call system("rich-presence-update vi-quit")
 augroup END
