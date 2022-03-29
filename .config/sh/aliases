@@ -33,7 +33,3 @@ alias k='kubectl'
 alias less='less -NFRX'
 
 alias tree='tree --dirsfirst'
-
-alias podman='podman --cgroup-manager cgroupfs'
-alias docker='podman --cgroup-manager cgroupfs'
-alias docker-compose=podman-compose
