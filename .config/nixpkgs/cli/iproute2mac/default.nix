@@ -9,7 +9,7 @@ stdenv.mkDerivation {
 
   src = fetchurl {
     url = "https://github.com/brona/iproute2mac/raw/master/src/ip.py";
-    sha256 = "0qivphbqvbp04bsx6zgzhq4c8cvf7av8x60b258gwjv40brrbm6q";
+    sha256 = "sha256-d8IHWw5VVIRGNt6H376usU3uiC7Gyeln0ZR0dEQK0GE=";
   };
 
   unpackPhase = ":";
