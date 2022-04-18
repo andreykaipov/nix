@@ -49,7 +49,6 @@ let
       gh
       go
       go-tools
-      k3s
       neofetch
       neovim
       nixpkgs-fmt
