@@ -50,7 +50,8 @@ export XDG_RUNTIME_DIR="$HOME/.run"
 . ~/.config/sh/functions # for pathify
 
 # Nix stuff
-. ~/.nix-profile/etc/profile.d/nix.sh
+#.  /nix/var/nix/profiles/default/etc/profile.d/nix.sh
+. /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
 
 # Go stuff
 export GOBIN="$HOME/go/bin"

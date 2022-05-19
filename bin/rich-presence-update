@@ -33,6 +33,8 @@ getshortenedpath() {
 }
 
 main() {
+        if [ -n "${SKIP_RICH_PRESENCE-}" ]; then return; fi
+
         kind="$1"
         shift
         details="tmux $(tmux id)"
