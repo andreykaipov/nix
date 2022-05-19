@@ -42,24 +42,23 @@ ensure_prereqs() {
 ensure_nix() {
         echo "Ensuring Nix"
 
-        if [ "$os" = darwin ]; then
-                nixargs="--darwin-use-unencrypted-nix-store-volume"
+        if ! command -v nix >/dev/null; then
+                echo "Nix is not installed!"
+
+                curl -sLo- https://nixos.org/nix/install | sh -s -- --daemon --no-channel-add --no-modify-profile
         fi
+
+        nix-channel --update
+        nix-shell -p nix-info --run "nix-info -m"
 
         if [ -n "$FORCE_REINSTALL" ]; then
                 nix-env --uninstall '*' || true
         fi
 
-        if ! command -v nix >/dev/null; then
-                export NIX_INSTALLER_NO_MODIFY_PROFILE=1
-                curl -sL https://nixos.org/nix/install | sh -s -- --no-daemon $nixargs
-                . "$HOME/.nix-profile/etc/profile.d/nix.sh"
-                nix-shell -p nix-info --run "nix-info -m"
-        fi
+        nixpkg=linux
+        if [ "$os" = darwin ]; then nixpkg=macos; fi
+        nix-env --install --attr "nixpkgs.$nixpkg"
 
-        git checkout -- ~/.nix-channels
-        nix-channel --update                  # update
-        nix-env --install --attr nixpkgs.mine # install
         # nix-collect-garbage -d   # cleanup
 
         # hard link a common shell.nix for each of our custom derivations
@@ -73,8 +72,6 @@ ensure_apps() {
 
         echo "Ensuring apps"
 
-        nix-env --install --attr nixpkgs.macos-apps
-
         IFS="$nl"
         hashApp() {
                 path="$1/Contents/MacOS"
@@ -86,7 +83,7 @@ ensure_apps() {
 
         mkdir -p ~/Applications/Nix\ Apps
 
-        appspath="$(nix eval --raw nixpkgs.macos-apps.outPath)"
+        appspath="$(nix-instantiate --eval --expr '(import <nixpkgs> {}).macos.outPath' | tr -d '"')"
 
         find "$appspath"/Applications/*.app -maxdepth 1 -type l | while read -r app; do
                 echo "$app"
