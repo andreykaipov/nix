@@ -1,7 +1,7 @@
 { master ? import <master> { }
 , unstable ? import <unstable> { }
 , pkgs ? import <unstable> { }
-, stable ? import <stable> { }
+, stable ? import <stable> { /* config = { allowUnfree = true; }; */ }
 , ...
 }:
 
@@ -27,6 +27,7 @@ let
       nmap
       shellcheck
       shfmt
+      stoken
       tre-command
       tree
       upx
@@ -38,14 +39,6 @@ let
       bashInteractive_5
       cloudflared
       exiftool
-      #docker
-      #docker-client
-      #runc
-      #containerd
-      #colima
-      #podman
-      podman-compose
-      #lima
       gh
       go
       go-tools
@@ -60,21 +53,12 @@ let
       terragrunt
       tflint
       tmux
-      twitch
       yq-go
       expect
     ])
   ];
 
-  forDarwin = with stable; [
-    coreutils
-    iproute2mac
-  ];
-
-  forLinux = with stable; [
-  ];
-
-  forWSL = with stable; [
+  wsl = with stable; [
     dns-tcp-socks-proxy
     gcc
     gnumake
@@ -85,56 +69,56 @@ let
     wudo
   ];
 
-  forWork = with stable; [
+  work = with stable; [
     google-cloud-sdk
     kubectl
-    kubernetes-helm
-    nodePackages.http-server
-    nodePackages.typescript
-    nodejs-17_x
-    vault
-    yarn
-
     safe
-    #bosh-v5_2_2
-    #fly-v4_2_5
-    #fly-v5_7_2
-    #spruce-v1_18_2
+    vault
   ];
 
   inherit (stable.lib) optional flatten;
   inherit (stable.stdenv) isDarwin isLinux;
+
   isWork = builtins.pathExists ~/.config/sh/env.work;
   isWSL = (builtins.getEnv "WSL_DISTRO_NAME") != "";
 in
 {
-  allowUnfree = true;
-
   packageOverrides = _: with pkgs; {
-    mine = buildEnv {
-      name = "my-packages";
+    macos = buildEnv {
+      name = "macos";
       paths = flatten [
         common
-        (optional isDarwin forDarwin)
-        (optional isLinux forLinux)
-        (optional isWSL forWSL)
-        (optional isWork forWork)
+
+        [
+          coreutils
+          iproute2mac
+          colima
+          docker-client
+
+          # apps; to be moved to '~/Applications/Nix Apps'
+          (callPackage ./apps/rectangle { })
+          (callPackage ./apps/1password { })
+          (callPackage ./apps/spotify { })
+          (callPackage ./apps/iterm2 { })
+        ]
+
+        (optional isWork work)
+
+        (optional (! isWork) [
+          (callPackage ./apps/barrier { })
+          (callPackage ./apps/discord { })
+        ])
       ];
     };
 
-    macos-apps = buildEnv {
-      name = "my-macos-apps";
-      paths = [
-        (callPackage ./apps/1password { })
-        (callPackage ./apps/barrier { })
-        (callPackage ./apps/discord { })
-        (callPackage ./apps/docker { })
-        (callPackage ./apps/iterm2 { })
-        (callPackage ./apps/rectangle { })
-        (callPackage ./apps/spotify { })
+    linux = buildEnv {
+      name = "linux";
+      paths = flatten [
+        common
+        (optional isWSL wsl)
+        (optional isWork work)
+        (optional (! isWork) [ ])
       ];
     };
   };
-
-  #virtualisation.podman.dockerCompat = true;
 }
