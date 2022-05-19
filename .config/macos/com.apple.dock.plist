@@ -8,10 +8,12 @@
 	<real>82</real>
 	<key>last-analytics-stamp</key>
 	<array>
-		<real>657132770.72471297</real>
+		<real>674404528.09981704</real>
 	</array>
 	<key>last-messagetrace-stamp</key>
-	<real>648421303.92774701</real>
+	<real>612463514.40225196</real>
+	<key>lastShowIndicatorTime</key>
+	<real>674162815.10308802</real>
 	<key>loc</key>
 	<string>en_US:US</string>
 	<key>magnification</key>
@@ -19,64 +21,219 @@
 	<key>minimize-to-application</key>
 	<false/>
 	<key>mod-count</key>
-	<integer>726</integer>
+	<integer>276</integer>
 	<key>orientation</key>
 	<string>bottom</string>
 	<key>persistent-apps</key>
 	<array>
 		<dict>
 			<key>GUID</key>
-			<integer>180129288</integer>
+			<integer>3782826652</integer>
 			<key>tile-data</key>
 			<dict>
 				<key>book</key>
 				<data>
-				Ym9va1gCAAAAAAQQMAAAAAAAAAAAAAAAAAAAAAAAAAAA
-				AAAAAAAAAAAAAAAAAAAAeAEAAAQAAAADAwAAAAAAIAYA
-				AAABAQAAU3lzdGVtAAAMAAAAAQEAAEFwcGxpY2F0aW9u
-				cw0AAAABAQAATGF1bmNocGFkLmFwcAAAAAwAAAABBgAA
-				EAAAACAAAAA0AAAACAAAAAQDAADRWAAA////DwgAAAAE
-				AwAAMdAGAP///w8IAAAABAMAAKBPBwD///8PDAAAAAEG
-				AABgAAAAcAAAAIAAAAAIAAAAAAQAAEHBn+P5AAAAGAAA
-				AAECAAACAAAAAAAAAA8AAAAAAAAAAAAAAAAAAAAIAAAA
-				AQkAAGZpbGU6Ly8vDAAAAAEBAABNYWNpbnRvc2ggSEQI
-				AAAABAMAAACgIGh0AAAACAAAAAAEAABBwbsZK9pmpSQA
-				AAABAQAAREIyMkY1QTItRTBCMy00RjhCLTlFQ0UtQzdG
-				RTAxOEQzNjYzGAAAAAECAACBAAAAAQAAAO8TAAABAAAA
-				AAAAAAAAAAABAAAAAQEAAC8AAAAAAAAAAQUAAKgAAAD+
-				////AQAAAAAAAAANAAAABBAAAEwAAAAAAAAABRAAAJAA
-				AAAAAAAAEBAAALQAAAAAAAAAQBAAAKQAAAAAAAAAAiAA
-				AGQBAAAAAAAABSAAANQAAAAAAAAAECAAAOQAAAAAAAAA
-				ESAAABgBAAAAAAAAEiAAAPgAAAAAAAAAEyAAAAgBAAAA
-				AAAAICAAAEQBAAAAAAAAMCAAAHABAAAAAAAAENAAAAQA
-				AAAAAAAA
+				Ym9va3QCAAAAAAQQMAAAAAAAAAAAAAAAAAAAAAAAAAAA
+				AAAAAAAAAAAAAAAAAAAAlAEAAAQAAAADAwAAAAAAIAwA
+				AAABAQAAQXBwbGljYXRpb25zBQAAAAEBAABDaXNjbwAA
+				ACsAAAABAQAAQ2lzY28gQW55Q29ubmVjdCBTZWN1cmUg
+				TW9iaWxpdHkgQ2xpZW50LmFwcAAMAAAAAQYAABAAAAAk
+				AAAANAAAAAgAAAAEAwAAuaAOAAAAAAAIAAAABAMAAM0K
+				AQAAAAAACAAAAAQDAADOCgEAAAAAAAwAAAABBgAAfAAA
+				AIwAAACcAAAACAAAAAAEAABBw7Bj7YAAABgAAAABAgAA
+				AgAAAAAAAAAPAAAAAAAAAAAAAAAAAAAACAAAAAEJAABm
+				aWxlOi8vLwwAAAABAQAATWFjaW50b3NoIEhECAAAAAQD
+				AAAAkIKW5wAAAAgAAAAABAAAQcPYOcGAAAAkAAAAAQEA
+				AEM0NjQyNTVCLUMyNUYtNEQ5Mi1COUExLTE0RDA3Qzgx
+				ODUzOBgAAAABAgAAgQAAAAEAAADvEwAAAQAAAAAAAAAA
+				AAAAAQAAAAEBAAAvAAAAAAAAAAEFAACoAAAA/v///wEA
+				AAAAAAAADQAAAAQQAABoAAAAAAAAAAUQAACsAAAAAAAA
+				ABAQAADQAAAAAAAAAEAQAADAAAAAAAAAAAIgAACAAQAA
+				AAAAAAUgAADwAAAAAAAAABAgAAAAAQAAAAAAABEgAAA0
+				AQAAAAAAABIgAAAUAQAAAAAAABMgAAAkAQAAAAAAACAg
+				AABgAQAAAAAAADAgAACMAQAAAAAAABDQAAAEAAAAAAAA
+				AA==
 				</data>
 				<key>bundle-identifier</key>
-				<string>com.apple.launchpad.launcher</string>
+				<string>com.cisco.anyconnect.gui</string>
 				<key>dock-extra</key>
 				<false/>
 				<key>file-data</key>
 				<dict>
 					<key>_CFURLString</key>
-					<string>file:///System/Applications/Launchpad.app/</string>
+					<string>file:///Applications/Cisco/Cisco%20AnyConnect%20Secure%20Mobility%20Client.app/</string>
 					<key>_CFURLStringType</key>
 					<integer>15</integer>
 				</dict>
 				<key>file-label</key>
-				<string>Launchpad</string>
+				<string>Cisco AnyConnect Secure Mobility Client</string>
 				<key>file-mod-date</key>
-				<integer>195308723633868</integer>
+				<integer>63818351778443</integer>
 				<key>file-type</key>
-				<integer>169</integer>
+				<integer>41</integer>
+				<key>is-beta</key>
+				<false/>
 				<key>parent-mod-date</key>
-				<integer>3656093106</integer>
+				<integer>83175769381510</integer>
 			</dict>
 			<key>tile-type</key>
 			<string>file-tile</string>
 		</dict>
 		<dict>
 			<key>GUID</key>
-			<integer>506065780</integer>
+			<integer>868184477</integer>
+			<key>tile-data</key>
+			<dict>
+				<key>book</key>
+				<data>
+				Ym9vazQCAAAAAAQQMAAAAAAAAAAAAAAAAAAAAAAAAAAA
+				AAAAAAAAAAAAAAAAAAAAVAEAAAQAAAADAwAAAAAAIAwA
+				AAABAQAAQXBwbGljYXRpb25zEQAAAAEBAABHb29nbGUg
+				Q2hyb21lLmFwcAAAAAgAAAABBgAAEAAAACQAAAAIAAAA
+				BAMAALmgDgAAAAAACAAAAAQDAACmXjcAAAAAAAgAAAAB
+				BgAAUAAAAGAAAAAIAAAAAAQAAEHD37mHgAAAGAAAAAEC
+				AAACAAAAAAAAAA8AAAAAAAAAAAAAAAAAAAAIAAAAAQkA
+				AGZpbGU6Ly8vDAAAAAEBAABNYWNpbnRvc2ggSEQIAAAA
+				BAMAAACQgpbnAAAACAAAAAAEAABBw9g5wYAAACQAAAAB
+				AQAAQzQ2NDI1NUItQzI1Ri00RDkyLUI5QTEtMTREMDdD
+				ODE4NTM4GAAAAAECAACBAAAAAQAAAO8TAAABAAAAAAAA
+				AAAAAAABAAAAAQEAAC8AAAAAAAAAAQUAAKgAAAD+////
+				AQAAAAAAAAANAAAABBAAAEAAAAAAAAAABRAAAHAAAAAA
+				AAAAEBAAAJAAAAAAAAAAQBAAAIAAAAAAAAAAAiAAAEAB
+				AAAAAAAABSAAALAAAAAAAAAAECAAAMAAAAAAAAAAESAA
+				APQAAAAAAAAAEiAAANQAAAAAAAAAEyAAAOQAAAAAAAAA
+				ICAAACABAAAAAAAAMCAAAEwBAAAAAAAAENAAAAQAAAAA
+				AAAA
+				</data>
+				<key>bundle-identifier</key>
+				<string>com.google.Chrome</string>
+				<key>dock-extra</key>
+				<false/>
+				<key>file-data</key>
+				<dict>
+					<key>_CFURLString</key>
+					<string>file:///Applications/Google%20Chrome.app/</string>
+					<key>_CFURLStringType</key>
+					<integer>15</integer>
+				</dict>
+				<key>file-label</key>
+				<string>Google Chrome</string>
+				<key>file-mod-date</key>
+				<integer>3732739709</integer>
+				<key>file-type</key>
+				<integer>41</integer>
+				<key>is-beta</key>
+				<false/>
+				<key>parent-mod-date</key>
+				<integer>139598760819920</integer>
+			</dict>
+			<key>tile-type</key>
+			<string>file-tile</string>
+		</dict>
+		<dict>
+			<key>GUID</key>
+			<integer>2483342276</integer>
+			<key>tile-data</key>
+			<dict>
+				<key>book</key>
+				<data>
+				Ym9va0QCAAAAAAQQMAAAAAAAAAAAAAAAAAAAAAAAAAAA
+				AAAAAAAAAAAAAAAAAAAAWAEAAAQAAAADAwAAAAAAIAwA
+				AAABAQAAQXBwbGljYXRpb25zFQAAAAEBAABNaWNyb3Nv
+				ZnQgT3V0bG9vay5hcHAAAAAIAAAAAQYAABAAAAAkAAAA
+				CAAAAAQDAAA7z30AAAAAAAgAAAAEAwAADSt/AAAAAAAI
+				AAAAAQYAAFQAAABkAAAACAAAAAAEAABBw93KgAAAABgA
+				AAABAgAAAgAAAAAAAAAPAAAAAAAAAAAAAAAAAAAAAAAA
+				AAEFAAAIAAAAAQkAAGZpbGU6Ly8vDAAAAAEBAABNYWNp
+				bnRvc2ggSEQIAAAABAMAAACQgpbnAAAACAAAAAAEAABB
+				w/d7NIAAACQAAAABAQAAQzQ2NDI1NUItQzI1Ri00RDky
+				LUI5QTEtMTREMDdDODE4NTM4GAAAAAECAACBAAAAAQAA
+				AO8TAAABAAAAAAAAAAAAAAABAAAAAQEAAC8AAAC0AAAA
+				/v///wEAAAAAAAAADgAAAAQQAABEAAAAAAAAAAUQAAB0
+				AAAAAAAAABAQAACUAAAAAAAAAEAQAACEAAAAAAAAAAIg
+				AABMAQAAAAAAAAUgAAC8AAAAAAAAABAgAADMAAAAAAAA
+				ABEgAAAAAQAAAAAAABIgAADgAAAAAAAAABMgAADwAAAA
+				AAAAACAgAAAsAQAAAAAAADAgAAC0AAAAAAAAAAHQAAC0
+				AAAAAAAAABDQAAAEAAAAAAAAAA==
+				</data>
+				<key>bundle-identifier</key>
+				<string>com.microsoft.Outlook</string>
+				<key>dock-extra</key>
+				<false/>
+				<key>file-data</key>
+				<dict>
+					<key>_CFURLString</key>
+					<string>file:///Applications/Microsoft%20Outlook.app/</string>
+					<key>_CFURLStringType</key>
+					<integer>15</integer>
+				</dict>
+				<key>file-label</key>
+				<string>Microsoft Outlook</string>
+				<key>file-mod-date</key>
+				<integer>264874366980408</integer>
+				<key>file-type</key>
+				<integer>41</integer>
+				<key>is-beta</key>
+				<false/>
+				<key>parent-mod-date</key>
+				<integer>205500740660905</integer>
+			</dict>
+			<key>tile-type</key>
+			<string>file-tile</string>
+		</dict>
+		<dict>
+			<key>GUID</key>
+			<integer>3577121897</integer>
+			<key>tile-data</key>
+			<dict>
+				<key>book</key>
+				<data>
+				Ym9vaywCAAAAAAQQMAAAAAAAAAAAAAAAAAAAAAAAAAAA
+				AAAAAAAAAAAAAAAAAAAATAEAAAQAAAADAwAAAAAAIAwA
+				AAABAQAAQXBwbGljYXRpb25zCQAAAAEBAABTbGFjay5h
+				cHAAAAAIAAAAAQYAABAAAAAkAAAACAAAAAQDAAA7z30A
+				AAAAAAgAAAAEAwAAj/QbAAAAAAAIAAAAAQYAAEgAAABY
+				AAAACAAAAAAEAABBw6zwJoAAABgAAAABAgAAAgAAAAAA
+				AAAPAAAAAAAAAAAAAAAAAAAACAAAAAEJAABmaWxlOi8v
+				LwwAAAABAQAATWFjaW50b3NoIEhECAAAAAQDAAAAkIKW
+				5wAAAAgAAAAABAAAQcP3ezSAAAAkAAAAAQEAAEM0NjQy
+				NTVCLUMyNUYtNEQ5Mi1COUExLTE0RDA3QzgxODUzOBgA
+				AAABAgAAgQAAAAEAAADvEwAAAQAAAAAAAAAAAAAAAQAA
+				AAEBAAAvAAAAAAAAAAEFAACoAAAA/v///wEAAAAAAAAA
+				DQAAAAQQAAA4AAAAAAAAAAUQAABoAAAAAAAAABAQAACI
+				AAAAAAAAAEAQAAB4AAAAAAAAAAIgAAA4AQAAAAAAAAUg
+				AACoAAAAAAAAABAgAAC4AAAAAAAAABEgAADsAAAAAAAA
+				ABIgAADMAAAAAAAAABMgAADcAAAAAAAAACAgAAAYAQAA
+				AAAAADAgAABEAQAAAAAAABDQAAAEAAAAAAAAAA==
+				</data>
+				<key>bundle-identifier</key>
+				<string>com.tinyspeck.slackmacgap</string>
+				<key>dock-extra</key>
+				<false/>
+				<key>file-data</key>
+				<dict>
+					<key>_CFURLString</key>
+					<string>file:///Applications/Slack.app/</string>
+					<key>_CFURLStringType</key>
+					<integer>15</integer>
+				</dict>
+				<key>file-label</key>
+				<string>Slack</string>
+				<key>file-mod-date</key>
+				<integer>3721353549</integer>
+				<key>file-type</key>
+				<integer>41</integer>
+				<key>is-beta</key>
+				<false/>
+				<key>parent-mod-date</key>
+				<integer>205500740660905</integer>
+			</dict>
+			<key>tile-type</key>
+			<string>file-tile</string>
+		</dict>
+		<dict>
+			<key>GUID</key>
+			<integer>3577121886</integer>
 			<key>tile-data</key>
 			<dict>
 				<key>book</key>
@@ -84,13 +241,13 @@
 				Ym9vaywCAAAAAAQQMAAAAAAAAAAAAAAAAAAAAAAAAAAA
 				AAAAAAAAAAAAAAAAAAAATAEAAAQAAAADAwAAAAAAIAwA
 				AAABAQAAQXBwbGljYXRpb25zCwAAAAEBAABGaXJlZm94
-				LmFwcAAIAAAAAQYAABAAAAAkAAAACAAAAAQDAAAX1YcD
-				AAAAAAgAAAAEAwAAp4QzAgAAAAAIAAAAAQYAAEgAAABY
-				AAAACAAAAAAEAABBwvydhAAAABgAAAABAgAAAgAAAAAA
+				LmFwcAAIAAAAAQYAABAAAAAkAAAACAAAAAQDAAC5oA4A
+				AAAAAAgAAAAEAwAAe3ICAAAAAAAIAAAAAQYAAEgAAABY
+				AAAACAAAAAAEAABBw9WOsYAAABgAAAABAgAAAgAAAAAA
 				AAAPAAAAAAAAAAAAAAAAAAAACAAAAAEJAABmaWxlOi8v
-				LwwAAAABAQAATWFjaW50b3NoIEhECAAAAAQDAAAAoCBo
-				dAAAAAgAAAAABAAAQcHeRIAAAAAkAAAAAQEAAERCMjJG
-				NUEyLUUwQjMtNEY4Qi05RUNFLUM3RkUwMThEMzY2MxgA
+				LwwAAAABAQAATWFjaW50b3NoIEhECAAAAAQDAAAAkIKW
+				5wAAAAgAAAAABAAAQcPYOcGAAAAkAAAAAQEAAEM0NjQy
+				NTVCLUMyNUYtNEQ5Mi1COUExLTE0RDA3QzgxODUzOBgA
 				AAABAgAAgQAAAAEAAADvEwAAAQAAAAAAAAAAAAAAAQAA
 				AAEBAAAvAAAAAAAAAAEFAACoAAAA/v///wEAAAAAAAAA
 				DQAAAAQQAAA4AAAAAAAAAAUQAABoAAAAAAAAABAQAACI
@@ -113,18 +270,25 @@
 				<key>file-label</key>
 				<string>Firefox</string>
 				<key>file-mod-date</key>
-				<integer>190403912534126</integer>
+				<integer>3726677603</integer>
 				<key>file-type</key>
 				<integer>41</integer>
+				<key>is-beta</key>
+				<false/>
 				<key>parent-mod-date</key>
-				<integer>274787135943283</integer>
+				<integer>10324536999082</integer>
 			</dict>
 			<key>tile-type</key>
 			<string>file-tile</string>
 		</dict>
+	</array>
+	<key>persistent-others</key>
+	<array/>
+	<key>recent-apps</key>
+	<array>
 		<dict>
 			<key>GUID</key>
-			<integer>3480388093</integer>
+			<integer>4011546357</integer>
 			<key>tile-data</key>
 			<dict>
 				<key>book</key>
@@ -134,12 +298,12 @@
 				AAABAQAAU3lzdGVtAAAMAAAAAQEAAEFwcGxpY2F0aW9u
 				cwwAAAABAQAATWVzc2FnZXMuYXBwDAAAAAEGAAAQAAAA
 				IAAAADQAAAAIAAAABAMAABUAAAD///8PCAAAAAQDAAAX
-				AAAA////DwgAAAAEAwAABY4AAP///w8MAAAAAQYAAFwA
-				AABsAAAAfAAAAAgAAAAABAAAQcHeRIAAAAAYAAAAAQIA
+				AAAA////DwgAAAAEAwAA6okAAP///w8MAAAAAQYAAFwA
+				AABsAAAAfAAAAAgAAAAABAAAQcP3ezSAAAAYAAAAAQIA
 				AAIAAAAAAAAADwAAAAAAAAAAAAAAAAAAAAgAAAABCQAA
 				ZmlsZTovLy8MAAAAAQEAAE1hY2ludG9zaCBIRAgAAAAE
-				AwAAAKAgaHQAAAAkAAAAAQEAAERCMjJGNUEyLUUwQjMt
-				NEY4Qi05RUNFLUM3RkUwMThEMzY2MxgAAAABAgAAgQAA
+				AwAAAJCClucAAAAkAAAAAQEAAEM0NjQyNTVCLUMyNUYt
+				NEQ5Mi1COUExLTE0RDA3QzgxODUzOBgAAAABAgAAgQAA
 				AAEAAADvEwAAAQAAAAAAAAAAAAAAAQAAAAEBAAAvAAAA
 				AAAAAAEFAACoAAAA/v///wEAAAAAAAAADQAAAAQQAABI
 				AAAAAAAAAAUQAACMAAAAAAAAABAQAACwAAAAAAAAAEAQ
@@ -151,7 +315,7 @@
 				<key>bundle-identifier</key>
 				<string>com.apple.MobileSMS</string>
 				<key>dock-extra</key>
-				<true/>
+				<false/>
 				<key>file-data</key>
 				<dict>
 					<key>_CFURLString</key>
@@ -162,372 +326,118 @@
 				<key>file-label</key>
 				<string>Messages</string>
 				<key>file-mod-date</key>
-				<integer>3660710400</integer>
-				<key>file-type</key>
-				<integer>41</integer>
-				<key>parent-mod-date</key>
-				<integer>3660710400</integer>
-			</dict>
-			<key>tile-type</key>
-			<string>file-tile</string>
-		</dict>
-		<dict>
-			<key>GUID</key>
-			<integer>2988204539</integer>
-			<key>tile-data</key>
-			<dict>
-				<key>book</key>
-				<data>
-				Ym9va+QCAAAAAAQQMAAAAAAAAAAAAAAAAAAAAAAAAAAA
-				AAAAAAAAAAAAAAAAAAAA4AEAAAQAAAADAwAAAAAAIAUA
-				AAABAQAAVXNlcnMAAAAHAAAAAQEAAGFuZHJleWsADAAA
-				AAEBAABBcHBsaWNhdGlvbnMIAAAAAQEAAE5peCBBcHBz
-				CQAAAAEBAABpVGVybS5hcHAAAAAUAAAAAQYAABAAAAAg
-				AAAAMAAAAEQAAABUAAAACAAAAAQDAACdUwAAAAAAAAgA
-				AAAEAwAAybYGAAAAAAAIAAAABAMAABpWKgEAAAAACAAA
-				AAQDAABGg00BAAAAAAgAAAAEAwAALaDSAwAAAAAUAAAA
-				AQYAAIQAAACUAAAApAAAALQAAADEAAAACAAAAAAEAABB
-				w38XUqHkChgAAAABAgAAAgAAAAAAAAAPAAAAAAAAAAAA
-				AAAAAAAACAAAAAQDAAADAAAAAAAAAAQAAAADAwAArmGK
-				EwgAAAABCQAAZmlsZTovLy8MAAAAAQEAAE1hY2ludG9z
-				aCBIRAgAAAAEAwAAAKAgaHQAAAAIAAAAAAQAAEHB3kSA
-				AAAAJAAAAAEBAABEQjIyRjVBMi1FMEIzLTRGOEItOUVD
-				RS1DN0ZFMDE4RDM2NjMYAAAAAQIAAIEAAAABAAAA7xMA
-				AAEAAAAAAAAAAAAAAAEAAAABAQAALwAAAAAAAAABBQAA
-				zAAAAP7///8BAAAAAAAAABAAAAAEEAAAaAAAAAAAAAAF
-				EAAA1AAAAAAAAAAQEAAAAAEAAAAAAABAEAAA8AAAAAAA
-				AAACIAAAzAEAAAAAAAAFIAAAPAEAAAAAAAAQIAAATAEA
-				AAAAAAARIAAAgAEAAAAAAAASIAAAYAEAAAAAAAATIAAA
-				cAEAAAAAAAAgIAAArAEAAAAAAAAwIAAA2AEAAAAAAAAB
-				wAAAIAEAAAAAAAARwAAAIAAAAAAAAAASwAAAMAEAAAAA
-				AAAQ0AAABAAAAAAAAAA=
-				</data>
-				<key>bundle-identifier</key>
-				<string>com.googlecode.iterm2</string>
-				<key>dock-extra</key>
-				<false/>
-				<key>file-data</key>
-				<dict>
-					<key>_CFURLString</key>
-					<string>file:///Users/andreyk/Applications/Nix%20Apps/iTerm.app/</string>
-					<key>_CFURLStringType</key>
-					<integer>15</integer>
-				</dict>
-				<key>file-label</key>
-				<string>iTerm</string>
-				<key>file-mod-date</key>
-				<integer>74577232504741</integer>
-				<key>file-type</key>
-				<integer>41</integer>
-				<key>parent-mod-date</key>
-				<integer>48158891608451</integer>
-			</dict>
-			<key>tile-type</key>
-			<string>file-tile</string>
-		</dict>
-		<dict>
-			<key>tile-data</key>
-			<dict>
-				<key>book</key>
-				<data>
-				Ym9va7wCAAAAAAQQMAAAAAAAAAAAAAAAAAAAAAAAAAAA
-				AAAAAAAAAAAAAAAAAAAAuAEAAAQAAAADAwAAAAAAIAUA
-				AAABAQAAVXNlcnMAAAAHAAAAAQEAAGFuZHJleWsACQAA
-				AAEBAABEb3dubG9hZHMAAAALAAAAAQEAAFJpcGNvcmQu
-				YXBwABAAAAABBgAAEAAAACAAAAAwAAAARAAAAAgAAAAE
-				AwAAnVMAAAAAAAAIAAAABAMAAMm2BgAAAAAACAAAAAQD
-				AAAAtwYAAAAAAAgAAAAEAwAAV0L8AwAAAAAQAAAAAQYA
-				AHAAAACAAAAAkAAAAKAAAAAIAAAAAAQAAEHDNV3QAAAA
-				GAAAAAECAAACAAAAAAAAAA8AAAAAAAAAAAAAAAAAAAAI
-				AAAABAMAAAIAAAAAAAAABAAAAAMDAACuYYoTCAAAAAEJ
-				AABmaWxlOi8vLwwAAAABAQAATWFjaW50b3NoIEhECAAA
-				AAQDAAAAoCBodAAAAAgAAAAABAAAQcHeRIAAAAAkAAAA
-				AQEAAERCMjJGNUEyLUUwQjMtNEY4Qi05RUNFLUM3RkUw
-				MThEMzY2MxgAAAABAgAAgQAAAAEAAADvEwAAAQAAAAAA
-				AAAAAAAAAQAAAAEBAAAvAAAAAAAAAAEFAADMAAAA/v//
-				/wEAAAAAAAAAEAAAAAQQAABYAAAAAAAAAAUQAACwAAAA
-				AAAAABAQAADYAAAAAAAAAEAQAADIAAAAAAAAAAIgAACk
-				AQAAAAAAAAUgAAAUAQAAAAAAABAgAAAkAQAAAAAAABEg
-				AABYAQAAAAAAABIgAAA4AQAAAAAAABMgAABIAQAAAAAA
-				ACAgAACEAQAAAAAAADAgAACwAQAAAAAAAAHAAAD4AAAA
-				AAAAABHAAAAgAAAAAAAAABLAAAAIAQAAAAAAABDQAAAE
-				AAAAAAAAAA==
-				</data>
-				<key>bundle-identifier</key>
-				<string>com.cancelfm.Ripcord</string>
-				<key>dock-extra</key>
-				<false/>
-				<key>file-data</key>
-				<dict>
-					<key>_CFURLString</key>
-					<string>file:///Users/andreyk/Downloads/Ripcord.app/</string>
-					<key>_CFURLStringType</key>
-					<integer>15</integer>
-				</dict>
-				<key>file-label</key>
-				<string>Ripcord</string>
-				<key>file-mod-date</key>
-				<integer>0</integer>
+				<integer>3731124073</integer>
 				<key>file-type</key>
 				<integer>1</integer>
+				<key>is-beta</key>
+				<false/>
 				<key>parent-mod-date</key>
-				<integer>0</integer>
+				<integer>3731124073</integer>
 			</dict>
 			<key>tile-type</key>
 			<string>file-tile</string>
 		</dict>
 		<dict>
 			<key>GUID</key>
-			<integer>180129307</integer>
+			<integer>4011546362</integer>
 			<key>tile-data</key>
 			<dict>
 				<key>book</key>
 				<data>
-				Ym9va2ACAAAAAAQQMAAAAAAAAAAAAAAAAAAAAAAAAAAA
-				AAAAAAAAAAAAAAAAAAAAgAEAAAQAAAADAwAAAAAAIAYA
+				Ym9va3ACAAAAAAQQMAAAAAAAAAAAAAAAAAAAAAAAAAAA
+				AAAAAAAAAAAAAAAAAAAAkAEAAAQAAAADAwAAAAAAIAYA
 				AAABAQAAU3lzdGVtAAAMAAAAAQEAAEFwcGxpY2F0aW9u
-				cxYAAAABAQAAU3lzdGVtIFByZWZlcmVuY2VzLmFwcAAA
-				DAAAAAEGAAAQAAAAIAAAADQAAAAIAAAABAMAANFYAAD/
-				//8PCAAAAAQDAAAx0AYA////DwgAAAAEAwAAr5oHAP//
-				/w8MAAAAAQYAAGgAAAB4AAAAiAAAAAgAAAAABAAAQcGw
-				n+KAAAAYAAAAAQIAAAIAAAAAAAAADwAAAAAAAAAAAAAA
-				AAAAAAgAAAABCQAAZmlsZTovLy8MAAAAAQEAAE1hY2lu
-				dG9zaCBIRAgAAAAEAwAAAKAgaHQAAAAIAAAAAAQAAEHB
-				uxkr2malJAAAAAEBAABEQjIyRjVBMi1FMEIzLTRGOEIt
-				OUVDRS1DN0ZFMDE4RDM2NjMYAAAAAQIAAIEAAAABAAAA
-				7xMAAAEAAAAAAAAAAAAAAAEAAAABAQAALwAAAAAAAAAB
-				BQAAqAAAAP7///8BAAAAAAAAAA0AAAAEEAAAVAAAAAAA
-				AAAFEAAAmAAAAAAAAAAQEAAAvAAAAAAAAABAEAAArAAA
-				AAAAAAACIAAAbAEAAAAAAAAFIAAA3AAAAAAAAAAQIAAA
-				7AAAAAAAAAARIAAAIAEAAAAAAAASIAAAAAEAAAAAAAAT
-				IAAAEAEAAAAAAAAgIAAATAEAAAAAAAAwIAAAeAEAAAAA
-				AAAQ0AAABAAAAAAAAAA=
+				cwkAAAABAQAAVXRpbGl0aWVzAAAADAAAAAEBAABUZXJt
+				aW5hbC5hcHAQAAAAAQYAABAAAAAgAAAANAAAAEgAAAAI
+				AAAABAMAABUAAAD///8PCAAAAAQDAAAXAAAA////DwgA
+				AAAEAwAA+D0BAP///w8IAAAABAMAAPaoAQD///8PEAAA
+				AAEGAAB0AAAAhAAAAJQAAACkAAAACAAAAAAEAABBw/d7
+				NIAAABgAAAABAgAAAgAAAAAAAAAPAAAAAAAAAAAAAAAA
+				AAAACAAAAAEJAABmaWxlOi8vLwwAAAABAQAATWFjaW50
+				b3NoIEhECAAAAAQDAAAAkIKW5wAAACQAAAABAQAAQzQ2
+				NDI1NUItQzI1Ri00RDkyLUI5QTEtMTREMDdDODE4NTM4
+				GAAAAAECAACBAAAAAQAAAO8TAAABAAAAAAAAAAAAAAAB
+				AAAAAQEAAC8AAAAAAAAAAQUAAKgAAAD+////AQAAAAAA
+				AAANAAAABBAAAFwAAAAAAAAABRAAALQAAAAAAAAAEBAA
+				ANwAAAAAAAAAQBAAAMwAAAAAAAAAAiAAAHwBAAAAAAAA
+				BSAAAPwAAAAAAAAAECAAAAwBAAAAAAAAESAAADABAAAA
+				AAAAEiAAACABAAAAAAAAEyAAAMwAAAAAAAAAICAAAFwB
+				AAAAAAAAMCAAAIgBAAAAAAAAENAAAAQAAAAAAAAA
 				</data>
 				<key>bundle-identifier</key>
-				<string>com.apple.systempreferences</string>
-				<key>dock-extra</key>
-				<true/>
-				<key>file-data</key>
-				<dict>
-					<key>_CFURLString</key>
-					<string>file:///System/Applications/System%20Preferences.app/</string>
-					<key>_CFURLStringType</key>
-					<integer>15</integer>
-				</dict>
-				<key>file-label</key>
-				<string>System Preferences</string>
-				<key>file-mod-date</key>
-				<integer>46750129232005</integer>
-				<key>file-type</key>
-				<integer>41</integer>
-				<key>parent-mod-date</key>
-				<integer>3656093106</integer>
-			</dict>
-			<key>tile-type</key>
-			<string>file-tile</string>
-		</dict>
-	</array>
-	<key>persistent-others</key>
-	<array>
-		<dict>
-			<key>GUID</key>
-			<integer>180129308</integer>
-			<key>tile-data</key>
-			<dict>
-				<key>arrangement</key>
-				<integer>2</integer>
-				<key>book</key>
-				<data>
-				Ym9va5ACAAAAAAQQMAAAAAAAAAAAAAAAAAAAAAAAAAAA
-				AAAAAAAAAAAAAAAAAAAAjAEAAAQAAAADAwAAAAAAIAUA
-				AAABAQAAVXNlcnMAAAAHAAAAAQEAAGFuZHJleWsACQAA
-				AAEBAABEb3dubG9hZHMAAAAMAAAAAQYAABAAAAAgAAAA
-				MAAAAAgAAAAEAwAAnVMAAAAAAAAIAAAABAMAAMm2BgAA
-				AAAACAAAAAQDAAAAtwYAAAAAAAwAAAABBgAAWAAAAGgA
-				AAB4AAAACAAAAAAEAABBwVOc/AAAABgAAAABAgAAAgAA
-				AAAAAAAPAAAAAAAAAAAAAAAAAAAACAAAAAQDAAABAAAA
-				AAAAAAQAAAADAwAArmGKEwgAAAABCQAAZmlsZTovLy8M
-				AAAAAQEAAE1hY2ludG9zaCBIRAgAAAAEAwAAAKAgaHQA
-				AAAIAAAAAAQAAEHB3kSAAAAAJAAAAAEBAABEQjIyRjVB
-				Mi1FMEIzLTRGOEItOUVDRS1DN0ZFMDE4RDM2NjMYAAAA
-				AQIAAIEAAAABAAAA7xMAAAEAAAAAAAAAAAAAAAEAAAAB
-				AQAALwAAAAAAAAABBQAAzAAAAP7///8BAAAAAAAAABAA
-				AAAEEAAARAAAAAAAAAAFEAAAiAAAAAAAAAAQEAAArAAA
-				AAAAAABAEAAAnAAAAAAAAAACIAAAeAEAAAAAAAAFIAAA
-				6AAAAAAAAAAQIAAA+AAAAAAAAAARIAAALAEAAAAAAAAS
-				IAAADAEAAAAAAAATIAAAHAEAAAAAAAAgIAAAWAEAAAAA
-				AAAwIAAAhAEAAAAAAAABwAAAzAAAAAAAAAARwAAAIAAA
-				AAAAAAASwAAA3AAAAAAAAAAQ0AAABAAAAAAAAAA=
-				</data>
-				<key>displayas</key>
-				<integer>0</integer>
-				<key>file-data</key>
-				<dict>
-					<key>_CFURLString</key>
-					<string>file:///Users/andreyk/Downloads/</string>
-					<key>_CFURLStringType</key>
-					<integer>15</integer>
-				</dict>
-				<key>file-label</key>
-				<string>Downloads</string>
-				<key>file-mod-date</key>
-				<integer>236695028499112</integer>
-				<key>file-type</key>
-				<integer>2</integer>
-				<key>parent-mod-date</key>
-				<integer>137764751803192</integer>
-				<key>preferreditemsize</key>
-				<integer>-1</integer>
-				<key>showas</key>
-				<integer>1</integer>
-			</dict>
-			<key>tile-type</key>
-			<string>directory-tile</string>
-		</dict>
-	</array>
-	<key>recent-apps</key>
-	<array>
-		<dict>
-			<key>GUID</key>
-			<integer>2693351710</integer>
-			<key>tile-data</key>
-			<dict>
-				<key>book</key>
-				<data>
-				Ym9vazQCAAAAAAQQMAAAAAAAAAAAAAAAAAAAAAAAAAAA
-				AAAAAAAAAAAAAAAAAAAAVAEAAAQAAAADAwAAAAAAIAwA
-				AAABAQAAQXBwbGljYXRpb25zEgAAAAEBAABDeWJlckdo
-				b3N0IFZQTi5hcHAAAAgAAAABBgAAEAAAACQAAAAIAAAA
-				BAMAABfVhwMAAAAACAAAAAQDAACuGFUCAAAAAAgAAAAB
-				BgAAUAAAAGAAAAAIAAAAAAQAAEHDASASgAAAGAAAAAEC
-				AAACAAAAAAAAAA8AAAAAAAAAAAAAAAAAAAAIAAAAAQkA
-				AGZpbGU6Ly8vDAAAAAEBAABNYWNpbnRvc2ggSEQIAAAA
-				BAMAAACgIGh0AAAACAAAAAAEAABBwd5EgAAAACQAAAAB
-				AQAAREIyMkY1QTItRTBCMy00RjhCLTlFQ0UtQzdGRTAx
-				OEQzNjYzGAAAAAECAACBAAAAAQAAAO8TAAABAAAAAAAA
-				AAAAAAABAAAAAQEAAC8AAAAAAAAAAQUAAKgAAAD+////
-				AQAAAAAAAAANAAAABBAAAEAAAAAAAAAABRAAAHAAAAAA
-				AAAAEBAAAJAAAAAAAAAAQBAAAIAAAAAAAAAAAiAAAEAB
-				AAAAAAAABSAAALAAAAAAAAAAECAAAMAAAAAAAAAAESAA
-				APQAAAAAAAAAEiAAANQAAAAAAAAAEyAAAOQAAAAAAAAA
-				ICAAACABAAAAAAAAMCAAAEwBAAAAAAAAENAAAAQAAAAA
-				AAAA
-				</data>
-				<key>bundle-identifier</key>
-				<string>com.cyberghostsrl.cyberghostmac</string>
+				<string>com.apple.Terminal</string>
 				<key>dock-extra</key>
 				<false/>
 				<key>file-data</key>
 				<dict>
 					<key>_CFURLString</key>
-					<string>file:///Applications/CyberGhost%20VPN.app/</string>
+					<string>file:///System/Applications/Utilities/Terminal.app/</string>
 					<key>_CFURLStringType</key>
 					<integer>15</integer>
 				</dict>
 				<key>file-label</key>
-				<string>CyberGhost VPN</string>
+				<string>Terminal</string>
 				<key>file-mod-date</key>
-				<integer>21160708464805</integer>
+				<integer>3731124073</integer>
 				<key>file-type</key>
 				<integer>1</integer>
+				<key>is-beta</key>
+				<false/>
 				<key>parent-mod-date</key>
-				<integer>274787135943283</integer>
+				<integer>3731124073</integer>
 			</dict>
 			<key>tile-type</key>
 			<string>file-tile</string>
 		</dict>
 		<dict>
 			<key>GUID</key>
-			<integer>2693351711</integer>
+			<integer>4011546363</integer>
 			<key>tile-data</key>
 			<dict>
 				<key>book</key>
 				<data>
-				Ym9vaywCAAAAAAQQMAAAAAAAAAAAAAAAAAAAAAAAAAAA
-				AAAAAAAAAAAAAAAAAAAATAEAAAQAAAADAwAAAAAAIAwA
-				AAABAQAAQXBwbGljYXRpb25zCgAAAAEBAABQaW5nSUQu
-				YXBwAAAIAAAAAQYAABAAAAAkAAAACAAAAAQDAAAX1YcD
-				AAAAAAgAAAAEAwAAaXQTAQAAAAAIAAAAAQYAAEgAAABY
-				AAAACAAAAAAEAABBwhjtbIAAABgAAAABAgAAAgAAAAAA
-				AAAPAAAAAAAAAAAAAAAAAAAACAAAAAEJAABmaWxlOi8v
-				LwwAAAABAQAATWFjaW50b3NoIEhECAAAAAQDAAAAoCBo
-				dAAAAAgAAAAABAAAQcHeRIAAAAAkAAAAAQEAAERCMjJG
-				NUEyLUUwQjMtNEY4Qi05RUNFLUM3RkUwMThEMzY2MxgA
-				AAABAgAAgQAAAAEAAADvEwAAAQAAAAAAAAAAAAAAAQAA
-				AAEBAAAvAAAAAAAAAAEFAACoAAAA/v///wEAAAAAAAAA
-				DQAAAAQQAAA4AAAAAAAAAAUQAABoAAAAAAAAABAQAACI
-				AAAAAAAAAEAQAAB4AAAAAAAAAAIgAAA4AQAAAAAAAAUg
-				AACoAAAAAAAAABAgAAC4AAAAAAAAABEgAADsAAAAAAAA
-				ABIgAADMAAAAAAAAABMgAADcAAAAAAAAACAgAAAYAQAA
-				AAAAADAgAABEAQAAAAAAABDQAAAEAAAAAAAAAA==
+				Ym9va3gCAAAAAAQQMAAAAAAAAAAAAAAAAAAAAAAAAAAA
+				AAAAAAAAAAAAAAAAAAAAmAEAAAQAAAADAwAAAAAAIAYA
+				AAABAQAAU3lzdGVtAAAMAAAAAQEAAEFwcGxpY2F0aW9u
+				cwkAAAABAQAAVXRpbGl0aWVzAAAAFAAAAAEBAABBY3Rp
+				dml0eSBNb25pdG9yLmFwcBAAAAABBgAAEAAAACAAAAA0
+				AAAASAAAAAgAAAAEAwAAFQAAAP///w8IAAAABAMAABcA
+				AAD///8PCAAAAAQDAAD4PQEA////DwgAAAAEAwAA+j0B
+				AP///w8QAAAAAQYAAHwAAACMAAAAnAAAAKwAAAAIAAAA
+				AAQAAEHD93s0gAAAGAAAAAECAAACAAAAAAAAAA8AAAAA
+				AAAAAAAAAAAAAAAIAAAAAQkAAGZpbGU6Ly8vDAAAAAEB
+				AABNYWNpbnRvc2ggSEQIAAAABAMAAACQgpbnAAAAJAAA
+				AAEBAABDNDY0MjU1Qi1DMjVGLTREOTItQjlBMS0xNEQw
+				N0M4MTg1MzgYAAAAAQIAAIEAAAABAAAA7xMAAAEAAAAA
+				AAAAAAAAAAEAAAABAQAALwAAAAAAAAABBQAAqAAAAP7/
+				//8BAAAAAAAAAA0AAAAEEAAAZAAAAAAAAAAFEAAAvAAA
+				AAAAAAAQEAAA5AAAAAAAAABAEAAA1AAAAAAAAAACIAAA
+				hAEAAAAAAAAFIAAABAEAAAAAAAAQIAAAFAEAAAAAAAAR
+				IAAAOAEAAAAAAAASIAAAKAEAAAAAAAATIAAA1AAAAAAA
+				AAAgIAAAZAEAAAAAAAAwIAAAkAEAAAAAAAAQ0AAABAAA
+				AAAAAAA=
 				</data>
 				<key>bundle-identifier</key>
-				<string>com.pingidentity.pingid.pcclient</string>
+				<string>com.apple.ActivityMonitor</string>
 				<key>dock-extra</key>
 				<false/>
 				<key>file-data</key>
 				<dict>
 					<key>_CFURLString</key>
-					<string>file:///Applications/PingID.app/</string>
+					<string>file:///System/Applications/Utilities/Activity%20Monitor.app/</string>
 					<key>_CFURLStringType</key>
 					<integer>15</integer>
 				</dict>
 				<key>file-label</key>
-				<string>PingID</string>
+				<string>Activity Monitor</string>
 				<key>file-mod-date</key>
-				<integer>82114875700857</integer>
+				<integer>3731124073</integer>
 				<key>file-type</key>
 				<integer>1</integer>
-				<key>parent-mod-date</key>
-				<integer>274787135943283</integer>
-			</dict>
-			<key>tile-type</key>
-			<string>file-tile</string>
-		</dict>
-		<dict>
-			<key>GUID</key>
-			<integer>2693351713</integer>
-			<key>tile-data</key>
-			<dict>
-				<key>book</key>
-				<data>
-				Ym9vazACAAAAAAQQMAAAAAAAAAAAAAAAAAAAAAAAAAAA
-				AAAAAAAAAAAAAAAAAAAAUAEAAAQAAAADAwAAAAAAIAwA
-				AAABAQAAQXBwbGljYXRpb25zDwAAAAEBAAAxUGFzc3dv
-				cmQgNy5hcHAACAAAAAEGAAAQAAAAJAAAAAgAAAAEAwAA
-				F9WHAwAAAAAIAAAABAMAAKSPrAMAAAAACAAAAAEGAABM
-				AAAAXAAAAAgAAAAABAAAQcNhoN+AAAAYAAAAAQIAAAIA
-				AAAAAAAADwAAAAAAAAAAAAAAAAAAAAgAAAABCQAAZmls
-				ZTovLy8MAAAAAQEAAE1hY2ludG9zaCBIRAgAAAAEAwAA
-				AKAgaHQAAAAIAAAAAAQAAEHB3kSAAAAAJAAAAAEBAABE
-				QjIyRjVBMi1FMEIzLTRGOEItOUVDRS1DN0ZFMDE4RDM2
-				NjMYAAAAAQIAAIEAAAABAAAA7xMAAAEAAAAAAAAAAAAA
-				AAEAAAABAQAALwAAAAAAAAABBQAAqAAAAP7///8BAAAA
-				AAAAAA0AAAAEEAAAPAAAAAAAAAAFEAAAbAAAAAAAAAAQ
-				EAAAjAAAAAAAAABAEAAAfAAAAAAAAAACIAAAPAEAAAAA
-				AAAFIAAArAAAAAAAAAAQIAAAvAAAAAAAAAARIAAA8AAA
-				AAAAAAASIAAA0AAAAAAAAAATIAAA4AAAAAAAAAAgIAAA
-				HAEAAAAAAAAwIAAASAEAAAAAAAAQ0AAABAAAAAAAAAA=
-				</data>
-				<key>bundle-identifier</key>
-				<string>com.agilebits.onepassword7</string>
-				<key>dock-extra</key>
+				<key>is-beta</key>
 				<false/>
-				<key>file-data</key>
-				<dict>
-					<key>_CFURLString</key>
-					<string>file:///Applications/1Password%207.app/</string>
-					<key>_CFURLStringType</key>
-					<integer>15</integer>
-				</dict>
-				<key>file-label</key>
-				<string>1Password 7</string>
-				<key>file-mod-date</key>
-				<integer>3711482559</integer>
-				<key>file-type</key>
-				<integer>1</integer>
 				<key>parent-mod-date</key>
-				<integer>274787135943283</integer>
+				<integer>3731124073</integer>
 			</dict>
 			<key>tile-type</key>
 			<string>file-tile</string>
@@ -540,10 +450,12 @@
 	<key>show-recents</key>
 	<true/>
 	<key>tilesize</key>
-	<real>63</real>
+	<real>67</real>
 	<key>trash-full</key>
 	<true/>
 	<key>version</key>
 	<integer>1</integer>
+	<key>wvous-br-corner</key>
+	<integer>14</integer>
 </dict>
 </plist>

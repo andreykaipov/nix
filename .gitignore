@@ -18,8 +18,9 @@
 .config/configstore
 .config/dnsproxy/debug.log
 .config/gcloud
-.config/gh/state.yml
 .config/gh/hosts.yml
+.config/gh/state.yml
+.config/iterm2/
 .config/nixpkgs/**/result
 .config/nvim/.netrwhist
 .config/nvim/autoload

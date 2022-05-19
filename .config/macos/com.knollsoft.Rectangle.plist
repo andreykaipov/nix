@@ -13,11 +13,7 @@
 	<key>alternateDefaultShortcuts</key>
 	<true/>
 	<key>bottomHalf</key>
-	<data>
-	YnBsaXN0MDDUAQIDBAUGBwpYJHZlcnNpb25ZJGFyY2hpdmVyVCR0b3BYJG9iamVjdHMS
-	AAGGoF8QD05TS2V5ZWRBcmNoaXZlctEICVRyb290gAChC1UkbnVsbAgRGiQpMjdJTFFT
-	VQAAAAAAAAEBAAAAAAAAAAwAAAAAAAAAAAAAAAAAAABb
-	</data>
+	<dict/>
 	<key>bottomLeft</key>
 	<dict>
 		<key>keyCode</key>
@@ -33,19 +29,21 @@
 		<integer>1179648</integer>
 	</dict>
 	<key>center</key>
-	<data>
-	YnBsaXN0MDDUAQIDBAUGBwpYJHZlcnNpb25ZJGFyY2hpdmVyVCR0b3BYJG9iamVjdHMS
-	AAGGoF8QD05TS2V5ZWRBcmNoaXZlctEICVRyb290gAChC1UkbnVsbAgRGiQpMjdJTFFT
-	VQAAAAAAAAEBAAAAAAAAAAwAAAAAAAAAAAAAAAAAAABb
-	</data>
+	<dict>
+		<key>keyCode</key>
+		<integer>47</integer>
+		<key>modifierFlags</key>
+		<integer>1179648</integer>
+	</dict>
 	<key>disabledApps</key>
 	<string>["com.jetbrains.goland"]</string>
 	<key>larger</key>
-	<data>
-	YnBsaXN0MDDUAQIDBAUGBwpYJHZlcnNpb25ZJGFyY2hpdmVyVCR0b3BYJG9iamVjdHMS
-	AAGGoF8QD05TS2V5ZWRBcmNoaXZlctEICVRyb290gAChC1UkbnVsbAgRGiQpMjdJTFFT
-	VQAAAAAAAAEBAAAAAAAAAAwAAAAAAAAAAAAAAAAAAABb
-	</data>
+	<dict>
+		<key>keyCode</key>
+		<integer>24</integer>
+		<key>modifierFlags</key>
+		<integer>1179648</integer>
+	</dict>
 	<key>lastVersion</key>
 	<string>53</string>
 	<key>launchOnLogin</key>
@@ -65,11 +63,7 @@
 		<integer>1179648</integer>
 	</dict>
 	<key>maximizeHeight</key>
-	<data>
-	YnBsaXN0MDDUAQIDBAUGBwpYJHZlcnNpb25ZJGFyY2hpdmVyVCR0b3BYJG9iamVjdHMS
-	AAGGoF8QD05TS2V5ZWRBcmNoaXZlctEICVRyb290gAChC1UkbnVsbAgRGiQpMjdJTFFT
-	VQAAAAAAAAEBAAAAAAAAAAwAAAAAAAAAAAAAAAAAAABb
-	</data>
+	<dict/>
 	<key>moveLeft</key>
 	<data>
 	YnBsaXN0MDDUAQIDBAUGBwpYJHZlcnNpb25ZJGFyY2hpdmVyVCR0b3BYJG9iamVjdHMS
@@ -97,11 +91,7 @@
 		<integer>1703936</integer>
 	</dict>
 	<key>restore</key>
-	<data>
-	YnBsaXN0MDDUAQIDBAUGBwpYJHZlcnNpb25ZJGFyY2hpdmVyVCR0b3BYJG9iamVjdHMS
-	AAGGoF8QD05TS2V5ZWRBcmNoaXZlctEICVRyb290gAChC1UkbnVsbAgRGiQpMjdJTFFT
-	VQAAAAAAAAEBAAAAAAAAAAwAAAAAAAAAAAAAAAAAAABb
-	</data>
+	<dict/>
 	<key>rightHalf</key>
 	<dict>
 		<key>keyCode</key>
@@ -110,19 +100,16 @@
 		<integer>1179648</integer>
 	</dict>
 	<key>smaller</key>
-	<data>
-	YnBsaXN0MDDUAQIDBAUGBwpYJHZlcnNpb25ZJGFyY2hpdmVyVCR0b3BYJG9iamVjdHMS
-	AAGGoF8QD05TS2V5ZWRBcmNoaXZlctEICVRyb290gAChC1UkbnVsbAgRGiQpMjdJTFFT
-	VQAAAAAAAAEBAAAAAAAAAAwAAAAAAAAAAAAAAAAAAABb
-	</data>
+	<dict>
+		<key>keyCode</key>
+		<integer>27</integer>
+		<key>modifierFlags</key>
+		<integer>1179648</integer>
+	</dict>
 	<key>subsequentExecutionMode</key>
 	<integer>0</integer>
 	<key>topHalf</key>
-	<data>
-	YnBsaXN0MDDUAQIDBAUGBwpYJHZlcnNpb25ZJGFyY2hpdmVyVCR0b3BYJG9iamVjdHMS
-	AAGGoF8QD05TS2V5ZWRBcmNoaXZlctEICVRyb290gAChC1UkbnVsbAgRGiQpMjdJTFFT
-	VQAAAAAAAAEBAAAAAAAAAAwAAAAAAAAAAAAAAAAAAABb
-	</data>
+	<dict/>
 	<key>topLeft</key>
 	<dict>
 		<key>keyCode</key>
