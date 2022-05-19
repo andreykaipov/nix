@@ -1,4 +1,4 @@
-{ stdenv, fetchurl, xar, cpio }:
+{ stdenv, lib, fetchurl, xar, cpio }:
 
 stdenv.mkDerivation rec {
   pname = "1Password";
@@ -12,9 +12,9 @@ stdenv.mkDerivation rec {
   appname = "${pname} 7";
   sourceRoot = "${appname}.app";
 
-  buildInputs = stdenv.lib.optionals stdenv.isDarwin [ xar cpio ];
+  buildInputs = lib.optionals stdenv.isDarwin [ xar cpio ];
 
-  unpackPhase = stdenv.lib.optionalString stdenv.isDarwin ''
+  unpackPhase = lib.optionalString stdenv.isDarwin ''
     xar -xf "$src"
     zcat < ${pname}.pkg/Payload | cpio -i
   '';
@@ -27,7 +27,7 @@ stdenv.mkDerivation rec {
 
   dontStrip = stdenv.isDarwin;
 
-  meta = with stdenv.lib; {
+  meta = with lib; {
     homepage = "https://1password.com";
     platforms = platforms.darwin;
   };

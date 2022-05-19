@@ -1,4 +1,4 @@
-{ stdenv, fetchurl, undmg }:
+{ stdenv, lib, fetchurl, undmg }:
 
 stdenv.mkDerivation rec {
   pname = "Discord";
@@ -18,7 +18,7 @@ stdenv.mkDerivation rec {
     chmod a+x "$out/Applications/${sourceRoot}/Contents/MacOS/${pname}"
   '';
 
-  meta = with stdenv.lib; {
+  meta = with lib; {
     homepage = "https://discord.com";
     platforms = platforms.darwin;
   };

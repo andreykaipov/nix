@@ -1,4 +1,4 @@
-{ stdenv, fetchurl, undmg }:
+{ stdenv, lib, fetchurl, undmg }:
 
 stdenv.mkDerivation rec {
   pname = "Rectangle";
@@ -18,7 +18,7 @@ stdenv.mkDerivation rec {
     chmod a+x "$out/Applications/${sourceRoot}/Contents/MacOS/${pname}"
   '';
 
-  meta = with stdenv.lib; {
+  meta = with lib; {
     description = "Move and resize windows on macOS with keyboard shortcuts or snap areas";
     homepage = "https://rectangleapp.com";
     platforms = platforms.darwin;

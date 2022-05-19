@@ -1,4 +1,4 @@
-{ stdenv, fetchurl, undmg }:
+{ stdenv, lib, fetchurl, undmg }:
 
 stdenv.mkDerivation rec {
   pname = "Barrier";
@@ -18,7 +18,7 @@ stdenv.mkDerivation rec {
     chmod a+x "$out/Applications/${sourceRoot}/Contents/MacOS/${pname}"
   '';
 
-  meta = with stdenv.lib; {
+  meta = with lib; {
     description = "Fork of Symless's Synergy - open source KVM software";
     homepage = "https://github.com/debauchee/barrier";
     platforms = platforms.darwin;
