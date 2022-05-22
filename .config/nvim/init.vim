@@ -180,7 +180,8 @@ function s:OnOpenFile()
     set formatoptions=croq1j
 
     " better to put in an autocmd rather than directly calling it, since
-    " re-sourcing $MYVIMRC will not trigger our toggles this way
+    " re-sourcing this file (`:source $MYVIMRC`) will not trigger our toggles
+    " this way
     "
     ToggleNumbers
     " ToggleAutoSave

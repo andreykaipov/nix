@@ -8,11 +8,26 @@
 # https://github.com/NixOS/nixpkgs/blob/master/pkgs/misc/vim-plugins/generated.nix
 
 self: super: {
-  neovim = super.neovim.override (old: rec {
-    viAlias = true;
-    vimAlias = true;
-    # configure = {
-    #   customRC = builtins.readFile ~/.config/nvim/init.vim;
-    # };
-  });
+  neovim-unwrapped =
+    super.neovim-unwrapped.overrideAttrs (oldAttrs: rec {
+      pname = oldAttrs.pname;
+      version = "0.7.0";
+
+      src = super.fetchFromGitHub {
+        owner = "neovim";
+        repo = "neovim";
+        rev = "v${version}";
+        sha256 = "sha256-eYYaHpfSaYYrLkcD81Y4rsAMYDP1IJ7fLJJepkACkA8=";
+      };
+
+      patches = oldAttrs.patches ++ [
+        ./relative-numbers.patch
+      ];
+    });
+
+  neovim =
+    super.neovim.override (old: rec {
+      viAlias = true;
+      vimAlias = true;
+    });
 }
