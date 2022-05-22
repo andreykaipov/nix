@@ -59,6 +59,8 @@ export GOBIN="$HOME/go/bin"
 # Our marvelous path
 PATH="$(echo "
     $(for profile in $NIX_PROFILES; do echo "$profile/bin"; done)
+    /etc/profiles/per-user/$USER/bin
+    /run/current-system/sw/bin
 
     $HOME/bin
     /usr/local/sbin
@@ -154,3 +156,5 @@ if [ -n "${WSL_DISTRO_NAME:-}" ]; then
         WINHOST="$(ip r show default | awk '{print $3}')"
         export WINHOST
 fi
+
+export SKIP_RICH_PRESENCE=1

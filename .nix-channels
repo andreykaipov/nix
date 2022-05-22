@@ -1,3 +1,2 @@
 https://nixos.org/channels/nixpkgs-unstable nixpkgs
-https://nixos.org/channels/nixos-21.11/nixexprs.tar.xz stable
-https://nixos.org/channels/nixpkgs-unstable/nixexprs.tar.xz unstable
+https://nixos.org/channels/nixos-21.11 stable
