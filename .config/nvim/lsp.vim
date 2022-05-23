@@ -43,6 +43,7 @@ end
 local servers = {
   'bashls',
   'terraformls',
+  'gopls',
 }
 for _, lsp in ipairs(servers) do
   nvim_lsp[lsp].setup {
@@ -53,3 +54,5 @@ for _, lsp in ipairs(servers) do
   }
 end
 EOF
+
+"require'lspconfig'.gopls.setup{}

@@ -4,10 +4,13 @@ let g:go_fmt_command = "goimports"
 let g:go_fmt_autosave = 1
 let g:go_metalinter_command = 'golangci-lint run'
 
+let g:go_gopls_enabled = 1
+let g:go_gopls_options = ['-remote=auto'] ", '-logfile=auto', '-remote.debug=:0', '-rpc.trace']
+let g:go_referrers_mode = 'gopls'
 let g:go_info_mode='gopls'
 let g:go_def_mode='gopls'
 
-" let g:go_debug = ["shell-commands"] # lsp
+" let g:go_debug = ["lsp", "shell-commands"]
 
 nmap <Leader>ds <Plug>(go-def-split)
 nmap <Leader>dv <Plug>(go-def-vertical)
