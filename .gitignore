@@ -27,6 +27,7 @@
 .config/nvim/tmp/bak/*~
 .config/nvim/tmp/swp
 .config/nvim/tmp/undo
+.config/op/*
 .config/ssh/keys/*.pem
 .config/tmux/plugins
 .config/wslu
