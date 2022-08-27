@@ -5,6 +5,14 @@ endif
 let g:localvimrc_ask = 0
 "let g:localvimrc_persistent = 0
 
+augroup auto_colorize
+    autocmd!
+    autocmd
+          \ BufNewFile,BufRead,BufEnter,BufLeave,WinEnter,WinLeave,WinNew
+          \ *.js,*.css,*.scss,*.sass,*.toml,*.yml,*.yaml
+          \ ColorHighlight
+augroup END
+
 " ale
 "
 let g:ale_disable_lsp = 1
