@@ -109,10 +109,10 @@ ensure_tmux() {
                 echo "If you'd really like to, we'll attach into it in 3 seconds"
                 echo "Otherwise, send ^C"
                 sleep 3
-                exec tmux attach -t local
+                exec tmux -2 attach -t local
         else
                 echo "Starting local tmux session"
-                exec tmux -f ~/.config/tmux/core.conf new -s local
+                exec tmux -2 -f ~/.config/tmux/core.conf new -s local
         fi
 }
 
