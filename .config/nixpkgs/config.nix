@@ -1,6 +1,5 @@
-{ master ? import <master> { }
+{ nixpkgs ? import <nixpkgs> { }
 , unstable ? import <unstable> { }
-, pkgs ? import <unstable> { }
 , stable ? import <stable> { /* config = { allowUnfree = true; }; */ }
 , ...
 }:
@@ -13,32 +12,46 @@ let
       bat
       binutils
       cmake
+      csvkit
       dircolors_hex
+      entr
       ffmpeg
       fzf
       gifsicle
+      git-filter-repo
       git-lfs
       go-2fa
       htop
       imagemagick
+      jp
       jq
       k2tf
+      kind
       mysql-client
+      nixFlakes
       nmap
+      nodePackages.npm
+      nodejs
+      powershell
+      python38Packages.scapy
       shellcheck
       shfmt
+      sshpass
       stoken
       tre-command
       tree
       upx
       whois
-      git-filter-repo
+      wireguard-go
+      wireguard-tools
     ])
 
     (with unstable; [
       bashInteractive_5
       cloudflared
+      direnv
       exiftool
+      expect
       gh
       go
       go-tools
@@ -54,7 +67,6 @@ let
       tflint
       tmux
       yq-go
-      expect
     ])
   ];
 
@@ -62,15 +74,14 @@ let
     dns-tcp-socks-proxy
     gcc
     gnumake
-    rich-presence-cli-windows
     rich-presence-cli-linux
+    rich-presence-cli-windows
     unzip
     win32yank
     wudo
   ];
 
   work = with stable; [
-    google-cloud-sdk
     kubectl
     safe
     vault
@@ -83,7 +94,7 @@ let
   isWSL = (builtins.getEnv "WSL_DISTRO_NAME") != "";
 in
 {
-  packageOverrides = _: with pkgs; {
+  packageOverrides = _: with stable; {
     macos = buildEnv {
       name = "macos";
       paths = flatten [
@@ -91,9 +102,9 @@ in
 
         [
           coreutils
+          gnugrep
+          gnused
           iproute2mac
-          colima
-          docker-client
 
           # apps; to be moved to '~/Applications/Nix Apps'
           (callPackage ./apps/rectangle { })
@@ -111,14 +122,22 @@ in
       ];
     };
 
-    linux = buildEnv {
-      name = "linux";
-      paths = flatten [
-        common
-        (optional isWSL wsl)
-        (optional isWork work)
-        (optional (! isWork) [ ])
+    macos-broken = buildEnv {
+      name = "macos-broken";
+      paths = [
+        _1password
       ];
     };
+
+    linux = buildEnv
+      {
+        name = "linux";
+        paths = flatten [
+          common
+          (optional isWSL wsl)
+          (optional isWork work)
+          (optional (! isWork) [ ])
+        ];
+      };
   };
 }
