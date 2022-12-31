@@ -39,23 +39,25 @@
 # update our environment. The escaped quotes are necessary because of word
 # splitting as values can potentially have leading/trailing spaces.
 sourceg() {
-    sourced="$1"; shift
-    . "$sourced"
-    env - \
-        "HOME=$HOME" \
-        "USER=$USER" \
-        sh -c ". $sourced; env" | cut -d= -f1 | while read -r var; do
-            val="$(eval "echo \"\$$var\"")"
-            tmux set-environment -gt local "$var" "$val"
+        sourced="$1"
+        shift
+        . "$sourced"
+        env - \
+                "HOME=$HOME" \
+                "USER=$USER" \
+                sh -c ". $sourced; env" | cut -d= -f1 | while read -r var; do
+                val="$(eval "echo \"\$$var\"")"
+                tmux set-environment -gt local "$var" "$val"
         done
 }
 
 # unsetg is to unset as sourceg is to source, removing any set env vars from
 # both the local and global tmux state.
 unsetg() {
-    var="${1?need a var to unset}"; shift
-    unset "$var"
-    tmux set-environment -gt local -u "$var"
+        var="${1?need a var to unset}"
+        shift
+        unset "$var"
+        tmux set-environment -gt local -u "$var"
 }
 
 safesource() { [ -r "$1" ] && . "$1"; }
@@ -68,116 +70,121 @@ safesource ~/.config/sh/functions.work
 # shell supports colors directly in its PS1, e.g. ash or dash or any minimal
 # shell. Why would we ever use ash or dash? Mind your own business.
 if [ -z "$BASH_VERSION" ]; then
-    # shellcheck disable=SC2016
-    fnretcolor='if [ "$?" = 0 ]; then printf "\e[1;32m"; else printf "\e[1;31m"; fi'
-    PS1='$(printf "$(eval "$fnretcolor")%s\[\e[0m\]$ " "$0")'
-    printf "\e]2;%s\e\\" "#[fg=yellow,bold]$PWD#[fg=default] $(git condensed-status-tmux)"
-    return
+        # shellcheck disable=SC2016
+        fnretcolor='if [ "$?" = 0 ]; then printf "\e[1;32m"; else printf "\e[1;31m"; fi'
+        PS1='$(printf "$(eval "$fnretcolor")%s\[\e[0m\]$ " "$0")'
+        printf "\e]2;%s\e\\" "#[fg=yellow,bold]$PWD#[fg=default] $(git condensed-status-tmux)"
+        return
 fi
 
 # Bash-specific stuff below
 
-. ~/.config/sh/hooks # TODO: consider precmds with PS0 instead of trap .. DEBUG
+. ~/.config/sh/hooks       # TODO: consider precmds with PS0 instead of trap .. DEBUG
+eval "$(direnv hook bash)" # after hooks since it touches PROMPT_COMMAND
 
 safesource ~/.nix-profile/etc/profile.d/bash_completion.sh
 safesource ~/.nix-profile/etc/bash_completion.d/gcloud.inc
+safesource ~/.local/mc-cli/bin/mc.completion.bash
 
 findshortenedpath() {
-    case "$PWD" in
-        "$HOME") shortenedpath='~' ;;
-        "$HOME"*)
-            shortenedpath="$(
-                dirs=$(IFS=/; printf '%s\n' ${PWD/$HOME/'~'})
-                i="$(echo "$dirs" | wc -l)"
-                for p in $dirs; do
-                    i=$((i-1))
-                    if [ $i -lt 2 ]; then
-                        echo "$p"
-                        continue
-                    fi
-                    echo "${p:0:1}"
-                done | paste -sd /
-            )"
-            ;;
-        *)
-            shortenedpath="$PWD"
-            ;;
-    esac
+        case "$PWD" in
+                "$HOME") shortenedpath='~' ;;
+                "$HOME"*)
+                        shortenedpath="$(
+                                dirs=$(
+                                        IFS=/
+                                        printf '%s\n' ${PWD/$HOME/'~'}
+                                )
+                                i="$(echo "$dirs" | wc -l)"
+                                for p in $dirs; do
+                                        i=$((i - 1))
+                                        if [ $i -lt 2 ]; then
+                                                echo "$p"
+                                                continue
+                                        fi
+                                        echo "${p:0:1}"
+                                done | paste -s -d /
+                        )"
+                        ;;
+                *)
+                        shortenedpath="$PWD"
+                        ;;
+        esac
 }
 
 # Set tmux window and pane title. See
 # http://man7.org/linux/man-pages/man1/tmux.1.html#NAMES_AND_TITLES.
 # shellcheck disable=SC2039
 setpanetitle() {
-    if [ -n "$TMUX_PANE" ]; then
-        paneindex="$(tmux display-message -pt "$TMUX_PANE" '#{pane_index}')"
-    else
-        paneindex='?'
-    fi
-    #paneindex="#[fg=white][$paneindex]#[default]"
-
-    [ "${__ret_last_cmd:-0}" = 0 ] && color="#[fg=green,bold]" || color="#[fg=red,bold]"
-    retcolor() { printf "$color%s#[default]" "$1"; }
-    smiley="$(
-        if [ "${__ret_last_cmd:-0}" = 0 ]; then
-            retcolor 'c;'
+        if [ -n "$TMUX_PANE" ]; then
+                paneindex="$(tmux display-message -pt "$TMUX_PANE" '#{pane_index}')"
         else
-            retcolor ');'
+                paneindex='?'
         fi
-    )"
+        #paneindex="#[fg=white][$paneindex]#[default]"
 
-    git=
-    # todo maybe just put this check into the git subcommand
-    if ! pwd -P | grep -q "^/mnt/c/"; then
-        git="$(git condensed-status-tmux)"
-    fi
+        [ "${__ret_last_cmd:-0}" = 0 ] && color="#[fg=green,bold]" || color="#[fg=red,bold]"
+        retcolor() { printf "$color%s#[default]" "$1"; }
+        smiley="$(
+                if [ "${__ret_last_cmd:-0}" = 0 ]; then
+                        retcolor 'c;'
+                else
+                        retcolor ');'
+                fi
+        )"
 
-    path="#[fg=yellow,bold]$shortenedpath#[default]"
+        git=
+        # todo maybe just put this check into the git subcommand
+        if ! pwd -P | grep -q "^/mnt/c/"; then
+                git="$(git condensed-status-tmux)"
+        fi
 
-    printf "\e]2;%s\e\\" "#[align=right] $smiley $path $git#[fg=white][$paneindex]#[fg=default] "
+        path="#[fg=yellow,bold]$shortenedpath#[default]"
+
+        printf "\e]2;%s\e\\" "#[align=right] $smiley $path $git#[fg=white][$paneindex]#[fg=default] "
 }
 
 # the escape sequence doesn't work, so we just invoke tmux directly
 # printf "\ek%s\e\\" "#[fg=yellow]$PWD#[fg=default]"
 # shellcheck disable=SC2039
 setwindowtitle() {
-    if [ "$PWD" = "$HOME" ]; then
-        tmux rename-window -t local '~'
-    else
-        shortened="$(dirname "${PWD/$HOME/'~'}" | sed -e "s:\(/.\)[^/]*:\1:g")"
-        last="$(basename "$PWD")"
-        tmux rename-window -t local "$shortenedpath"
-    fi
+        if [ "$PWD" = "$HOME" ]; then
+                tmux rename-window -t local '~'
+        else
+                shortened="$(dirname "${PWD/$HOME/'~'}" | sed -e "s:\(/.\)[^/]*:\1:g")"
+                last="$(basename "$PWD")"
+                tmux rename-window -t local "$shortenedpath"
+        fi
 }
 
 settitles() {
-    findshortenedpath
-    setrichpresence
-    setpanetitle
-    setwindowtitle
+        findshortenedpath
+        #setrichpresence
+        setpanetitle
+        setwindowtitle
 }
 
 setrichpresence() {
-    details="$shortenedpath"
-    if [ "$shortenedpath" = '~' ]; then
-        details="home"
-    fi
-    rich-presence-update sh
+        details="$shortenedpath"
+        if [ "$shortenedpath" = '~' ]; then
+                details="home"
+        fi
+        rich-presence-update sh
 }
 
 # can use $BASH_COMMAND to get the last command here
 precmd() {
-    rich-presence-update bash-command "$BASH_COMMAND"
-    #echo $BASH_COMMAND
-    :
+        #rich-presence-update bash-command "$BASH_COMMAND"
+        #echo $BASH_COMMAND
+        :
 }
 
 postcmd() {
-    # append to history file immediately so new shells can have a chronological
-    # history of all prior shells
-    history -a
+        # append to history file immediately so new shells can have a chronological
+        # history of all prior shells
+        history -a
 
-    settitles
+        settitles
 }
 
 # Note: Don't forget to surround non-printing chars with \[...\] (Bash's PS1) or
@@ -187,43 +194,43 @@ postcmd() {
 # For terminals supporting DECSCUSR sequences, we change our cursor between
 # readline modes. See https://invisible-island.net/xterm/ctlseqs/ctlseqs.html.
 setprompt() {
-    PS1=' $(unset __precmd_start __precmd_done)'
-    PS2='' # removes readline's mode chars from continuation prompts
-    # PS4='\e[1;34m$0.$LINENO\e[0m++\011' #\e[35m'
-    # \011 tab
-    PS4='+\011'
+        PS1=' $(unset __precmd_start __precmd_done)'
+        PS2='' # removes readline's mode chars from continuation prompts
+        # PS4='\e[1;34m$0.$LINENO\e[0m++\011' #\e[35m'
+        # \011 tab
+        PS4='+\011'
 
-    prompt=''
-    if [ -n "$SSH_TTY" ]; then
-        prompt="\1\e[0;31m\2${HOSTNAME:=$(hostname)}\1\e[0m\2"
-    fi
-    prompt="$prompt\1\e[1;33m\2❯\1\e[0m\2"
+        prompt=''
+        if [ -n "$SSH_TTY" ]; then
+                prompt="\1\e[0;31m\2${HOSTNAME:=$(hostname)}\1\e[0m\2"
+        fi
+        prompt="$prompt\1\e[1;33m\2❯\1\e[0m\2"
 
-    bind "set emacs-mode-string \1\e[5 q\2${prompt}\1\e[0m\2"
+        bind "set emacs-mode-string \1\e[5 q\2${prompt}\1\e[0m\2"
 }
 
 # Resets our bindings because I want to know about every binding that I put into
 # my inputrc. This doesn't clear everything, and I still need to overwrite some
 # stuff, but it's good enough.
 reset_readline_bindings() {
-    readline_functions="$(bind -l | grep -vE '^do-lowercase-version|self-insert$')"
-    for f in $readline_functions; do bind -u "$f"; done
-    bind -f ~/.config/readline/inputrc
+        readline_functions="$(bind -l | grep -vE '^do-lowercase-version|self-insert$')"
+        for f in $readline_functions; do bind -u "$f"; done
+        bind -f ~/.config/readline/inputrc
 
-    bind -x '"\ee":edit-and-execute-command'
+        bind -x '"\ee":edit-and-execute-command'
 
-    # prevents \C-s from pausing the terminal, allowing for \C-s to be sent for
-    # our forward-search-history binding
-    stty -ixon
+        # prevents \C-s from pausing the terminal, allowing for \C-s to be sent for
+        # our forward-search-history binding
+        stty -ixon
 }
 
 main() {
-    # shellcheck disable=SC2039
-    shopt -s autocd histverify histappend
+        # shellcheck disable=SC2039
+        shopt -s autocd histverify histappend
 
-    reset_readline_bindings
-    setprompt
-    settitles
+        reset_readline_bindings
+        setprompt
+        settitles
 }
 
 main
