@@ -8,6 +8,7 @@ function! s:ToggleNumbers()
     set numberwidth=1
     set invcursorline
     set signcolumn=number
+    set signcolumn=no
 endfunction
 
 command! ToggleNumbers :call s:ToggleNumbers()

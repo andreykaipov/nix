@@ -102,14 +102,23 @@ map gn :bn<cr>
 map gp :bp<cr>
 map gd :bd<cr>
 
+" move cursor through soft-wrapped lines
+" https://stackoverflow.com/questions/20975928/moving-the-cursor-through-long-soft-wrapped-lines-in-vim
+nnoremap <expr> j v:count ? 'j' : 'gj'
+nnoremap <expr> k v:count ? 'k' : 'gk'
+vnoremap <expr> j v:count ? 'j' : 'gj'
+vnoremap <expr> k v:count ? 'k' : 'gk'
+
 " show 81 char line. ideally our code won't go past it.
 " because of this, we don't need to wrap lines.
 "
 set textwidth=80
 let &colorcolumn=join(range(81,120),",")
 set nowrap
+nmap <leader>w :set wrap!<cr>
 
 " scroll offset sets the number of context lines we see whenever we scroll
+" setting this higher gives a more page-like feeling by centering the cursorline
 "
 set scrolloff=20
 
@@ -131,22 +140,23 @@ set guicursor=n-v-c:ver25
             \,i-ci-ve:ver25-blinkwait700-blinkoff400-blinkon250
             \,r-cr-o:hor20
 
-" set termguicolors
+set mouse=
+
+set termguicolors
 
 " override any colorscheme with our custom highlights that are superior
 " anywhere. don't @ me. use :XtermColorTable to view available colors. see :help
 " highlight-groups for available highlight groups.
 "
 function! SetCustomHighlights()
-    highlight ColorColumn                            ctermbg=233
-    highlight CursorLine                             ctermbg=233
-    highlight CursorLineNr            ctermfg=yellow ctermbg=233
-    highlight Normal                  ctermfg=252    ctermbg=none guibg=none
-    highlight MatchParen   cterm=bold ctermfg=208    ctermbg=233
-    highlight StatusLine                                          guifg=yellow guibg=none
-    " highlight highlight-group :cterm=NONE ctermbg=NONE ctermfg=NONE gui=NONE guibg=NONE guifg=NONE
+    highlight Normal                                 ctermbg=233 guibg=none
+    highlight ColorColumn                            ctermbg=232
+    highlight CursorLine                             ctermbg=232
+    highlight CursorLineNr            ctermfg=yellow ctermbg=232
+    highlight LineNr                  ctermfg=none   ctermbg=none
 endfunction
 
+exec printf('source %s/functions.vim', root)
 exec printf('source %s/numbers.vim', root)
 exec printf('source %s/autosave.vim', root)
 exec printf('source %s/autocomplete.vim', root)
@@ -160,10 +170,6 @@ let g:colorizer_auto_filetype = 'css,html,dircolors'
 " not the late 19th century, and is a silly default.
 set nojoinspaces
 
-" to be used in autocmd events
-" TODO - take out ToggleAutoSave and create autocmds on FileTypes to enable it
-" on specific filetypes only. See autosave.vim for reasoning.
-"
 function s:OnOpenFile()
     " we use an autocmd to set global formatoptions because underlying plugins
     " may overwrite this value. see :h fo-table
@@ -179,12 +185,16 @@ function s:OnOpenFile()
     "
     set formatoptions=croq1j
 
-    " better to put in an autocmd rather than directly calling it, since
+    " better to put toggles here rather than directly calling them, since
     " re-sourcing this file (`:source $MYVIMRC`) will not trigger our toggles
     " this way
     "
     ToggleNumbers
-    " ToggleAutoSave
+    ToggleAutoSave " TODO consider opting into specific fts instead of all
+
+    " erase any messages when vim first opens up
+    echon "\r"
+    echon ""
 endfunction
 
 augroup init
@@ -197,8 +207,8 @@ augroup init
     " go back to last position after closing (see :help restore-cursor)
     "
     autocmd BufRead *
-        \ if line("'\"") >= 1 && line("'\"") <= line("$") && &ft !~# 'commit'
-        \ |   exe "normal! g`\""
+        \ if &ft !~# 'commit\|rebase' && line("'\"") > 1 && line("'\"") <= line("$")
+        \ | exe 'normal! g`"'
         \ | endif
 
     autocmd BufNewFile,BufReadPost * :call system("rich-presence-update vi-open " . expand("%:t"))

@@ -46,15 +46,3 @@ endfunction
 
 command! ToggleAutoSave :call s:ToggleAutoSave()
 nmap <leader>s :ToggleAutoSave<cr>
-
-" Turn it on by default
-"
-" TODO - opt in to autosaving specific filetypes rather than opting out. don't
-" really want to edit something in /etc/, step away from the computer, and bork
-" everything.
-:ToggleAutoSave
-
-" We only want to show the "(Dis|Ena)bled autosave" message when toggling, so we
-" move the cursor to the first column to erase the message when Vim first opens
-echon "\r"
-echon ""
