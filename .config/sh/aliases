@@ -33,3 +33,6 @@ alias k='kubectl'
 alias less='less -NFRX'
 
 alias tree='tree --dirsfirst'
+
+alias cat='bat --paging=never'
+alias less=bat
