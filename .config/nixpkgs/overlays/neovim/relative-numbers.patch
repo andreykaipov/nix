@@ -1,17 +1,9 @@
-diff --git a/src/nvim/screen.c b/src/nvim/screen.c
-index c6fd9e5df..ced886f45 100644
---- a/src/nvim/screen.c
-+++ b/src/nvim/screen.c
-@@ -1970,7 +1970,7 @@ static inline void provider_err_virt_text(linenr_T lnum, char *err)
- static inline void get_line_number_str(win_T *wp, linenr_T lnum, char_u *buf, size_t buf_len)
- {
-   long num;
--  char *fmt = "%*ld ";
-+  char *fmt = "%*ld ";
-
-   if (wp->w_p_nu && !wp->w_p_rnu) {
-     // 'number' + 'norelativenumber'
-@@ -1981,7 +1981,7 @@ static inline void get_line_number_str(win_T *wp, linenr_T lnum, char_u *buf, si
+# right-aligns the absolute numbers wrt to the relative numbers, ocd
+diff --git a/src/nvim/drawline.c b/src/nvim/drawline.c
+index 08b6fd89a..2fd6a5eca 100644
+--- a/src/nvim/drawline.c
++++ b/src/nvim/drawline.c
+@@ -402,7 +402,7 @@ static inline void get_line_number_str(win_T *wp, linenr_T lnum, char_u *buf, si
      if (num == 0 && wp->w_p_nu && wp->w_p_rnu) {
        // 'number' + 'relativenumber'
        num = lnum;

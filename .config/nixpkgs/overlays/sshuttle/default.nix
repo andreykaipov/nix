@@ -8,11 +8,11 @@ with super.python3Packages; {
   sshuttle = super.sshuttle.overridePythonAttrs (old: rec {
 
     pname = old.pname;
-    version = "1.1.0";
+    version = "1.1.1";
 
     src = fetchPypi {
       inherit pname version;
-      sha256 = "IfuRvfOStQ5422uNdelbc6ydr9Nh4mV+eE5nRWEhkxU=";
+      sha256 = "sha256-9aPtHlqxITx6bfhgr0HxqQOrLK+/73Hzcazc/yHmnuY=";
     };
 
     # see https://github.com/sshuttle/sshuttle/issues/563#issuecomment-789693694

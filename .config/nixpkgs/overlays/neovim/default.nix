@@ -11,13 +11,14 @@ self: super: {
   neovim-unwrapped =
     super.neovim-unwrapped.overrideAttrs (oldAttrs: rec {
       pname = oldAttrs.pname;
-      version = "0.7.0";
+      version = "0.8.2";
 
       src = super.fetchFromGitHub {
         owner = "neovim";
         repo = "neovim";
         rev = "v${version}";
-        sha256 = "sha256-eYYaHpfSaYYrLkcD81Y4rsAMYDP1IJ7fLJJepkACkA8=";
+        sha256 = "sha256-eqiH/K8w0FZNHLBBMjiTSQjNQyONqcx3X+d85gPnFJg=";
+        #sha256 = "";
       };
 
       patches = oldAttrs.patches ++ [
