@@ -2,6 +2,9 @@ if ! isdirectory(printf('%s/autoload/plugs', root))
     finish
 endif
 
+let g:localvimrc_ask = 0
+"let g:localvimrc_persistent = 0
+
 " ale
 "
 let g:ale_disable_lsp = 1

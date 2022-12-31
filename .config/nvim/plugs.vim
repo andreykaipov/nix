@@ -57,3 +57,12 @@ Plug 'zigford/vim-powershell'
 
 " embed vim status line into tmux
 Plug 'vimpostor/vim-tpipeline'
+
+" markdown writing
+Plug 'junegunn/goyo.vim'
+Plug 'preservim/vim-pencil'
+" one sentence per line for text/markdown files
+Plug 'whonore/vim-sentencer'
+
+"
+Plug 'embear/vim-localvimrc'
