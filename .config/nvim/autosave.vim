@@ -23,7 +23,7 @@ function! s:AutoSave()
     " Issue a BufWritePost event for any autocmds that would listen for it. This
     " way we actual mimic a manual `:update`. For example, ALE listens for it to
     " run fixers on save.
-    doautocmd BufWritePost
+    doautocmd BufWritePost " funky with folding
 
     echo "autosaved at " . strftime("%H:%M:%S")
 endfunction
