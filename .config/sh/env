@@ -58,11 +58,11 @@ export GOBIN="$HOME/go/bin"
 
 # Our marvelous path
 PATH="$(echo "
+    $HOME/bin
     $(for profile in $NIX_PROFILES; do echo "$profile/bin"; done)
     /etc/profiles/per-user/$USER/bin
     /run/current-system/sw/bin
 
-    $HOME/bin
     /usr/local/sbin
     /usr/local/bin
     /usr/sbin
@@ -72,6 +72,7 @@ PATH="$(echo "
 
     $GOBIN
     $HOME/npm/bin
+    $HOME/work/bin
 
     /mnt/c/Windows/System32/WindowsPowerShell/v1.0
     /mnt/c/Windows/System32
@@ -100,8 +101,8 @@ eval "$(dircolors.hex "$HOME/.config/dircolors/dircolors")"
 export TERM=xterm-256color
 
 # Bash-specific stuff for pretty history
-export HISTSIZE=20000 # in memory
-export HISTFILESIZE=20000
+export HISTSIZE=100000 # in memory
+export HISTFILESIZE=100000
 export HISTFILE="$HOME/.bash_history"
 export HISTTIMEFORMAT="%F %T  "
 export HISTCONTROL=ignoredups:erasedups
@@ -158,3 +159,8 @@ if [ -n "${WSL_DISTRO_NAME:-}" ]; then
 fi
 
 export SKIP_RICH_PRESENCE=1
+
+eval "$(~/.local/homebrew/bin/brew shellenv)"
+export HOMEBREW_NO_AUTO_UPDATE=1
+
+export DOTNET_CLI_TELEMETRY_OPTOUT=1
