@@ -1,7 +1,9 @@
-" let b:ale_fixers = ['gofmt', 'goimports']
-
+let b:ale_fixers = ['gofmt', 'goimports']
 let g:go_fmt_command = "goimports"
 let g:go_fmt_autosave = 1
+
+let g:ale_linters = {'go': ['golangci-lint', 'gofmt', 'govet']}
+let g:ale_go_golangci_lint_options = '--fast'
 let g:go_metalinter_command = 'golangci-lint run'
 
 let g:go_info_mode='gopls'
