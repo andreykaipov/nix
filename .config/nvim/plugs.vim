@@ -1,7 +1,11 @@
-" theme and status line that i'll get tired of later
-Plug 'liuchengxu/space-vim-theme'
-Plug 'itchyny/lightline.vim'
+Plug 'liuchengxu/space-vim-theme'     " spaaaaaace
+Plug 'vimpostor/vim-tpipeline'        " vim status line into tmux pane title
+Plug 'christoomey/vim-tmux-navigator' " navigate between vim and tmux panes easier
+Plug 'TaDaa/vimade'                   " dim inactive vim windows
+Plug 'tpope/vim-vinegar'              " better file browser?
+Plug 'github/copilot.vim'             " i, for one, welcome our new insect overlords
 
+Plug 'chaoren/vim-wordmotion' " bettter word motions
 " handy one-off commands I might want to run sometimes
 " TODO - just get rid of vim-markdown and replace with my own (auto)cmds
 " also read http://vimcasts.org/episodes/aligning-text-with-tabular-vim again
@@ -55,9 +59,6 @@ Plug 'zigford/vim-powershell'
 " Plug 'timburgess/extempore.vim'
 "
 
-" embed vim status line into tmux
-Plug 'vimpostor/vim-tpipeline'
-
 " markdown writing
 Plug 'junegunn/goyo.vim'
 Plug 'preservim/vim-pencil'
@@ -66,3 +67,5 @@ Plug 'whonore/vim-sentencer'
 
 "
 Plug 'embear/vim-localvimrc'
+
+Plug 'AndrewRadev/splitjoin.vim'
