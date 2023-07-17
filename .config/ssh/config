@@ -12,4 +12,8 @@ Host *
 
     UserKnownHostsFile ~/.cache/ssh/known_hosts
 
+    ControlMaster auto
+    ControlPath ~/.cache/ssh/sockets/%C
+    ControlPersist 600
+
 Include ~/.config/ssh/config.d/*

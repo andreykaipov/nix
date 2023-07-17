@@ -54,6 +54,7 @@
 # 4. Otherwise, we're good and we add our keys.
 ensure_ssh_agent() {
         mkdir -p ~/.cache/ssh
+        mkdir -p ~/.cache/ssh/sockets
         cd ~/.cache/ssh || return
 
         ssh_agent_pids="$(ps -e | awk '$NF == "ssh-agent" {print $1}')"
