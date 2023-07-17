@@ -218,3 +218,6 @@ augroup init
     autocmd FocusGained * :call system("rich-presence-update vi-move"   ." ".line(".").":".col(".")." ".expand("%:t"))
     autocmd QuitPre * :call system("rich-presence-update vi-quit")
 augroup END
+
+" has to exist here and not in after/plugin/init.vim
+let g:localvimrc_persistent = 1
