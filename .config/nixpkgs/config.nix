@@ -1,5 +1,5 @@
 { nixpkgs ? import <nixpkgs> { }
-, unstable ? import <unstable> { }
+, unstable ? import <nixpkgs> { }
 , stable ? import <stable> { /* config = { allowUnfree = true; }; */ }
 , ...
 }:
@@ -7,78 +7,76 @@
 let
   common = flatten [
     (with stable; [
-      asciinema
-      bash-completion
-      bat
-      binutils
-      cmake
-      csvkit
-      dircolors_hex
-      entr
-      ffmpeg
-      fzf
-      gifsicle
-      git-filter-repo
-      git-lfs
-      go-2fa
-      htop
-      imagemagick
-      jp
-      jq
-      k2tf
-      kind
-      mysql-client
-      nixFlakes
-      nmap
-      nodePackages.npm
-      nodejs
-      powershell
-      python38Packages.scapy
-      shellcheck
-      shfmt
-      sshpass
-      stoken
-      tre-command
-      tree
-      upx
-      whois
-      wireguard-go
-      wireguard-tools
+      #      asciinema
+      #      bash-completion
+      #      bat
+      #      binutils
+      #      cmake
+      #      csvkit
+      #      entr
+      #      ffmpeg
+      #      fzf
+      #      gifsicle
+      #      git-filter-repo
+      #      git-lfs
+      #      go-2fa
+      #      htop
+      #      imagemagick
+      #      jp
+      #      jq
+      #      k2tf
+      #      kind
+      #      mysql-client
+      #      nixFlakes
+      #      nmap
+      #      nodejs
+      #      powershell
+      #      python38Packages.scapy
+      #      shellcheck
+      #      shfmt
+      #      sshpass
+      #      stoken
+      #      tre-command
+      #      tree
+      #      upx
+      #      whois
+      #      wireguard-go
+      #      wireguard-tools
     ])
 
     (with unstable; [
-      bashInteractive_5
-      cloudflared
-      direnv
-      exiftool
-      expect
-      gh
-      go
-      go-tools
-      neofetch
-      neovim
-      nixpkgs-fmt
-      nodePackages.bash-language-server
-      sshuttle
-      terraform
-      terraform-docs
-      terraform-ls
-      terragrunt
-      tflint
-      tmux
-      yq-go
+      #      bashInteractive_5
+      #      cloudflared
+      #      direnv
+      #      exiftool
+      #      expect
+      #      gh
+      #      go
+      #      go-tools
+      #      neofetch
+      #      neovim
+      #      nixpkgs-fmt
+      #      nodePackages.bash-language-server
+      #      sshuttle
+      #      terraform
+      #      terraform-docs
+      #      terraform-ls
+      #      terragrunt
+      #      tflint
+      #      tmux
+      #      yq-go
     ])
   ];
 
   wsl = with stable; [
-    dns-tcp-socks-proxy
-    gcc
-    gnumake
-    rich-presence-cli-linux
-    rich-presence-cli-windows
-    unzip
-    win32yank
-    wudo
+    #dns-tcp-socks-proxy
+    #gcc
+    #gnumake
+    ##rich-presence-cli-linux
+    ##rich-presence-cli-windows
+    #unzip
+    #win32yank
+    #wudo
   ];
 
   work = with stable; [
@@ -90,7 +88,7 @@ let
   inherit (stable.lib) optional flatten;
   inherit (stable.stdenv) isDarwin isLinux;
 
-  isWork = builtins.pathExists ~/.config/sh/env.work;
+  #isWork = builtins.pathExists ~/.config/sh/env.work;
   isWSL = (builtins.getEnv "WSL_DISTRO_NAME") != "";
 in
 {

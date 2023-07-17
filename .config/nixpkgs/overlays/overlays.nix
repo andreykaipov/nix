@@ -45,21 +45,21 @@ in
       chmod +x $out/bin/*
     '';
   };
-  mutagen = stdenv.mkDerivation rec {
-    pname = "mutagen";
-    version = "0.16.3";
-    src = fetchurl {
-      url = "https://github.com/mutagen-io/${pname}/releases/download/v${version}/${pname}_${os}_${arch}_v${version}.tar.gz";
-      sha256 = "sha256-cBH4s82KmBNcxIPo9aXuny89SslZEy55Y31wc5V+Ryo=";
-    };
-    buildInputs = [ gnutar ];
-    unpackPhase = ":";
-    installPhase = ''
-      mkdir -p $out/bin
-      tar xfvz $src -C $out/bin ${pname}
-      chmod +x $out/bin/*
-    '';
-  };
+  #  mutagen = stdenv.mkDerivation rec {
+  #    pname = "mutagen";
+  #    version = "0.16.3";
+  #    src = fetchurl {
+  #      url = "https://github.com/mutagen-io/${pname}/releases/download/v${version}/${pname}_${os}_${arch}_v${version}.tar.gz";
+  #      sha256 = "sha256-cBH4s82KmBNcxIPo9aXuny89SslZEy55Y31wc5V+Ryo=";
+  #    };
+  #    buildInputs = [ gnutar ];
+  #    unpackPhase = ":";
+  #    installPhase = ''
+  #      mkdir -p $out/bin
+  #      tar xfvz $src -C $out/bin ${pname}
+  #      chmod +x $out/bin/*
+  #    '';
+  #  };
   # mitmproxy depends on mitmproxy-wireguard which has a failing build on macos:
   #
   # = note: ld: warning: option -s is obsolete and being ignored
