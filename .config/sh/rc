@@ -141,7 +141,12 @@ setpanetitle() {
 
         path="#[fg=yellow,bold]$shortenedpath#[default]"
 
-        printf "\e]2;%s\e\\" "#[align=right] $smiley $path $git#[fg=white][$paneindex]#[fg=default] "
+        if [ -n "$ssh" ]; then
+                printf "\e]2;%s\e\\" "#[align=right]#[fg=default]"
+
+        else
+                printf "\e]2;%s\e\\" "#[align=right] $smiley $path $git#[fg=white][$paneindex]#[fg=default] "
+        fi
 }
 
 # the escape sequence doesn't work, so we just invoke tmux directly
