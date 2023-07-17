@@ -7,6 +7,7 @@
         (builtins.readDir dir));
 
   # find all packages to include
+  # andrey it's cool but pls don't use this
   packages =
     # check our custom packages' meta.platforms to see if we should include it
     let
@@ -16,10 +17,15 @@
     in
     builtins.filter shouldUsePkg packagesEvaled;
 
-  # find all overlays to include
+  # create overlays from custom packages and include any actual overlays
   overlays =
-    let dirs = lib.my.subdirs ./overlays;
-    in lib.lists.forEach dirs (o: import ./overlays/${o});
+    let
+      packages = lib.my.subdirs ./packages;
+      overlays = lib.my.subdirs ./overlays;
+    in
+    lib.lists.forEach packages (p: self: super: { ${p} = pkgs.callPackage ./packages/${p} { }; }) ++
+    lib.lists.forEach overlays (o: import ./overlays/${o})
+  ;
 
   homedir = username: (if pkgs.stdenv.isLinux then "/home" else "/Users") + "/${username}";
 }

@@ -63,8 +63,8 @@
     in
     {
       homeConfigurations = builtins.mapAttrs (hostname: config: config hostname) {
-        dustbox = homeConfig "x86_64-linux" [ ];
-        smart-toaster = homeConfig "aarch64-darwin " [ ];
+        dustbox = homeConfig "x86_64-linux" [ ./wsl.nix ];
+        smart-toaster = homeConfig "aarch64-darwin " [ ./macos.nix ];
       };
     };
 }

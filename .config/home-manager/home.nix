@@ -9,6 +9,7 @@
     bat
     cachix
     devenv
+    dircolors_hex
     gh
     go
     jq
@@ -20,8 +21,7 @@
     rufo
     terraform-ls
     tmux
-    wslu
-  ] ++ lib.my.packages;
+  ];
 
   programs.home-manager.enable = true;
   programs.direnv.enable = true;
