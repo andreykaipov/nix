@@ -140,7 +140,8 @@ set guicursor=n-v-c:ver25
             \,i-ci-ve:ver25-blinkwait700-blinkoff400-blinkon250
             \,r-cr-o:hor20
 
-set mouse=
+" mouse ain't so bad for resizing vim panes
+set mouse=nv
 
 set termguicolors
 
