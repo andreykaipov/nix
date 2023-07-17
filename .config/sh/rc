@@ -42,13 +42,16 @@ sourceg() {
         sourced="$1"
         shift
         . "$sourced"
+        echo "updating tmux environment" >&2
         env - \
                 "HOME=$HOME" \
                 "USER=$USER" \
+                "WSL_DISTRO_NAME=$WSL_DISTRO_NAME" \
                 sh -c ". $sourced; env" | cut -d= -f1 | while read -r var; do
-                val="$(eval "echo \"\$$var\"")"
-                tmux set-environment -gt local "$var" "$val"
-        done
+                        val="$(eval "echo \"\$$var\"")"
+                        tmux set-environment -gt local "$var" "$val"
+                        echo "updated $var" >&2
+                done
 }
 
 # unsetg is to unset as sourceg is to source, removing any set env vars from

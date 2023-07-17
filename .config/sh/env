@@ -51,7 +51,8 @@ export XDG_RUNTIME_DIR="$HOME/.run"
 
 # Nix stuff
 #.  /nix/var/nix/profiles/default/etc/profile.d/nix.sh
-. /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
+#. /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
+. /home/andrey/.nix-profile/etc/profile.d/nix.sh
 
 # Go stuff
 export GOBIN="$HOME/go/bin"
@@ -156,6 +157,8 @@ if [ -n "${WSL_DISTRO_NAME:-}" ]; then
         echo >&2 "Finding Windows host..."
         WINHOST="$(ip r show default | awk '{print $3}')"
         export WINHOST
+
+        export BROWSER=wslview
 fi
 
 export SKIP_RICH_PRESENCE=1
