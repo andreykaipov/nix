@@ -1,0 +1,3 @@
+#!/bin/sh
+# sleep to spot errors, if any
+TMUX= tmux new-session -s temp nvim +PlugInstall +PlugClean! +PlugStatus +'!sleep 0.5' +qa

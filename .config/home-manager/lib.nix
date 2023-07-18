@@ -1,4 +1,8 @@
-{ system, pkgs, lib, ... }:
+{ system
+, pkgs
+, lib
+, ...
+}:
 
 {
   subdirs = dir:
@@ -28,4 +32,34 @@
   ;
 
   homedir = username: (if pkgs.stdenv.isLinux then "/home" else "/Users") + "/${username}";
+
+  activationScripts = scripts:
+    let
+      run = script: lib.hm.dag.entryAfter [
+        "installPackages"
+        "onFilesChange"
+        "reloadSystemd"
+      ] ''
+        # can't use config.home.path so rely on .nix-profile
+        export PATH="/bin:/usr/bin:$HOME/.nix-profile/bin:$PATH"
+        ${script}
+      '';
+
+      # if the given script is one line, use that as the name of the activation
+      # entry. otherwise, hash the arbitrary script content to get a name.
+      # prepend an index so the scripts run in the same order as they're defined
+      # in the list (nix sorts the entries)
+      condense = i: script: {
+        value = run script;
+        name =
+          let
+            base =
+              if (lib.strings.hasInfix "\n" script)
+              then builtins.hashString "md5" script
+              else script;
+          in
+          "[${toString i}] ${base}";
+      };
+    in
+    builtins.listToAttrs (lib.lists.imap0 condense scripts);
 }

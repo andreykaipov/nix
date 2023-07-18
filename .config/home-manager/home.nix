@@ -1,4 +1,5 @@
-{ lib
+{ config
+, lib
 , nixpkgs
 , nixpkgs-stable
 , devenv
@@ -12,6 +13,7 @@
     cachix
     devenv
     dircolors_hex
+    git
     gh
     go
     jq
@@ -29,15 +31,9 @@
   programs.direnv.nix-direnv.enable = true;
   programs.home-manager.enable = true;
 
-  home.activation = {
-    # run arbitrary commands after activation of the following entries
-    arbitrary-shell = lib.hm.dag.entryAfter [ "installPackages" "onFilesChange" "reloadSystemd" ] ''
-      echo hello
-    '';
-
-    ssh-xdg-dir-workaround = lib.hm.dag.entryAfter [ "arbitrary" ] ''
-      rm -rf ~/.ssh/config
-      ln -sf ~/.config/ssh/config ~/.ssh/config
-    '';
-  };
+  home.activation = lib.my.activationScripts (map toString [
+    ./scripts/ssh-generate-authorized-keys
+    ./scripts/nvim-ensure-plugins
+    ./scripts/tmux-ensure-plugins
+  ]);
 }
