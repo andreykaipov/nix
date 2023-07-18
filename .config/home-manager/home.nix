@@ -6,6 +6,8 @@
 }:
 {
   home.packages = with nixpkgs; [
+    bashInteractive
+    bash-completion
     bat
     cachix
     devenv
@@ -23,9 +25,9 @@
     tmux
   ];
 
-  programs.home-manager.enable = true;
   programs.direnv.enable = true;
   programs.direnv.nix-direnv.enable = true;
+  programs.home-manager.enable = true;
 
   home.activation = {
     # run arbitrary commands after activation of the following entries

@@ -85,9 +85,7 @@ fi
 . ~/.config/sh/hooks       # TODO: consider precmds with PS0 instead of trap .. DEBUG
 eval "$(direnv hook bash)" # after hooks since it touches PROMPT_COMMAND
 
-safesource ~/.nix-profile/etc/profile.d/bash_completion.sh
-safesource ~/.nix-profile/etc/bash_completion.d/gcloud.inc
-safesource ~/.local/mc-cli/bin/mc.completion.bash
+. ~/.nix-profile/share/bash-completion/bash_completion
 
 findshortenedpath() {
         case "$PWD" in
