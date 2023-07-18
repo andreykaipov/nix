@@ -107,7 +107,7 @@ export HISTFILESIZE=100000
 export HISTFILE="$HOME/.bash_history"
 export HISTTIMEFORMAT="%F %T  "
 export HISTCONTROL=ignoredups:erasedups
-export HISTIGNORE='\:;*:'
+export HISTIGNORE='\:;*:' # preface :; to ignore command in history
 
 # Miscellaneous
 export INPUTRC="$HOME/.config/readline/inputrc"
