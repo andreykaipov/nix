@@ -230,6 +230,10 @@ reset_readline_bindings() {
         # prevents \C-s from pausing the terminal, allowing for \C-s to be sent for
         # our forward-search-history binding
         stty -ixon
+
+	# shows files on empty commands
+	# otherwise it'll try to list all our binaries and hang the prompt
+	complete -Ef
 }
 
 main() {
