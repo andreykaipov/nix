@@ -22,9 +22,11 @@
     , ...
     }:
     let
+      username = "andrey";
+
       homeConfig = system: extraModules: hostName:
         home-manager.lib.homeManagerConfiguration rec {
-          pkgs = nixos.legacyPackages.${system}; # or remiport again with... pkgs = import blah stable { inherit system; };
+          pkgs = nixpkgs-unstable.legacyPackages.${system}; # or just reimport again
 
           lib = nixos.lib.extend (self: super: {
             my = import ./lib.nix {
@@ -33,32 +35,25 @@
             };
           });
 
-          modules =
-            let
-              username = "andrey";
-            in
-            [
-              {
-                home.username = username;
-                home.homeDirectory = lib.my.homedir username;
-                home.stateVersion = "22.11";
-              }
-              ./home.nix
-            ] ++ extraModules;
-
-          extraSpecialArgs =
-            let
-              import' = pkg: import pkg {
-                inherit system;
-                config.allowUnfree = true;
-                overlays = lib.my.overlays;
-              };
-            in
+          modules = [
             {
-              nixpkgs = import' nixpkgs-unstable;
-              nixpkgs-stable = import' nixos;
-              devenv = devenv.packages.${system}.devenv;
-            };
+              nixpkgs.config.allowUnfree = true;
+              nixpkgs.overlays = lib.my.overlays;
+            }
+            {
+              home.username = username;
+              home.homeDirectory = lib.my.homedir username;
+              home.stateVersion = "22.11";
+            }
+            ./home.nix
+          ]
+          ++ lib.my.modules
+          ++ extraModules;
+
+          extraSpecialArgs = {
+            pkgs-stable = import nixos { inherit system; config.allowUnfree = true; };
+            devenv = devenv.packages.${system}.devenv;
+          };
         };
     in
     {

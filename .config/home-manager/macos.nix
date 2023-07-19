@@ -1,6 +1,8 @@
-{ nixpkgs, ... }:
+{ pkgs
+, ...
+}:
 {
-  home.packages = with nixpkgs; [
+  home.packages = with pkgs; [
     iproute2mac
   ];
 }

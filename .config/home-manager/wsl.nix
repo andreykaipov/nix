@@ -1,6 +1,9 @@
-{ nixpkgs, nixpkgs-stable, ... }:
+{ pkgs
+, pkgs-stable
+, ...
+}:
 {
-  home.packages = with nixpkgs; [
+  home.packages = with pkgs; [
     expect
     gcc
     gnumake

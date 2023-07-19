@@ -1,12 +1,12 @@
 { config
 , lib
-, nixpkgs
-, nixpkgs-stable
+, pkgs
+, pkgs-stable
 , devenv
 , ...
 }:
 {
-  home.packages = with nixpkgs; [
+  home.packages = with pkgs; [
     bashInteractive
     bash-completion
     bat

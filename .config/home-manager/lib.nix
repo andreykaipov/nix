@@ -4,32 +4,28 @@
 , ...
 }:
 
-{
-  subdirs = dir:
-    lib.attrsets.mapAttrsToList (k: v: k)
-      (lib.attrsets.filterAttrs (k: v: v == "directory")
-        (builtins.readDir dir));
-
-  # find all packages to include
-  # andrey it's cool but pls don't use this
-  packages =
-    # check our custom packages' meta.platforms to see if we should include it
+rec {
+  find = type: dir:
     let
-      dirs = lib.my.subdirs ./packages;
-      packagesEvaled = lib.lists.forEach dirs (p: pkgs.callPackage ./packages/${p} { });
-      shouldUsePkg = p: lib.meta.availableOn pkgs.stdenv.hostPlatform p;
+      contents = builtins.readDir dir;
+      filtered = lib.attrsets.filterAttrs (k: v: v == type) contents;
     in
-    builtins.filter shouldUsePkg packagesEvaled;
+    lib.attrsets.mapAttrsToList (k: v: k) filtered;
+
+  subdirs = find "directory";
+
+  files = find "regular";
 
   # create overlays from custom packages and include any actual overlays
   overlays =
     let
-      packages = lib.my.subdirs ./packages;
-      overlays = lib.my.subdirs ./overlays;
+      packages = subdirs ./packages;
+      overlays = subdirs ./overlays;
     in
     lib.lists.forEach packages (p: self: super: { ${p} = pkgs.callPackage ./packages/${p} { }; }) ++
-    lib.lists.forEach overlays (o: import ./overlays/${o})
-  ;
+    lib.lists.forEach overlays (o: import ./overlays/${o});
+
+  modules = lib.lists.forEach (files ./modules) (m: ./modules/${m});
 
   homedir = username: (if pkgs.stdenv.isLinux then "/home" else "/Users") + "/${username}";
 
