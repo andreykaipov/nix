@@ -1,4 +1,6 @@
 #!/bin/sh
+#
+# Generates SSH authorized_keys file from keys in ~/.config/ssh/keys
 
 cd "$HOME/.config/ssh" || exit
 

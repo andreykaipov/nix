@@ -1,6 +1,7 @@
 { system
 , pkgs
 , lib
+, flake
 , ...
 }:
 
@@ -38,7 +39,16 @@ rec {
       ] ''
         # can't use config.home.path so rely on .nix-profile
         export PATH="/bin:/usr/bin:$HOME/.nix-profile/bin:$PATH"
-        ${script}
+        if [ -n "$DRY_RUN_CMD" ]; then
+          if [ -r "${script}" ]; then
+            head -n3 "${script}"
+          else
+            echo '${script}' | head -n3
+          fi
+          echo ${flake}
+        else
+          ${script}
+        fi
       '';
 
       # if the given script is one line, use that as the name of the activation
@@ -49,12 +59,12 @@ rec {
         value = run script;
         name =
           let
-            base =
+            fname =
               if (lib.strings.hasInfix "\n" script)
               then builtins.hashString "md5" script
               else script;
           in
-          "[${toString i}] ${base}";
+          "[${toString i}] ${fname}";
       };
     in
     builtins.listToAttrs (lib.lists.imap0 condense scripts);

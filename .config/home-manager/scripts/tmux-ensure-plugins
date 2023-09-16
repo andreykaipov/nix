@@ -1,4 +1,6 @@
 #!/bin/sh
+#
+# Ensures all tmux plugins are installed and up to date.
 
 tmux="$HOME/.config/tmux"
 tpm="$tmux/plugins/tpm"
@@ -13,5 +15,6 @@ fi
 
 TMUX= tmux -f "$tmux/plugins.conf" new-session -s temp bash -c "
         $tpm/bin/install_plugins
+        $tpm/bin/update_plugins
         sleep 0.5
 "

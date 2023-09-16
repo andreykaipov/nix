@@ -28,16 +28,19 @@
         home-manager.lib.homeManagerConfiguration rec {
           pkgs = nixpkgs-unstable.legacyPackages.${system}; # or just reimport again
 
-          lib = nixos.lib.extend (self: super: {
+          lib = nixos.lib.extend (libself: super: {
             my = import ./lib.nix {
               inherit system pkgs;
-              lib = self;
+              lib = libself;
+              flake = self;
             };
           });
 
           modules = [
             {
-              nixpkgs.config.allowUnfree = true;
+              # alternatively, we can set these in `import nixpkgs { ... }`
+              # instead of using legacyPackages above
+              nixpkgs.config.allowUnfreePredicate = (pkg: true); # https://github.com/nix-community/home-manager/issues/2942
               nixpkgs.overlays = lib.my.overlays;
             }
             {
@@ -47,7 +50,6 @@
             }
             ./home.nix
           ]
-          ++ lib.my.modules
           ++ extraModules;
 
           extraSpecialArgs = {
