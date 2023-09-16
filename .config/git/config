@@ -16,8 +16,5 @@
 [diff "plist"]
     textconv = plutil -convert xml1 -o -
 
-[includeIf "gitdir:~/projects/work/**"]
-    path = work
-
-[includeIf "gitdir:~/projects/work/github/**"]
-    path = github
+[url "git@github.com:"]
+    insteadOf = https://github.com/
