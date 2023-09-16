@@ -85,6 +85,11 @@ fi
 . ~/.config/sh/hooks       # TODO: consider precmds with PS0 instead of trap .. DEBUG
 eval "$(direnv hook bash)" # after hooks since it touches PROMPT_COMMAND
 
+# if you can't rely on ~/.nix-profile here, you'll have to symlink the package
+# path in an activation script, e.g.: 
+#
+# ln -sf "${pkgs.bash-completion}" ~/.config/links/bash-completion
+#
 . ~/.nix-profile/share/bash-completion/bash_completion
 
 findshortenedpath() {
