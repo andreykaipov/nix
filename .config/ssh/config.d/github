@@ -1,0 +1,20 @@
+# vim: ft=sshconfig
+
+CanonicalizeHostname yes
+
+Host gh* *.github.net
+    User andreykaipov
+    IdentityFile ~/.config/ssh/keys/bastion.pem
+    ForwardAgent yes
+
+Host *.github.net
+    ProxyJump ghbastion
+
+Host ghbastion
+    HostName bastion.githubapp.com
+
+Host ghshell
+    HostName shell.service.ac4-iad.github.net
+
+Host ghvault
+    HostName vault-bastion.githubapp.com
