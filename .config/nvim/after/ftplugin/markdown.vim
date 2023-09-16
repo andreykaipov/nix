@@ -10,6 +10,25 @@ let g:sentencer_textwidth = -1
 set formatexpr=sentencer#Format()
 set formatoptions+=n " better line wrapping sentences in list items
 let &formatlistpat='^\s*\d\+\.\s\+\|^\s*[-*+]\s\+\|^\[^\ze[^\]]\+\]:'
+let g:sentencer_ignore = [
+            \ '\<i.e',
+            \ '\<e.g',
+            \ '\<vs',
+            \ '\<Dr',
+            \ '\<Mr',
+            \ '\<Mrs',
+            \ '\<Ms',
+            \ '0',
+            \ '1',
+            \ '2',
+            \ '3',
+            \ '4',
+            \ '5',
+            \ '6',
+            \ '7',
+            \ '8',
+            \ '9',
+            \ ]
 
 function! Preserve(command)
     " save last search, and cursor position
@@ -25,7 +44,8 @@ endfunction
 
 augroup markdown
     autocmd!
-    autocmd InsertLeave * :call Preserve("normal gqq<CR>")
+    autocmd BufWritePost,InsertLeave * :call Preserve("normal gqq<CR>")
+    "autocmd BufWritePost,InsertLeave * silent! :call Preserve("s/\\([^0-9]\\+\\)\\.\\s\\+\\(.*\\.\\)/\\1.\r\\2/g") "| call Preserve("normal gqq<CR>")
 
     autocmd VimEnter * Goyo
     autocmd User GoyoEnter :call s:goyo_enter()

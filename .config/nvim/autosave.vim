@@ -45,4 +45,4 @@ function! s:ToggleAutoSave()
 endfunction
 
 command! ToggleAutoSave :call s:ToggleAutoSave()
-nmap <leader>s :ToggleAutoSave<cr>
+"nmap <leader>s :ToggleAutoSave<cr>
