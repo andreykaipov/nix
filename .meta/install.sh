@@ -18,14 +18,14 @@ esac
 main() {
         trap 'cd -' EXIT
         cd "$HOME"
-        ensure_prereqs
-        ensure_nix
-        ensure_apps
-        ensure_nvim
+        #ensure_prereqs
+        #ensure_nix
+        #ensure_apps
         ensure_tpm
-        ssh-generate-authorized-keys
         echo "Done"
 }
+
+log() { echo "$*" >&2; }
 
 ensure_prereqs() {
         if [ "$os" = linux ] && [ -n "${WSL_DISTRO_NAME:-}" ]; then
@@ -43,28 +43,23 @@ ensure_nix() {
         echo "Ensuring Nix"
 
         if ! command -v nix >/dev/null; then
-                echo "Nix is not installed!"
-
-                curl -sLo- https://nixos.org/nix/install | sh -s -- --daemon --no-channel-add --no-modify-profile
+                log "Nix is not installed!"
+                 set -x
+                curl -sLo- https://nixos.org/nix/install | sh -s -- --no-daemon --no-channel-add --no-modify-profile
+                set +x
         fi
+
+        nixprofile=~/.nix-profile/etc/profile.d/nix.sh
+	if ! [ -r "$nixprofile" ]; then
+                log "Seems like the above install failed!"
+                log "Nix profile file not present: $nixprofile"
+        fi
+
+        . "$nixprofile"
 
         nix-channel --update
         nix-shell -p nix-info --run "nix-info -m"
-
-        if [ -n "$FORCE_REINSTALL" ]; then
-                nix-env --uninstall '*' || true
-        fi
-
-        nixpkg=linux
-        if [ "$os" = darwin ]; then nixpkg=macos; fi
-        nix-env --install --attr "nixpkgs.$nixpkg"
-
-        # nix-collect-garbage -d   # cleanup
-
-        # hard link a common shell.nix for each of our custom derivations
-        for dir in ~/.config/nixpkgs/cli/*/; do
-                ln -f ~/.config/nixpkgs/cli/shell.nix -t "$dir"
-        done
+        nix run home-manager -- switch --flake ~/.config/home-manager#dustbox
 }
 
 ensure_apps() {
@@ -102,33 +97,6 @@ ensure_apps() {
                         cp -R "$src" ~/Applications/Nix\ Apps
                 fi
         done
-}
-
-ensure_nvim() {
-        echo "Ensuring Neovim plugins"
-
-        # nvim itself is installed through nix
-
-        nvim +PlugInstall +qa
-
-        echo "You're good"
-}
-
-ensure_tpm() {
-        echo "Ensuring Tmux plugins"
-
-        tmux="$HOME/.config/tmux"
-        tpm="$tmux/plugins/tpm"
-
-        if [ -d "$tpm" ]; then
-                cd "$tpm"
-                git pull
-        else
-                mkdir -p "$tpm"
-                git clone https://github.com/tmux-plugins/tpm "$tpm"
-        fi
-
-        TMUX='' tmux -f "$tmux/plugins.conf" new-session -s temp "$tpm/bin/install_plugins"
 }
 
 main "$@"
