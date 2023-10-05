@@ -2,18 +2,23 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>NSStatusItem Preferred Position Item-0</key>
-	<real>401</real>
 	<key>SUEnableAutomaticChecks</key>
 	<false/>
 	<key>SUHasLaunchedBefore</key>
 	<true/>
 	<key>SUSendProfileInfo</key>
 	<false/>
+	<key>almostMaximize</key>
+	<dict/>
 	<key>alternateDefaultShortcuts</key>
 	<true/>
 	<key>bottomHalf</key>
-	<dict/>
+	<dict>
+		<key>keyCode</key>
+		<integer>125</integer>
+		<key>modifierFlags</key>
+		<integer>1703936</integer>
+	</dict>
 	<key>bottomLeft</key>
 	<dict>
 		<key>keyCode</key>
@@ -37,6 +42,8 @@
 	</dict>
 	<key>disabledApps</key>
 	<string>["com.jetbrains.goland"]</string>
+	<key>hideMenubarIcon</key>
+	<true/>
 	<key>larger</key>
 	<dict>
 		<key>keyCode</key>
