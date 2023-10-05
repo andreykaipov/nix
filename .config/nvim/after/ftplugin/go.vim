@@ -4,6 +4,7 @@ let g:go_fmt_autosave = 1
 
 let g:ale_linters = {'go': ['golangci-lint', 'gofmt', 'govet']}
 let g:ale_go_golangci_lint_options = '--fast'
+let g:ale_go_golangci_lint_package = 1
 let g:go_metalinter_command = 'golangci-lint run'
 
 let g:go_info_mode='gopls'
