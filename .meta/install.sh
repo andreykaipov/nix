@@ -49,6 +49,7 @@ ensure_nix() {
                 set +x
         fi
 
+<<<<<<< Updated upstream
         nixprofile=~/.nix-profile/etc/profile.d/nix.sh
 	if ! [ -r "$nixprofile" ]; then
                 log "Seems like the above install failed!"
@@ -58,6 +59,9 @@ ensure_nix() {
         . "$nixprofile"
 
         nix-channel --update
+=======
+        #nix-channel --update
+>>>>>>> Stashed changes
         nix-shell -p nix-info --run "nix-info -m"
         nix run home-manager -- switch --flake ~/.config/home-manager#dustbox
 }
@@ -100,3 +104,9 @@ ensure_apps() {
 }
 
 main "$@"
+
+# create .run directory for op cli
+#❯ mkdir -p ~/.local/homebrew && curl -sL https://github.com/Homebrew/brew/tarball/master | tar xz --strip 1 -C ~/.local/homebrew
+# #❯eval "$(homebrew/bin/brew shellenv)"
+# brew update --force --quiet
+# chmod -R go-w "$(brew --prefix)/share/zsh"
