@@ -5,15 +5,37 @@
 
 Host *
     # keys will still be added to our known hosts, and we'll still get the
-    # warning, so calm yourself
+    # warning, so calm yourself, i just don't like typing yes
     StrictHostKeyChecking no
 
     HashKnownHosts no
 
     UserKnownHostsFile ~/.cache/ssh/known_hosts
 
+    # don't try all keys, but only the ones we specify
+    IdentitiesOnly yes
+
+    # persist connections for 10 minutes
     ControlMaster auto
-    ControlPath ~/.cache/ssh/sockets/%C
+    ControlPath ~/.cache/ssh/sockets/%r.%C
     ControlPersist 600
 
+CanonicalizeHostname yes
 Include ~/.config/ssh/config.d/*
+
+Host localhost
+    HostName localhost
+    UserKnownHostsFile /dev/null
+    NoHostAuthenticationForLocalhost yes
+
+# alias for the following: `gh cs ssh --server-port 1234`
+# we can then access the codespace through native ssh, e.g. `ssh codespace`
+#
+# useful in mutagen configs for syncing local env with codespace, see:
+# https://icanthascheezburger.com/wordpress/2021/12/use-codespaces-with-mutagen-and-keep-your-local-dev-tools
+Host codespace
+    User codespace
+    HostName localhost
+    Port 1234
+    IdentityFile ~/.ssh/codespaces.auto
+    PasswordAuthentication no

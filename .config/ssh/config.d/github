@@ -1,6 +1,7 @@
 # vim: ft=sshconfig
 
-CanonicalizeHostname yes
+Match user git host github.com
+    IdentityFile ~/.config/ssh/keys/m1.toast.pem
 
 Host gh* *.github.net
     User andreykaipov
