@@ -15,6 +15,7 @@
 !.config/**
 
 # and then ignore things we don't want
+.DS_Store
 .config/configstore
 .config/dnsproxy/debug.log
 .config/gcloud
