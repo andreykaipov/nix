@@ -16,11 +16,14 @@
 
 # and then ignore things we don't want
 .DS_Store
+.config/.wrangler
 .config/configstore
+.config/direnv
 .config/dnsproxy/debug.log
 .config/gcloud
 .config/gh/hosts.yml
 .config/gh/state.yml
+.config/github-copilot
 .config/iterm2/
 .config/nixpkgs/**/result
 .config/nvim/.netrwhist
