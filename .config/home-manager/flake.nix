@@ -22,46 +22,61 @@
     , ...
     }:
     let
-      username = "andrey";
+      lib = nixpkgs-unstable.lib;
+      homeConfig = system: cfg: hostName:
+        let
+          username = cfg.username;
+          homedir = lib.attrsets.attrByPath [ "homedir" ] "" cfg;
+          extraModules = cfg.extraModules;
+        in
+        #username: system: extraModules: hostName:
+        home-manager.lib.homeManagerConfiguration
+          rec {
+            pkgs = nixpkgs-unstable.legacyPackages.${system}; # or just reimport again
+            #pkgs = import <nixpkgs> { }; # or just reimport again
 
-      homeConfig = system: extraModules: hostName:
-        home-manager.lib.homeManagerConfiguration rec {
-          pkgs = nixpkgs-unstable.legacyPackages.${system}; # or just reimport again
+            lib = nixos.lib.extend (libself: super: {
+              my = import ./lib.nix {
+                inherit system pkgs;
+                lib = libself;
+                flake = self;
+              };
+            });
 
-          lib = nixos.lib.extend (libself: super: {
-            my = import ./lib.nix {
-              inherit system pkgs;
-              lib = libself;
-              flake = self;
+            modules = [
+              {
+                # alternatively, we can set these in `import nixpkgs { ... }`
+                # instead of using legacyPackages above
+                nixpkgs.config.allowUnfreePredicate = (pkg: true); # https://github.com/nix-community/home-manager/issues/2942
+                nixpkgs.overlays = lib.my.overlays;
+              }
+              {
+                home.username = username;
+                home.homeDirectory = if homedir != "" then homedir else lib.my.homedir username;
+                home.stateVersion = "22.11";
+              }
+              ./home.nix
+            ]
+            ++ extraModules;
+
+            extraSpecialArgs = {
+              pkgs-stable = import nixos { inherit system; config.allowUnfree = true; };
+              devenv = devenv.packages.${system}.devenv;
             };
-          });
-
-          modules = [
-            {
-              # alternatively, we can set these in `import nixpkgs { ... }`
-              # instead of using legacyPackages above
-              nixpkgs.config.allowUnfreePredicate = (pkg: true); # https://github.com/nix-community/home-manager/issues/2942
-              nixpkgs.overlays = lib.my.overlays;
-            }
-            {
-              home.username = username;
-              home.homeDirectory = lib.my.homedir username;
-              home.stateVersion = "22.11";
-            }
-            ./home.nix
-          ]
-          ++ extraModules;
-
-          extraSpecialArgs = {
-            pkgs-stable = import nixos { inherit system; config.allowUnfree = true; };
-            devenv = devenv.packages.${system}.devenv;
           };
-        };
     in
     {
       homeConfigurations = builtins.mapAttrs (hostname: configurer: configurer hostname) {
-        dustbox = homeConfig "x86_64-linux" [ ./wsl.nix ];
-        smart-toaster = homeConfig "aarch64-darwin " [ ./macos.nix ];
+        dustbox = homeConfig "x86_64-linux" {
+          username = "andrey";
+          extraModules = [ ./wsl.nix ];
+        };
+        smart-toaster = homeConfig "x86_64-darwin" {
+          # aarch64-darwin ?
+          username = "andreykaipov";
+          homedir = "/Users/andrey";
+          extraModules = [ ./macos.nix ];
+        };
       };
     };
 }

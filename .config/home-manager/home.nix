@@ -18,6 +18,7 @@
       git
       gh
       go
+      graphviz
       jq
       yq-go
       neovim
