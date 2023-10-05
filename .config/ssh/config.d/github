@@ -2,6 +2,7 @@
 
 Match user git host github.com
     IdentityFile ~/.config/ssh/keys/m1.toast.pem
+    IdentityFile ~/.config/ssh/keys/dustbox.pem
 
 Host gh* *.github.net
     User andreykaipov
