@@ -50,12 +50,16 @@ export XDG_RUNTIME_DIR="$HOME/.run"
 . ~/.config/sh/functions # for pathify
 
 # Nix stuff
-#.  /nix/var/nix/profiles/default/etc/profile.d/nix.sh
-#. /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
-. /home/andrey/.nix-profile/etc/profile.d/nix.sh
+. /nix/var/nix/profiles/default/etc/profile.d/nix.sh
+. /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
+#. /home/andrey/.nix-profile/etc/profile.d/nix.sh
 
 # Go stuff
 export GOBIN="$HOME/go/bin"
+export GOPROXY=https://goproxy.githubapp.com/mod,https://proxy.golang.org,direct
+export GOPRIVATE=
+export GONOPROXY=
+export GONOSUMDB='github.com/github/*'
 
 # Our marvelous path
 PATH="$(echo "

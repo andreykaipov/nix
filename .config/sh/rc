@@ -86,7 +86,7 @@ fi
 eval "$(direnv hook bash)" # after hooks since it touches PROMPT_COMMAND
 
 # if you can't rely on ~/.nix-profile here, you'll have to symlink the package
-# path in an activation script, e.g.: 
+# path in an activation script, e.g.:
 #
 # ln -sf "${pkgs.bash-completion}" ~/.config/links/bash-completion
 #
@@ -148,8 +148,8 @@ setpanetitle() {
         path="#[fg=yellow,bold]$shortenedpath#[default]"
 
         if [ -n "$ssh" ]; then
-                printf "\e]2;%s\e\\" "#[align=right]#[fg=default]"
-
+                :
+                #printf "\e]2;%s\e\\" "#[align=right]#[fg=default]"
         else
                 printf "\e]2;%s\e\\" "#[align=right] $smiley $path $git#[fg=white][$paneindex]#[fg=default] "
         fi
@@ -234,9 +234,9 @@ reset_readline_bindings() {
         # our forward-search-history binding
         stty -ixon
 
-	# shows files on empty commands
-	# otherwise it'll try to list all our binaries and hang the prompt
-	complete -Ef
+        # shows files on empty commands
+        # otherwise it'll try to list all our binaries and hang the prompt
+        complete -Ef
 }
 
 main() {
