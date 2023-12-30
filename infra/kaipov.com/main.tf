@@ -2,12 +2,17 @@ terraform {
   required_providers {
     cloudflare = {
       source  = "cloudflare/cloudflare"
-      version = "~> 2.0"
+      version = ">= 4.0, < 5.0"
     }
   }
 }
 
+provider "cloudflare" {
+  api_token  = local.secrets["cloudflare_api_token"]
+}
+
 resource "cloudflare_zone" "kaipov" {
+  account_id = local.secrets["cloudflare_account_id"]
   zone       = "kaipov.com"
   plan       = "free"
   type       = "full"

@@ -1,3 +1,6 @@
+retry_max_attempts       = 3
+retry_sleep_interval_sec = 10
+
 locals {
   git_dir = run_cmd("git", "rev-parse", "--show-toplevel")
 
@@ -24,5 +27,41 @@ remote_state {
   }
 }
 
-retry_max_attempts       = 3
-retry_sleep_interval_sec = 10
+# declare the 1password provider without conflicts
+# (https://developer.hashicorp.com/terraform/language/files/override)
+generate "provider_override" {
+  path      = "provider_override.tf"
+  if_exists = "overwrite_terragrunt"
+  contents  = <<EOF
+terraform {
+  required_providers {
+    onepassword = {
+      source  = "1Password/onepassword"
+      version = ">= 1.0, < 2.0"
+    }
+  }
+}
+EOF
+}
+
+generate "secrets" {
+  path      = "secrets.tf"
+  if_exists = "overwrite_terragrunt"
+  contents  = <<EOF
+locals {
+  secrets = {
+    for e in one(data.onepassword_item.secrets.section).field :
+    e.label => e.value
+  }
+}
+
+data "onepassword_vault" "vault" {
+  name = "github"
+}
+
+data "onepassword_item" "secrets" {
+  vault = data.onepassword_vault.vault.uuid
+  title = "setup.self"
+}
+EOF
+}

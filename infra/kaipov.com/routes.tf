@@ -21,8 +21,9 @@ locals {
 ### subdomain routes, e.g. blah.kaipov.com/*
 
 resource "cloudflare_worker_script" "subdomain_routes" {
-  for_each = local.subdomain_routes
-  name     = "301-${each.key}"
+  account_id = local.secrets["cloudflare_account_id"]
+  for_each   = local.subdomain_routes
+  name       = "301-${each.key}"
   content = templatefile("js/redirect-301.js.tmpl", {
     base          = each.value.to
     preserve_path = try(each.value.preserve_path, false)
@@ -49,8 +50,9 @@ resource "cloudflare_record" "subdomain_routes" {
 ### path routes, e.g. kaipov.com/blah*
 
 resource "cloudflare_worker_script" "path_routes" {
-  for_each = local.path_routes
-  name     = "301-${each.key}-path"
+  account_id = local.secrets["cloudflare_account_id"]
+  for_each   = local.path_routes
+  name       = "301-${each.key}-path"
   content = templatefile("js/redirect-301.js.tmpl", {
     base          = each.value.to
     preserve_path = try(each.value.preserve_path, false)

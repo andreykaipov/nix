@@ -2,20 +2,26 @@ terraform {
   required_providers {
     cloudflare = {
       source  = "cloudflare/cloudflare"
-      version = "~> 3.0"
+      version = ">= 4.0, < 5.0"
     }
   }
+}
+
+provider "cloudflare" {
+  api_token  = local.secrets["cloudflare_api_token"]
 }
 
 variable "tf_backend_username" {}
 variable "tf_backend_password" {}
 
 resource "cloudflare_workers_kv_namespace" "tfstate" {
-  title = "tfstate"
+  account_id = local.secrets["cloudflare_account_id"]
+  title      = "tfstate"
 }
 
 resource "cloudflare_worker_script" "tfstate" {
-  name = "tfstate-handler"
+  account_id = local.secrets["cloudflare_account_id"]
+  name       = "tfstate-handler"
   content = templatefile("index.js.tmpl", {
     kv_namespace = cloudflare_workers_kv_namespace.tfstate.title
     username     = var.tf_backend_username
