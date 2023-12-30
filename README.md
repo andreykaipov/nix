@@ -31,11 +31,11 @@ you even living?
 The `infra/kaipov.com` module manages all the Cloudflare configuration for
 `kaipov.com` -- DNS records, routes, security, whatever.
 
-We can use `make` to manage our infrastructure too, e.g.:
+We can use `./script/run.sh` to manage our infrastructure too, e.g.:
 
 ```console
-$ make infra/kaipov.com plan
-$ make infra/kaipov.com state show cloudflare_zone.kaipov
+$ ./scripts/run.sh infra/kaipov.com plan
+$ ./scripts/run.sh infra/kaipov.com state show cloudflare_zone.kaipov
 ```
 
 ### resume
@@ -45,7 +45,8 @@ with some of my own custom patches.
 
 Thanks to [Tectonic](https://github.com/tectonic-typesetting/tectonic), building
 the TeX document is astonglishly **not** a giant pain in the ass!
-Unbelievable--I know! Typically I'll run `make resume watch` and have _Sumatra
+Unbelievable--I know!
+Typically I'll run `./scripts/resume.dev.sh` and have _Sumatra
 PDF_ open on the side to get a live preview. When I'm done, the resume should
 already be moved into the appropriate place under `website` so that our Hugo
 site can serve it accordingly.
