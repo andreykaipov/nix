@@ -5,14 +5,12 @@ on:
   workflow_dispatch:
   push:
     branches: [master]
-    paths: [infra/**, resume/**]
+    paths:
+    - 'infra/**'
+    - 'resume/**'
 
 env:
-  terragrunt_version: 0.35.4
-  CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-  CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-  TF_BACKEND_USERNAME: ${{ secrets.TF_BACKEND_USERNAME }}
-  TF_BACKEND_PASSWORD: ${{ secrets.TF_BACKEND_PASSWORD }}
+  OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
 
 jobs:
   deployment:
@@ -20,12 +18,20 @@ jobs:
     environment:
       name: production
     steps:
-    - uses: actions/checkout@v2
-    - name: Setup Terragrunt
-      uses: autero1/action-terragrunt@v1.1.1
+    - uses: actions/checkout@v4
+    - uses: cachix/install-nix-action@v23
+    - uses: cachix/cachix-action@v12
       with:
-        terragrunt_version: ${{ env.terragrunt_version }}
-    - run: terragrunt --version
-    - run: curl -v https://tf.kaipov.com/self/infra/tfstate
-    - run: make infra/tfstate plan
-    - run: make infra/kaipov.com plan
+        name: devenv
+    - name: Install devenv.sh
+      run: nix profile install tarball+https://install.devenv.sh/latest
+    - name: Build the devenv shell and run any pre-commit hooks
+      run: devenv ci
+    - name: devenv shell
+      shell: devenv shell bash -e {0}
+      run: |
+        op --version
+        terragrunt --version
+        curl -v https://tf.kaipov.com/self/infra/tfstate
+        ./scripts/run.sh infra/tfstate plan
+        ./scripts/run.sh infra/kaipov.com plan
