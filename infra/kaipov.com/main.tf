@@ -8,11 +8,15 @@ terraform {
 }
 
 provider "cloudflare" {
-  api_token  = local.secrets["cloudflare_api_token"]
+  api_token = local.secrets.setup["cloudflare_api_token"]
+}
+
+locals {
+  cf_account_id = local.secrets.setup["cloudflare_account_id"]
 }
 
 resource "cloudflare_zone" "kaipov" {
-  account_id = local.secrets["cloudflare_account_id"]
+  account_id = local.cf_account_id
   zone       = "kaipov.com"
   plan       = "free"
   type       = "full"

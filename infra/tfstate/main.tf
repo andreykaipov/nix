@@ -8,19 +8,23 @@ terraform {
 }
 
 provider "cloudflare" {
-  api_token  = local.secrets["cloudflare_api_token"]
+  api_token = local.secrets.setup["cloudflare_api_token"]
+}
+
+locals {
+  cf_account_id = local.secrets.setup["cloudflare_account_id"]
 }
 
 variable "tf_backend_username" {}
 variable "tf_backend_password" {}
 
 resource "cloudflare_workers_kv_namespace" "tfstate" {
-  account_id = local.secrets["cloudflare_account_id"]
+  account_id = local.cf_account_id
   title      = "tfstate"
 }
 
 resource "cloudflare_worker_script" "tfstate" {
-  account_id = local.secrets["cloudflare_account_id"]
+  account_id = local.cf_account_id
   name       = "tfstate-handler"
   content = templatefile("index.js.tmpl", {
     kv_namespace = cloudflare_workers_kv_namespace.tfstate.title
