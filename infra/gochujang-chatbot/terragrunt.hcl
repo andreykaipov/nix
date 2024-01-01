@@ -13,7 +13,7 @@ inputs = {
   name     = "gochujang"
   location = "eastus"
   image    = "ghcr.io/andreykaipov/discord-bots/go/chatbot"
-  sha      = "sha256:f39aa86765c73db03e249c2f08908ad4df0d1ade52645aacd3898ef3453ee8d4"
+  sha      = "sha256:2dba846bf290db46456ea48eab607b25a413c669c4fa2ccbf21a6afc8a1f707e"
 
   env = {
     DISCORD_TOKEN                 = "secret://discord_token",
