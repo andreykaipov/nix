@@ -24,8 +24,8 @@ infra() {
         shift
         export TERRAGRUNT_DEBUG=1
         export TERRAGRUNT_WORKING_DIR="$dir"
-        export TF_BACKEND_USERNAME="$(get setup.self/tf_backend_username)"
-        export TF_BACKEND_PASSWORD="$(get setup.self/tf_backend_password)"
+        export TF_BACKEND_USERNAME="$(get self/setup/tf_backend_username)"
+        export TF_BACKEND_PASSWORD="$(get self/setup/tf_backend_password)"
         terragrunt "$@"
 }
 
