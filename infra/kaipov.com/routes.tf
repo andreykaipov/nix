@@ -21,7 +21,7 @@ locals {
 ### subdomain routes, e.g. blah.kaipov.com/*
 
 resource "cloudflare_worker_script" "subdomain_routes" {
-  account_id = local.secrets["cloudflare_account_id"]
+  account_id = local.cf_account_id
   for_each   = local.subdomain_routes
   name       = "301-${each.key}"
   content = templatefile("js/redirect-301.js.tmpl", {
@@ -50,7 +50,7 @@ resource "cloudflare_record" "subdomain_routes" {
 ### path routes, e.g. kaipov.com/blah*
 
 resource "cloudflare_worker_script" "path_routes" {
-  account_id = local.secrets["cloudflare_account_id"]
+  account_id = local.cf_account_id
   for_each   = local.path_routes
   name       = "301-${each.key}-path"
   content = templatefile("js/redirect-301.js.tmpl", {
