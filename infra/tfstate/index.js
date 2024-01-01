@@ -1,42 +1,30 @@
-// vim: ft=javascript
-//
 // adapated from https://github.com/louy/terraform-backend-cloudflare-worker
 
-// The expected credentials used to authenticate against our HTTP backend with.
-// If they ever change, existing states will need to be reconfigured via:
-// `terraform init -reconfigure`.
-const username = "${username}";
-const password = "${password}";
-const expectedCredentials = btoa([username, password].join(':'));
+export default {
+  async fetch(request, env) {
+    return await handleRequest(request, env)
+  }
+}
 
-// When we bind a KV namespace to the worker handling this code, it'll be made
-// available as a global variable. We rename it for convenience so we don't have
-// to keep interpolating it.
-const kv_namespace = ${kv_namespace};
-
-addEventListener('fetch', event => {
-  event.respondWith(handleRequest(event.request));
-});
-
-async function handleRequest(request) {
+async function handleRequest(request, env) {
   try {
     // Check authorisation
-    let authError = await authenticate(request);
+    let authError = await authenticate(request, env);
     if (authError) return authError;
 
     let requestURL = new URL(request.url);
     const module = requestURL.pathname.slice(1);
     switch (request.method) {
       case "GET":
-        return await getState(module);
+        return await getState(env, module);
       case "POST":
-        return await setState(module, await request.text());
+        return await setState(env, module, await request.text());
       case "DELETE":
-        return await deleteState(module);
+        return await deleteState(env, module);
       case "LOCK":
-        return await lockState(module, await request.text());
+        return await lockState(env, module, await request.text());
       case "UNLOCK":
-        return await unlockState(module, await request.text());
+        return await unlockState(env, module, await request.text());
     }
 
     return new Response(`Nothing found for $${module}`, {
@@ -47,7 +35,11 @@ async function handleRequest(request) {
   }
 }
 
-async function authenticate(request) {
+async function authenticate(request, env) {
+  const username = env.username
+  const password = env.password
+  const expectedCredentials = btoa([username, password].join(':'));
+
   const authHeader = request.headers.get('Authorization');
   if (!authHeader || typeof authHeader !== 'string') {
     return new Response('Eat more tomatoes', {
@@ -75,8 +67,8 @@ async function authenticate(request) {
 // handle state
 //
 
-async function getState(path) {
-  const state = await kv_namespace.get(`state://$${path}`);
+async function getState(env, path) {
+  const state = await env.tfstate.get(`state://$${path}`);
   if (!state) {
     return new Response('', {
       status: 404,
@@ -93,8 +85,8 @@ async function getState(path) {
     },
   });
 }
-async function setState(path, body) {
-  await kv_namespace.put(`state://$${path}`, body);
+async function setState(env, path, body) {
+  await env.tfstate.put(`state://$${path}`, body);
   return new Response(body || '', {
     status: 200,
     headers: {
@@ -103,8 +95,8 @@ async function setState(path, body) {
     },
   });
 }
-async function deleteState(path) {
-  await kv_namespace.delete(`state://$${path}`);
+async function deleteState(env, path) {
+  await env.tfstate.delete(`state://$${path}`);
   return new Response('', {
     status: 200,
     headers: {
@@ -117,8 +109,8 @@ async function deleteState(path) {
 // handle locks
 //
 
-async function lockState(path, body) {
-  const existingLock = await kv_namespace.get(`lock://$${path}`);
+async function lockState(env, path, body) {
+  const existingLock = await env.tfstate.get(`lock://$${path}`);
   if (existingLock) {
     return new Response(existingLock, {
       status: 423,
@@ -128,7 +120,7 @@ async function lockState(path, body) {
       },
     });
   }
-  await kv_namespace.put(`lock://$${path}`, body);
+  await env.tfstate.put(`lock://$${path}`, body);
   return new Response(body, {
     status: 200,
     headers: {
@@ -138,8 +130,8 @@ async function lockState(path, body) {
   });
 }
 
-async function unlockState(path, body) {
-  await kv_namespace.delete(`lock://$${path}`);
+async function unlockState(env, path, body) {
+  await env.tfstate.delete(`lock://$${path}`);
   return new Response('', {
     status: 200,
     headers: {
