@@ -2,7 +2,17 @@
 # shellcheck disable=SC2155
 
 log() { printf '\033[1;33m%s\033[0m\n' "$*" >&2; }
-get() { op read "op://github/$1"; }
+get() {
+        val=$(op read "op://github/$1")
+        cached=~/.cache/op/$1
+        mkdir -p "$(dirname "$cached")"
+        if ! [ -r "$cached" ] || find "$cached" -mtime +1 2>/dev/null | grep .; then
+                # if not readable or older than 1 day, refresh
+                rm -rf "$cached"
+                echo "$val" >"$cached"
+        fi
+        cat "$cached"
+}
 
 main() {
         root=$(git rev-parse --show-toplevel)
