@@ -1,8 +1,8 @@
-infra/**/backend.tf
 infra/**/terragrunt-debug.tfvars.json
 infra/**/.terraform
 infra/**/.terragrunt-cache
 infra/**/.terraform.lock.hcl
+infra/**/zz_generated.*.tf
 
 # Devenv
 .devenv*
