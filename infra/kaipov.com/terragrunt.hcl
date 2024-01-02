@@ -4,7 +4,7 @@ include "root" {
 }
 
 locals {
-  resume_tex = "${include.root.locals.git_dir}/resume/resume.tex"
+  resume_tex = "${include.root.locals.root}/resume/resume.tex"
 
   resume = {
     projects = split("\n", run_cmd("sh", "-c", <<EOF

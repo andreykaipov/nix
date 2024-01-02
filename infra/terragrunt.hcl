@@ -2,12 +2,14 @@ retry_max_attempts       = 3
 retry_sleep_interval_sec = 10
 
 locals {
-  // e.g. /home/andrey/gh/self
-  git_dir = run_cmd("--terragrunt-quiet", "sh", "-c", "git rev-parse --show-toplevel")
+  // /home/andrey/gh/self
+  root = get_repo_root()
 
-  project_name = reverse(split("/", local.git_dir))[0]
+  // self
+  project_name = basename(local.root)
 
-  tfstate_kv_path = substr(get_terragrunt_dir(), length(local.git_dir) - length(local.project_name), -1)
+  // self/infra/project
+  tfstate_path = "${local.project_name}/${get_path_from_repo_root()}"
 
   self_secrets = jsondecode(get_env("self_secrets"))
 }
@@ -26,9 +28,9 @@ remote_state {
   config = {
     username       = local.self_secrets.setup.tf_backend_username
     password       = local.self_secrets.setup.tf_backend_password
-    address        = "https://tf.kaipov.com/${local.tfstate_kv_path}"
-    lock_address   = "https://tf.kaipov.com/${local.tfstate_kv_path}"
-    unlock_address = "https://tf.kaipov.com/${local.tfstate_kv_path}"
+    address        = "https://tf.kaipov.com/${local.tfstate_path}"
+    lock_address   = "https://tf.kaipov.com/${local.tfstate_path}"
+    unlock_address = "https://tf.kaipov.com/${local.tfstate_path}"
   }
 }
 
