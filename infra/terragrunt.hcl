@@ -8,9 +8,13 @@ locals {
   project_name = reverse(split("/", local.git_dir))[0]
 
   tfstate_kv_path = substr(get_terragrunt_dir(), length(local.git_dir) - length(local.project_name), -1)
+
+  self_secrets = jsondecode(get_env("self_secrets"))
 }
 
-inputs = {}
+inputs = {
+  self_secrets = local.self_secrets
+}
 
 remote_state {
   generate = {
@@ -20,8 +24,8 @@ remote_state {
 
   backend = "http"
   config = {
-    username       = get_env("TF_BACKEND_USERNAME")
-    password       = get_env("TF_BACKEND_PASSWORD")
+    username       = local.self_secrets.setup.tf_backend_username
+    password       = local.self_secrets.setup.tf_backend_password
     address        = "https://tf.kaipov.com/${local.tfstate_kv_path}"
     lock_address   = "https://tf.kaipov.com/${local.tfstate_kv_path}"
     unlock_address = "https://tf.kaipov.com/${local.tfstate_kv_path}"
@@ -49,26 +53,13 @@ generate "secrets" {
   path      = "zz_generated.secrets.tf"
   if_exists = "overwrite_terragrunt"
   contents  = <<EOF
+variable "self_secrets" {
+  type = string
+}
+
 locals {
-  secrets = {
-    for section in data.onepassword_item.secrets.section:
-    section.label => {
-      for field in section.field:
-      field.label => field.value
-    }
-    if section.label != ""
-  }
-
-  az_service_principal = jsondecode(local.secrets.setup["az_service_principal_json"])
-}
-
-data "onepassword_vault" "vault" {
-  name = "github"
-}
-
-data "onepassword_item" "secrets" {
-  vault = data.onepassword_vault.vault.uuid
-  title = "self"
+  secrets = jsondecode(var.self_secrets)
+  az_service_principal = local.secrets.setup.az_service_principal
 }
 EOF
 }
