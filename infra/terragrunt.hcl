@@ -61,7 +61,6 @@ variable "self_secrets" {
 
 locals {
   secrets = jsondecode(var.self_secrets)
-  az_service_principal = local.secrets.setup.az_service_principal
 }
 EOF
 }

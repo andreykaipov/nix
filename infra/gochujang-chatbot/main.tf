@@ -10,10 +10,10 @@ terraform {
 provider "azurerm" {
   features {}
   skip_provider_registration = true
-  client_id                  = local.az_service_principal.appId
-  client_secret              = local.az_service_principal.password
-  tenant_id                  = local.az_service_principal.tenant
-  subscription_id            = local.az_service_principal.subscriptionId
+  client_id                  = local.secrets.setup.az_service_principal.appId
+  client_secret              = local.secrets.setup.az_service_principal.password
+  tenant_id                  = local.secrets.setup.az_service_principal.tenantId
+  subscription_id            = local.secrets.setup.az_service_principal.subscriptionId
 }
 
 resource "azurerm_resource_group" "rg" {
