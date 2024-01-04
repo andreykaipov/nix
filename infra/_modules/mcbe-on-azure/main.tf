@@ -8,7 +8,7 @@ locals {
   }
   setup_mcbe_vars = {
     server_name          = var.server_name
-    level_name           = var.world_name
+    level_name           = var.level_name
     backup_dir           = local.backup_dir
     bedrock_bridge_token = var.bedrock_bridge_token
   }

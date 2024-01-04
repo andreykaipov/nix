@@ -25,12 +25,14 @@ variable "server_name" {
   description = "The server name shown in the in-game server list."
 }
 
-variable "world_name" {
+variable "level_name" {
   type        = string
   default     = "Bedrock level"
   description = <<EOF
 The name of the world, e.g. "Bedrock level".
 Change this if you want to load a different world on the server.
+This variable is called `level_name` because that's what it's called in the
+`server.properties` file.
 EOF
 }
 
