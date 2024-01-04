@@ -14,13 +14,11 @@ module "app" {
   image    = "ghcr.io/andreykaipov/discord-bots/go/chatbot"
   sha      = "sha256:2dba846bf290db46456ea48eab607b25a413c669c4fa2ccbf21a6afc8a1f707e"
 
-  secrets = local.secrets[local.name]
-
   env = {
-    DISCORD_TOKEN                 = "secret://discord_token",
+    DISCORD_TOKEN                 = "secret://${local.secrets[local.name].discord_token}",
     CHAT_CHANNEL                  = "1189812317043568640",
     MGMT_CHANNEL                  = "1191195268343939082",
-    OPENAI_API_KEY                = "secret://openai_api_key",
+    OPENAI_API_KEY                = "secret://${local.secrets[local.name].openai_api_key}",
     MODEL                         = "ft:gpt-3.5-turbo-1106:personal::8acg6lzo",
     TEMPERATURE                   = "0.95",
     TOP_P                         = "1",
