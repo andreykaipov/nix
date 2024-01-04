@@ -1,3 +1,20 @@
+terraform {
+  required_providers {
+    azurerm = {
+      source  = "hashicorp/azurerm"
+      version = ">= 3.0, < 4.0"
+    }
+    cloudflare = {
+      source  = "cloudflare/cloudflare"
+      version = ">= 4.0, < 5.0"
+    }
+    onepassword = {
+      source  = "1Password/onepassword"
+      version = ">= 1.0, < 2.0"
+    }
+  }
+}
+
 locals {
   disk_lun   = 10
   backup_dir = "/opt/mc-backups"
@@ -156,7 +173,7 @@ resource "azurerm_managed_disk" "data" {
     kind = "mc-data"
   }
   lifecycle {
-    prevent_destroy = false
+    prevent_destroy = true
   }
 }
 
