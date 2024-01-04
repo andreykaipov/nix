@@ -5,7 +5,7 @@ set -eu
 : "${server_name?}"
 : "${level_name?}"
 : "${backup_dir?}"
-: "${bedrock_bridge_token:-}"
+: "${bedrock_bridge_token:=}"
 
 if ! [ -d /opt/MCscripts ]; then
         echo "Setting up MCscripts..."
@@ -27,11 +27,16 @@ if ! [ -d ~mc/bedrock/server ]; then
 fi
 
 echo "Replacing default server files"
-cp /tmp/config/server/* ~mc/bedrock/server
+cp -r /tmp/config/server/* ~mc/bedrock/server
 sed -i -E "
         s/^(server-name=).+$/\1$server_name/;
         s/^(level-name=).+$/\1$level_name/;
 " ~mc/bedrock/server/server.properties
+
+if [ -n "$bedrock_bridge_token" ]; then
+        echo "Setting up bedrock bridge"
+        sed -i -E "s/0000/$bedrock_bridge_token/" ~mc/bedrock/server/config/default/secrets.json
+fi
 
 # if this is a new server with no worlds, try to find the latest backup for our
 # specified world from our mounted managed disk and restore it if it exists
