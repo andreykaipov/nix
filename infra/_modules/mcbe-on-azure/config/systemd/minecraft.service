@@ -1,0 +1,23 @@
+# vi: ft=systemd
+
+[Unit]
+Description=Minecraft Bedrock Dedicated Server
+After=network.target
+BindsTo=%N.socket
+StartLimitBurst=3
+StartLimitIntervalSec=30
+
+[Service]
+Type=exec
+Restart=always
+RestartSec=5
+User=root
+WorkingDirectory=/opt/minecraft
+ExecReload=/bin/sh -c 'echo reload >%t/%N'
+ExecStart=/opt/minecraft/bedrock_server
+StandardInput=socket
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target
