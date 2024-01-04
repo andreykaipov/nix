@@ -6,4 +6,5 @@ module "volianski" {
   onepassword_vault    = "github"
   az_service_principal = local.secrets.setup.az_service_principal
   cf_api_token         = local.secrets.setup.cloudflare_api_token
+  bedrock_bridge_token = local.secrets.minecraft.bedrock_bridge_token_allan_server
 }

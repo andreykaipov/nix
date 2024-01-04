@@ -7,9 +7,10 @@ locals {
     mount_dir = local.backup_dir
   }
   setup_mcbe_vars = {
-    server_name = var.server_name
-    level_name  = var.world_name
-    backup_dir  = local.backup_dir
+    server_name          = var.server_name
+    level_name           = var.world_name
+    backup_dir           = local.backup_dir
+    bedrock_bridge_token = var.bedrock_bridge_token
   }
 
   setup_disk_env = join(" ", [for k, v in local.setup_disk_vars : "${k}=\"${v}\""])

@@ -61,3 +61,12 @@ variable "onepassword_vault" {
   default     = ""
   description = "If nonempty, we'll write the secrets to this 1Password vault."
 }
+
+variable "bedrock_bridge_token" {
+  type        = string
+  default     = ""
+  description = <<EOF
+The secret token from Discord to connect to Bedrock Bridge.
+See https://github.com/InnateAlpaca/BedrockBridge/.
+EOF
+}
