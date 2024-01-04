@@ -37,6 +37,4 @@ module "app" {
     "prompts.yml" = file("config/prompts.yml")
     "users.json"  = file("config/users.json")
   }
-
-  az_service_principal = local.secrets.setup.az_service_principal
 }

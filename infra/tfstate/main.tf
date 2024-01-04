@@ -1,16 +1,3 @@
-terraform {
-  required_providers {
-    cloudflare = {
-      source  = "cloudflare/cloudflare"
-      version = ">= 4.0, < 5.0"
-    }
-  }
-}
-
-provider "cloudflare" {
-  api_token = local.secrets.setup["cloudflare_api_token"]
-}
-
 locals {
   cf_account_id = local.secrets.setup["cloudflare_account_id"]
 }
