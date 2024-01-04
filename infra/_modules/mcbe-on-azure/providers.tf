@@ -27,3 +27,16 @@ provider "azurerm" {
 provider "cloudflare" {
   api_token = var.cf_api_token
 }
+
+variable "az_service_principal" {
+  type = object({
+    appId          = string
+    password       = string
+    tenantId       = string
+    subscriptionId = string
+  })
+}
+
+variable "cf_api_token" {
+  type = string
+}
