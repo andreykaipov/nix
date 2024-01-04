@@ -7,7 +7,7 @@ get() {
         val=$(op read "op://$path")
         cached=~/.cache/op/$1
         mkdir -p "$(dirname "$cached")"
-        if ! [ -r "$cached" ] || find "$cached" -mtime +1 2>/dev/null | grep .; then
+        if ! [ -r "$cached" ] || find "$cached" -mtime +0 2>/dev/null | grep .; then
                 # if not readable or older than 1 day, refresh
                 rm -rf "$cached"
                 echo "$val" >"$cached"
@@ -22,7 +22,7 @@ get_secret_json() {
         entry=$2
         cached=~/.cache/op/$vault/$entry.json
         mkdir -p "$(dirname "$cached")"
-        if [ -n "${NOCACHE-}" ] || ! [ -r "$cached" ] || find "$cached" -mtime +1 2>/dev/null | grep .; then
+        if [ -n "${NOCACHE-}" ] || ! [ -r "$cached" ] || find "$cached" -mtime +0 2>/dev/null | grep .; then
                 log "Updating secret: $cached"
                 rm -rf "$cached"
                 op --vault "$vault" item get "$entry" --format json | jq '
