@@ -1,0 +1,12 @@
+# vi: ft=systemd
+
+[Socket]
+SocketMode=0660
+SocketUser=root
+Accept=no
+ListenFIFO=%t/%N
+FileDescriptorName=unix
+RemoveOnStop=true
+
+[Install]
+WantedBy=sockets.target
