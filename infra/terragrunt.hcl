@@ -18,6 +18,10 @@ inputs = {
   self_secrets = local.self_secrets
 }
 
+terraform {
+  source = "${get_repo_root()}/infra/_modules//"
+}
+
 remote_state {
   generate = {
     path      = "zz_generated.backend.tf"
