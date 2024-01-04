@@ -25,20 +25,10 @@ variable "env" {
   default     = {}
   description = <<EOF
 The environment variables for the container. Secrets can be set by prefacing the
-value with `secret://`, followed by the name of the secret to lookup in
-`var.secrets`.
+value with `secret://`, followed by the contents of the secret env var.
 
 This is done so these values are properly passed as secrets to the container.
 Functionally it makes no difference. The only purpose is for Terraform to
-recognize them as sensitive values and to store them as secrets in Azure,
-
-If you don't care, you can just pass the secrets directly in the environment.
-I can't tell you what to do.
+recognize them as sensitive values and to store them as secrets in Azure.
 EOF
-}
-
-variable "secrets" {
-  type        = map(string)
-  default     = {}
-  description = "For lookup in `var.env`. These will still be stored in the tfstate."
 }

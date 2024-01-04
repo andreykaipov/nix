@@ -1,3 +1,11 @@
+terraform {
+  required_providers {
+    azurerm = {
+      source  = "hashicorp/azurerm"
+      version = ">= 3.0, < 4.0"
+    }
+  }
+}
 
 resource "azurerm_resource_group" "rg" {
   name     = "${var.name}-rg"
@@ -20,10 +28,10 @@ resource "azurerm_container_app" "app" {
   revision_mode                = "Single"
 
   dynamic "secret" {
-    for_each = [for k, v in var.env : substr(v, length("secret://"), -1) if startswith(v, "secret://")]
+    for_each = { for k, v in var.env : k => substr(v, length("secret://"), -1) if startswith(v, "secret://") }
     content {
-      name  = replace(secret.value, "_", "-")
-      value = var.secrets[secret.value]
+      name  = replace(lower(secret.key), "/[^a-z0-9-.]/", "-")
+      value = secret.value
     }
   }
 
@@ -68,7 +76,7 @@ resource "azurerm_container_app" "app" {
         for_each = var.env
         content {
           name        = env.key
-          secret_name = startswith(env.value, "secret://") ? replace(substr(env.value, length("secret://"), -1), "_", "-") : null
+          secret_name = startswith(env.value, "secret://") ? replace(lower(env.key), "/[^a-z0-9-.]/", "-") : null
           value       = startswith(env.value, "secret://") ? null : env.value
         }
       }
