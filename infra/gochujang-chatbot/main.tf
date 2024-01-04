@@ -1,100 +1,42 @@
-terraform {
-  required_providers {
-    azurerm = {
-      source  = "hashicorp/azurerm"
-      version = ">= 3.0, < 4.0"
-    }
-  }
+locals {
+  name = "gochujang"
 }
 
-provider "azurerm" {
-  features {}
-  skip_provider_registration = true
-  client_id                  = local.secrets.setup.az_service_principal.appId
-  client_secret              = local.secrets.setup.az_service_principal.password
-  tenant_id                  = local.secrets.setup.az_service_principal.tenantId
-  subscription_id            = local.secrets.setup.az_service_principal.subscriptionId
-}
+# debug with:
+# az containerapp logs show --follow -n gochujang -g gochujang-rg
+# az containerapp exec -n gochujang -g gochujang-rg --command sh
 
-resource "azurerm_resource_group" "rg" {
-  name     = "${var.name}-rg"
-  location = var.location
-  tags = {
-    name = var.name
-    kind = "chatbot"
-  }
-}
+module "app" {
+  source = "./azure-container-app"
 
-resource "azurerm_container_app_environment" "env" {
-  name                = "${var.name}-env"
-  location            = azurerm_resource_group.rg.location
-  resource_group_name = azurerm_resource_group.rg.name
-}
+  name     = local.name
+  location = "eastus"
+  image    = "ghcr.io/andreykaipov/discord-bots/go/chatbot"
+  sha      = "sha256:2dba846bf290db46456ea48eab607b25a413c669c4fa2ccbf21a6afc8a1f707e"
 
-resource "azurerm_container_app" "app" {
-  name                         = var.name
-  container_app_environment_id = azurerm_container_app_environment.env.id
-  resource_group_name          = azurerm_resource_group.rg.name
-  revision_mode                = "Single"
+  secrets = local.secrets[local.name]
 
-  dynamic "secret" {
-    for_each = [for k, v in var.env : substr(v, length("secret://"), -1) if startswith(v, "secret://")]
-    content {
-      name  = replace(secret.value, "_", "-")
-      value = local.secrets[var.name][secret.value]
-    }
+  env = {
+    DISCORD_TOKEN                 = "secret://discord_token",
+    CHAT_CHANNEL                  = "1189812317043568640",
+    MGMT_CHANNEL                  = "1191195268343939082",
+    OPENAI_API_KEY                = "secret://openai_api_key",
+    MODEL                         = "ft:gpt-3.5-turbo-1106:personal::8acg6lzo",
+    TEMPERATURE                   = "0.95",
+    TOP_P                         = "1",
+    PROMPTS                       = "/shared/prompts.yml",
+    USERS                         = "/shared/users.json",
+    MESSAGE_CONTEXT               = "30",
+    MESSAGE_CONTEXT_INTERVAL      = "60",
+    MESSAGE_REPLY_INTERVAL        = "1",
+    MESSAGE_REPLY_INTERVAL_JITTER = "4",
+    MESSAGE_SELF_REPLY_CHANCE     = "10",
   }
 
-  template {
-    max_replicas = 1
-    min_replicas = 1
-
-    volume {
-      name         = "shared"
-      storage_type = "EmptyDir"
-    }
-
-    init_container {
-      name   = "copy-files"
-      image  = "alpine:latest"
-      cpu    = 0.25
-      memory = "0.5Gi"
-      command = [
-        "/bin/sh",
-        "-c",
-        join("\n", [
-          for k, v in var.files :
-          "cat >/shared/${k} <<'LOL'\n${v}\nLOL\n"
-        ])
-      ]
-
-      volume_mounts {
-        name = "shared"
-        path = "/shared"
-      }
-    }
-
-    container {
-      name   = var.name
-      image  = "${var.image}${var.sha == "" ? ":latest" : "@${var.sha}"}"
-      cpu    = 0.25
-      memory = "0.5Gi"
-      # command = ["sh", "-c", "tail -f /dev/null"]
-      args = ["discord"]
-
-      dynamic "env" {
-        for_each = var.env
-        content {
-          name        = env.key
-          secret_name = startswith(env.value, "secret://") ? replace(substr(env.value, length("secret://"), -1), "_", "-") : null
-          value       = startswith(env.value, "secret://") ? null : env.value
-        }
-      }
-
-      volume_mounts {
-        name = "shared"
-        path = "/shared"
-      }
-    }
+  files = {
+    "prompts.yml" = file("config/prompts.yml")
+    "users.json"  = file("config/users.json")
   }
+
+  az_service_principal = local.secrets.setup.az_service_principal
 }
