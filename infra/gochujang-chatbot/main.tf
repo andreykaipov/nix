@@ -12,7 +12,7 @@ module "app" {
   name     = local.name
   location = "eastus"
   image    = "ghcr.io/andreykaipov/discord-bots/go/chatbot"
-  sha      = "sha256:2dba846bf290db46456ea48eab607b25a413c669c4fa2ccbf21a6afc8a1f707e"
+  sha      = "sha256:8c67b9b88fbb099062b7613d8ea669442ad5eed5c85f9996e006eb0a7e1ef366"
 
   env = {
     DISCORD_TOKEN                 = "secret://${local.secrets[local.name].discord_token}",
