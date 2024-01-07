@@ -2,23 +2,29 @@
   description = "Andrey's Home Manager config";
 
   inputs = {
-    nixos.url = "github:nixos/nixpkgs/nixos-23.05";
-    nixos-unstable.url = "github:nixos/nixpkgs/nixos-unstable";
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-23.11";
     nixpkgs-unstable.url = "github:nixos/nixpkgs/nixpkgs-unstable";
+    nixpkgs-master.url = "github:nixos/nixpkgs/master";
 
-    home-manager.url = "github:nix-community/home-manager";
+    home-manager.url = "github:nix-community/home-manager/release-23.11";
     home-manager.inputs.nixpkgs.follows = "nixpkgs-unstable";
 
     devenv.url = "github:cachix/devenv/latest"; # don't follow 
+
+    neovim-nightly-overlay.url = "github:nix-community/neovim-nightly-overlay";
+    neovim-nightly-overlay.inputs.nixpkgs.follows = "nixpkgs-unstable";
+    neovim-nightly-overlay.inputs.neovim-flake.url = "github:neovim/neovim?dir=contrib"; #&rev=eb151a9730f0000ff46e0b3467e29bb9f02ae362";
+    neovim-nightly-overlay.inputs.neovim-flake.inputs.nixpkgs.follows = "nixpkgs-unstable";
   };
 
   outputs =
     inputs @ { self
-    , nixos
-    , nixos-unstable
+    , nixpkgs
     , nixpkgs-unstable
+    , nixpkgs-master
     , home-manager
     , devenv
+    , neovim-nightly-overlay
     , ...
     }:
     let
@@ -29,13 +35,12 @@
           homedir = lib.attrsets.attrByPath [ "homedir" ] "" cfg;
           extraModules = cfg.extraModules;
         in
-        #username: system: extraModules: hostName:
         home-manager.lib.homeManagerConfiguration
           rec {
-            pkgs = nixpkgs-unstable.legacyPackages.${system}; # or just reimport again
-            #pkgs = import <nixpkgs> { }; # or just reimport again
+            pkgs = nixpkgs-unstable.legacyPackages.${system};
+            # pkgs = import <nixpkgs> { }; # alternative to above line, but this is impure
 
-            lib = nixos.lib.extend (libself: super: {
+            lib = nixpkgs.lib.extend (libself: super: {
               my = import ./lib.nix {
                 inherit system pkgs;
                 lib = libself;
@@ -45,10 +50,11 @@
 
             modules = [
               {
-                # alternatively, we can set these in `import nixpkgs { ... }`
-                # instead of using legacyPackages above
+                # alternatively, we can set these in `import nixpkgs { ... }` instead of using legacyPackages above
                 nixpkgs.config.allowUnfreePredicate = (pkg: true); # https://github.com/nix-community/home-manager/issues/2942
-                nixpkgs.overlays = lib.my.overlays;
+                nixpkgs.overlays = lib.my.overlays ++ [
+                  neovim-nightly-overlay.overlay
+                ];
               }
               {
                 home.username = username;
