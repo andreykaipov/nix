@@ -1,35 +1,26 @@
-locals {
-  servers = [
-    {
-      name        = "island.mc.volianski.com"
-      server_name = "Magic DVD Ripper 4.3.1kg"
-      level_name  = "island-mp"
-    },
-    {
-      name        = "winrar.mc.volianski.com"
-      server_name = "WinRAR 3.60 beta 5 rucrk"
-      level_name  = "world"
-    },
-    {
-      name        = "shadow.mc.volianski.com"
-      server_name = "Passolo v5.0.007RetailCrk"
-      level_name  = "world2"
-    }
-  ]
+variable "servers" {
+  type = list(object({
+    name        = string
+    server_name = string
+    level_name  = string
+  }))
+}
 
+locals {
   servers_yml = yamlencode({
-    check_interval         = "3m"
-    deallocation_threshold = 5
+    check_interval         = "1m"
+    deallocation_threshold = 10
     check_timeout          = "10s"
-    servers = values({
-      for server in local.servers :
-      server.name => { host = server.name }
-    })
+    servers = [
+      for server in var.servers : {
+        host = server.name
+      }
+    ]
   })
 }
 
 module "mcserver" {
-  for_each             = { for _, v in local.servers : v.name => v }
+  for_each             = { for _, v in var.servers : v.name => v }
   source               = "./mcbe-on-azure"
   name                 = each.value.name
   server_name          = each.value.server_name
@@ -44,7 +35,7 @@ module "mcmanager" {
   name     = "mcmanager"
   location = "eastus"
   image    = "ghcr.io/andreykaipov/discord-bots/go/mcmanager"
-  sha      = "sha256:101c588c6bd815ba4055a4fde76411e2be9f2578bd8db4fc09bdea5ff1147cb4"
+  sha      = "sha256:64c13a5c3615ebb687a289ff64b792933b9fc2a889619671127df2ef8277eacb"
 
   env = {
     AZURE_CLIENT_ID       = "secret://${local.secrets.setup.az_service_principal.appId}"
