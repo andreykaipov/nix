@@ -33,6 +33,8 @@ Host localhost
 #
 # useful in mutagen configs for syncing local env with codespace, see:
 # https://icanthascheezburger.com/wordpress/2021/12/use-codespaces-with-mutagen-and-keep-your-local-dev-tools
+#
+# usernames seem to differ between codespaces. sometimes it's vscode too.
 Host codespace
     User codespace
     HostName localhost
