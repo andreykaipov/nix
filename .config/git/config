@@ -2,7 +2,7 @@
 
 [user]
     name = Andrey Kaipov
-    email = andreykaipov@users.noreply.github.com
+    email = 9457739+andreykaipov@users.noreply.github.com
 
     # TODO: use the same name on every machine and add each to github
     signingkey = ~/.config/ssh/keys/dustbox.pem.pub
