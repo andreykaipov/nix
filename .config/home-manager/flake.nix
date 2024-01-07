@@ -29,8 +29,9 @@
     }:
     let
       lib = nixpkgs-unstable.lib;
-      homeConfig = system: cfg: hostName:
+      homeConfig = system: hostName:
         let
+          cfg = import ./hosts/${hostName}.nix;
           username = cfg.username;
           homedir = lib.attrsets.attrByPath [ "homedir" ] "" cfg;
           extraModules = cfg.extraModules;
@@ -66,23 +67,15 @@
             ++ extraModules;
 
             extraSpecialArgs = {
-              pkgs-stable = import nixos { inherit system; config.allowUnfree = true; };
+              pkgs-stable = import nixpkgs { inherit system; config.allowUnfree = true; };
               devenv = devenv.packages.${system}.devenv;
             };
           };
     in
     {
       homeConfigurations = builtins.mapAttrs (hostname: configurer: configurer hostname) {
-        dustbox = homeConfig "x86_64-linux" {
-          username = "andrey";
-          extraModules = [ ./wsl.nix ];
-        };
-        smart-toaster = homeConfig "x86_64-darwin" {
-          # aarch64-darwin ?
-          username = "andreykaipov";
-          homedir = "/Users/andrey";
-          extraModules = [ ./macos.nix ];
-        };
+        dustbox = homeConfig "x86_64-linux";
+        smart-toaster = homeConfig "x86_64-darwin"; # this is an m1 but aarch64-darwin doesn't work?
       };
     };
 }
