@@ -30,6 +30,9 @@ rec {
 
   homedir = username: (if pkgs.stdenv.isLinux then "/home" else "/Users") + "/${username}";
 
+  # note this will only be read if invoked via --impure
+  dry_run = builtins.getEnv "DRY_RUN";
+
   activationScripts = scripts:
     let
       run = script: lib.hm.dag.entryAfter [
@@ -39,7 +42,7 @@ rec {
       ] ''
         # can't use config.home.path so rely on .nix-profile
         export PATH="/bin:/usr/bin:$HOME/.nix-profile/bin:$PATH"
-        if [ -n "$DRY_RUN_CMD" ]; then
+        if [ -n "${dry_run}" ]; then
           if [ -r "${script}" ]; then
             head -n3 "${script}"
           else

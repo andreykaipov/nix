@@ -2,6 +2,8 @@
 #
 # Ensures all tmux plugins are installed and up to date.
 
+set -eu
+
 tmux="$HOME/.config/tmux"
 tpm="$tmux/plugins/tpm"
 
@@ -13,8 +15,7 @@ else
         git clone https://github.com/tmux-plugins/tpm "$tpm"
 fi
 
-TMUX= tmux -f "$tmux/plugins.conf" new-session -s temp bash -c "
+TMUX='' tmux -f "$tmux/plugins.conf" new-session -s temp bash -c "
         $tpm/bin/install_plugins
-        $tpm/bin/update_plugins
-        sleep 0.5
+        $tpm/bin/update_plugins all
 "
