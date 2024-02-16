@@ -1,3 +1,6 @@
+# yaml-language-server: $schema=https://json.schemastore.org/github-workflow.json
+# this ends with resume which gets caught by the latter "json resume" entry in https://www.schemastore.org/api/json/catalog.json
+# see https://github.com/neoclide/coc-yaml/issues/28#issuecomment-784849086
 ---
 name: resume
 
@@ -11,8 +14,8 @@ on:
     paths: [resume/**]
 
 env:
-  tectonic_version: 0.8.0
-  commit_message_resume: 'gh-actions: add resume.pdf'
+  tectonic_version: 0.15.0
+  commit_message_resume: "gh-actions: add resume.pdf"
 
 jobs:
   build:
@@ -22,45 +25,45 @@ jobs:
     outputs:
       leave-comment: ${{ steps.push.outputs.committed && steps.push.outputs.pushed }}
     steps:
-    - uses: actions/checkout@v2
-    - name: Download Tectonic
-      uses: wtfjoke/setup-tectonic@main
-      with:
-        tectonic-version: ${{ env.tectonic_version }}
-        github-token: ${{ secrets.GITHUB_TOKEN }}
-    - name: Cache Tectonic
-      uses: actions/cache@v2
-      env: {cache-name: cache-tectonic}
-      with:
-        path: ~/.cache/Tectonic
-        key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/*.tex') }}
-        restore-keys: |
-          ${{ runner.os }}-build-${{ env.cache-name }}-
-          ${{ runner.os }}-build-
-          ${{ runner.os }}-
-    - name: Build our resume
-      id: build
-      run: |
-        ./scripts/resume.build.sh
-        echo "::set-output name=msg::${{ env.commit_message_resume }}"
-    - name: Push that bitch up
-      id: push
-      if: ${{ success() && steps.build.outputs.msg != '' }}
-      uses: EndBug/add-and-commit@v7.1.2
-      with:
-        add: website/static
-        push: true
-        message: ${{ steps.build.outputs.msg }}
-        author_name: github-actions
-        author_email: 41898282+github-actions[bot]@users.noreply.github.com
-    - name: Leave a comment
-      if: |
-        success() &&
-        steps.push.outputs.committed == 'true' &&
-        steps.push.outputs.pushed == 'true'
-      uses: mshick/add-pr-comment@v1
-      with:
-        repo-token: ${{ secrets.GITHUB_TOKEN }}
-        repo-token-user-login: github-actions[bot]
-        message: |
-          ${{ env.commit_message_resume }}
+      - uses: actions/checkout@v2
+      - name: Download Tectonic
+        uses: wtfjoke/setup-tectonic@main
+        with:
+          tectonic-version: ${{ env.tectonic_version }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Cache Tectonic
+        uses: actions/cache@v2
+        env: { cache-name: cache-tectonic }
+        with:
+          path: ~/.cache/Tectonic
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/*.tex') }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ env.cache-name }}-
+            ${{ runner.os }}-build-
+            ${{ runner.os }}-
+      - name: Build our resume
+        id: build
+        run: |
+          ./scripts/resume.build.sh
+          echo "::set-output name=msg::${{ env.commit_message_resume }}"
+      - name: Push that bitch up
+        id: push
+        if: ${{ success() && steps.build.outputs.msg != '' }}
+        uses: EndBug/add-and-commit@v7.1.2
+        with:
+          add: website/static
+          push: true
+          message: ${{ steps.build.outputs.msg }}
+          author_name: github-actions
+          author_email: 41898282+github-actions[bot]@users.noreply.github.com
+      - name: Leave a comment
+        if: |
+          success() &&
+          steps.push.outputs.committed == 'true' &&
+          steps.push.outputs.pushed == 'true'
+        uses: mshick/add-pr-comment@v1
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          repo-token-user-login: github-actions[bot]
+          message: |
+            ${{ env.commit_message_resume }}
