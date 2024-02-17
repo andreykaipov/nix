@@ -7,10 +7,10 @@ name: resume
 on:
   workflow_dispatch:
   push:
-    branches: [master]
+    branches: [main]
     paths: [resume/**]
   pull_request:
-    branches: [master]
+    branches: [main]
     paths: [resume/**]
 
 env:
