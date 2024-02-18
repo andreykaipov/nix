@@ -92,8 +92,9 @@ return {
 				nls.builtins.formatting.trim_newlines.with({ filetypes = { "*" } }),
 				nls.builtins.formatting.trim_whitespace.with({ filetypes = { "*" } }),
 				nls.builtins.formatting.textlint,
-				nls.builtins.formatting.yamlfix,
-				nls.builtins.formatting.yamlfmt,
+				-- nls.builtins.formatting.yamllint,
+				-- nls.builtins.formatting.yamlfix,
+				-- nls.builtins.formatting.yamlfmt,
 				nls.builtins.hover.dictionary,
 				nls.builtins.hover.printenv,
 			})
