@@ -48,9 +48,11 @@ in
       nil
       nixd
       nodePackages.bash-language-server
-      nodePackages_latest.vim-language-server
+      nodePackages.typescript-language-server
+      nodePackages.vim-language-server
       terraform-ls
       vscode-langservers-extracted
+      # yaml-language-server
 
       # lang-specific dev/diagnostic/lint tools
       deadnix
@@ -61,6 +63,16 @@ in
       shfmt
       statix
       stylua
+      nodePackages.textlint
+      nodePackages.textlint-rule-common-misspellings
+      nodePackages.textlint-rule-no-start-duplicated-conjunction
+      nodePackages.textlint-rule-stop-words
+      nodePackages.textlint-rule-terminology
+      nodePackages.textlint-rule-write-good
+      yaml-language-server
+      # yamlfix
+      # yamlfmt
+      # yamllint
     ];
 
 
