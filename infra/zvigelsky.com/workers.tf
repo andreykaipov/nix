@@ -42,4 +42,5 @@ module "worker" {
   domains    = each.value
   script     = file("js/${each.key}.js")
   bindings   = local.bindings
+  with_itty  = true
 }
