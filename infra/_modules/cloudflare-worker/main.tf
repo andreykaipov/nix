@@ -131,7 +131,7 @@ EOF
 }
 
 locals {
-  script  = fileexists(var.script) ? file(var.script) : var.script
+  script  = try(file(var.script), var.script)
   content = var.with_itty ? "${file("${path.module}/lib.js")}\n${local.script}" : local.script
 }
 
@@ -200,10 +200,10 @@ resource "cloudflare_worker_script" "script" {
 }
 
 resource "cloudflare_worker_cron_trigger" "trigger" {
-  for_each   = var.cron_schedules
-  account_id = var.account_id
-  script     = cloudflare_worker_script.script.name
-  schedule   = each.value
+  count       = length(var.cron_schedules) > 0 ? 1 : 0
+  account_id  = var.account_id
+  script_name = cloudflare_worker_script.script.name
+  schedules   = var.cron_schedules
 }
 
 resource "cloudflare_worker_route" "route" {
