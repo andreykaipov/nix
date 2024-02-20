@@ -51,6 +51,7 @@ in
       nodePackages.typescript-language-server
       nodePackages.vim-language-server
       terraform-ls
+        terraform-lsp # unofficial one
       vscode-langservers-extracted
       # yaml-language-server
 

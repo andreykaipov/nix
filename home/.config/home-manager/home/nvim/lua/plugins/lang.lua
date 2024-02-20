@@ -35,6 +35,9 @@ return {
 			servers = {
 				lua_ls = {},
 				bashls = {},
+				terraformls = {
+					filetypes = { "terraform", "terraform-vars", "hcl" },
+				},
 				nil_ls = {
 					autostart = true,
 					settings = {
@@ -44,7 +47,7 @@ return {
 							},
 						},
 					},
-				}, -- nix
+				},
 				-- nixd = {},
 			},
 		},
