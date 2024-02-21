@@ -14,7 +14,7 @@ locals {
 
   // add up to 1
   games = {
-    "Dota 2"          = 0.2
+    "Helldivers 2"    = 0.2
     "Minecraft"       = 0.2
     "Anime Night"     = 0.1
     "Amogus"          = 0.1
