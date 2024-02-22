@@ -52,25 +52,3 @@ resource "cloudflare_zone_settings_override" "kaipov" {
     server_side_exclude = "on"
   }
 }
-
-# Gonna try out Vercel instead of Cloudflare pages
-
-/*
-resource "cloudflare_record" "pages" {
-  zone_id = cloudflare_zone.kaipov.id
-  name    = cloudflare_zone.kaipov.zone
-  type    = "CNAME"
-  value   = "cname.vercel-dns.com"
-  proxied = false # Vercel doesn't want us to proxy
-  ttl     = 1
-}
-*/
-
-resource "cloudflare_record" "pages" {
-  zone_id = cloudflare_zone.kaipov.id
-  name    = cloudflare_zone.kaipov.zone
-  type    = "CNAME"
-  value   = "kaipov.pages.dev"
-  proxied = true
-  ttl     = 1
-}
