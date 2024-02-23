@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+    {{ partial "head.html" . }}
+
+    <body>
+        {{ partial "page_header.html" . }}
+
+        <h3>{{ .Title }}</h3>
+
+        <p class="post-meta">
+        <time itemprop="datePublished">{{ .Date.Format "Monday, January 2, 2006, 3:04 MST" }}</time>
+        </p>
+
+        {{ .Content }}
+
+        {{ partial "footer.html" . }}
+    </body>
+</html>

@@ -1,0 +1,3 @@
+[submodule "resume/moderncv"]
+	path = resume/moderncv
+	url = https://github.com/moderncv/moderncv.git

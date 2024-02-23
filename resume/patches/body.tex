@@ -1,0 +1,122 @@
+\makeatletter
+
+% Modify the text size in the cventry so our text is consistent across sections.
+\xpatchcmd{\cventry}
+  {\small#7}
+  {\normalsize#7}
+  {}{}
+
+% Define custom \cventry commands for a common interface across styles.
+
+\ifboolexpr{
+  test {\expandafter\ifstrequal\expandafter{\metamoderncvbody}{classic}}
+} {
+  \newcommand*{\cventryskill}[3][.25em]{
+    \cvitem{#2}{#3}
+  }
+
+  \newcommand*{\cventryproject}[4][.25em]{
+    \cvitem
+      {#3}
+      {#4\hfill\raggedleft\href{https://#3.#2}{\code{\hintstyle{#3}.#2}}}
+  }
+
+  \newcommand*{\cventryoneline}[7][.25em]{
+    \cventry[#1]{#2}{#3}{#4}{#5}{#6}{#7}
+  }
+} {}
+
+\ifboolexpr{
+  test {\expandafter\ifstrequal\expandafter{\metamoderncvbody}{banking}}
+  or
+  test {\expandafter\ifstrequal\expandafter{\metamoderncvbody}{oldstyle}}
+} {
+  \newcommand*{\cventryskill}[3][.25em]{
+    \begin{tabularx}
+      {\textwidth}
+      {>{\hsize=.17\textwidth}X X}
+      \hintstyle{#2} &{#3}
+    \end{tabularx}
+    \par\addvspace{#1}}
+
+  \newcommand*{\cventryproject}[4][.25em]{
+    \begin{tabularx}
+      {\textwidth}
+      {>{\hsize=.70\textwidth}X >{\raggedleft}X}
+      \listitemsymbol #4 & \href{https://#3.#2}{\code{\hintstyle{#3}.#2}}
+    \end{tabularx}
+    \par\addvspace{#1}}
+
+  % Reminiscent of classic. Here the role, company, location, and date are all
+  % on one line, rather than being broken up across two lines.
+  \newcommand*{\cventryoneline}[7][.25em]{
+      {\bfseries#3}%
+      \ifthenelse{\equal{#4}{}}{}{, {\slshape#4}}%
+      \ifthenelse{\equal{#5}{}}{}{, #5}%
+      \ifthenelse{\equal{#6}{}}{}{, #6}%
+      .\strut%
+      \hfill%
+      {\slshape#2}%
+    \ifx&#7&%
+    \else{\\%
+      \begin{minipage}{\maincolumnwidth}%
+        \normalsize#7%
+      \end{minipage}}\fi%
+    \par\addvspace{#1}}
+} {}
+
+\newcommand*{\cventrywithcommentaligned}[4][.25em]{
+  \begin{tabularx}
+    {\textwidth}
+    {>{\hsize=.17\textwidth}X X >{\raggedleft\hsize=.30\textwidth}X}
+    \hintstyle{#2} &{#3} &{#4}
+  \end{tabularx}
+  \par\addvspace{#1}}
+
+%%%
+%%%
+%%%
+
+% Redefine \section for the classic body to expose the thickness of the section
+% lines via \hintscolumnthickness. Can't patchcmd it. :(
+% Example usage: \setlength{\hintscolumnthickness}{0.55ex}
+%
+\ifnum0=\pdfstrcmp{\metamoderncvbody}{classic}
+  \newlength{\hintscolumnthickness}
+  \setlength{\hintscolumnthickness}{0.95ex}
+  % copy pasta
+  \@initializelength{\baseletterheight}
+  \settoheight{\baseletterheight}{\sectionstyle{o}}
+  \setlength{\baseletterheight}{\baseletterheight-0.95ex}
+  \RenewDocumentCommand{\section}{sm}{%
+    \par\addvspace{2.5ex}%
+    \phantomsection{}% reset the anchor for hyperrefs
+    \addcontentsline{toc}{section}{#2}%
+    \cvitem[0ex]{\strut\raggedleft\raisebox{\baseletterheight}{\color{color1}\rule{\hintscolumnwidth}{\hintscolumnthickness}}}{\strut\sectionstyle{#2}}%
+    \par\nobreak\addvspace{1ex}\@afterheading}% to avoid a pagebreak after the heading
+\fi
+
+% Redefine \section for banking to expose distances between each section.
+% Example usage: \setlength{\sectiondistance}{1.5ex}
+\ifboolexpr{
+  test {\expandafter\ifstrequal\expandafter{\metamoderncvbody}{banking}}
+} {
+  \newlength{\sectiondistance}
+  \setlength{\sectiondistance}{2.5ex}
+  \RenewDocumentCommand{\section}{sm}{%
+    \par\addvspace{\sectiondistance}%
+    \phantomsection{}% reset the anchor for hyperrefs
+    \addcontentsline{toc}{section}{#2}%
+    \if@left\else\if@fullrules\else\if@mixedrules\else%
+      \sectionrule\fi\fi\fi%
+    \strut\sectionstyle{#2}%
+    \if@fullrules%
+      \sectionrule%
+    \else\if@mixedrules%
+      \sectionrule%
+    \else\if@right\else%
+      \sectionrule\fi\fi\fi%
+    \par\nobreak\addvspace{1ex}\@afterheading}
+} {}
+
+\makeatother

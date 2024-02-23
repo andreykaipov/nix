@@ -1,0 +1,15 @@
+infra/**/terragrunt-debug.tfvars.json
+infra/**/.terraform
+infra/**/.terragrunt-cache
+infra/**/.terraform.lock.hcl
+infra/**/zz_generated.*.tf
+
+# Devenv
+.devenv*
+devenv.local.nix
+
+# direnv
+.direnv
+
+# pre-commit
+.pre-commit-config.yaml

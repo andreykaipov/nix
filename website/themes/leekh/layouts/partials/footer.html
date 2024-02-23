@@ -1,0 +1,8 @@
+<footer>
+    {{ $postCount := len (where .Site.RegularPages "Section" "posts") }}
+    {{ if ne 0 $postCount }}
+    <h4>
+        <a href="{{ .Site.BaseURL }}/posts">View all posts ({{ $postCount }})</a>
+    </h4>
+    {{ end }}
+</footer>

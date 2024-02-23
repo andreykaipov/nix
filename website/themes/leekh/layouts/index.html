@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+    {{ partial "head.html" . }}
+
+    <body>
+        <h1>{{ .Site.Title }}</h1>
+
+        <div>{{ .Content }}</div>
+
+        <table>
+            <tr>
+                {{ if ne .Site.Params.Resume "" }}
+                <td><i class="fas fa-file-alt" aria-hidden="true"></i></td>
+                <td>&nbsp;<a href="{{ .Site.Params.Resume | relURL }}" target="_blank">Resume</a></td>
+                {{ end }}
+            </tr>
+            {{ range .Site.Params.profiles }}
+            {{ partial "profile_link.html" . }}
+            {{ end }}
+            {{ if .Site.Params.Email }}
+            <tr>
+                <td><i class="fas fa-envelope" aria-hidden="true"></i></td>
+                <td>&nbsp;<code>{{ .Site.Params.Email }}</code></td>
+            </tr>
+            {{ end }}
+            {{ if .Site.Params.Calendar }}
+            <tr>
+                <td><i class="far fa-calendar" aria-hidden="true"></i></td>
+                <td>&nbsp;<a href="{{ .Site.Params.Calendar }}" target="_blank">Calendar</a></td>
+            </tr>
+            {{ end }}
+        </table>
+
+        <hr>
+
+        <div>
+            <h3>Recent Posts</h3>
+
+            {{ range first (.Site.Params.PostLimit | default 3) (where .Site.RegularPages.ByPublishDate.Reverse "Section" "posts") }}
+            <p>
+            <a href="{{ .Permalink }}">{{ .Title }}</a><br />
+            <time itemprop="datePublished">{{ .Date.Format "January 2, 2006" }}</time>
+            </p>
+            {{ end }}
+
+            {{ $postCount := len (where .Site.RegularPages "Section" "posts") }}
+            {{ if ne 0 $postCount }}
+            <h4>
+                <a href="posts/">View all posts ({{ $postCount }})</a>
+            </h4>
+            {{ else }}
+            <p>There are none yet! :)</p>
+            {{ end }}
+        </div>
+
+        {{ if ne .Site.Params.GoatCounterCode "" }}
+        <script data-goatcounter="{{ .Site.Params.GoatCounterCode }}" async src="//gc.zgo.at/count.js"></script>
+        {{ end }}
+    </body>
+</html>
