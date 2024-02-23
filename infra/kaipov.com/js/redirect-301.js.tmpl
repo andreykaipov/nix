@@ -1,0 +1,26 @@
+// vim: ft=javascript
+
+// Templated version of both examples from
+// https://developers.cloudflare.com/workers/examples/redirect
+
+const base = "${base}"
+const statusCode = 301
+
+async function handleRequest(request) {
+${
+  preserve_path ?
+<<EOF
+  const url = new URL(request.url)
+  const { pathname, search } = url
+  const destinationURL = base + pathname + search
+EOF
+: <<EOF
+  const destinationURL = base
+EOF
+}
+  return Response.redirect(destinationURL, statusCode)
+}
+
+addEventListener("fetch", async event => {
+  event.respondWith(handleRequest(event.request))
+})

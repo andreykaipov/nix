@@ -1,0 +1,13 @@
+name: Delete all non-production Vercel deployments
+
+on:
+  workflow_dispatch
+
+jobs:
+  clean:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - run: ./scripts/vercel.delete.deployments.sh
+      env:
+        VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}

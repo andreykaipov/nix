@@ -1,0 +1,38 @@
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- css -->
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/fonts.css">
+    <link rel="stylesheet"
+          href="https://use.fontawesome.com/releases/v5.8.2/css/all.css"
+          integrity="sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay"
+          crossorigin="anonymous">
+
+    <!-- js -->
+    <script src="/js/dark.js" defer=""></script>
+
+    <!-- favicon -->
+    <link rel="icon" type="image/png" href="{{ .Site.Params.Favicon | relURL }}" />
+
+    <!-- meta -->
+    <title>{{ .Title }}</title>
+    <meta name="description" content="{{ .Summary }}">
+
+    <!-- opengraph meta tags from https://www.opengraph.xyz/ -->
+
+    <meta property="og:url" content="{{ .Site.BaseURL }}">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="{{ .Title }}">
+    <meta property="og:description" content="{{ .Summary }}">
+    <!-- <meta property="og:image" content="n/a"> -->
+
+    <meta property="twitter:url" content="{{ .Site.BaseURL }}">
+    <meta property="twitter:domain" content="">
+    <meta name="twitter:title" content="{{ .Title }}">
+    <meta name="twitter:description" content="{{ .Summary }}">
+    <meta name="twitter:card" content="summary_large_image">
+    <!-- <meta name="twitter:image" content="n/a"> -->
+</head>

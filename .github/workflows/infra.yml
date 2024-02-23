@@ -1,0 +1,37 @@
+---
+name: infra
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [master]
+    paths:
+    - 'infra/**'
+    - 'resume/**'
+
+env:
+  OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
+
+jobs:
+  deployment:
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+    steps:
+    - uses: actions/checkout@v4
+    - uses: cachix/install-nix-action@v23
+    - uses: cachix/cachix-action@v12
+      with:
+        name: devenv
+    - name: Install devenv.sh
+      run: nix profile install tarball+https://install.devenv.sh/latest
+    - name: Build the devenv shell and run any pre-commit hooks
+      run: devenv ci
+    - name: devenv shell
+      shell: devenv shell bash -e {0}
+      run: |
+        op --version
+        terragrunt --version
+        curl -v https://tf.kaipov.com/self/infra/tfstate
+        ./scripts/run.sh infra/tfstate plan
+        ./scripts/run.sh infra/kaipov.com plan
