@@ -51,12 +51,13 @@ in
       nodePackages.typescript-language-server
       nodePackages.vim-language-server
       terraform-ls
-        terraform-lsp # unofficial one
+      terraform-lsp # unofficial one
       vscode-langservers-extracted
       # yaml-language-server
 
       # lang-specific dev/diagnostic/lint tools
       deadnix
+      git-filter-repo
       lazygit
       nixpkgs-fmt
       rufo
