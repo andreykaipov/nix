@@ -42,7 +42,7 @@
             # pkgs = import <nixpkgs> { }; # alternative to above line, but this is impure
 
             lib = nixpkgs.lib.extend (libself: super: {
-              my = import ./lib.nix {
+              my = import ./lib {
                 inherit system pkgs;
                 lib = libself;
                 flake = self;
@@ -54,7 +54,7 @@
                 # alternatively, we can set these in `import nixpkgs { ... }` instead of using legacyPackages above
                 nixpkgs.config.allowUnfreePredicate = (pkg: true); # https://github.com/nix-community/home-manager/issues/2942
                 nixpkgs.overlays = lib.my.overlays ++ [
-                  neovim-nightly-overlay.overlay
+                  # neovim-nightly-overlay.overlay
                 ];
               }
               {
@@ -62,13 +62,14 @@
                 home.homeDirectory = if homedir != "" then homedir else lib.my.homedir username;
                 home.stateVersion = "22.11";
               }
-              ./home.nix
+              ./home
             ]
             ++ extraModules;
 
             extraSpecialArgs = {
               pkgs-stable = import nixpkgs { inherit system; config.allowUnfree = true; };
               devenv = devenv.packages.${system}.devenv;
+              homeConfig = cfg;
             };
           };
     in

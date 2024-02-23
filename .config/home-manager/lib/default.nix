@@ -20,13 +20,13 @@ rec {
   # create overlays from custom packages and include any actual overlays
   overlays =
     let
-      packages = subdirs ./packages;
-      overlays = subdirs ./overlays;
+      packages = subdirs ../packages;
+      overlays = subdirs ../overlays;
     in
-    lib.lists.forEach packages (p: self: super: { ${p} = pkgs.callPackage ./packages/${p} { }; }) ++
-    lib.lists.forEach overlays (o: import ./overlays/${o});
+    lib.lists.forEach packages (p: self: super: { ${p} = pkgs.callPackage ../packages/${p} { }; }) ++
+    lib.lists.forEach overlays (o: import ../overlays/${o});
 
-  modules = lib.lists.forEach (files ./modules) (m: ./modules/${m});
+  modules = lib.lists.forEach (files ./modules) (m: ../modules/${m});
 
   homedir = username: (if pkgs.stdenv.isLinux then "/home" else "/Users") + "/${username}";
 
@@ -71,4 +71,14 @@ rec {
       };
     in
     builtins.listToAttrs (lib.lists.imap0 condense scripts);
+
+  vimPluginFromGitHub = repo: ref: rev: pkgs.vimUtils.buildVimPlugin {
+    pname = "${lib.strings.sanitizeDerivationName repo}";
+    version = ref;
+    src = builtins.fetchGit {
+      url = "https://github.com/${repo}.git";
+      ref = ref;
+      rev = rev;
+    };
+  };
 }

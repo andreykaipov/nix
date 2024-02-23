@@ -13,5 +13,6 @@
     win32yank
     wsl-sudo
     wslu
+    npiperelay-exe
   ];
 }

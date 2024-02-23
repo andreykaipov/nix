@@ -19,3 +19,4 @@ stdenv.mkDerivation rec {
     cp bin/dircolors.hex "$out/bin/dircolors.hex"
   '';
 }
+
