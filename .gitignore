@@ -26,11 +26,7 @@
 .config/github-copilot
 .config/iterm2/
 .config/nixpkgs/**/result
-.config/nvim/.netrwhist
-.config/nvim/autoload
-.config/nvim/tmp/bak/*~
-.config/nvim/tmp/swp
-.config/nvim/tmp/undo
+.config/nvim
 .config/op/*
 .config/ssh/keys/*.pem
 .config/tmux/plugins
