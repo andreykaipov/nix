@@ -11,7 +11,15 @@ locals {
   // self/infra/project
   tfstate_path = "${local.project_name}/${get_path_from_repo_root()}"
 
-  self_secrets = jsondecode(get_env("self_secrets"))
+  self_secrets_val = get_env("self_secrets")
+  self_secrets = try(
+    jsondecode(local.self_secrets_val),
+    run_cmd("sh", "-c", <<EOF
+      echo "There was an issue parsing self_secrets:"
+      echo '${local.self_secrets_val}'
+    EOF
+    )
+  )
 
   providers = read_terragrunt_config("providers.hcl").locals.providers
 }
