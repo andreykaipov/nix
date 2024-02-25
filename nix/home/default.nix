@@ -32,6 +32,8 @@ in
       tmux
       nmap
       zellij
+      ripgrep
+      gnused
 
       # langs
       cargo
@@ -45,6 +47,7 @@ in
       # lsps
       gopls
       lua-language-server
+      golangci-lint-langserver
       nil
       nixd
       nodePackages.bash-language-server
@@ -92,7 +95,7 @@ in
     viAlias = true;
     vimAlias = true;
     plugins = with pkgs.vimPlugins; [
-      ## lualine-nvim # statusline 
+      ## lualine-nvim # statusline
       ## gruvbox-nvim # colorscheme
       ## tokyonight-nvim # colorscheme
       ## vim-tmux-navigator # navigate between vim and tmux panes easily
@@ -122,7 +125,7 @@ in
       ## (lib.my.vimPluginFromGitHub "SergioRibera/cmp-dotenv" "main" "fd78929551010bc20602e7e663e42a5e14d76c96") # remember cursor position
       ## cmp-nvim-lsp-signature-help
       ## cmp-nvim-lsp-document-symbol
-      ## # copilot, the lua ones don't behave like the og one 
+      ## # copilot, the lua ones don't behave like the og one
       ## # https://github.com/zbirenbaum/copilot-cmp/issues/5
       ## copilot-vim
       # copilot-lua

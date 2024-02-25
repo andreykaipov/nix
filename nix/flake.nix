@@ -79,6 +79,6 @@
         smart-toaster = homeConfig "x86_64-darwin"; # this is an m1 but aarch64-darwin doesn't work?
       };
     };
-}
+}  
 
 

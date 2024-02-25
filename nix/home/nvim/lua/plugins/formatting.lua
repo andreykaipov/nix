@@ -4,11 +4,11 @@ return {
 		"stevearc/conform.nvim",
 		enabled = true,
 	},
-	-- {
-	-- 	-- trim trailing whitespace and lines
-	-- 	"cappyzawa/trim.nvim",
-	-- 	opts = {},
-	-- },
+	{
+		-- trim trailing whitespace and lines
+		"cappyzawa/trim.nvim",
+		opts = {},
+	},
 	{
 		"tpope/vim-sleuth",
 		config = function(_, opts)
