@@ -27,6 +27,17 @@ return {
 		build = ':lua require("go.install").update_all_sync()', -- if you need to install/update all binaries
 	},
 	{
+		"nvimdev/lspsaga.nvim",
+		event = "LspAttach",
+		config = function()
+			require("lspsaga").setup({})
+		end,
+		dependencies = {
+			"neovim/nvim-lspconfig",
+			"nvim-treesitter/nvim-treesitter",
+		},
+	},
+	{
 		-- lsp
 		"neovim/nvim-lspconfig",
 		event = "LazyFile",
@@ -35,7 +46,9 @@ return {
 			servers = {
 				lua_ls = {},
 				bashls = {},
+				golangci_lint_ls = {},
 				terraformls = {
+					-- overwrite default lazyvim tf lang extension to also include hcl files
 					filetypes = { "terraform", "terraform-vars", "hcl" },
 				},
 				nil_ls = {
@@ -51,11 +64,25 @@ return {
 				-- nixd = {},
 			},
 		},
+		-- stylua: ignore
 		init = function()
 			-- https://github.com/neovim/nvim-lspconfig/tree/master#suggested-configuration
 			local keys = require("lazyvim.plugins.lsp.keymaps").get()
 			keys[#keys + 1] = { "<C-k>", false, mode = "i" } -- C-k is for navigating up in the completion menu
-			keys[#keys + 1] = { "<C-f>", vim.lsp.buf.signature_help, mode = "i" } -- C-k is for navigating up in the completion menu
+			-- keys[#keys + 1] = { "<leader>ca", false, mode = "n" }
+			keys[#keys + 1] = { "<leader>cA", false, mode = "n" }
+
+			-- keys[#keys + 1] = { "<C-f>", "<cmd>Lspsaga hover_doc<CR>", mode = "i" }
+			keys[#keys + 1] = { "K",          "<cmd>Lspsaga hover_doc<CR>",            mode = "n", desc = "(Lspsaga) hover_doc"}
+			keys[#keys + 1] = { "gD",         "<cmd>Lspsaga peek_definition<CR>",      mode = "n", desc = "(Lspsaga) peek_definition"}
+			keys[#keys + 1] = { "gf",         "<cmd>Lspsaga finder<CR>",               mode = "n", desc = "(Lspsaga) finder"}
+			keys[#keys + 1] = { "go",         "<cmd>Lspsaga outline<CR>",              mode = "n", desc = "(Lspsaga) outline"}
+			keys[#keys + 1] = { "gt",         "<cmd>Lspsaga term_toggle<CR>",          mode = "n", desc = "(Lspsaga) term toggle"}
+			keys[#keys + 1] = { "<leader>cj", "<cmd>Lspsaga diagnostic_jump_next<CR>", mode = "n", desc = "(Lspsaga) diagnostic_jump_next"}
+			keys[#keys + 1] = { "<leader>ck", "<cmd>Lspsaga diagnostic_jump_prev<CR>", mode = "n", desc = "(Lspsaga) diagnostic_jump_prev"}
+			keys[#keys + 1] = { "<leader>cA", "<cmd>Lspsaga code_action<CR>",          mode = "n", desc = "(Lspsaga) code_action"}
+			-- keys[#keys + 1] = { "gR", "<cmd>Lspsaga rename ++project<CR>"     , mode = "n", desc = "(Lspsaga) rename ++project"}
+			-- keys[#keys + 1] = { "gl", "<cmd>Lspsaga show_line_diagnostics<CR>", mode = "n", desc = "(Lspsaga) show_line_diagnostics"}
 		end,
 	},
 	{
@@ -69,7 +96,7 @@ return {
 			-- remove default shfmt included by lazyvim
 			local sources = {}
 			for _, s in pairs(opts.sources) do
-				if not string.match(s.name, "(shfmt)") then
+				if not string.match(s.name, "(shfmt|terraform_fmt)") then
 					vim.list_extend(sources, { s })
 				end
 			end
@@ -86,12 +113,11 @@ return {
 				-- nix
 				-- nls.builtins.diagnostics.statix,
 				-- nls.builtins.diagnostics.deadnix,
-				nls.builtins.formatting.shfmt.with({
-					extra_args = { "-s", "-ln", "posix", "-i", "8", "-ci" },
-				}),
+				nls.builtins.formatting.shfmt.with({ extra_args = { "-s", "-ln", "posix", "-i", "8", "-ci" } }),
 				nls.builtins.formatting.taplo,
-				nls.builtins.formatting.terrafmt,
-				nls.builtins.formatting.terraform_fmt,
+				nls.builtins.formatting.terrafmt, -- markdown nested tf blocks
+				nls.builtins.formatting.terraform_fmt.with({ filetypes = { "hcl" } }),
+				nls.builtins.diagnostics.terraform_validate.with({ filetypes = { "hcl" } }),
 				nls.builtins.formatting.trim_newlines.with({ filetypes = { "*" } }),
 				nls.builtins.formatting.trim_whitespace.with({ filetypes = { "*" } }),
 				nls.builtins.formatting.textlint,
