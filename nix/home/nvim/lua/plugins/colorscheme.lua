@@ -29,7 +29,7 @@ local customize_colorscheme = function(f)
 			vim.api.nvim_set_hl(0, "CursorLine", { bg = "#101010" })
 			vim.api.nvim_set_hl(0, "CursorLineNr", { fg = "yellow" })
 			-- dirty yellow for the cursor
-			vim.api.nvim_set_hl(0, "Cursor", { bg = "#5f5b26" }) -- #505050
+			vim.api.nvim_set_hl(0, "Cursor", { bg = "#7f7b26" }) -- #505050 #5f5b26
 
 			-- ggandor/leap.nvim
 			-- vim.api.nvim_set_hl(0, "LeapBackdrop", { link = Util.ui.bg("Comment") })
