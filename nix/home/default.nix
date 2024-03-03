@@ -95,6 +95,9 @@ in
   home.file.".config/nvim".source = ./nvim;
   home.file.".config/nvim".recursive = true;
 
+  home.file.bin.source = ./scripts;
+  home.file.bin.recursive = true;
+
   programs.neovim.enable = true;
   # programs.neovim.package = pkgs.neovim-nightly;
   programs.neovim.defaultEditor = true;

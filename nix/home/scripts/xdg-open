@@ -1,0 +1,7 @@
+#!/bin/sh
+set -x
+if [ -n "$WSL_DISTRO_NAME" ]; then
+        explorer.exe "$(wslpath -w "$@")"
+        exit
+fi
+xdg-open "$@"

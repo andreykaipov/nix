@@ -1,0 +1,33 @@
+#!/bin/bash
+# ref: https://github.com/Freed-Wu/fzf-tab-source
+
+has_cmd() {
+        for opt in "$@"; do
+                command -v "$opt" >/dev/null
+        done
+}
+
+mime=$(file -Lbs --mime-type "$1")
+category=${mime%%/*}
+kind=${mime##*/}
+if [ "$kind" = octet-stream ]; then
+        if has_cmd bat; then
+                bat --color=always "$1" --style=numbers,changes
+        fi
+elif [ "$kind" = json ]; then
+        if has_cmd jq; then
+                jq -Cr . "$1"
+        fi
+elif [ -d "$1" ]; then
+        if has_cmd eza; then
+                eza -hl --git --color=always --icons "$1"
+        elif has_cmd exa; then
+                exa -hl --color=always --icons "$1"
+        fi
+elif [ "$category" = text ]; then
+        if has_cmd bat; then
+                bat --color=always "$1" --style=numbers,changes
+        fi
+else
+        exit 1
+fi
