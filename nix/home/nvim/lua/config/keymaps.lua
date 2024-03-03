@@ -29,8 +29,6 @@ vim.keymap.set("v", ">", ">gv")
 vim.keymap.set("v", "J", ":m '>+1<cr>gv=gv", { desc = "Move down" })
 vim.keymap.set("v", "K", ":m '<-2<cr>gv=gv", { desc = "Move up" })
 
--- clear search highlights
-vim.keymap.set("n", "<localleader><CR>", ":nohlsearch<Cr>")
 -- keep searches centered
 vim.keymap.set("n", "n", "nzz")
 vim.keymap.set("n", "N", "Nzz")

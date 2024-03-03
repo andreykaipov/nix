@@ -1,4 +1,5 @@
 local Util = require("util")
+local colors = Util.colors
 
 local customize_colorscheme = function(f)
 	local opt = vim.opt
@@ -18,9 +19,9 @@ local customize_colorscheme = function(f)
 
 	f()
 
-	local colors = vim.api.nvim_create_augroup("colors", { clear = true })
+	local colors_group = vim.api.nvim_create_augroup("colors", { clear = true })
 	vim.api.nvim_create_autocmd({ "ColorScheme" }, {
-		group = colors,
+		group = colors_group,
 		pattern = "*",
 		desc = "set custom highlights",
 		callback = function()
@@ -41,6 +42,29 @@ local customize_colorscheme = function(f)
 			vim.api.nvim_set_hl(0, "CmpCursorLine", { link = "PmenuSel" })
 			vim.api.nvim_set_hl(0, "CmpDoc", { link = "PmenuSel", blend = 0 })
 			vim.api.nvim_set_hl(0, "CmpItemKindFile", { fg = "red" })
+
+			-- telescope
+			-- vim.api.nvim_set_hl(0, "TelescopeBorder", { bg = colors.dark })
+			-- vim.api.nvim_set_hl(0, "TelescopeNormal", { bg = colors.dark })
+			-- vim.api.nvim_set_hl(0, "TelescopeTitle", { fg = colors.light, bg = colors.dark })
+			-- telescope prompt
+			-- stylua: ignore
+			vim.api.nvim_set_hl(0, "TelescopePromptBorder", { fg = colors.dark_blue_green, bg = colors.dark_blue_green })
+			vim.api.nvim_set_hl(0, "TelescopePromptNormal", { bg = colors.dark_blue_green })
+			vim.api.nvim_set_hl(0, "TelescopePromptTitle", { bg = colors.light })
+			-- telescope preview
+			vim.api.nvim_set_hl(0, "TelescopePreviewBorder", { fg = colors.dark, bg = colors.dark })
+			vim.api.nvim_set_hl(0, "TelescopePreviewNormal", { bg = colors.dark })
+			vim.api.nvim_set_hl(0, "TelescopePreviewTitle", { bg = colors.light })
+			-- telescope results
+			vim.api.nvim_set_hl(0, "TelescopeResultsBorder", { fg = colors.dark_blue, bg = colors.dark_blue })
+			vim.api.nvim_set_hl(0, "TelescopeResultsNormal", { bg = colors.dark_blue })
+			vim.api.nvim_set_hl(0, "TelescopeResultsTitle", { bg = colors.dark_blue })
+			-- telescope misc
+			vim.api.nvim_set_hl(0, "TelescopeMatching", { fg = colors.orange })
+			vim.api.nvim_set_hl(0, "TelescopeSelection", { fg = "black", bg = colors.light_blue })
+			vim.api.nvim_set_hl(0, "TelescopeSelectionCaret", { fg = "black", bg = colors.light_blue })
+			vim.api.nvim_set_hl(0, "TelescopeMultiSelection", { bg = "red" })
 		end,
 	})
 end
