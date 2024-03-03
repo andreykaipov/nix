@@ -228,7 +228,7 @@ return {
 					mappings = {
 						-- emacs-esque navigation in telescope
 						i = {
-							["<esc>"] = actions.close,
+							-- ["<esc>"] = actions.close,
 							["<C-j>"] = actions.move_selection_next,
 							["<C-k>"] = actions.move_selection_previous,
 							["<C-u>"] = false,
@@ -244,6 +244,8 @@ return {
 						},
 						n = {
 							["q"] = actions.close,
+							["j"] = actions.move_selection_next,
+							["k"] = actions.move_selection_previous,
 						},
 					},
 				},
@@ -252,6 +254,7 @@ return {
 						theme = "ivy",
 						-- theme = "dropdown",
 						hijack_netrw = true,
+						initial_mode = "normal",
 					},
 				},
 			}
@@ -261,7 +264,7 @@ return {
 			require("telescope").load_extension("file_browser")
 			vim.api.nvim_set_keymap(
 				"n",
-				"<space>fb",
+				"<leader><space>",
 				":Telescope file_browser path=%:p:h select_buffer=true<CR>",
 				{ noremap = true }
 			)
