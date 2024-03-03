@@ -54,6 +54,7 @@
       . ${pkgs.nix.outPath}/etc/profile.d/nix.sh
       export FZF_BASE=${pkgs.fzf}/share/fzf
       ${builtins.readFile ./zshenv}
+      export PATH=~/bin:$PATH
     '';
     initExtraFirst = ''
       # To customize prompt, run `p10k configure` or edit p10k.zsh.
