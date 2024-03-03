@@ -29,9 +29,15 @@ return {
 	{
 		"nvimdev/lspsaga.nvim",
 		event = "LspAttach",
-		config = function()
-			require("lspsaga").setup({})
-		end,
+		opts = {
+			-- https://nvimdev.github.io/lspsaga/lightbulb
+			lightbulb = {
+				virtual_text = false, -- disable the lightbulb only at the end of the line
+			},
+		},
+		-- config = function(_, opts)
+		-- 	require("lspsaga").setup(opts)
+		-- end,
 		dependencies = {
 			"neovim/nvim-lspconfig",
 			"nvim-treesitter/nvim-treesitter",
