@@ -1,0 +1,63 @@
+# load zle widgets
+# zle is like readline for bash
+# use `zle -al` to view all zle widgets
+# we can even write our own widgets:
+# https://thevaluable.dev/zsh-line-editor-configuration-mouseless
+# https://sgeb.io/posts/zsh-zle-custom-widgets
+# https://zsh.sourceforge.io/Doc/Release/Zsh-Line-Editor.html#User_002dDefined-Widgets
+
+bindkey -e # use emacs keymap
+
+# make things feel more like bash
+# https://github.com/zsh-users/zsh/blob/master/Functions/Zle/select-word-style
+autoload -Uz select-word-style
+select-word-style bash
+
+# default ^u seems to kill entire line, i only want to kill it from cursor
+bindkey "^u" backward-kill-line
+# default for ^f is forward-char, but that's dumb, plus this is nicer for autosuggestions
+bindkey "^f" forward-word
+
+# like ^x^e in emacs
+autoload -Uz edit-command-line
+zle -N edit-command-line
+bindkey "^[e" edit-command-line
+
+# better history
+# i like ^j to go forward in history, but if there's a buffer we should complete
+# makes it feel like my nvim lsp setup
+function _complete-or-history-forward() {
+        if [[ $LASTWIDGET == history-search-backward ]]; then
+                zle history-search-forward
+        elif [[ $LASTWIDGET == _complete-or-history-forward ]]; then
+                zle history-search-forward
+        elif [[ -n $BUFFER ]]; then
+                # widget from fzf-tab
+                zle fzf-tab-complete
+        else
+                zle history-search-forward
+        fi
+}
+zle -N _complete-or-history-forward
+bindkey "^k" history-search-backward
+bindkey "^j" _complete-or-history-forward
+zsh-widget-noop() {}
+zle -N zsh-widget-noop
+bindkey "^n" zsh-widget-noop
+bindkey "^p" zsh-widget-noop
+
+# fzf is used for incremental history search
+# so we don't need ^s for forward inc search; use it for file search
+# because the default ^t is too far away for my chubby fingers
+# widget loaded from omz fzf plugin: https://github.com/ohmyzsh/ohmyzsh/tree/master/plugins/fzf
+bindkey "^s" fzf-file-widget
+
+# styling for Aloxaf/fzf-tab
+# https://github.com/Aloxaf/fzf-tab/wiki/Configuration#fzf-preview
+# disable sort when completing `git checkout`
+zstyle ':completion:*:git-checkout:*' sort false
+# set descriptions format to enable group support
+zstyle ':completion:*:descriptions' format '[%d]'
+zstyle ':fzf-tab:*' prefix ''
+zstyle ':fzf-tab:*' show-group brief
+zstyle ':fzf-tab:*' switch-group '<' '>'
