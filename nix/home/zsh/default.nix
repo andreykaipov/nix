@@ -36,7 +36,7 @@
       "aliases"
       "asdf"
       "autojump"
-      "docker"
+      # "docker" # not always available on WSL depending on if Docker Desktop is on or not
       "fzf"
       "gh"
       "git"
@@ -61,9 +61,9 @@
       # Initialization code that may require console input (password prompts, [y/n] confirmations, etc.)
       # can go here too, but should be above this conditional.
       # ref: https://github.com/romkatv/powerlevel10k?tab=readme-ov-file#instant-prompt
-      if [[ -r "''${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-''${(%):-%n}.zsh" ]]; then
-        source "''${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-''${(%):-%n}.zsh"
-      fi
+      # if [[ -r "''${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-''${(%):-%n}.zsh" ]]; then
+      #   source "''${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-''${(%):-%n}.zsh"
+      # fi
     '';
     initExtraBeforeCompInit = ''
     '';
