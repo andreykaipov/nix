@@ -1,0 +1,9 @@
+#!/bin/sh
+set -eu
+cd ~/gh/self
+git add nix
+export NIX_CONF_DIR=~/gh/self/nix
+hostname=${1?hostname empty}
+# todo look in nix/hosts to find all available ones
+# maybe just use $HOSTNAME duh?
+home-manager --flake "nix/#$hostname" switch
