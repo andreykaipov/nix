@@ -1,5 +1,7 @@
 local util = require("util")
 
+-- ref: https://github.com/loctvl842/nvim/blob/33bc9bae4a0351bf6b36e7b4e71d476e75bef2cb/lua/beastvim/plugins/ui.lua#L161
+
 return {
 	{
 		"dashboard-nvim",
@@ -36,6 +38,16 @@ return {
 			opts.background_colour = "#000000"
 			require("notify").setup(opts)
 		end,
+		keys = {
+			{
+				"<localleader><CR>",
+				function()
+					require("notify").dismiss({ silent = true, pending = true })
+					vim.cmd("nohlsearch")
+				end,
+				desc = "Dismiss all notifications and search highlights (+clear)",
+			},
+		},
 	},
 	{
 		-- https://github.com/folke/noice.nvim/wiki/A-Guide-to-Messages#messages-and-notifications-in-neovim

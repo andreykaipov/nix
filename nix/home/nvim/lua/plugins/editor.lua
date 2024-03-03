@@ -191,63 +191,50 @@ return {
 			})
 		end,
 	},
+	{ "nvim-telescope/telescope-ui-select.nvim" },
+	{
+		"nvim-telescope/telescope-file-browser.nvim",
+		dependencies = { "nvim-telescope/telescope.nvim", "nvim-lua/plenary.nvim" },
+	},
 	{
 		"nvim-telescope/telescope.nvim",
 		opts = function()
 			local actions = require("telescope.actions")
-
-			local open_with_trouble = function(...)
-				return require("trouble.providers.telescope").open_with_trouble(...)
-			end
-			local open_selected_with_trouble = function(...)
-				return require("trouble.providers.telescope").open_selected_with_trouble(...)
-			end
-			local find_files_no_ignore = function()
-				local action_state = require("telescope.actions.state")
-				local line = action_state.get_current_line()
-				Util.telescope("find_files", { no_ignore = true, default_text = line })()
-			end
-			local find_files_with_hidden = function()
-				local action_state = require("telescope.actions.state")
-				local line = action_state.get_current_line()
-				Util.telescope("find_files", { hidden = true, default_text = line })()
-			end
-
+			local actions_layout = require("telescope.actions.layout")
 			return {
 				defaults = {
-					layout_config = {
-						prompt_position = "top",
-						width = 0.75,
-						height = 0.75,
-						preview_width = 0.65,
-						preview_cutoff = 80,
-					},
+					-- theme = "center",
 					layout_strategy = "horizontal", -- vertical ?
+					sort_mru = true,
 					sorting_strategy = "ascending",
+					layout_config = {
+						horizontal = {
+							prompt_position = "top",
+							width = 0.75,
+							height = 0.75,
+							preview_width = 0.65,
+							preview_cutoff = 80,
+						},
+					},
+					border = true,
+					multi_icon = "",
+					entry_prefix = "   ",
+					prompt_prefix = "   ",
+					selection_caret = "  ",
+					hl_result_eol = true,
+					results_title = "",
 					winblend = 0,
-					prompt_prefix = " ",
-					selection_caret = " ",
-					-- open files in the first window that is an actual file.
-					-- use the current window if no other window is available.
-					get_selection_window = function()
-						local wins = vim.api.nvim_list_wins()
-						table.insert(wins, 1, vim.api.nvim_get_current_win())
-						for _, win in ipairs(wins) do
-							local buf = vim.api.nvim_win_get_buf(win)
-							if vim.bo[buf].buftype == "" then
-								return win
-							end
-						end
-						return 0
-					end,
+					wrap_results = true,
 					mappings = {
 						-- emacs-esque navigation in telescope
 						i = {
+							["<esc>"] = actions.close,
 							["<C-j>"] = actions.move_selection_next,
 							["<C-k>"] = actions.move_selection_previous,
 							["<C-u>"] = false,
 							["<C-f>"] = actions.preview_scrolling_up,
 							["<C-b>"] = actions.preview_scrolling_down,
+							["<C-p>"] = actions_layout.toggle_preview,
 							-- ["<A-t>"] = open_selected_with_trouble,
 							-- ["<A-i>"] = find_files_no_ignore,
 							-- ["<A-h>"] = find_files_with_hidden,
@@ -260,7 +247,53 @@ return {
 						},
 					},
 				},
+				extensions = {
+					file_browser = {
+						theme = "ivy",
+						-- theme = "dropdown",
+						hijack_netrw = true,
+					},
+				},
 			}
 		end,
+		config = function(_, opts)
+			require("telescope").setup(opts)
+			require("telescope").load_extension("file_browser")
+			vim.api.nvim_set_keymap(
+				"n",
+				"<space>fb",
+				":Telescope file_browser path=%:p:h select_buffer=true<CR>",
+				{ noremap = true }
+			)
+		end,
+	},
+	{
+		"nvim-neo-tree/neo-tree.nvim",
+		opts = {
+			filesystem = {
+				filtered_items = {
+					visible = true,
+					hide_dotfiles = false,
+					hide_gitignored = false,
+					hide_by_name = {
+						".gitignore",
+						".gitmodules",
+						".github",
+						".envrc",
+						".direnv",
+					},
+					never_show = {
+						".git",
+						"flake.lock",
+						"devenv.lock",
+						".devenv",
+						".devenv.flake.nix",
+						".pre-commit-config.yaml",
+						"go.sum",
+						"package-lock.json",
+					},
+				},
+			},
+		},
 	},
 }
