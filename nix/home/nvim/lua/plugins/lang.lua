@@ -99,17 +99,18 @@ return {
 		opts = function(_, opts)
 			local nls = require("null-ls")
 
-			-- remove default shfmt included by lazyvim
+			-- so basically shfmt is included by default, but we want to change the args (added below)
+			-- so what this does is get the default nonels sources (and those injected by lazyvim extras)
+			-- but ignores the default shfmt
+			local defaults = { ["shfmt"] = true }
 			local sources = {}
 			for _, s in pairs(opts.sources) do
-				if not string.match(s.name, "(shfmt|terraform_fmt)") then
+				if defaults[s.name] == nil then
 					vim.list_extend(sources, { s })
 				end
 			end
 
-			-- we don't want to just replace the sources because lazyvim extras extend this list before
-			-- our plugins are loaded, so those will be overwritten.
-			-- alternatively I guess we can just add all those on our own, see:
+			-- alternatively I guess we can just add all the nonels extras ourselves here:
 			-- https://www.lazyvim.org/extras/lang/go#none-lsnvim-optional
 			-- https://www.lazyvim.org/extras/lang/terraform#none-lsnvim-optional
 			--
@@ -119,11 +120,12 @@ return {
 				-- nix
 				-- nls.builtins.diagnostics.statix,
 				-- nls.builtins.diagnostics.deadnix,
-				nls.builtins.formatting.shfmt.with({ extra_args = { "-s", "-ln", "posix", "-i", "8", "-ci" } }),
+				nls.builtins.formatting.shfmt.with({
+					filetypes = { "sh", "bash" },
+					extra_args = { "-s", "-ln", "auto", "-i", "8", "-ci" },
+				}),
 				nls.builtins.formatting.taplo,
 				nls.builtins.formatting.terrafmt, -- markdown nested tf blocks
-				nls.builtins.formatting.terraform_fmt.with({ filetypes = { "hcl" } }),
-				nls.builtins.diagnostics.terraform_validate.with({ filetypes = { "hcl" } }),
 				nls.builtins.formatting.trim_newlines.with({ filetypes = { "*" } }),
 				nls.builtins.formatting.trim_whitespace.with({ filetypes = { "*" } }),
 				nls.builtins.formatting.textlint,
