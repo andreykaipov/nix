@@ -217,11 +217,11 @@
       },
       "locked": {
         "dir": "contrib",
-        "lastModified": 1708913519,
-        "narHash": "sha256-S5d8OvfvPitMZPGa3BWhLvR8MjCkjpUVIc48auALFJs=",
+        "lastModified": 1709466399,
+        "narHash": "sha256-8Y2+a/DQl8KD+fEFGhbyGA9mW/4OTCtxRuUaaMTuC00=",
         "owner": "neovim",
         "repo": "neovim",
-        "rev": "8b4e26915612caf2d143edca31919cae18a848a1",
+        "rev": "da2130934b95c4bc8a10266ef032d68a2014d1ea",
         "type": "github"
       },
       "original": {
@@ -426,7 +426,11 @@
         "neovim-nightly-overlay": "neovim-nightly-overlay",
         "nixpkgs": "nixpkgs_3",
         "nixpkgs-master": "nixpkgs-master",
-        "nixpkgs-unstable": "nixpkgs-unstable"
+        "nixpkgs-unstable": "nixpkgs-unstable",
+        "zsh-completions": "zsh-completions",
+        "zsh-fzf-tab": "zsh-fzf-tab",
+        "zsh-fzf-tab-source": "zsh-fzf-tab-source",
+        "zsh-powerlevel10k": "zsh-powerlevel10k"
       }
     },
     "systems": {
@@ -441,6 +445,70 @@
       "original": {
         "owner": "nix-systems",
         "repo": "default",
+        "type": "github"
+      }
+    },
+    "zsh-completions": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1707297631,
+        "narHash": "sha256-8qgANoYAvTlAnyKcOfHATEAWvvPzztIcRVmTHWcEM5c=",
+        "owner": "zsh-users",
+        "repo": "zsh-completions",
+        "rev": "507f1f8715edd9f1f403c140fa332644d81ebab5",
+        "type": "github"
+      },
+      "original": {
+        "owner": "zsh-users",
+        "repo": "zsh-completions",
+        "type": "github"
+      }
+    },
+    "zsh-fzf-tab": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1709300945,
+        "narHash": "sha256-CZrFf79mat70E3QAQ4jVdICoyOHFiMn7Fv3Z+yAXnCA=",
+        "owner": "Aloxaf",
+        "repo": "fzf-tab",
+        "rev": "f3d892cf19bba09c0c44fa9fcaf6d616fe5b18e6",
+        "type": "github"
+      },
+      "original": {
+        "owner": "Aloxaf",
+        "repo": "fzf-tab",
+        "type": "github"
+      }
+    },
+    "zsh-fzf-tab-source": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1708517627,
+        "narHash": "sha256-laiX2VJgI+FgwytGAU9rTZRhbfUiSidlfgjWTiGsbG4=",
+        "owner": "Freed-Wu",
+        "repo": "fzf-tab-source",
+        "rev": "83f31017a8f80cc4eaff66279f8089889dad0c1a",
+        "type": "github"
+      },
+      "original": {
+        "owner": "Freed-Wu",
+        "repo": "fzf-tab-source",
+        "type": "github"
+      }
+    },
+    "zsh-powerlevel10k": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1708664635,
+        "narHash": "sha256-+BRW6ESjEiHDOuX3PE6X3EpgiSLsmpQ/hGCLnnIZZ5w=",
+        "owner": "romkatv",
+        "repo": "powerlevel10k",
+        "rev": "0cc19ac2ede35fd8accff590fa71df580dc7e109",
+        "type": "github"
+      },
+      "original": {
+        "owner": "romkatv",
+        "repo": "powerlevel10k",
         "type": "github"
       }
     }
