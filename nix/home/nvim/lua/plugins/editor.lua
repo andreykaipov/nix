@@ -191,4 +191,76 @@ return {
 			})
 		end,
 	},
+	{
+		"nvim-telescope/telescope.nvim",
+		opts = function()
+			local actions = require("telescope.actions")
+
+			local open_with_trouble = function(...)
+				return require("trouble.providers.telescope").open_with_trouble(...)
+			end
+			local open_selected_with_trouble = function(...)
+				return require("trouble.providers.telescope").open_selected_with_trouble(...)
+			end
+			local find_files_no_ignore = function()
+				local action_state = require("telescope.actions.state")
+				local line = action_state.get_current_line()
+				Util.telescope("find_files", { no_ignore = true, default_text = line })()
+			end
+			local find_files_with_hidden = function()
+				local action_state = require("telescope.actions.state")
+				local line = action_state.get_current_line()
+				Util.telescope("find_files", { hidden = true, default_text = line })()
+			end
+
+			return {
+				defaults = {
+					layout_config = {
+						prompt_position = "top",
+						width = 0.75,
+						height = 0.75,
+						preview_width = 0.65,
+						preview_cutoff = 80,
+					},
+					layout_strategy = "horizontal", -- vertical ?
+					sorting_strategy = "ascending",
+					winblend = 0,
+					prompt_prefix = " ",
+					selection_caret = " ",
+					-- open files in the first window that is an actual file.
+					-- use the current window if no other window is available.
+					get_selection_window = function()
+						local wins = vim.api.nvim_list_wins()
+						table.insert(wins, 1, vim.api.nvim_get_current_win())
+						for _, win in ipairs(wins) do
+							local buf = vim.api.nvim_win_get_buf(win)
+							if vim.bo[buf].buftype == "" then
+								return win
+							end
+						end
+						return 0
+					end,
+					mappings = {
+						-- emacs-esque navigation in telescope
+						i = {
+							["<C-j>"] = actions.move_selection_next,
+							["<C-k>"] = actions.move_selection_previous,
+							["<C-u>"] = false,
+							["<C-f>"] = actions.preview_scrolling_up,
+							["<C-b>"] = actions.preview_scrolling_down,
+							-- ["<A-t>"] = open_selected_with_trouble,
+							-- ["<A-i>"] = find_files_no_ignore,
+							-- ["<A-h>"] = find_files_with_hidden,
+							-- ["<C-Down>"] = actions.cycle_history_next,
+							-- ["<C-Up>"] = actions.cycle_history_prev,
+							-- ["<C-t>"] = open_with_trouble,
+						},
+						n = {
+							["q"] = actions.close,
+						},
+					},
+				},
+			}
+		end,
+	},
 }
