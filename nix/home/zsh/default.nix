@@ -51,6 +51,7 @@
       source "${inputs.zsh-completions}/zsh-completions.plugin.zsh"
     '';
     envExtra = ''
+      . ${pkgs.nix.outPath}/etc/profile.d/nix.sh
       export FZF_BASE=${pkgs.fzf}/share/fzf
       ${builtins.readFile ./zshenv}
     '';

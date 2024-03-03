@@ -32,7 +32,6 @@ in
     devenv
     tmux
     nmap
-    zellij
     ripgrep
     fd
     eza
@@ -90,7 +89,10 @@ in
   programs.direnv.nix-direnv.enable = true;
   programs.home-manager.enable = true;
 
-  imports = [ ./zsh ];
+  imports = [
+    ./zsh
+    ./zellij
+  ];
 
   home.file.".config/nvim".source = ./nvim;
   home.file.".config/nvim".recursive = true;
