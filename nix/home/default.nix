@@ -84,28 +84,17 @@ in
     # yamllint
   ];
 
-
-  programs.direnv.enable = true;
-  programs.direnv.nix-direnv.enable = true;
   programs.home-manager.enable = true;
 
   imports = [
+    ./nvim
+    ./direnv
     ./zsh
     ./zellij
   ];
 
-  home.file.".config/nvim".source = ./nvim;
-  home.file.".config/nvim".recursive = true;
-
   home.file.bin.source = ./scripts;
   home.file.bin.recursive = true;
-
-  programs.neovim.enable = true;
-  # programs.neovim.package = pkgs.neovim-nightly;
-  programs.neovim.defaultEditor = true;
-  programs.neovim.viAlias = true;
-  programs.neovim.vimAlias = true;
-  # programs.neovim.plugins = with pkgs.vimPlugins; [ ]; # managed with LazyVim and lazy.nvim instead
 
   home.activation = lib.my.activationScripts (map toString [
     ''
