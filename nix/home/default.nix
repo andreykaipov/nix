@@ -19,8 +19,10 @@ in
     socat
     unixtools.netstat
     bat
+    autojump
     cachix
     dircolors_hex
+    fzf
     gh
     git
     graphviz
@@ -32,7 +34,10 @@ in
     nmap
     zellij
     ripgrep
+    fd
+    eza
     gnused
+    lesspipe
 
     # langs
     cargo
@@ -84,6 +89,8 @@ in
   programs.direnv.enable = true;
   programs.direnv.nix-direnv.enable = true;
   programs.home-manager.enable = true;
+
+  imports = [ ./zsh ];
 
   home.file.".config/nvim".source = ./nvim;
   home.file.".config/nvim".recursive = true;
