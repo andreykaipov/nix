@@ -6,7 +6,7 @@
   home.file.".config/nvim".recursive = true;
 
   programs.neovim.enable = true;
-  # programs.neovim.package = pkgs.neovim-nightly;
+  programs.neovim.package = pkgs.neovim-nightly;
   programs.neovim.defaultEditor = true;
   programs.neovim.viAlias = true;
   programs.neovim.vimAlias = true;
