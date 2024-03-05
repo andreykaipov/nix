@@ -2,6 +2,9 @@
 
 local M = require("lazyvim.util")
 
+M.cmp = require("util.cmp")
+M.theme = require("util.theme")
+
 -- e.g. Util.ui.fg("Statement") to fetch the color for a specific highlight group
 -- see: https://github.com/oxfist/night-owl.nvim/blob/main/lua/night-owl/theme.lua
 
@@ -92,22 +95,5 @@ function M.lsp_servers(opts)
 		null_ls = lsps_null,
 	}
 end
-
--- the night-owl theme but with some colors swapped around
--- https://github.com/oxfist/night-owl.nvim/blob/2b7e78c34e25aea841d10ebc3ee19d6d558e9ec0/lua/lualine/themes/night-owl.lua
--- can import as follows alternatively and do the overwriting but i think redefining it is easier:
--- local theme = require("lualine.themes.night-owl")
-M.colors = {
-	dark = "#010d18",
-	light = "#d6deeb",
-	magenta = "#c792ea",
-	green = "#c5e478",
-	yellow = "#e2b93d",
-	orange = "#f78c6c",
-	cyan = "#6ae9f0",
-	dark_blue = "#0e293f",
-	light_blue = "#5f7e97",
-	dark_blue_green = "#006b6b",
-}
 
 return M
