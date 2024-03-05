@@ -39,10 +39,12 @@ local theme = {
 return {
 	-- https://www.lazyvim.org/plugins/ui#lualinenvim
 	"nvim-lualine/lualine.nvim",
+	-- if VeryLazy, there will be a white bar flicker that is more annoying than the "slightly longer" startup time
+	event = "VimEnter",
+	-- lazy = false,
 	dependencies = {
 		"meuter/lualine-so-fancy.nvim",
 	},
-	event = "VeryLazy",
 	init = function()
 		vim.g.lualine_laststatus = vim.o.laststatus
 		if vim.fn.argc(-1) > 0 then

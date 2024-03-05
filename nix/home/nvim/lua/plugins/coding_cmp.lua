@@ -150,7 +150,7 @@ return {
 	{
 		"hrsh7th/nvim-cmp",
 		version = false, -- last release is way too old
-		event = "insertenter",
+		event = "InsertEnter",
 		dependencies = {
 			"hrsh7th/cmp-nvim-lsp",
 			"saadparwaiz1/cmp_luasnip",
@@ -233,6 +233,9 @@ return {
 	},
 	{
 		"github/copilot.vim",
+		event = "InsertEnter",
+		-- cmd = "Copilot",
+		-- build = ":Copilot auth",
 		config = function()
 			-- vim.keymap.set("i", "<c-j>", 'copilot#accept("\\<cr>")', {
 			-- 	expr = true,

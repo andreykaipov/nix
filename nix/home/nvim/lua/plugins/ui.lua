@@ -5,6 +5,7 @@ local util = require("util")
 return {
 	{
 		"dashboard-nvim",
+		event = "VimEnter",
 		opts = {
 			config = {
 				header = util.header(),
@@ -13,6 +14,7 @@ return {
 	},
 	{
 		"folke/which-key.nvim",
+		event = "VeryLazy",
 		opts = {
 			hidden = {},
 			layout = {
@@ -34,6 +36,7 @@ return {
 	{
 		-- removes some annoying popup
 		"rcarriga/nvim-notify",
+		event = "VeryLazy",
 		config = function(_, opts)
 			opts.background_colour = "#000000"
 			require("notify").setup(opts)
@@ -53,6 +56,7 @@ return {
 		-- https://github.com/folke/noice.nvim/wiki/A-Guide-to-Messages#messages-and-notifications-in-neovim
 		-- https://github.com/folke/noice.nvim/wiki/Configuration-Recipes
 		"folke/noice.nvim",
+		event = "VeryLazy",
 		opts = {
 			routes = {
 				-- show @recording messages
