@@ -125,10 +125,6 @@ return {
 					filetypes = { "sh", "bash" },
 					extra_args = { "-s", "-ln", "auto", "-i", "8", "-ci" },
 				}),
-				nls.builtins.formatting.taplo,
-				nls.builtins.formatting.terrafmt, -- markdown nested tf blocks
-				nls.builtins.formatting.trim_newlines.with({ filetypes = { "*" } }),
-				nls.builtins.formatting.trim_whitespace.with({ filetypes = { "*" } }),
 				nls.builtins.formatting.textlint,
 				-- nls.builtins.formatting.yamllint,
 				-- nls.builtins.formatting.yamlfix,

@@ -221,7 +221,11 @@ return {
 		end,
 	},
 	{
-		"l3mon4d3/luasnip",
+		"L3MON4D3/LuaSnip",
+		event = "InsertEnter",
+		build = "make install_jsregexp",
+		-- version = "v2.*", -- Replace <CurrentMajor> by the latest released major (first number of latest release)
+		-- build = (jit.os:find("macos") and "make install_jsregexp" or nil),
 		dependencies = {
 			{
 				"rafamadriz/friendly-snippets",
