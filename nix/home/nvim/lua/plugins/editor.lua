@@ -2,6 +2,7 @@ return {
 	{
 		-- highlights similar words when you hover over them
 		"vim-illuminate",
+		event = "VeryLazy",
 		enabled = true,
 		opts = {
 			under_cursor = false,
@@ -10,6 +11,7 @@ return {
 	{
 		-- show the current line's indent guide
 		"echasnovski/mini.indentscope",
+		event = "VeryLazy",
 		enabled = true,
 		opts = {
 			-- for more symbols, see :h ibl.config.indent.char
@@ -19,6 +21,7 @@ return {
 	{
 		-- show other lines' indent guides
 		"lukas-reineke/indent-blankline.nvim",
+		event = "VeryLazy",
 		enabled = true,
 		opts = {
 			indent = {
@@ -49,11 +52,14 @@ return {
 	{
 		-- disable included default, leap and flit are more than enough
 		"folke/flash.nvim",
+		event = "VeryLazy",
 		enabled = false,
 	},
 	{
 		-- navigation, f and t alternative
 		"ggandor/leap.nvim",
+		event = "VeryLazy",
+		dependencies = { "tpope/vim-repeat" },
 		enabled = true,
 		keys = {
 			{ "s", mode = { "n", "x", "o" }, desc = "Leap forward to" },
@@ -81,6 +87,7 @@ return {
 	{
 		-- navigation, better f and t
 		"ggandor/flit.nvim",
+		event = "VeryLazy",
 		enabled = true,
 		keys = function()
 			local ret = {}
@@ -102,14 +109,10 @@ return {
 		end,
 	},
 	{
-		-- dependency for leap
-		"tpope/vim-repeat",
-		enabled = true,
-	},
-	{
 		-- rename surround mappings from gs to gz to prevent conflict with leap
 		-- also see mini.ai below
 		"echasnovski/mini.surround",
+		event = "VeryLazy",
 		opts = {
 			highlight_duration = 5000, -- ms
 			mappings = {
@@ -151,7 +154,8 @@ return {
 	},
 	{
 		"echasnovski/mini.align",
-		version = "false",
+		event = "VeryLazy",
+		version = "*",
 		-- https://github.com/echasnovski/mini.nvim/blob/main/readmes/mini-align.md#default-config
 		opts = {
 			-- swap the default mappings around, preview seems more responsive
@@ -167,6 +171,7 @@ return {
 	{
 		-- structural search and replace
 		"cshuaimin/ssr.nvim",
+		event = "VeryLazy",
 		module = "ssr",
 		config = function()
 			require("ssr").setup({
@@ -191,13 +196,22 @@ return {
 			})
 		end,
 	},
-	{ "nvim-telescope/telescope-ui-select.nvim" },
+	{
+		"nvim-telescope/telescope-ui-select.nvim",
+		event = "VeryLazy",
+		lazy = true,
+	},
 	{
 		"nvim-telescope/telescope-file-browser.nvim",
+		event = "VeryLazy",
+		lazy = true,
 		dependencies = { "nvim-telescope/telescope.nvim", "nvim-lua/plenary.nvim" },
+		-- https://github.com/nvim-telescope/telescope-fzf-native.nvim/issues/119#issuecomment-1873653249
+		-- build = 'CFLAGS=-march=native make',
 	},
 	{
 		"nvim-telescope/telescope.nvim",
+		event = "VeryLazy",
 		opts = function()
 			local actions = require("telescope.actions")
 			local actions_layout = require("telescope.actions.layout")
@@ -272,6 +286,7 @@ return {
 	},
 	{
 		"nvim-neo-tree/neo-tree.nvim",
+		event = "VeryLazy",
 		opts = {
 			filesystem = {
 				filtered_items = {

@@ -1,16 +1,15 @@
 return {
 	{
 		-- lazy vim prefers conform, falls back to lsp for formatting
+		-- https://github.com/stevearc/conform.nvim/blob/master/doc/recipes.md#lazy-loading-with-lazynvim
 		"stevearc/conform.nvim",
+		event = { "BufWritePre" },
+		cmd = { "ConformInfo" },
 		enabled = true,
 	},
 	{
-		-- trim trailing whitespace and lines
-		"cappyzawa/trim.nvim",
-		opts = {},
-	},
-	{
 		"tpope/vim-sleuth",
+		event = { "BufRead" },
 		config = function(_, opts)
 			-- classic vim plugin, no setup() call necessary
 

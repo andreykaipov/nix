@@ -25,3 +25,7 @@ opt.directory = { root .. "/tmp/swp//" }
 
 local Util = require("lazyvim.util")
 opt.relativenumber = false
+
+-- don't show netrw since neotree will load in soon after
+vim.g.loaded_netrwPlugin = 1
+vim.g.loaded_netrw = 1
