@@ -1,5 +1,5 @@
 local Util = require("util")
-local colors = Util.colors
+local colors = Util.theme.colors
 
 local theme = {
 	normal = {
