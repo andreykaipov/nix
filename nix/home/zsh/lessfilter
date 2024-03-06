@@ -20,9 +20,9 @@ elif [ "$kind" = json ]; then
         fi
 elif [ -d "$1" ]; then
         if has_cmd eza; then
-                eza -hl --git --color=always --icons "$1"
+                eza -h --git --color=always --icons --no-user --no-permissions -l "$1"
         elif has_cmd exa; then
-                exa -hl --color=always --icons "$1"
+                eza -h --git --color=always --icons --no-user --no-permissions -l "$1"
         fi
 elif [ "$category" = text ]; then
         if has_cmd bat; then

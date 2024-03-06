@@ -1,3 +1,5 @@
+export PATH=~/bin:$PATH
+
 export FZF_DEFAULT_COMMAND=fd
 
 # https://vitormv.github.io/fzf-themes/

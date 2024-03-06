@@ -8,6 +8,10 @@
 
 bindkey -e # use emacs keymap
 
+# so new shells will get the history of all previous shells
+# other history settings are managed by home-manager
+setopt INC_APPEND_HISTORY_TIME
+
 # make things feel more like bash
 # https://github.com/zsh-users/zsh/blob/master/Functions/Zle/select-word-style
 autoload -Uz select-word-style
@@ -64,3 +68,12 @@ zstyle ':completion:*:descriptions' format '[%d]'
 zstyle ':fzf-tab:*' prefix ''
 zstyle ':fzf-tab:*' show-group brief
 zstyle ':fzf-tab:*' switch-group '<' '>'
+
+# colors when fzf tab completing
+zstyle ':completion:*' list-colors ""
+zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}" # not bash syntax so silently breaks shfmt
+
+zstyle ':completion:*' special-dirs true
+zstyle ':completion:*' list-dirs-first true
+
+setopt complete_aliases
