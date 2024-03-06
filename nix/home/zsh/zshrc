@@ -52,6 +52,9 @@ bindkey "^p" zsh-widget-noop
 # widget loaded from omz fzf plugin: https://github.com/ohmyzsh/ohmyzsh/tree/master/plugins/fzf
 bindkey "^s" fzf-file-widget
 
+# completes when cursor is in between words
+bindkey "^i" expand-or-complete-prefix
+
 # styling for Aloxaf/fzf-tab
 # https://github.com/Aloxaf/fzf-tab/wiki/Configuration#fzf-preview
 # disable sort when completing `git checkout`
