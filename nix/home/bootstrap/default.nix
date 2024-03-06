@@ -1,14 +1,16 @@
-{ inputs
-, pkgs
+{ pkgs
 , lib
 , ...
 }:
+let
+  data = {
+    nix = pkgs.nix.outPath;
+  };
+  f = lib.my.templateFile "_bootstrap.sh" ./bootstrap.sh.mustache data;
+  content = builtins.readFile f;
+in
 {
-  home.packages = with pkgs; [
-    (pkgs.writeShellScriptBin "_bootstrap.source.sh" ''
-      . ${pkgs.nix.outPath}/etc/profile.d/nix.sh
-      # export PATH=~/bin:$PATH
-    '')
+  home.packages = [
+    (pkgs.writeShellScriptBin "_bootstrap.sh" content)
   ];
-  home.file."bin/_bootstrap.sh".source = ./bootstrap.sh;
 }

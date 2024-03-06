@@ -82,9 +82,12 @@ rec {
     };
   };
 
+  # f = lib.my.templateFile "_bootstrap.sh" ./bootstrap.sh.mustache data;
+  # home.file."bin/_bootstrap.sh".source = f;
+  # home.file."bin/_bootstrap.sh".text = builtins.readFile f;
   templateFile = name: template: data:
     pkgs.stdenv.mkDerivation {
-      name = "${name}";
+      name = "${name}-templated";
 
       nativeBuildInpts = [ pkgs.mustache-go ];
 
