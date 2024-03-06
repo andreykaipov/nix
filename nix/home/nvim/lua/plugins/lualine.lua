@@ -41,12 +41,17 @@ return {
 	"nvim-lualine/lualine.nvim",
 	-- if VeryLazy, there will be a white bar flicker that is more annoying than the "slightly longer" startup time
 	event = "VimEnter",
-	enabled = false,
-	lazy = false,
+	enabled = true,
+	-- lazy = false,
 	dependencies = {
 		"meuter/lualine-so-fancy.nvim",
 	},
 	init = function()
+		-- set empty winbar on startup so that the text is already lined up
+		-- this is to prevent eye strain from the text moving around
+		local win = vim.api.nvim_get_current_win()
+		vim.wo[win].winbar = " "
+
 		vim.g.lualine_laststatus = vim.o.laststatus
 		if vim.fn.argc(-1) > 0 then
 			-- set an empty statusline till lualine loads
@@ -100,7 +105,7 @@ return {
 					cond = function()
 						local buffers = vim.api.nvim_list_bufs()
 						for _, buf in pairs(buffers) do
-							local ft = vim.api.nvim_buf_get_option(buf, "ft")
+							local ft = vim.api.nvim_get_option_value("filetype", { buf = buf })
 							if ft == "neo-tree" then
 								return false
 							end
