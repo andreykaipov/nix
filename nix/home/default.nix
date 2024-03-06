@@ -35,8 +35,9 @@ in
     ripgrep
     fd
     eza
-    gnused
     lesspipe
+    opentofu
+    pkgs-stable.terraform
 
     # langs
     cargo
@@ -45,7 +46,7 @@ in
     python311
     python311Packages.pip
     python311Packages.virtualenv
-    terraform
+    lua
 
     # lsps
     golangci-lint-langserver
@@ -82,34 +83,38 @@ in
     # yamlfix
     # yamlfmt
     # yamllint
-  ];
 
+
+  ];
   programs.home-manager.enable = true;
 
   imports = [
+    ./bootstrap
     ./nvim
     ./direnv
     ./zsh
     ./zellij
   ];
 
-  home.file.bin.source = ./scripts;
-  home.file.bin.recursive = true;
+  home.file."bin/example".text = ''but not executable'';
 
   home.activation = lib.my.activationScripts (map toString [
     ''
       mkdir -p ~/.{cache,config,local,run}
     ''
     ''
-      if ! grep -q discord /etc/group; then
-        echo "Discord group does not exist. Creating it..."
-        sudo groupadd discord
-      fi
-      if ! groups ${user} | grep -qw discord; then
-        echo "Adding ${user} to discord group..."
-        sudo usermod -a -G discord ${user}
-      fi
+      echo hello??
     ''
+    # ''
+    #   if ! grep -q discord /etc/group; then
+    #     echo "Discord group does not exist. Creating it..."
+    #     sudo groupadd discord
+    #   fi
+    #   if ! groups ${user} | grep -qw discord; then
+    #     echo "Adding ${user} to discord group..."
+    #     sudo usermod -a -G discord ${user}
+    #   fi
+    # ''
     #./scripts/ssh-generate-authorized-keys
     #./scripts/nvim-ensure-plugins
     #./scripts/tmux-ensure-plugins

@@ -19,7 +19,7 @@ M.colors = {
 
 M.customize_colorscheme = function(f)
 	local opt = vim.opt
-	opt.signcolumn = "yes:3-5" -- so new gutter signs don't move the text
+	opt.signcolumn = "auto:3-5" -- so new gutter signs don't move the text
 	opt.cursorline = true -- highlight current line
 	opt.cursorlineopt = "line,number" --
 	-- opt.colorcolumn = table.concat(vim.fn.range(81, 120), ",") -- highlight column 81 to 120

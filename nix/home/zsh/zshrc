@@ -53,7 +53,7 @@ bindkey "^p" zsh-widget-noop
 bindkey "^s" fzf-file-widget
 
 # completes when cursor is in between words
-bindkey "^i" expand-or-complete-prefix
+# bindkey "^i" expand-or-complete-prefix
 
 # styling for Aloxaf/fzf-tab
 # https://github.com/Aloxaf/fzf-tab/wiki/Configuration#fzf-preview
