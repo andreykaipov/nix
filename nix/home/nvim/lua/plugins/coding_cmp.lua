@@ -48,16 +48,11 @@ return {
 		"L3MON4D3/LuaSnip",
 		event = "InsertEnter",
 		build = "make install_jsregexp",
+		-- why does lazynvim add tab mappings here...
+		-- if i try to lazyload this plugin, their default mappings conflict with copilot's default tab...
+		-- it took way too long to figure that out
+		keys = false,
 		-- version = "v2.*", -- Replace <CurrentMajor> by the latest released major (first number of latest release)
-		-- build = (jit.os:find("macos") and "make install_jsregexp" or nil),
-		dependencies = {
-			{
-				"rafamadriz/friendly-snippets",
-				config = function()
-					require("luasnip.loaders.from_vscode").lazy_load()
-				end,
-			},
-		},
 	},
 	{
 		"github/copilot.vim",
