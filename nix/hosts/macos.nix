@@ -1,4 +1,5 @@
 { pkgs
+, lib
 , ...
 }:
 {
@@ -6,5 +7,12 @@
     coreutils
     iproute2mac
     gnused
+    findutils
   ];
+
+  home.activation = lib.my.activationScripts (map toString [
+    ''
+      echo i am a macos user
+    ''
+  ]);
 }
