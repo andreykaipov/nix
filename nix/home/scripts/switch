@@ -6,4 +6,7 @@ export NIX_CONF_DIR=~/gh/self/nix
 hostname=${1?hostname empty}
 # todo look in nix/hosts to find all available ones
 # maybe just use $HOSTNAME duh?
-home-manager --flake "nix/#$hostname" switch
+
+# curl -s 'https://prometheus.nixos.org/api/v1/query?query=channel_revision' | jq -r '.data.result[].metric | select(.status == "stable" and .variant == "primary") | .channel'
+
+nix run home-manager/release-23.11 -- switch --flake nix/#smart-toaster
