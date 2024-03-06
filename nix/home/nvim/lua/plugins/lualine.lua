@@ -41,7 +41,8 @@ return {
 	"nvim-lualine/lualine.nvim",
 	-- if VeryLazy, there will be a white bar flicker that is more annoying than the "slightly longer" startup time
 	event = "VimEnter",
-	-- lazy = false,
+	enabled = false,
+	lazy = false,
 	dependencies = {
 		"meuter/lualine-so-fancy.nvim",
 	},
