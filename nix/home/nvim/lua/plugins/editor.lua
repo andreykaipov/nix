@@ -217,17 +217,26 @@ return {
 			local actions_layout = require("telescope.actions.layout")
 			return {
 				defaults = {
-					-- theme = "center",
-					layout_strategy = "horizontal", -- vertical ?
 					sort_mru = true,
 					sorting_strategy = "ascending",
+					layout_strategy = "horizontal",
 					layout_config = {
+						center = {
+							prompt_position = "top",
+							width = 0.75,
+							height = 0.75,
+						},
 						horizontal = {
 							prompt_position = "top",
 							width = 0.75,
 							height = 0.75,
 							preview_width = 0.65,
 							preview_cutoff = 80,
+						},
+						vertical = {
+							prompt_position = "bottom",
+							width = 0.75,
+							height = 0.9,
 						},
 					},
 					border = true,
@@ -263,12 +272,14 @@ return {
 						},
 					},
 				},
+				pickers = {
+					find_files = {},
+				},
 				extensions = {
 					file_browser = {
 						theme = "ivy",
-						-- theme = "dropdown",
-						hijack_netrw = true,
 						initial_mode = "normal",
+						hijack_netrw = true,
 					},
 				},
 			}
@@ -276,11 +287,18 @@ return {
 		config = function(_, opts)
 			require("telescope").setup(opts)
 			require("telescope").load_extension("file_browser")
+			require("telescope").load_extension("notify")
 			vim.api.nvim_set_keymap(
 				"n",
-				"<leader><space>",
+				"<leader>fb",
 				":Telescope file_browser path=%:p:h select_buffer=true<CR>",
 				{ noremap = true }
+			)
+			vim.api.nvim_set_keymap(
+				"n",
+				"<localleader>n",
+				":Telescope notify theme=ivy initial_mode=normal<CR>",
+				{ desc = "Open notifications", noremap = true }
 			)
 		end,
 	},

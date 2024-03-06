@@ -19,7 +19,7 @@ M.colors = {
 
 M.customize_colorscheme = function(f)
 	local opt = vim.opt
-	opt.signcolumn = "yes:2" -- so new gutter signs don't move the text
+	opt.signcolumn = "yes:3-5" -- so new gutter signs don't move the text
 	opt.cursorline = true -- highlight current line
 	opt.cursorlineopt = "line,number" --
 	-- opt.colorcolumn = table.concat(vim.fn.range(81, 120), ",") -- highlight column 81 to 120
@@ -78,7 +78,8 @@ M.customize_colorscheme = function(f)
 			vim.api.nvim_set_hl(0, "TelescopeResultsNormal", { bg = M.colors.dark_blue })
 			vim.api.nvim_set_hl(0, "TelescopeResultsTitle", { bg = M.colors.dark_blue })
 			-- telescope misc
-			vim.api.nvim_set_hl(0, "TelescopeMatching", { fg = M.colors.orange })
+			-- vim.api.nvim_set_hl(0, "TelescopeMatching", { fg = M.colors.orange })
+			-- vim.api.nvim_set_hl(0, "TelescopeMatching", { fg = "none" })
 			vim.api.nvim_set_hl(0, "TelescopeSelection", { fg = "black", bg = M.colors.light_blue })
 			vim.api.nvim_set_hl(0, "TelescopeSelectionCaret", { fg = "black", bg = M.colors.light_blue })
 			vim.api.nvim_set_hl(0, "TelescopeMultiSelection", { bg = "red" })

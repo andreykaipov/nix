@@ -105,7 +105,10 @@ M.cmp_opts = function()
 		sorting = defaults.sorting,
 		mapping = cmp.mapping.preset.insert({
 			["<C-Space>"] = cmp.mapping.complete({ reason = cmp.ContextReason.Automatic }),
-			["<C-e>"] = cmp.mapping.abort(),
+			["<C-e>"] = cmp.mapping(function(fallback)
+				fallback()
+			end, { "i", "s" }),
+			["<C-c>"] = cmp.mapping.abort(),
 			["<C-u>"] = cmp.mapping.scroll_docs(-4), -- up docs
 			["<C-d>"] = cmp.mapping.scroll_docs(4), -- down docs
 			["<C-k>"] = cmp.mapping(M.cmp_prev), -- using tab for copilot.vim is too convenient
