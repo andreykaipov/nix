@@ -2,7 +2,7 @@
 
 local M = require("lazyvim.util")
 
-M.cmp = require("util.cmp")
+-- TODO: split out utils more to speed up load times for any plugins that require utils
 M.theme = require("util.theme")
 
 -- e.g. Util.ui.fg("Statement") to fetch the color for a specific highlight group
@@ -21,17 +21,6 @@ end
 
 function M.trim(s)
 	return s:match("^%s*(.-)%s*$")
-end
-
-function M.header()
-	local logo = M.trim([[
-┃      ⹁⹁    ⹁⹁           ┃
-┃      |'\__/'|     (`\   ┃
-┃    = | 'ㅅ' | =    ) )  ┃
-┃--- ◜◜◜----- ◜◜◜---------┃
-	]])
-	logo = string.rep("\n", 2) .. logo .. string.rep("\n", 1)
-	return vim.split(logo, "\n")
 end
 
 function M.augroup(name)

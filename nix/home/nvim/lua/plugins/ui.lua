@@ -1,5 +1,3 @@
-local util = require("util")
-
 -- maybe refer to https://github.com/loctvl842/nvim/blob/33bc9bae4a0351bf6b36e7b4e71d476e75bef2cb/lua/beastvim/plugins/ui.lua#L161
 
 return {
@@ -8,7 +6,19 @@ return {
 		event = "VimEnter",
 		opts = {
 			config = {
-				header = util.header(),
+				header = (function()
+					local trim = function(s)
+						return s:match("^%s*(.-)%s*$")
+					end
+					local logo = trim([[
+┃      ⹁⹁    ⹁⹁           ┃
+┃      |'\__/'|     (`\   ┃
+┃    = | 'ㅅ' | =    ) )  ┃
+┃--- ◜◜◜----- ◜◜◜---------┃
+					]])
+					logo = string.rep("\n", 2) .. logo .. string.rep("\n", 1)
+					return vim.split(logo, "\n")
+				end)(),
 			},
 		},
 	},
