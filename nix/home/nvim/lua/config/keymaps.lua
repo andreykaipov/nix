@@ -8,10 +8,9 @@ local opt = vim.opt
 -- -- vim.keymap.set("n", "<Space>", "<Nop>") -- unmap <Space> so we can use it as leader
 --
 --
+vim.keymap.set("n", "<localleader>l", ":set invlist<cr>", { desc = "Toggle listchars" })
 
 -- command mode stuff
-opt.showcmd = true -- show (partial) command in status line
-opt.wildmenu = true -- visual autocomplete for command menu
 vim.keymap.set("c", "<C-a>", "<Home>") -- use emacs style shortcuts in command mode
 vim.keymap.set("c", "<C-f>", "<Right>") -- see :help tcsh-style
 vim.keymap.set("c", "<C-b>", "<Left>")
@@ -34,6 +33,9 @@ vim.keymap.set("n", "n", "nzz")
 vim.keymap.set("n", "N", "Nzz")
 vim.keymap.set("n", "*", "*zz")
 vim.keymap.set("n", "#", "#zz")
+
+-- vim.keymap.set("n", "<C-d>", "<C-d>zz", { desc = "Center cursor after moving down half-page" })
+-- vim.keymap.set("n", "<C-u>", "<C-u>zz", { desc = "Center cursor after moving down half-page" })
 
 local util = require("util")
 
