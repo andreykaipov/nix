@@ -21,17 +21,18 @@ M.customize_colorscheme = function(f)
 	local opt = vim.opt
 	opt.signcolumn = "auto:3-5" -- so new gutter signs don't move the text
 	opt.cursorline = true -- highlight current line
-	opt.cursorlineopt = "line,number" --
+	opt.cursorlineopt = "line" --
 	-- opt.colorcolumn = table.concat(vim.fn.range(81, 120), ",") -- highlight column 81 to 120
 	opt.colorcolumn = "120"
 	opt.termguicolors = true
 	opt.background = "dark"
 
-	opt.guicursor = "\z
-		n-c-v:block-Cursor,\z
-		i-c-ve:ver25-Cursor-blinkwait600-blinkoff400-blinkon600,\z
-		r-cr-o:hor20-Cursor-blinkwait600-blinkoff400-blinkon600\z
-	"
+	-- see :h faq under "cursor style isn't restored" for fix
+	-- opt.guicursor = "\z
+	-- 	n-c-v:block-Cursor,\z
+	-- 	i-c-ve:ver25-Cursor-blinkwait600-blinkoff400-blinkon600,\z
+	-- 	r-cr-o:hor20-Cursor-blinkwait600-blinkoff400-blinkon600\z
+	-- "
 
 	f()
 
@@ -44,7 +45,7 @@ M.customize_colorscheme = function(f)
 			vim.api.nvim_set_hl(0, "Normal", { bg = "none" })
 			-- vim.api.nvim_set_hl(0, "Normal", { bg = M.colors.dark })
 			vim.api.nvim_set_hl(0, "ColorColumn", { bg = "#0b0b0b" })
-			vim.api.nvim_set_hl(0, "CursorLine", { bg = "#101010" })
+			vim.api.nvim_set_hl(0, "CursorLine", { bg = "#1d3d2d" })
 			vim.api.nvim_set_hl(0, "CursorLineNr", { fg = "yellow" })
 			-- dirty yellow for the cursor
 			vim.api.nvim_set_hl(0, "Cursor", { bg = "#7f7b26" }) -- #505050 #5f5b26

@@ -8,10 +8,15 @@ M.theme = require("util.theme")
 -- e.g. Util.ui.fg("Statement") to fetch the color for a specific highlight group
 -- see: https://github.com/oxfist/night-owl.nvim/blob/main/lua/night-owl/theme.lua
 
-function M.ui.bg(name)
+function M.ui.color(name)
 	local hl = vim.api.nvim_get_hl(0, { name = name })
-	local bg = hl and (hl.bg or hl.background)
-	return bg and { bg = string.format("#%06x", bg) } or nil
+	local fg = hl and hl.fg or nil
+	local bg = hl and hl.bg or nil
+	local color = {
+		fg = fg and string.format("#%06x", fg) or "default",
+		bg = bg and string.format("#%06x", bg) or "default",
+	}
+	return hl and color or nil
 end
 
 function M.trim(s)
@@ -27,6 +32,10 @@ function M.header()
 	]])
 	logo = string.rep("\n", 2) .. logo .. string.rep("\n", 1)
 	return vim.split(logo, "\n")
+end
+
+function M.augroup(name)
+	return vim.api.nvim_create_augroup("mylazyvim-" .. name, { clear = true })
 end
 
 function M.dump(x)

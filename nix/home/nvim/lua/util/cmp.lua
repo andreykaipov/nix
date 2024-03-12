@@ -76,16 +76,14 @@ M.cmp_opts = function()
 				max_height = 12,
 			},
 		},
-		sources = cmp.config.sources({
-			-- { name = "copilot" },
-			{ name = "nvim_lsp" },
-			{ name = "nvim_lsp_signature_help" },
-			{ name = "luasnip" },
-			{ name = "emoji" },
-			{ name = "path" },
-		}, {
-			{ name = "buffer" },
-		}),
+		-- sources = cmp.config.sources({
+		-- 	{ name = "nvim_lsp" },
+		-- 	{ name = "path" },
+		-- 	-- { name = "dotenv" },
+		-- 	-- luasnip is auto added by lazynvim
+		-- }, {
+		-- 	{ name = "buffer" },
+		-- }),
 		formatting = {
 			fields = { "abbr", "menu", "kind" },
 			format = function(_, item)

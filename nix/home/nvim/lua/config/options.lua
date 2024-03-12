@@ -12,8 +12,9 @@ vim.g.is_posix = 1
 
 local opt = vim.opt
 
+opt.termguicolors = true
 opt.tabstop = 8
-opt.list = false
+opt.background = "dark"
 
 local config_home = vim.env.XDG_CONFIG_HOME or vim.fn.expand("~/.config")
 local root = config_home .. "/nvim"
@@ -24,7 +25,28 @@ opt.backupdir = { root .. "/tmp/bak//" }
 opt.directory = { root .. "/tmp/swp//" }
 
 local Util = require("lazyvim.util")
-opt.relativenumber = false
+opt.number = true
+opt.relativenumber = true -- <leader>uL to toggle
+opt.scrolloff = 10
+
+opt.list = false
+opt.listchars = {
+	tab = "→ ",
+	space = "·",
+	eol = "↲",
+	nbsp = "␣",
+	trail = "•",
+	extends = "⟩",
+	precedes = "⟨",
+}
+
+opt.signcolumn = "auto:3-5" -- so new gutter signs don't move the text
+opt.cursorline = true -- highlight current line
+opt.cursorlineopt = "line,number" --
+opt.colorcolumn = "120" -- table.concat(vim.fn.range(81, 120), ",") -- highlight column 81 to 120
+
+opt.showcmd = true -- show (partial) command in status line
+opt.wildmenu = true -- visual autocomplete for command menu
 
 -- don't show netrw since neotree will load in soon after
 vim.g.loaded_netrwPlugin = 1
