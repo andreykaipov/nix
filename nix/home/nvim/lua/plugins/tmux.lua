@@ -1,19 +1,13 @@
-local util = require("util")
-
 return {
 	{
 		"andreykaipov/tmux-colorscheme-sync.nvim",
 		event = "ColorScheme",
-		dependencies = {
-			-- "levoouh/tint.nvim",
-			-- "lukas-reineke/indent-blankline.nvim", -- i erase some highlight groups this apparently depends on
-		},
-		version = "*",
-		dev = true,
+		-- dependencies = { "lukas-reineke/indent-blankline.nvim" }, -- i erase some highlight groups this apparently depends on,
 		opts = {
 			tmux_source_file = "~/.config/tmux/styles.conf",
 		},
 		config = function(_, opts)
+			local util = require("util")
 			require("tmux-colorscheme-sync").setup(opts)
 			vim.api.nvim_create_autocmd({ "FocusLost" }, {
 				group = util.augroup("tmux-transparency-1"),
