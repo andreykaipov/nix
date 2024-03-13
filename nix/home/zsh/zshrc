@@ -5,22 +5,45 @@
 # https://thevaluable.dev/zsh-line-editor-configuration-mouseless
 # https://sgeb.io/posts/zsh-zle-custom-widgets
 # https://zsh.sourceforge.io/Doc/Release/Zsh-Line-Editor.html#User_002dDefined-Widgets
-
 bindkey -e # use emacs keymap
 
-# so new shells will get the history of all previous shells
 # other history settings are managed by home-manager
 setopt INC_APPEND_HISTORY_TIME
 
-# make things feel more like bash
-# https://github.com/zsh-users/zsh/blob/master/Functions/Zle/select-word-style
+# make things feel more like my old bash
+# select-word-style bash is not good enough
+# https://zsh.sourceforge.io/Doc/Release/User-Contributions.html#index-select_002dword_002dstyle
+# so new shells will get the history of all previous shells
 autoload -Uz select-word-style
-select-word-style bash
+select-word-style bash # words are alphanumeric only
+export WORDCHARS=''
+# using widgets beginning with . will prevent it from being overwritten by zsh-autocomplete:
+# https://github.com/marlonrichert/zsh-autocomplete/tree/main#preserve-zsh-default-keybindings
+# however we can't change the zstyle of the . widgets, so we redefine them
+#
+# whitespace as word boundary to mimic bash readline's unix-word-rubout
+zle -N .unix-word-rubout backward-kill-word-match
+zstyle ':zle:.unix-word-rubout' word-style whitespace
 
-# default ^u seems to kill entire line, i only want to kill it from cursor
+# a more selective word kill if i get tired of default vi-backward-kill-word
+# what i really want is specified [:space:] AND unspecified [:punct:], but whatever I've tried for too long
+zle -N .vi-backward-kill-word-permissive backward-kill-word-match
+zstyle ':zle:.vi-backward-kill-word-permissive' word-style unspecified
+zstyle ':zle:.vi-backward-kill-word-permissive' word-class '-/='
+
+bindkey "^w" .unix-word-rubout
+bindkey "^[^?" backward-kill-word # alt-backspace
+bindkey "^[^h" backward-kill-word # alt-backspace again
 bindkey "^u" backward-kill-line
-# default for ^f is forward-char, but that's dumb, plus this is nicer for autosuggestions
-bindkey "^f" forward-word
+bindkey "^d" delete-char
+bindkey "^[d" kill-word
+# i know it doesn't make any sense but i like it
+bindkey '^a' beginning-of-line
+bindkey '^e' end-of-line
+bindkey '^[f' emacs-forward-word
+bindkey '^[b' emacs-backward-word
+bindkey '^f' vi-forward-char
+bindkey '^b' vi-backward-char
 
 # like ^x^e in emacs
 autoload -Uz edit-command-line
@@ -30,21 +53,23 @@ bindkey "^[e" edit-command-line
 # better history
 # i like ^j to go forward in history, but if there's a buffer we should complete
 # makes it feel like my nvim lsp setup
-function _complete-or-history-forward() {
-        if [[ $LASTWIDGET == history-search-backward ]]; then
+._complete-or-history-forward() {
+        if [[ $LASTWIDGET == h\istory-search-backward ]]; then
                 zle history-search-forward
-        elif [[ $LASTWIDGET == _complete-or-history-forward ]]; then
+        elif [[ $LASTWIDGET == ._complete-or-history-forward ]]; then
                 zle history-search-forward
         elif [[ -n $BUFFER ]]; then
                 # widget from fzf-tab
                 zle fzf-tab-complete
+        elif [[ -z "$BUFFER" ]]; then
+                zle fzf-history-widget
         else
-                zle history-search-forward
+                echo "wtf?"
         fi
 }
-zle -N _complete-or-history-forward
-bindkey "^k" history-search-backward
-bindkey "^j" _complete-or-history-forward
+zle -N ._complete-or-history-forward
+bindkey "^k" .history-search-backward
+bindkey "^j" ._complete-or-history-forward
 zsh-widget-noop() {}
 zle -N zsh-widget-noop
 bindkey "^n" zsh-widget-noop
@@ -54,10 +79,47 @@ bindkey "^p" zsh-widget-noop
 # so we don't need ^s for forward inc search; use it for file search
 # because the default ^t is too far away for my chubby fingers
 # widget loaded from omz fzf plugin: https://github.com/ohmyzsh/ohmyzsh/tree/master/plugins/fzf
+# bindkey "^t" zsh-widget-noop
+# apparently ^s is forbidden because of tErMiNaL fLoW cOnTrOl but we live on the edge
+setopt noflowcontrol
 bindkey "^s" fzf-file-widget
 
-# completes when cursor is in between words
-# bindkey "^i" expand-or-complete-prefix
+# if zsh-autosuggestion has something for us, we want to complete it with tab
+# otherwise, start a fzf completion. we can also use ^j to force fzf completion (see above)
+# this makes zsh feel more like copilot.vim tab
+._complete-suggestion-or-fzf() {
+        if [[ -n "$_ZSH_AUTOSUGGEST_LAST_HIGHLIGHT" ]]; then
+                zle end-of-line
+        else
+                zle fzf-tab-complete
+        fi
+}
+zle -N ._complete-suggestion-or-fzf
+bindkey '^i' fzf-tab-complete # eh maybe the above it's not that great, ^e is plenty convenient
+bindkey '\t' fzf-tab-complete # this one overrides zsh-autocomplete's tab
+
+# emulate Bash $IGNOREEOF behavior
+# sometimes i spam ^d, so this is idiot proof
+# plus if I have a buffer, I can always get classic tab completion (no fzf with ^d too!)
+# ps: actually this is super annoying
+bash-ctrl-d() {
+        if [[ -z $BUFFER ]]; then
+                if [[ -z $IGNOREEOF || $IGNOREEOF == 0 ]]; then exit; fi
+                if [[ $LASTWIDGET == bash-ctrl-d ]]; then
+                        ((__bash_ignore_eof--))
+                        echo "Press Ctrl-D $__bash_ignore_eof more time(s) to exit" >&2
+                        if [[ $__bash_ignore_eof -eq 0 ]]; then exit; fi
+                else
+                        ((__bash_ignore_eof = IGNOREEOF - 1))
+                fi
+        else
+                zle delete-char-or-list
+        fi
+}
+zle -N bash-ctrl-d
+bindkey '^d' bash-ctrl-d
+setopt ignore_eof
+# export IGNOREEOF=2
 
 # styling for Aloxaf/fzf-tab
 # https://github.com/Aloxaf/fzf-tab/wiki/Configuration#fzf-preview
@@ -68,12 +130,51 @@ zstyle ':completion:*:descriptions' format '[%d]'
 zstyle ':fzf-tab:*' prefix ''
 zstyle ':fzf-tab:*' show-group brief
 zstyle ':fzf-tab:*' switch-group '<' '>'
+# very cool, i can pipe anything into ftb-tmux-popup btw!
+zstyle ':fzf-tab:*' fzf-command ftb-tmux-popup
+zstyle ':fzf-tab:complete:*:*' popup-min-size 150 12
+zstyle ':fzf-tab:complete:*:*' popup-smart-tab no
 
 # colors when fzf tab completing
 zstyle ':completion:*' list-colors ""
 zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}" # not bash syntax so silently breaks shfmt
-
 zstyle ':completion:*' special-dirs true
 zstyle ':completion:*' list-dirs-first true
 
+# my ll is aliased to eza ..., and without this, zsh gives me weird completions
 setopt complete_aliases
+
+# vim-tpipeline has a quirk where if i open up vi, but quickly change panes,
+# it'll set the pane title of the pane i switched to with my vim statusline.
+# this hook clears the pane title i switched to before i run a cmd just to clean up the clutter.
+# see https://github.com/rothgar/mastering-zsh/blob/master/docs/config/hooks.md
+# set-empty-tmux-pane-title() { tmux select-pane -T ''; }
+# add-zsh-hook preexec set-empty-tmux-pane-title
+
+function prompt_almostontop() {
+        if [ "x$ALMOSONTOP" = xfalse ]; then return; fi
+        p10k segment -i 'LOCK_ICON' -r -b '' -f '#ffa500'
+}
+function instant_prompt_almostontop() {
+        prompt_almostontop
+}
+
+########
+########
+########
+
+# revert up/down arrows from zsh-autocomplete:
+# https://github.com/marlonrichert/zsh-autocomplete#reset-history-key-bindings-to-zsh-default
+# no clue how this works, is that a special prefix used by the plugin?
+() {
+   local -a prefix=( '\e'{\[,O} )
+   local -a up=( ${^prefix}A ) down=( ${^prefix}B )
+   local key=
+   for key in $up[@]; do bindkey "$key" up-line-or-history; done
+   for key in $down[@]; do bindkey "$key" down-line-or-history; done
+}
+zstyle ':autocomplete:*complete*:*' insert-unambiguous no
+zstyle ':autocomplete:*history*:*' insert-unambiguous no
+zstyle ':autocomplete:menu-search:*' insert-unambiguous no
+zstyle ':autocomplete:*' delay 0.5
+zstyle ':completion:*:*' matcher-list 'm:{[:lower:]-}={[:upper:]_}' '+r:|[.]=**'

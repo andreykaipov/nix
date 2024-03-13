@@ -1,6 +1,6 @@
 export PATH=~/bin:$PATH
 
-export FZF_DEFAULT_COMMAND=fd
+export FZF_DEFAULT_COMMAND='fd --type f --strip-cwd-prefix --hidden --follow --exclude .git'
 
 # https://vitormv.github.io/fzf-themes/
 export FZF_DEFAULT_OPTS=$FZF_DEFAULT_OPTS'
@@ -10,6 +10,9 @@ export FZF_DEFAULT_OPTS=$FZF_DEFAULT_OPTS'
         --color=border:#262626,label:#aeaeae,query:#d9d9d9
         --preview-window="border-rounded" --prompt="@ " --marker="◆" --pointer=">"
         --separator="" --scrollbar="│" --layout="reverse"'
+
+# https://www.joshmedeski.com/posts/popup-history-with-tmux-and-fzf
+export FZF_TMUX_OPTS="-p"
 
 export BAT_STYLE=numbers,changes
 
