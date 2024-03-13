@@ -66,6 +66,7 @@
     shellAliases = {
       ll = "eza --group --header --group-directories-first --long --git --all --icons";
       gs = "git status";
+      cat = "bat";
     };
     shellGlobalAliases = {
       UUID = "$(uuidgen | tr -d \\n)";
