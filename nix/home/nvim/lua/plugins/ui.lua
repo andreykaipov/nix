@@ -46,23 +46,36 @@ return {
 	{
 		-- https://github.com/folke/noice.nvim/wiki/A-Guide-to-Messages#messages-and-notifications-in-neovim
 		-- https://github.com/folke/noice.nvim/wiki/Configuration-Recipes
+		-- https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/plugins/ui.lua#L288
 		"folke/noice.nvim",
 		event = "VeryLazy",
 		opts = {
+			messages = {
+				enabled = true,
+				view = "notify",
+				view_error = "mini",
+				view_warn = "mini",
+				view_history = "popup",
+				view_search = "virtualtext",
+			},
+			commands = {
+				history = {
+					view = "popup", -- :Noice, instead of split
+				},
+			},
 			routes = {
-				-- show @recording messages
-				{
-					view = "notify",
-					filter = { event = "msg_showmode" },
-				},
-				-- hide presence.nvim stuff
-				{
-					filter = {
-						kind = "echomsg",
-						find = "presence",
-					},
-					opts = { skip = true },
-				},
+				-- moves most bubbles to the mini view in the bottom right:
+				-- https://github.com/folke/noice.nvim/issues/71
+				-- {
+				-- 	filter = {
+				-- 		event = "msg_show",
+				-- 		["not"] = {
+				-- 			kind = { "", "confirm", "confirm_sub" },
+				-- 		},
+				-- 	},
+				-- 	view = "mini",
+				-- 	-- opts = { skip = true },
+				-- },
 				-- hide the search?
 				{
 					filter = {
@@ -74,6 +87,14 @@ return {
 						},
 					},
 					view = "mini",
+				},
+				-- hide presence.nvim stuff
+				{
+					filter = {
+						kind = "echomsg",
+						find = "presence",
+					},
+					opts = { skip = true },
 				},
 			},
 		},
