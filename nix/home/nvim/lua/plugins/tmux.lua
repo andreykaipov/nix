@@ -2,24 +2,36 @@ return {
 	{
 		"andreykaipov/tmux-colorscheme-sync.nvim",
 		event = "ColorScheme",
-		-- dependencies = { "lukas-reineke/indent-blankline.nvim" }, -- i erase some highlight groups this apparently depends on,
 		opts = {
 			tmux_source_file = "~/.config/tmux/styles.conf",
 		},
 		config = function(_, opts)
 			local util = require("util")
 
+			-- vim.api.nvim_create_autocmd({ "ColorScheme" }, {
+			-- 	group = util.augroup("tmux-colorscheme-black"),
+			-- 	pattern = "*",
+			-- 	desc = "No matter the colorscheme, set the bg of Normal to black",
+			-- 	callback = function()
+			-- 		vim.api.nvim_set_hl(0, "Normal", { bg = "black" })
+			-- 	end,
+			-- })
+
+			local normal = {}
+			local normal_nc = {}
+			local line_nr = {}
 			vim.api.nvim_create_autocmd({ "ColorScheme" }, {
-				group = util.augroup("tmux-colorscheme-black"),
+				group = util.augroup("get-original-colors"),
 				pattern = "*",
-				desc = "No matter the colorscheme, set the bg of Normal to black",
+				desc = "",
 				callback = function()
-					vim.api.nvim_set_hl(0, "Normal", { bg = "black" })
+					normal = util.ui.color("Normal")
+					normal_nc = util.ui.color("NormalNC")
+					line_nr = util.ui.color("LineNr")
 				end,
 			})
-
 			vim.api.nvim_create_autocmd({ "FocusLost" }, {
-				group = util.augroup("tmux-transparency-1"),
+				group = util.augroup("tmux-make-transparent"),
 				pattern = "*",
 				desc = "Sets some nvim highlight groups to none",
 				callback = function()
@@ -31,6 +43,16 @@ return {
 					-- might just use float windows for it anyway
 					-- vim.api.nvim_set_hl(0, "NeoTreeNormal", { bg = "none" })
 					-- vim.api.nvim_set_hl(0, "NeoTreeNormalNC", { bg = "none" })
+				end,
+			})
+			vim.api.nvim_create_autocmd({ "FocusGained" }, {
+				group = util.augroup("tmux-restore-transparency"),
+				pattern = "*",
+				desc = "Restores transparency to original colors of colorscheme",
+				callback = function()
+					vim.api.nvim_set_hl(0, "Normal", { bg = normal.bg })
+					vim.api.nvim_set_hl(0, "NormalNC", { bg = normal_nc.bg })
+					vim.api.nvim_set_hl(0, "LineNr", { bg = line_nr.bg })
 				end,
 			})
 
