@@ -8,7 +8,16 @@ return {
 		},
 		config = function(_, opts)
 			local util = require("util")
-			require("tmux-colorscheme-sync").setup(opts)
+
+			vim.api.nvim_create_autocmd({ "ColorScheme" }, {
+				group = util.augroup("tmux-colorscheme-black"),
+				pattern = "*",
+				desc = "No matter the colorscheme, set the bg of Normal to black",
+				callback = function()
+					vim.api.nvim_set_hl(0, "Normal", { bg = "black" })
+				end,
+			})
+
 			vim.api.nvim_create_autocmd({ "FocusLost" }, {
 				group = util.augroup("tmux-transparency-1"),
 				pattern = "*",
@@ -24,6 +33,8 @@ return {
 					-- vim.api.nvim_set_hl(0, "NeoTreeNormalNC", { bg = "none" })
 				end,
 			})
+
+			require("tmux-colorscheme-sync").setup(opts)
 		end,
 	},
 	{

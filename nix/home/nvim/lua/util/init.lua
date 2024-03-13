@@ -13,8 +13,8 @@ function M.ui.color(name)
 	local fg = hl and hl.fg or nil
 	local bg = hl and hl.bg or nil
 	local color = {
-		fg = fg and string.format("#%06x", fg) or "default",
-		bg = bg and string.format("#%06x", bg) or "default",
+		fg = fg and string.format("#%06x", fg) or "none",
+		bg = bg and string.format("#%06x", bg) or "none",
 	}
 	return hl and color or nil
 end
