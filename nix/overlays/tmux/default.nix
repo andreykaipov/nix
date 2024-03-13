@@ -1,13 +1,13 @@
 self: super: {
   tmux = super.tmux.overrideAttrs (old: rec {
     pname = old.pname;
-    version = "ee3f1d25d568a425420cf14ccba6a1b2a012f7dd";
+    version = "b54e1fc4f73b34f3f9c671289fef8cbbc7771d9c";
 
     src = super.fetchFromGitHub {
       owner = "tmux";
       repo = "tmux";
       rev = version;
-      sha256 = "sha256-LLQ2/SYv/4oQpygiA9+HFjLRODi7Z4EWnkNk9CvMRro=";
+      sha256 = "sha256-S+BGRaEceN2rG/RNcVTJjwvzPa1JSMtDn1hu8F0Gkr8=";
     };
 
     patches = [
