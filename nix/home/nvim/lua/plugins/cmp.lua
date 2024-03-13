@@ -61,6 +61,17 @@ return {
 				return col ~= 0
 					and vim.api.nvim_buf_get_lines(0, line - 1, line, true)[1]:sub(col, col):match("%s") == nil
 			end
+			local has_words_after = function()
+				return vim.api.nvim_get_current_line():sub(vim.fn.col("."), -1):match("%S") ~= nil
+
+				-- could probably just check if cursor is at the end of the line with vim.fn.col(".") == vim.fn.col("$")
+				-- but looking at the chars to ensure they're nonwhitespace is better i guess, hope not too slow
+				-- cmp.unpack = unpack or table.unpack
+				-- local row, col = unpack(vim.api.nvim_win_get_cursor(0))
+				-- local current = vim.api.nvim_buf_get_lines(0, row - 1, row, true)[1]
+				-- local chars_under_and_after_cursor = current:sub(col + 1, -1)
+				-- return chars_under_and_after_cursor:match("%S") ~= nil
+			end
 			local cmp_next = function()
 				-- see :h cmp.select_next_item
 				if cmp.visible() then
@@ -127,12 +138,21 @@ return {
 							-- if there's only one choice
 							-- if #cmp.get_entries() == 1 then
 							-- cmp.confirm({ behavior = cmp.ConfirmBehavior.Replace, select = true })
-							if cmp.get_selected_entry() then
-								-- selected enetry seems to apply to preselected entries too, so we should use select true
+							if has_words_after() then
+								-- print("words after")
+								-- very annoying to go back earlier in the line and edit it, and then press enter
+								-- only to complete the text instead of inserting a newline, like in comments
+								cmp.abort()
+								fallback()
+							elseif cmp.get_selected_entry() then
+								-- print("selected entry")
+								-- selected enetry seems to apply to both preselected entries and explicitly
+								-- selected entries too, so we should use select true
 								cmp.confirm({ behavior = cmp.ConfirmBehavior.Insert, select = true })
-							elseif cmp.get_active_entry() then
-								-- active entry seems to mean it was explicitly selected so we should use select = false
-								cmp.confirm({ behavior = cmp.ConfirmBehavior.Insert, select = false })
+							-- elseif cmp.get_active_entry() then
+							-- 	print("active entry")
+							-- 	-- active entry seems to mean it was explicitly selected so we should use select = false
+							-- 	cmp.confirm({ behavior = cmp.ConfirmBehavior.Insert, select = false })
 							else
 								cmp.abort()
 								fallback()
