@@ -1,4 +1,5 @@
 #!/bin/sh
+# shellcheck source=/dev/null
 # vi: ft=sh
 #
 # Similar to my old ~/.shlogin style of login, except it uses Zellij instead of tmux.
@@ -12,10 +13,61 @@
 #
 # It's supposed to be invoked by a very minimal shell.
 
+# 1. If there's more than one agent running, terminate them all.
+# 2. Read ~/.cache/ssh/vars for the connection info.
+# 3. If `ssh-add -l` exits 2, we've failed to connect.
+#    Either the socket has been cleaned up, the process was killed, or the agent
+#    is just not running. In any case, kill the remaining agent process if any,
+#    and start up a new agent, writing its connection info to
+#    ~/.cache/ssh/vars.
+# 4. Otherwise, we're good and we add our keys.
+ensure_ssh_agent() {
+        mkdir -p ~/.cache/ssh
+        mkdir -p ~/.cache/ssh/sockets
+        cd ~/.cache/ssh || return
+
+        ssh_agent_pids="$(ps -e | awk '$NF == "ssh-agent" {print $1}')"
+        if [ "$(echo "$ssh_agent_pids" | wc -l)" -gt 1 ]; then
+                echo "More than one SSH agent is running. Terminating them all."
+                echo "$ssh_agent_pids" | xargs kill -TERM
+        fi
+
+        echo "Setting up SSH agent..."
+        if [ -r ./vars ]; then
+                echo "Previous SSH agent vars exist, using them..."
+                . ./vars
+        fi
+
+        # see http://man7.org/linux/man-pages/man1/ssh-add.1.html#EXIT_STATUS
+        ssh-add -l >/dev/null
+        ssh_status="$?"
+
+        if [ "$ssh_status" -eq 2 ]; then
+                echo "Was unable to contact the SSH agent, restarting..."
+                kill -TERM "$ssh_agent_pids" 2>/dev/null
+                echo "Starting ssh-agent"
+                (
+                        umask 0066
+                        ssh-agent -s >vars
+                )
+                . ./vars
+        else
+                echo "Looks like it was already running!"
+        fi
+
+        cd - || return
+
+        ssh-add ~/.config/ssh/keys/*.pem
+}
+
 ensure_tmux() {
         if [ -n "$TMUX" ]; then
                 echo "We're already inside of a tmux session"
-                exit
+                # If this login init script was ran again, make sure our Tmux session
+                # has got the latest SSH agent vars for any new panes
+                tmux set-environment -gt local SSH_AUTH_SOCK "$SSH_AUTH_SOCK"
+                tmux set-environment -gt local SSH_AGENT_PID "$SSH_AGENT_PID"
+                return
         fi
 
         if tmux ls -F '#{session_name}' | grep -qx local; then
@@ -63,13 +115,16 @@ main() {
         # on macos, sets system paths
         # has to happen before zshenv because it appends its paths ahead of ours
         if [ -x /usr/libexec/path_helper ]; then
+                echo "Setting system paths (macOS)"
                 eval "$(/usr/libexec/path_helper -s)"
         fi
 
-        # shellcheck source=/dev/null
-        . "{{ nix }}"/etc/profile.d/nix.sh
+        nix="{{ nix }}"/etc/profile.d/nix.sh
+        echo "Sourcing $nix"
+        . "$nix"
 
         cd ~ || exit
+        ensure_ssh_agent
         ensure_mux
         # exec bash
 }
