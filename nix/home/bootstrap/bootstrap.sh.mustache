@@ -12,44 +12,67 @@
 #
 # It's supposed to be invoked by a very minimal shell.
 
-ensure_zellij() {
-        if [ -n "$ZELLIJ" ]; then
-                echo "We're already inside of a Zellij session"
-                exit
-        fi
+ensure_tmux() {
+	if [ -n "$TMUX" ]; then
+		echo "We're already inside of a tmux session"
+		exit
+	fi
 
-        if zellij list-sessions -ns | grep -qx local; then
-                echo "Zellij session 'local' already exists"
-                echo "If you'd really like to, we'll attach into it in 3 seconds"
-                echo "Otherwise, send ^C"
-                sleep 3
-                exec zellij attach local
-        else
-                echo "Creating new Zellij session 'local'"
-                exec zellij --session local
-        fi
+	if tmux ls -F '#{session_name}' | grep -qx local; then
+		echo "Tmux session 'local' already exists"
+		echo "If you'd really like to, we'll attach into it in 1 seconds"
+		echo "Otherwise, send ^C"
+		sleep 1
+		exec tmux -T 256 attach -t local
+	else
+		echo "Creating new tmux session 'local'"
+		exec tmux -T 256 -f ~/.config/tmux/core.conf new -s local
+	fi
+}
+
+ensure_zellij() {
+	if [ -n "$ZELLIJ" ]; then
+		echo "We're already inside of a Zellij session"
+		exit
+	fi
+
+	if zellij list-sessions -ns | grep -qx local; then
+		echo "Zellij session 'local' already exists"
+		echo "If you'd really like to, we'll attach into it in 3 seconds"
+		echo "Otherwise, send ^C"
+		sleep 1
+		exec zellij attach local
+	else
+		echo "Creating new Zellij session 'local'"
+		exec zellij --session local
+	fi
+}
+
+ensure_mux() {
+	# ensure_zellij
+	ensure_tmux
 }
 
 main() {
-        if [ -z "$BOOTSTRAP" ]; then
-                echo "BOOTSTRAP is not set. Set if you really want to run this."
-                sleep 5
-                exit 1
-        fi
+	if [ -z "$BOOTSTRAP" ]; then
+		echo "BOOTSTRAP is not set. Set if you really want to run this."
+		sleep 5
+		exit 1
+	fi
 
-        # on macos, sets system paths
-        # has to happen before zshenv because it appends its paths ahead of ours
-        # export PATH=~/bin:"$PATH"
-        if [ -x /usr/libexec/path_helper ]; then
-                eval "$(/usr/libexec/path_helper -s)"
-        fi
+	# on macos, sets system paths
+	# has to happen before zshenv because it appends its paths ahead of ours
+	# export PATH=~/bin:"$PATH"
+	if [ -x /usr/libexec/path_helper ]; then
+		eval "$(/usr/libexec/path_helper -s)"
+	fi
 
-        # shellcheck source=/dev/null
-        . "{{ nix }}"/etc/profile.d/nix.sh
+	# shellcheck source=/dev/null
+	. "{{ nix }}"/etc/profile.d/nix.sh
 
-        cd ~ || exit
-        ensure_zellij
-        # exec bash
+	cd ~ || exit
+	ensure_mux
+	# exec bash
 }
 
 main "$@"
