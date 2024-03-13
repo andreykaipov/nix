@@ -5,8 +5,8 @@ index edda0d6b..5e5c1702 100644
 @@ -1,6 +1,6 @@
  # configure.ac
 
--AC_INIT([tmux], next-3.4)
-+AC_INIT([tmux], andrey-custom-3.4)
+-AC_INIT([tmux], next-3.5)
++AC_INIT([tmux], andrey-custom-3.5)
  AC_PREREQ([2.60])
 
  AC_CONFIG_AUX_DIR(etc)
