@@ -65,6 +65,7 @@
     '';
     shellAliases = {
       ll = "eza --group --header --group-directories-first --long --git --all --icons";
+      g = "git";
       gs = "git status";
       cat = "bat";
     };
