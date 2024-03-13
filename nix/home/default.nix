@@ -30,7 +30,6 @@ in
     yq-go
     mutagen
     devenv
-    tmux
     nmap
     ripgrep
     fd
