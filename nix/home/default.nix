@@ -85,14 +85,16 @@ in
 
 
   ];
+
   programs.home-manager.enable = true;
 
   imports = [
     ./bootstrap
+    ./ssh
     ./nvim
     ./direnv
     ./zsh
-    ./zellij
+    ./tmux
   ];
 
   home.file."bin/example".text = ''but not executable'';
