@@ -71,27 +71,38 @@ return {
 	{
 		-- rename surround mappings from gs to gz to prevent conflict with leap
 		-- also see mini.ai below
+		-- https://github.com/echasnovski/mini.nvim/blob/main/doc/mini-surround.txt#L63
 		"echasnovski/mini.surround",
 		event = "VeryLazy",
 		opts = {
 			highlight_duration = 5000, -- ms
+			-- lazyvim sets these to gs, but i'm fine with mini.surround's actual defaults
 			mappings = {
-				add = "gza", -- Add surrounding in Normal and Visual modes
-				delete = "gzd", -- Delete surrounding
-				find = "gzf", -- Find surrounding (to the right)
-				find_left = "gzF", -- Find surrounding (to the left)
-				highlight = "gzh", -- "Highlight" surrounding
-				replace = "gzr", -- Replace surrounding
-				update_n_lines = "gzn", -- Update `n_lines`
+				add = "sa", -- Add surrounding in Normal and Visual modes
+				delete = "sd", -- Delete surrounding
+				find = "sf", -- Find surrounding (to the right)
+				find_left = "sF", -- Find surrounding (to the left)
+				highlight = "sh", -- Highlight surrounding
+				replace = "sr", -- Replace surrounding
+				update_n_lines = "sn", -- Update `n_lines`
+
+				suffix_last = "l", -- Suffix to search with "prev" method
+				suffix_next = "n", -- Suffix to search with "next" method
 			},
 		},
 	},
 	{
-		-- gcc - toggle comment in current line
-		-- gc - toggle comment in normal and vis
-		-- gc - comment textobject like dgc, gc5j, or gcva{
 		"echasnovski/mini.comment",
 		event = "VeryLazy",
+		opts = {
+			mappings = {
+				-- works also in visual mode if mapping differs from `comment_visual`
+				textobject = "gc", -- like dgc ygc or even gcgc (the second gc)
+				comment = "gc", -- toggle comment like gcip or gc5j gcva( or gcgc also (the first gc)
+				comment_line = "C", -- toggle comment on current line
+				comment_visual = "C", -- toggle comment on visual selection
+			},
+		},
 	},
 	{
 		"echasnovski/mini.pairs",
