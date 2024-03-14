@@ -2,7 +2,6 @@
 -- e.g. zsh is close enough to bash that we want it to be recognized by bash-ls & treesitter
 vim.filetype.add({
 	extension = {
-		hcl = "terraform",
 		zsh = "bash",
 		sh = "sh", -- force sh-files with *sh-shebang to still get sh as filetype
 	},

@@ -9,10 +9,8 @@ return {
 				lua_ls = {},
 				bashls = {},
 				golangci_lint_ls = {},
-				terraformls = {
-					-- overwrite default lazyvim tf lang extension to also include hcl files
-					filetypes = { "terraform", "terraform-vars", "hcl" },
-				},
+				terraformls = {},
+				-- nixd = {},
 				nil_ls = {
 					autostart = true,
 					settings = {
@@ -23,7 +21,6 @@ return {
 						},
 					},
 				},
-				-- nixd = {},
 			},
 		},
 		-- stylua: ignore
@@ -60,24 +57,35 @@ return {
 			-- rather than list extending we overwrite them to have finer control
 			-- i don't like every default none ls source lazynvim includes for us
 			opts.sources = {
-				nls.builtins.code_actions.statix,
+				nls.builtins.diagnostics.statix,
+				nls.builtins.diagnostics.deadnix,
 				nls.builtins.formatting.stylua,
 				nls.builtins.formatting.shfmt.with({
 					filetypes = { "sh", "bash" },
 					extra_args = { "-s", "-ln", "auto", "-i", "8", "-ci" },
 				}),
-				nls.builtins.formatting.textlint,
-				nls.builtins.hover.dictionary,
 				nls.builtins.hover.printenv,
-				nls.builtins.formatting.terraform_fmt,
-				nls.builtins.diagnostics.terraform_validate,
+				nls.builtins.formatting.terraform_fmt.with({
+					filetypes = { "terraform", "tf", "terraform-vars", "hcl" },
+				}),
+				nls.builtins.diagnostics.terraform_validate.with({
+					filetypes = { "terraform", "tf", "terraform-vars", "hcl" },
+				}),
 				nls.builtins.formatting.goimports,
 				nls.builtins.formatting.gofumpt,
-
 				-- if using a lightbulb plugin like lspsaga, it will check every line if code actions like
 				-- the following are available. make sure to silence those logs in noice
 				nls.builtins.code_actions.gomodifytags,
 				nls.builtins.code_actions.impl,
+				--
+				nls.builtins.diagnostics.yamllint,
+				-- nls.builtins.formatting.yamlfix,
+				-- nls.builtins.formatting.yamlfmt,
+				--
+				-- nls.builtins.diagnostics.markdownlint,
+				-- nls.builtins.diagnostics.markdownlint_cli2,
+				nls.builtins.formatting.textlint,
+				nls.builtins.hover.dictionary,
 			}
 
 			-- table.sort(opts.sources, function(a, b)
@@ -88,6 +96,20 @@ return {
 			-- end
 		end,
 	},
+	{
+		"mfussenegger/nvim-lint",
+		opts = function(_, opts)
+			-- same idea here, i don't extend this table because i don't like the defaults
+			-- and in some cases it's unnecessary because lsps do the same thing, like shellcheck in bashls
+			opts.linters_by_ft = {
+				nix = { "nix" },
+				terraform = { "terraform_validate" },
+				tf = { "terraform_validate" },
+			}
+			return opts
+		end,
+	},
+
 	-- 	"nvimdev/lspsaga.nvim",
 	-- 	event = "LspAttach",
 	-- 	enabled = true,
