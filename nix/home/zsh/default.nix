@@ -1,12 +1,9 @@
 { inputs
 , config
-, lib
 , pkgs
 , ...
 }:
 {
-  # config = lib.mkIf config.programs.zsh.enable { }
-
   programs.zsh = {
     enable = true;
     autocd = true;
@@ -78,25 +75,3 @@
   # see LESSOPEN in zshenv
   home.file."bin/lessfilter".source = ./lessfilter;
 }
-
-# oh-my-zsh.enable = false;
-# oh-my-zsh.plugins = [
-#   # https://github.com/ohmyzsh/ohmyzsh/wiki/Plugins
-#   "aliases"
-#   "asdf"
-#   "autojump"
-#   # "docker" # not always available on WSL depending on if Docker Desktop is on or not
-#   "fzf"
-#   "gh"
-#   "git"
-#   "terraform"
-#   "themes"
-# ];
-# oh-my-zsh.extraConfig = ''
-#   # happens before oh-my-zsh is sourced
-#
-#   # specifically bracketed paste
-#   # without this pasting into the terminal is super slow
-#   # export DISABLE_MAGIC_FUNCTIONS=true
-#
-# '';

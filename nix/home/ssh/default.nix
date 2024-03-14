@@ -3,9 +3,11 @@
 }:
 {
   # don't use programs.ssh.enable for the same reason we don't do it for tmux
-  home.packages = with pkgs; [ openssh ];
-  home.file.".config/ssh".source = ./.;
-  home.file.".config/ssh".recursive = true;
+  home = {
+    packages = with pkgs; [ openssh ];
+    file.".config/ssh".source = ./.;
+    file.".config/ssh".recursive = true;
+  };
 
   # TODO: figure out a way to use private keys here
   # i have all the public keys

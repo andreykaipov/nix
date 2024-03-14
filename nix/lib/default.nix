@@ -6,6 +6,11 @@
 }:
 
 rec {
+  # config = lib.mkIf config.programs.zsh.enable { }
+
+  # TODO: do it recursively since this only finds immediate child dirs
+  # see: https://github.com/bangedorrunt/nix/blob/tdt/lib/importers.nix
+
   find = type: dir:
     let
       contents = builtins.readDir dir;
