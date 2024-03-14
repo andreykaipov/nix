@@ -155,7 +155,7 @@ return {
 			opts.sections.lualine_y = {
 				{
 					function()
-						return " " .. require("lazy.status").updates()
+						return require("lazy.status").updates()
 					end,
 					cond = require("lazy.status").has_updates,
 					separator = { left = "" },
@@ -166,14 +166,14 @@ return {
 				{
 					"filetype",
 					icon_only = true,
-					padding = { left = 0, right = 1 },
+					padding = { left = 0, right = 0 },
 					separator = { left = "" },
 					color = { bg = "black" },
 				},
 				-- stylua: ignore
 				{
 					function() return util.lsp_servers({ lualine = true }) end,
-					padding = { left = 0, right = 1 },
+					padding = { left = 0, right = 0 },
 					separator = { left = "" },
 					cond = function() return vim.fn.winwidth(0) > 120 end,
 				},
