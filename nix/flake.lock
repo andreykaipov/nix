@@ -100,11 +100,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1709764752,
-        "narHash": "sha256-+lM4J4JoJeiN8V+3WSWndPHj1pJ9Jc1UMikGbXLqCTk=",
+        "lastModified": 1710446102,
+        "narHash": "sha256-MCmqsWwQkttCtDuah8Q1GQNksaRoUDV+wDusVrxJRTI=",
         "owner": "nix-community",
         "repo": "home-manager",
-        "rev": "cf111d1a849ddfc38e9155be029519b0e2329615",
+        "rev": "601c22f8af61b9a2e47001474c595c78771aa3b2",
         "type": "github"
       },
       "original": {
@@ -155,11 +155,11 @@
       },
       "locked": {
         "dir": "contrib",
-        "lastModified": 1709558104,
-        "narHash": "sha256-VFYv1ffOTt1f3MOOBThBYc0lYX16eUek7i/ShOw8QOY=",
+        "lastModified": 1710442807,
+        "narHash": "sha256-sIjTSkh9NMxtqXLTX/5VG4pDGgPAfP2j5GlOoKjil2k=",
         "owner": "neovim",
         "repo": "neovim",
-        "rev": "633bf61d3b03b2edac4526ecbe73e1485f68c1b1",
+        "rev": "4de4f13eb35e40799198689a5ae0bc534b4e38a8",
         "type": "github"
       },
       "original": {
@@ -243,11 +243,11 @@
     },
     "nixpkgs-stable_2": {
       "locked": {
-        "lastModified": 1709569716,
-        "narHash": "sha256-iOR44RU4jQ+YPGrn+uQeYAp7Xo7Z/+gT+wXJoGxxLTY=",
+        "lastModified": 1710283656,
+        "narHash": "sha256-nI+AOy4uK6jLGBi9nsbHjL1EdSIzoo8oa+9oeVhbyFc=",
         "owner": "nixos",
         "repo": "nixpkgs",
-        "rev": "617579a787259b9a6419492eaac670a5f7663917",
+        "rev": "51063ed4f2343a59fdeebb279bb81d87d453942b",
         "type": "github"
       },
       "original": {
@@ -259,11 +259,11 @@
     },
     "nixpkgs_2": {
       "locked": {
-        "lastModified": 1709675310,
-        "narHash": "sha256-w61tqFEmuJ+/1rAwU7nkYZ+dN6sLwyobfLwX2Yn42FE=",
+        "lastModified": 1710377395,
+        "narHash": "sha256-KMubsUWtVr7L55pXMBibBDBdmk3xrjbBPduc0E8z28c=",
         "owner": "nixos",
         "repo": "nixpkgs",
-        "rev": "43d259f8d726113fac056e8bb17d5ac2dea3e0a8",
+        "rev": "db001797591bf76f7b8d4c4ed3b49233391e0c97",
         "type": "github"
       },
       "original": {
@@ -401,11 +401,11 @@
     "zsh-fzf-tab": {
       "flake": false,
       "locked": {
-        "lastModified": 1709300945,
-        "narHash": "sha256-5vQodWvw9akVvvmpVQH0KjdWmCP7vQz2QOK4Yn24MbA=",
+        "lastModified": 1710254683,
+        "narHash": "sha256-0/YOL1/G2SWncbLNaclSYUz7VyfWu+OB8TYJYm4NYkM=",
         "owner": "Aloxaf",
         "repo": "fzf-tab",
-        "rev": "f3d892cf19bba09c0c44fa9fcaf6d616fe5b18e6",
+        "rev": "bf3ef5588af6d3bf7cc60f2ad2c1c95bca216241",
         "type": "github"
       },
       "original": {
@@ -417,11 +417,11 @@
     "zsh-fzf-tab-source": {
       "flake": false,
       "locked": {
-        "lastModified": 1708517627,
-        "narHash": "sha256-laiX2VJgI+FgwytGAU9rTZRhbfUiSidlfgjWTiGsbG4=",
+        "lastModified": 1710310666,
+        "narHash": "sha256-jWbroOjnteYJFERTbdLmJtNCJfFGWR2fs1qbhUvOKeU=",
         "owner": "Freed-Wu",
         "repo": "fzf-tab-source",
-        "rev": "83f31017a8f80cc4eaff66279f8089889dad0c1a",
+        "rev": "a2f1674e1642f5288bb4b7c6280b5a341595d7e7",
         "type": "github"
       },
       "original": {
@@ -433,11 +433,11 @@
     "zsh-fzf-zsh-plugin": {
       "flake": false,
       "locked": {
-        "lastModified": 1709654729,
-        "narHash": "sha256-1xXVe5sefuXvLN7LWEChUOyl2QH+MnDijF1WwhHKwMI=",
+        "lastModified": 1710079275,
+        "narHash": "sha256-RGYKNoWyNVg0WJxVqHyVaSpH8H+Eh7AW5s0wgKXZ/bQ=",
         "owner": "unixorn",
         "repo": "fzf-zsh-plugin",
-        "rev": "aec6776313bd321c240900acc6fd651ee5f487b0",
+        "rev": "0e85e934a3d671f157504b546e59f75cc9c256f8",
         "type": "github"
       },
       "original": {
@@ -449,11 +449,11 @@
     "zsh-powerlevel10k": {
       "flake": false,
       "locked": {
-        "lastModified": 1708664635,
-        "narHash": "sha256-+BRW6ESjEiHDOuX3PE6X3EpgiSLsmpQ/hGCLnnIZZ5w=",
+        "lastModified": 1710227260,
+        "narHash": "sha256-N9h2//PyRpK1Zh5xePjCALLpK7ZIxqgoMlD4EwMH+8U=",
         "owner": "romkatv",
         "repo": "powerlevel10k",
-        "rev": "0cc19ac2ede35fd8accff590fa71df580dc7e109",
+        "rev": "d39e4268355f7a10f7758982db2a59e485d2659a",
         "type": "github"
       },
       "original": {
