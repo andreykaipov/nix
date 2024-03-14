@@ -45,7 +45,7 @@
 
     # nix
     nil
-    nixd
+    # nixd # https://github.com/nix-community/nixd/issues/357
     deadnix
     statix
     nixpkgs-fmt
