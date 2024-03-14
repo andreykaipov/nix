@@ -96,20 +96,20 @@
     "home-manager": {
       "inputs": {
         "nixpkgs": [
-          "nixpkgs-unstable"
+          "nixpkgs"
         ]
       },
       "locked": {
-        "lastModified": 1706981411,
-        "narHash": "sha256-cLbLPTL1CDmETVh4p0nQtvoF+FSEjsnJTFpTxhXywhQ=",
+        "lastModified": 1709764752,
+        "narHash": "sha256-+lM4J4JoJeiN8V+3WSWndPHj1pJ9Jc1UMikGbXLqCTk=",
         "owner": "nix-community",
         "repo": "home-manager",
-        "rev": "652fda4ca6dafeb090943422c34ae9145787af37",
+        "rev": "cf111d1a849ddfc38e9155be029519b0e2329615",
         "type": "github"
       },
       "original": {
         "owner": "nix-community",
-        "ref": "release-23.11",
+        "ref": "master",
         "repo": "home-manager",
         "type": "github"
       }
@@ -130,11 +130,27 @@
         "type": "github"
       }
     },
+    "lscolors": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1702499750,
+        "narHash": "sha256-DT9WmtyJ/wngoiOTXMcnstVbGh3BaFWrr8Zxm4g4b6U=",
+        "owner": "trapd00r",
+        "repo": "LS_COLORS",
+        "rev": "a283d79dcbb23a8679f4b1a07d04a80cab01c0ba",
+        "type": "github"
+      },
+      "original": {
+        "owner": "trapd00r",
+        "repo": "LS_COLORS",
+        "type": "github"
+      }
+    },
     "neovim-nightly": {
       "inputs": {
         "flake-utils": "flake-utils_2",
         "nixpkgs": [
-          "nixpkgs-unstable"
+          "nixpkgs"
         ]
       },
       "locked": {
@@ -225,34 +241,34 @@
         "type": "github"
       }
     },
-    "nixpkgs-unstable": {
+    "nixpkgs-stable_2": {
       "locked": {
-        "lastModified": 1709386671,
-        "narHash": "sha256-VPqfBnIJ+cfa78pd4Y5Cr6sOWVW8GYHRVucxJGmRf8Q=",
+        "lastModified": 1709569716,
+        "narHash": "sha256-iOR44RU4jQ+YPGrn+uQeYAp7Xo7Z/+gT+wXJoGxxLTY=",
         "owner": "nixos",
         "repo": "nixpkgs",
-        "rev": "fa9a51752f1b5de583ad5213eb621be071806663",
+        "rev": "617579a787259b9a6419492eaac670a5f7663917",
         "type": "github"
       },
       "original": {
         "owner": "nixos",
-        "ref": "nixpkgs-unstable",
+        "ref": "nixos-23.11",
         "repo": "nixpkgs",
         "type": "github"
       }
     },
     "nixpkgs_2": {
       "locked": {
-        "lastModified": 1709309926,
-        "narHash": "sha256-VZFBtXGVD9LWTecGi6eXrE0hJ/mVB3zGUlHImUs2Qak=",
+        "lastModified": 1709675310,
+        "narHash": "sha256-w61tqFEmuJ+/1rAwU7nkYZ+dN6sLwyobfLwX2Yn42FE=",
         "owner": "nixos",
         "repo": "nixpkgs",
-        "rev": "79baff8812a0d68e24a836df0a364c678089e2c7",
+        "rev": "43d259f8d726113fac056e8bb17d5ac2dea3e0a8",
         "type": "github"
       },
       "original": {
         "owner": "nixos",
-        "ref": "nixos-23.11",
+        "ref": "nixpkgs-unstable",
         "repo": "nixpkgs",
         "type": "github"
       }
@@ -289,12 +305,17 @@
       "inputs": {
         "devenv": "devenv",
         "home-manager": "home-manager",
+        "lscolors": "lscolors",
         "neovim-nightly": "neovim-nightly",
         "nixpkgs": "nixpkgs_2",
-        "nixpkgs-unstable": "nixpkgs-unstable",
+        "nixpkgs-stable": "nixpkgs-stable_2",
+        "zsh-almostontop": "zsh-almostontop",
+        "zsh-autocomplete": "zsh-autocomplete",
         "zsh-completions": "zsh-completions",
+        "zsh-edit": "zsh-edit",
         "zsh-fzf-tab": "zsh-fzf-tab",
         "zsh-fzf-tab-source": "zsh-fzf-tab-source",
+        "zsh-fzf-zsh-plugin": "zsh-fzf-zsh-plugin",
         "zsh-powerlevel10k": "zsh-powerlevel10k"
       }
     },
@@ -313,6 +334,38 @@
         "type": "github"
       }
     },
+    "zsh-almostontop": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1568747795,
+        "narHash": "sha256-B7fZzafT7PpgnDkdhnUTB57WzfEWcsi1PnjxVOGUwGE=",
+        "owner": "Valiev",
+        "repo": "almostontop",
+        "rev": "aaf8a3e38d383cd179f04e814461acee66348dc8",
+        "type": "github"
+      },
+      "original": {
+        "owner": "Valiev",
+        "repo": "almostontop",
+        "type": "github"
+      }
+    },
+    "zsh-autocomplete": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1702543845,
+        "narHash": "sha256-u2BnkHZOSGVhcJvhGwHBdeAOVdszye7QZ324xinbELE=",
+        "owner": "marlonrichert",
+        "repo": "zsh-autocomplete",
+        "rev": "c7b65508fd3a016dc9cdb410af9ee7806b3f9be1",
+        "type": "github"
+      },
+      "original": {
+        "owner": "marlonrichert",
+        "repo": "zsh-autocomplete",
+        "type": "github"
+      }
+    },
     "zsh-completions": {
       "flake": false,
       "locked": {
@@ -326,6 +379,22 @@
       "original": {
         "owner": "zsh-users",
         "repo": "zsh-completions",
+        "type": "github"
+      }
+    },
+    "zsh-edit": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1702548438,
+        "narHash": "sha256-l6qGSxj/lZ+jUaAFC2LYMwARwQpXmKdvii4jbVR1Kqo=",
+        "owner": "marlonrichert",
+        "repo": "zsh-edit",
+        "rev": "113a0d53919c4866a1492574592eccafacdabe0b",
+        "type": "github"
+      },
+      "original": {
+        "owner": "marlonrichert",
+        "repo": "zsh-edit",
         "type": "github"
       }
     },
@@ -358,6 +427,22 @@
       "original": {
         "owner": "Freed-Wu",
         "repo": "fzf-tab-source",
+        "type": "github"
+      }
+    },
+    "zsh-fzf-zsh-plugin": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1709654729,
+        "narHash": "sha256-1xXVe5sefuXvLN7LWEChUOyl2QH+MnDijF1WwhHKwMI=",
+        "owner": "unixorn",
+        "repo": "fzf-zsh-plugin",
+        "rev": "aec6776313bd321c240900acc6fd651ee5f487b0",
+        "type": "github"
+      },
+      "original": {
+        "owner": "unixorn",
+        "repo": "fzf-zsh-plugin",
         "type": "github"
       }
     },

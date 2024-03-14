@@ -2,19 +2,20 @@
   description = "Andrey's Home Manager config";
 
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-23.11";
-    nixpkgs-unstable.url = "github:nixos/nixpkgs/nixpkgs-unstable";
+    nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
+    nixpkgs-stable.url = "github:nixos/nixpkgs/nixos-23.11";
     # nixpkgs-master.url = "github:nixos/nixpkgs/master";
 
-    home-manager.url = "github:nix-community/home-manager/release-23.11";
-    home-manager.inputs.nixpkgs.follows = "nixpkgs-unstable";
+    home-manager.url = "github:nix-community/home-manager/master";
+    home-manager.inputs.nixpkgs.follows = "nixpkgs";
 
     devenv.url = "github:cachix/devenv/latest"; # don't follow
 
     neovim-nightly.url = "github:neovim/neovim?dir=contrib"; #" #&rev=eb151a9730f0000ff46e0b3467e29bb9f02ae362";
-    neovim-nightly.inputs.nixpkgs.follows = "nixpkgs-unstable";
+    neovim-nightly.inputs.nixpkgs.follows = "nixpkgs";
 
     # zsh plugins
+    # (some are available via nixpkgs but these flakes will always be up to date)
     zsh-powerlevel10k.url = "github:romkatv/powerlevel10k";
     zsh-powerlevel10k.flake = false;
     zsh-completions.url = "github:zsh-users/zsh-completions";
@@ -23,13 +24,22 @@
     zsh-fzf-tab.flake = false;
     zsh-fzf-tab-source.url = "github:Freed-Wu/fzf-tab-source";
     zsh-fzf-tab-source.flake = false;
+    zsh-fzf-zsh-plugin.url = "github:unixorn/fzf-zsh-plugin";
+    zsh-fzf-zsh-plugin.flake = false;
+    lscolors.url = "github:trapd00r/LS_COLORS";
+    lscolors.flake = false;
+    zsh-edit.url = "github:marlonrichert/zsh-edit";
+    zsh-edit.flake = false;
+    zsh-almostontop.url = "github:Valiev/almostontop";
+    zsh-almostontop.flake = false;
+    zsh-autocomplete.url = "github:marlonrichert/zsh-autocomplete";
+    zsh-autocomplete.flake = false;
   };
 
   outputs =
-    inputs @ { self
+    inputs@ { self
     , nixpkgs
-    , nixpkgs-unstable
-      # , nixpkgs-master
+    , nixpkgs-stable
     , home-manager
     , neovim-nightly
     , devenv
@@ -39,7 +49,7 @@
       # lib = nixpkgs-unstable.lib;
       homeConfig = system: hostname:
         let
-          pkgs = nixpkgs-unstable.legacyPackages.${system};
+          pkgs = nixpkgs.legacyPackages.${system};
           lib = nixpkgs.lib.extend (libself: super: {
             my = import ./lib {
               inherit system pkgs;
@@ -48,9 +58,8 @@
             };
           });
           cfg = import ./hosts/${hostname}.nix { inherit lib; };
-          username = cfg.username;
           homedir = lib.attrsets.attrByPath [ "homedir" ] "" cfg;
-          extraModules = cfg.extraModules;
+          inherit (cfg) username extraModules;
         in
         home-manager.lib.homeManagerConfiguration
           rec {
@@ -69,9 +78,11 @@
                 ];
               }
               {
-                home.username = username;
-                home.homeDirectory = if homedir != "" then homedir else lib.my.homedir username;
-                home.stateVersion = "22.11";
+                home = {
+                  inherit username;
+                  homeDirectory = if homedir != "" then homedir else lib.my.homedir username;
+                  stateVersion = "22.11";
+                };
               }
               ./home
             ]
@@ -79,8 +90,8 @@
 
             extraSpecialArgs = {
               inherit inputs;
-              pkgs-stable = import nixpkgs { inherit system; config.allowUnfree = true; };
-              devenv = devenv.packages.${system}.devenv;
+              inherit (devenv.packages.${system}) devenv;
+              pkgs-stable = import nixpkgs-stable { inherit system; config.allowUnfree = true; };
               homeConfig = cfg;
             };
           };
