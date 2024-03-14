@@ -1,11 +1,6 @@
-{ pkgs
-, lib
-, homeConfig
+{ lib
 , ...
 }:
-let
-  user = homeConfig.username; # could just use $USER or whoami but why not pass it
-in
 {
   home = {
     emptyActivationPath = false;
