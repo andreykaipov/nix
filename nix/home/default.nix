@@ -1,14 +1,7 @@
-{ ... }:
+{ lib
+, ...
+}:
 {
   programs.home-manager.enable = true;
-  imports = [
-    ./bootstrap
-    ./packages
-    ./zsh
-    ./tmux
-    ./nvim
-    ./ssh
-    ./scripts
-    ./direnv
-  ];
+  imports = map (path: ./${path}) (lib.my.subdirs ./.);
 }
