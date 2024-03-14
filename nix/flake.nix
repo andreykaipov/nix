@@ -1,21 +1,20 @@
 {
-  description = "Andrey's Home Manager config";
+  description = "Andrey's Home Configurations";
 
   inputs = {
+    # https://status.nixos.org/
     nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
     nixpkgs-stable.url = "github:nixos/nixpkgs/nixos-23.11";
     # nixpkgs-master.url = "github:nixos/nixpkgs/master";
 
     home-manager.url = "github:nix-community/home-manager/master";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
-
     devenv.url = "github:cachix/devenv/latest"; # don't follow
-
     neovim-nightly.url = "github:neovim/neovim?dir=contrib"; #" #&rev=eb151a9730f0000ff46e0b3467e29bb9f02ae362";
     neovim-nightly.inputs.nixpkgs.follows = "nixpkgs";
 
     # zsh plugins
-    # (some are available via nixpkgs but these flakes will always be up to date)
+    # (some are available via nixpkgs but this way we can always keep them up to date)
     zsh-powerlevel10k.url = "github:romkatv/powerlevel10k";
     zsh-powerlevel10k.flake = false;
     zsh-completions.url = "github:zsh-users/zsh-completions";
@@ -36,71 +35,17 @@
     zsh-autocomplete.flake = false;
   };
 
-  outputs =
-    inputs@ { self
-    , nixpkgs
-    , nixpkgs-stable
-    , home-manager
-    , neovim-nightly
-    , devenv
-    , ...
-    }:
-    let
-      # lib = nixpkgs-unstable.lib;
-      homeConfig = system: hostname:
-        let
-          pkgs = nixpkgs.legacyPackages.${system};
-          lib = nixpkgs.lib.extend (libself: super: {
-            my = import ./lib {
-              inherit system pkgs;
-              lib = libself;
-              flake = self;
-            };
-          });
-          cfg = import ./hosts/${hostname}.nix { inherit lib; };
-          homedir = lib.attrsets.attrByPath [ "homedir" ] "" cfg;
-          inherit (cfg) username extraModules;
-        in
-        home-manager.lib.homeManagerConfiguration
-          rec {
-            inherit lib pkgs;
-
-            # pkgs = import <nixpkgs> { }; # alternative to above line, but this is impure
-
-            modules = [
-              {
-                # alternatively, we can set these in `import nixpkgs { ... }` instead of using legacyPackages above
-                nixpkgs.config.allowUnfreePredicate = (pkg: true); # https://github.com/nix-community/home-manager/issues/2942
-                nixpkgs.overlays = lib.my.overlays ++ [
-                  (final: prev: {
-                    neovim-nightly = neovim-nightly.packages.${prev.system}.neovim;
-                  })
-                ];
-              }
-              {
-                home = {
-                  inherit username;
-                  homeDirectory = if homedir != "" then homedir else lib.my.homedir username;
-                  stateVersion = "22.11";
-                };
-              }
-              ./home
-            ]
-            ++ extraModules;
-
-            extraSpecialArgs = {
-              inherit inputs;
-              inherit (devenv.packages.${system}) devenv;
-              pkgs-stable = import nixpkgs-stable { inherit system; config.allowUnfree = true; };
-              homeConfig = cfg;
-            };
-          };
-    in
-    {
-      homeConfigurations = builtins.mapAttrs (hostname: configurer: configurer hostname) {
-        dustbox = homeConfig "x86_64-linux";
-        # smart-toaster = homeConfig "x86_64-darwin"; # this is an m1 but aarch64-darwin doesn't work?
-        smart-toaster = homeConfig "aarch64-darwin";
-      };
-    };
+  outputs = { self, ... }: {
+    homeConfigurations =
+      let
+        configure = import ./home/config.nix { flake = self; };
+        hosts = [
+          "smart-toaster"
+          "dustbox"
+        ];
+        inherit (builtins) map listToAttrs;
+      in
+      listToAttrs (map (host: { name = host; value = configure host; }) hosts);
+    # zipAttrsWith (_: head) (map (host: { "${host}" = configure host; }) hosts);
+  };
 }
