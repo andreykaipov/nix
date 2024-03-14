@@ -24,7 +24,6 @@ opt.backup = true
 opt.backupdir = { root .. "/tmp/bak//" }
 opt.directory = { root .. "/tmp/swp//" }
 
-local Util = require("lazyvim.util")
 opt.number = true
 opt.relativenumber = true -- <leader>uL to toggle
 opt.scrolloff = 10
@@ -44,6 +43,7 @@ opt.signcolumn = "auto:3-5" -- so new gutter signs don't move the text
 opt.cursorline = true -- highlight current line
 opt.cursorlineopt = "line,number" --
 opt.colorcolumn = "120" -- table.concat(vim.fn.range(81, 120), ",") -- highlight column 81 to 120
+opt.textwidth = 120 -- wrap lines at 120 characters
 
 opt.showcmd = true -- show (partial) command in status line
 opt.wildmenu = true -- visual autocomplete for command menu
@@ -51,3 +51,9 @@ opt.wildmenu = true -- visual autocomplete for command menu
 -- don't show netrw since neotree will load in soon after
 vim.g.loaded_netrwPlugin = 1
 vim.g.loaded_netrw = 1
+
+-- use gw instead of gq:
+-- https://vi.stackexchange.com/questions/39200/wrapping-comment-in-visual-mode-not-working-with-gq
+-- https://github.com/neovim/neovim/pull/19677
+-- :h fo-table
+opt.formatoptions = opt.formatoptions + "croq1jlMn"
