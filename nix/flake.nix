@@ -36,16 +36,12 @@
   };
 
   outputs = { self, ... }: {
-    homeConfigurations =
-      let
-        configure = import ./home/config.nix { flake = self; };
-        hosts = [
-          "smart-toaster"
-          "dustbox"
-        ];
-        inherit (builtins) map listToAttrs;
-      in
-      listToAttrs (map (host: { name = host; value = configure host; }) hosts);
-    # zipAttrsWith (_: head) (map (host: { "${host}" = configure host; }) hosts);
+    homeConfigurations = import ./home/config.nix {
+      flake = self;
+      hosts = [
+        "smart-toaster"
+        "dustbox"
+      ];
+    };
   };
 }
