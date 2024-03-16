@@ -5,13 +5,10 @@
 }:
 let
   inherit (flake.inputs) nixpkgs nixpkgs-stable home-manager neovim-nightly devenv;
-  inherit (builtins) map listToAttrs;
+  inherit (builtins) mapAttrs map;
 
-  hostnames = nixpkgs.lib.attrsets.mapAttrsToList (name: _: name) hosts;
-
-  configure = { hostname }:
+  configure = host:
     let
-      host = hosts.${hostname};
       inherit (host) username system;
 
       # https://github.com/NixOS/nixpkgs/blob/e456032addae76701eb17e6c03fc515fd78ad74f/flake.nix#L76
@@ -49,11 +46,6 @@ let
           # see rakeLeaves: https://github.com/bangedorrunt/nix/blob/tdt/lib/importers.nix
           imports = map (path: ./${path}) (lib.my.subdirs ./.);
         }
-        {
-          # select common secrets for the host
-          config.andrey.agenix.secrets.${hostname} = { };
-          config.andrey.agenix.secrets.secret1 = { };
-        }
       ]
       ++ (host.extraModules or [ ])
       ++ extraModules;
@@ -75,9 +67,4 @@ let
       };
     };
 in
-listToAttrs (map
-  (hostname: {
-    name = hostname;
-    value = configure { inherit hostname; };
-  })
-  hostnames)
+mapAttrs (_: configure) hosts
