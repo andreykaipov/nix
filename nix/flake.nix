@@ -38,10 +38,8 @@
   outputs = { self, ... }: {
     homeConfigurations = import ./home/config.nix {
       flake = self;
-      hosts = [
-        "smart-toaster"
-        "dustbox"
-      ];
+      hosts = import ./hosts/config.nix { inherit (self.inputs.nixpkgs) lib; };
+      extraModules = [ ./root.nix ];
     };
   };
 }
