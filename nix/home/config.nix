@@ -1,25 +1,30 @@
 { flake
 , hosts
+, extraModules ? [ ]
 , ...
 }:
 let
-  inherit (flake.inputs) nixpkgs nixpkgs-stable home-manager devenv neovim-nightly;
+  inherit (flake.inputs) nixpkgs nixpkgs-stable home-manager neovim-nightly devenv;
+  inherit (builtins) map listToAttrs;
 
-  configure = hostname:
+  hostnames = nixpkgs.lib.attrsets.mapAttrsToList (name: _: name) hosts;
+
+  configure = { hostname }:
     let
-      host = import ./../hosts/${hostname}.nix { inherit lib; };
-      inherit (host) system;
+      host = hosts.${hostname};
+      inherit (host) username system;
 
       # https://github.com/NixOS/nixpkgs/blob/e456032addae76701eb17e6c03fc515fd78ad74f/flake.nix#L76
       pkgs = nixpkgs.legacyPackages.${system};
 
       # https://discourse.nixos.org/t/in-overlays-when-to-use-self-vs-super/2968/12
-      lib = nixpkgs.lib.extend (final: _: {
-        my = import ./../lib {
-          inherit system pkgs flake;
-          lib = final;
-        };
-      });
+      lib = nixpkgs.lib.extend
+        (final: _: {
+          my = import ./../lib {
+            inherit system pkgs flake;
+            lib = final;
+          };
+        }) // home-manager.lib;
     in
     home-manager.lib.homeManagerConfiguration {
       inherit lib pkgs;
@@ -32,19 +37,26 @@ let
           ];
         }
         {
-          home =
-            let
-              inherit (host) username;
-            in
-            {
-              inherit username;
-              homeDirectory = host.homedir or (lib.my.homedir username);
-              stateVersion = "22.11";
-            };
+          # so that after the first `nix run home-manager`, we can use home-manager directly
+          programs.home-manager.enable = true;
+          home = {
+            inherit username;
+            homeDirectory = host.homedir or (lib.my.homedir username);
+            stateVersion = "22.11";
+          };
+          # discover all the home imports
+          # TODO: make it only discover dirs with a default.nix
+          # see rakeLeaves: https://github.com/bangedorrunt/nix/blob/tdt/lib/importers.nix
+          imports = map (path: ./${path}) (lib.my.subdirs ./.);
         }
-        (./.)
+        {
+          # select common secrets for the host
+          config.andrey.agenix.secrets.${hostname} = { };
+          config.andrey.agenix.secrets.secret1 = { };
+        }
       ]
-      ++ host.extraModules;
+      ++ (host.extraModules or [ ])
+      ++ extraModules;
 
       extraSpecialArgs = {
         inherit host;
@@ -62,7 +74,10 @@ let
         };
       };
     };
-
-  inherit (builtins) map listToAttrs;
 in
-listToAttrs (map (host: { name = host; value = configure host; }) hosts)
+listToAttrs (map
+  (hostname: {
+    name = hostname;
+    value = configure { inherit hostname; };
+  })
+  hostnames)

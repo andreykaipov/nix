@@ -6,6 +6,6 @@
   username = "andreykaipov";
   homedir = "/Users/andrey";
   extraModules = [
-    ./macos.nix
+    # { andrey.agenix.secrets.secret1 = { }; }
   ];
 }
