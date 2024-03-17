@@ -1,12 +1,13 @@
 # vim: ft=sshconfig
 
 Match user git host github.com
-    IdentityFile ~/.config/ssh/keys/m1.toast.pem
+    # TODO template this with nix since we know the hostnames
+    IdentityFile ~/.config/ssh/keys/smart-toaster.pem
     IdentityFile ~/.config/ssh/keys/dustbox.pem
 
 Host gh* *.github.net
     User andreykaipov
-    IdentityFile ~/.config/ssh/keys/bastion.pem
+    IdentityFile ~/.config/ssh/keys/ghbastion.pem
     ForwardAgent yes
 
 Host *.github.net

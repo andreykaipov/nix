@@ -1,24 +1,41 @@
-{ pkgs
+{ config
+, pkgs
+, host
+, lib
 , ...
 }:
+let
+  inherit (host) hostname;
+in
 {
-  # don't use programs.ssh.enable for the same reason we don't do it for tmux
-  home = {
-    packages = with pkgs; [ openssh ];
-    file.".config/ssh".source = ./.;
-    file.".config/ssh".recursive = true;
-  };
+  config = {
+    age.decrypt."ghbastion.pem.age" = {
+      path = "${config.home.homeDirectory}/.config/ssh/keys/ghbastion.pem";
+      mode = "600";
+    };
 
-  # TODO: figure out a way to use private keys here
-  # i have all the public keys
-  # maybe read from personal 1password?
+    age.decrypt."${hostname}.pem.age" = {
+      path = "${config.home.homeDirectory}/.config/ssh/keys/${hostname}.pem";
+      mode = "600";
+    };
 
-  # SSH doesn't really support XDG config paths, so these are workarounds
-  # See https://wiki.archlinux.org/index.php/XDG_Base_Directory
-  #
-  # Why not just let it go to ~/.ssh/config? Because I'm a stubborn little bitch.
-  programs.zsh.shellAliases = {
-    ssh = "ssh -F ~/.config/ssh/config";
-    scp = "scp -F ~/.config/ssh/config";
+    # don't use programs.ssh.enable for the same reason we don't do it for tmux
+    home = {
+      packages = with pkgs; [ openssh ];
+      file = {
+        ".config/ssh".source = ./.;
+        ".config/ssh".recursive = true;
+      };
+    };
+
+    # SSH doesn't really support XDG config paths, so these are workarounds
+    # See https://wiki.archlinux.org/index.php/XDG_Base_Directory
+    #
+    # Why not just let it go to ~/.ssh/config so I don't have to do this?
+    # Because I'm a stubborn little bitch.
+    programs.zsh.shellAliases = {
+      ssh = "ssh -F ~/.config/ssh/config";
+      scp = "scp -F ~/.config/ssh/config";
+    };
   };
 }
