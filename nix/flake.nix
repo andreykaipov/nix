@@ -9,9 +9,11 @@
 
     home-manager.url = "github:nix-community/home-manager/master";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
-    devenv.url = "github:cachix/devenv/latest"; # don't follow
     neovim-nightly.url = "github:neovim/neovim?dir=contrib"; #" #&rev=eb151a9730f0000ff46e0b3467e29bb9f02ae362";
     neovim-nightly.inputs.nixpkgs.follows = "nixpkgs";
+    agenix.url = "github:ryantm/agenix/main";
+    agenix.inputs.nixpkgs.follows = "nixpkgs";
+    devenv.url = "github:cachix/devenv/latest"; # don't follow
 
     # zsh plugins
     # (some are available via nixpkgs but this way we can always keep them up to date)
