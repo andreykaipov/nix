@@ -2,9 +2,6 @@
 
 local M = require("lazyvim.util")
 
--- TODO: split out utils more to speed up load times for any plugins that require utils
-M.theme = require("util.theme")
-
 -- e.g. Util.ui.fg("Statement") to fetch the color for a specific highlight group
 -- see: https://github.com/oxfist/night-owl.nvim/blob/main/lua/night-owl/theme.lua
 

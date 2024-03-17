@@ -1,5 +1,7 @@
 local M = {}
 
+-- this entire module is unused
+
 -- the night-owl theme but with some colors swapped around
 -- https://github.com/oxfist/night-owl.nvim/blob/2b7e78c34e25aea841d10ebc3ee19d6d558e9ec0/lua/lualine/themes/night-owl.lua
 -- can import as follows alternatively and do the overwriting but i think redefining it is easier:
