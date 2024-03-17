@@ -138,13 +138,13 @@ return {
 							-- if there's only one choice
 							-- if #cmp.get_entries() == 1 then
 							-- cmp.confirm({ behavior = cmp.ConfirmBehavior.Replace, select = true })
-							if has_words_after() then
-								-- print("words after")
-								-- very annoying to go back earlier in the line and edit it, and then press enter
-								-- only to complete the text instead of inserting a newline, like in comments
-								cmp.abort()
-								fallback()
-							elseif cmp.get_selected_entry() then
+							-- if has_words_after() then
+							-- 	-- print("words after")
+							-- 	-- very annoying to go back earlier in the line and edit it, and then press enter
+							-- 	-- only to complete the text instead of inserting a newline, like in comments
+							-- 	cmp.abort()
+							-- 	fallback()
+							if cmp.get_selected_entry() then
 								-- print("selected entry")
 								-- selected enetry seems to apply to both preselected entries and explicitly
 								-- selected entries too, so we should use select true
