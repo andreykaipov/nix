@@ -1,22 +1,31 @@
-{ system
-, pkgs
+{ pkgs
 , lib
 , flake
 , ...
 }:
-
+with builtins;
 rec {
-  # config = lib.mkIf config.programs.zsh.enable { }
+  readLineDelimited = contents: map head (filter isList (split "([^\n]+)" contents)) ++ (attrNames hosts);
 
-  # TODO: do it recursively since this only finds immediate child dirs
-  # see: https://github.com/bangedorrunt/nix/blob/tdt/lib/importers.nix
+  # this is pretty janky and i likely don't need it but it was fun to get working
+  run = cmd:
+    let
+      name = "adhoc";
+      script = ''
+        export PATH=$PATH:/bin:/usr/bin:$HOME/.nix-profile/bin
+        ${cmd} >$out
+        :
+      '';
+      f = pkgs.runCommand name { env.when = flake.sourceInfo.lastModified; } script;
+    in
+    lib.readFile f;
 
   find = type: dir:
     let
       contents = builtins.readDir dir;
-      filtered = lib.attrsets.filterAttrs (k: v: v == type) contents;
+      filtered = lib.attrsets.filterAttrs (_: v: v == type) contents;
     in
-    lib.attrsets.mapAttrsToList (k: v: k) filtered;
+    lib.attrsets.mapAttrsToList (k: _: k) filtered;
 
   subdirs = find "directory";
 
@@ -45,8 +54,8 @@ rec {
         "onFilesChange"
         "reloadSystemd"
       ] ''
-        # can't use config.home.path so rely on .nix-profile
-        export PATH="/bin:/usr/bin:$HOME/.nix-profile/bin:$PATH"
+        # might not be necessary, could just use home.emptyActivationPath
+        # export PATH=$PATH:/bin:/usr/bin:$HOME/.nix-profile/bin
         if [ -n "${dry_run}" ]; then
           if [ -r "${script}" ]; then
             head -n3 "${script}"

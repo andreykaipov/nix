@@ -8,9 +8,17 @@ https://ryantm.github.io/nixpkgs/functions/library/lists/#function-library-lib.l
 
 ### home manager switch
 
+first run, make sure oyu get the master.pem key from 1password and put it in `/tmp/age.decryption.key.pem`
+
 ```console
-❯ nix run home-manager/release-23.11 -- switch --flake ~/.config/home-manager#dustbox
-❯ home-manager switch --flake ~/.config/home-manager#dustbox
+❯ export NIX_CONF_DIR=~/gh/self/nix
+❯ nix run home-manager -- switch --flake ~/gh/self/nix#dustbox
+```
+
+subsequent runs
+
+```console
+❯ home-manager switch --flake ~/gh/self/nix#dustbox
 ```
 
 ### dry run

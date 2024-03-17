@@ -5,9 +5,6 @@
 , ...
 }:
 with lib;
-let
-  cfg = config.andrey;
-in
 {
   config = mkIf pkgs.stdenv.isDarwin {
     home.packages = with pkgs; [
