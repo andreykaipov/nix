@@ -58,10 +58,11 @@
     '';
     envExtra = ''
       export FZF_BASE=${pkgs.fzf}/share/fzf
+      export NIX_CONF_DIR=${config.root}
       ${builtins.readFile ./zshenv}
     '';
     shellAliases = {
-      ll = "eza --group --header --group-directories-first --long --git --all --icons";
+      ll = "eza --group --header --group-directories-first --long --git --all --icons --sort extension";
       g = "git";
       gs = "git status";
       cat = "bat";
