@@ -32,7 +32,7 @@
         source "''${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-''${(%):-%n}.zsh"
       fi
     '';
-    enableAutosuggestions = true; # via forward-word ^[f or end-of-line ^e
+    autosuggestion.enable = true; # via forward-word ^[f or end-of-line ^e
     enableCompletion = true; # this only enables completion for 'nix *' commands, literally only that
     completionInit = ''
       source "${inputs.zsh-completions}/zsh-completions.plugin.zsh"

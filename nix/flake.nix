@@ -2,6 +2,7 @@
   description = "Andrey's Home Configurations";
 
   inputs = {
+    # nix flake info
     # https://status.nixos.org/
     nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
     nixpkgs-stable.url = "github:nixos/nixpkgs/nixos-23.11";
@@ -13,7 +14,8 @@
     neovim-nightly.inputs.nixpkgs.follows = "nixpkgs";
     agenix.url = "github:ryantm/agenix/main";
     agenix.inputs.nixpkgs.follows = "nixpkgs";
-    devenv.url = "github:cachix/devenv/latest"; # don't follow
+    devenv.url = "github:cachix/devenv/latest";
+    devenv.inputs.nixpkgs.follows = "nixpkgs";
 
     # zsh plugins
     # (some are available via nixpkgs but this way we can always keep them up to date)
