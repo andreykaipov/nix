@@ -76,15 +76,16 @@ return {
 		event = "VeryLazy",
 		opts = {
 			highlight_duration = 5000, -- ms
-			-- lazyvim sets these to gs, but i'm fine with mini.surround's actual defaults
+			-- lazyvim sets these to gz by default because of leap.nvim, but i'm using an alternative
+			-- scheme for leap such that gs is still available
 			mappings = {
-				add = "sa", -- Add surrounding in Normal and Visual modes
-				delete = "sd", -- Delete surrounding
-				find = "sf", -- Find surrounding (to the right)
-				find_left = "sF", -- Find surrounding (to the left)
-				highlight = "sh", -- Highlight surrounding
-				replace = "sr", -- Replace surrounding
-				update_n_lines = "sn", -- Update `n_lines`
+				add = "gsa", -- Add surrounding in Normal and Visual modes
+				delete = "gsd", -- Delete surrounding
+				find = "gsf", -- Find surrounding (to the right)
+				find_left = "gsF", -- Find surrounding (to the left)
+				highlight = "gsh", -- Highlight surrounding
+				replace = "gsr", -- Replace surrounding
+				update_n_lines = "gsn", -- Update `n_lines`
 
 				suffix_last = "l", -- Suffix to search with "prev" method
 				suffix_next = "n", -- Suffix to search with "next" method
@@ -193,5 +194,62 @@ return {
 				},
 			},
 		},
+	},
+	{
+		-- navigation, f and t alternative
+		"ggandor/leap.nvim",
+		event = "VeryLazy",
+		dependencies = { "tpope/vim-repeat" },
+		keys = {
+			{ "s", mode = { "n", "x", "o" }, desc = "Leap forward" },
+			{ "S", mode = { "n", "x", "o" }, desc = "Leap backward" },
+		},
+		config = function(_, opts)
+			local leap = require("leap")
+			for k, v in pairs(opts) do
+				leap.opts[k] = v
+			end
+			-- leap.add_default_mappings(true)
+			vim.keymap.set("n", "s", "<Plug>(leap)")
+			vim.keymap.set("n", "S", "<Plug>(leap-from-window)")
+			vim.keymap.set({ "x", "o" }, "s", "<Plug>(leap-forward)")
+			vim.keymap.set({ "x", "o" }, "S", "<Plug>(leap-backward)")
+
+			-- leap search across all windows
+			vim.keymap.set("n", "gs", function()
+				local focusable_windows = vim.tbl_filter(function(win)
+					return vim.api.nvim_win_get_config(win).focusable
+				end, vim.api.nvim_tabpage_list_wins(0))
+				require("leap").leap({ target_windows = focusable_windows })
+			end)
+		end,
+	},
+	{
+		-- structural search and replace
+		"cshuaimin/ssr.nvim",
+		event = "VeryLazy",
+		module = "ssr",
+		config = function()
+			require("ssr").setup({
+				border = "rounded",
+				min_width = 50,
+				min_height = 5,
+				max_width = 120,
+				max_height = 25,
+				adjust_window = true,
+				keymaps = {
+					close = "q",
+					next_match = "n",
+					prev_match = "N",
+					replace_confirm = "<cr>",
+					replace_all = "<leader><cr>",
+				},
+			})
+			vim.keymap.set({ "n", "x" }, "<leader>r", function()
+				require("ssr").open()
+			end, {
+				desc = "Structural Search and Replace",
+			})
+		end,
 	},
 }
