@@ -1,8 +1,11 @@
-{ lib
+{ config
+, host
+, lib
 , ...
 }:
 {
   home = {
+    # to keep the user path intact when running the activation scripts
     emptyActivationPath = false;
 
     # https://ryantm.github.io/nixpkgs/builders/trivial-builders/#trivial-builder-writeText
@@ -11,11 +14,12 @@
     activation = lib.my.activationScripts (map toString [
       ''
         mkdir -p ~/.{cache,config,local,run}
+        echo 1
+        echo '${config.root}'
+        echo '${host.hostname}'
       ''
-      ''
-        # echo "My path is: $PATH"
-        echo hello??
-      ''
+      # echo '${lib.my.gitRoot}'
+      # echo hello??
       # ''
       #   if ! grep -q discord /etc/group; then
       #     echo "Discord group does not exist. Creating it..."

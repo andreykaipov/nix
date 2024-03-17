@@ -27,6 +27,7 @@
     ripgrep
     socat
     yq-go
+    neofetch
 
     # sh
     nodePackages.bash-language-server
