@@ -1,6 +1,0 @@
-locals {
-  providers = [
-    "azure",
-    "cloudflare",
-  ]
-}

@@ -1,9 +1,0 @@
-#!/bin/sh
-#
-# Syncs the global Tmux environment with our local so that any new shells will
-# have the same environment as the shell that executed this script.
-
-env | cut -d= -f1 | while read -r var; do
-        val="$(eval "echo \"\$$var\"")"
-        tmux set-environment -gt local "$var" "$val"
-done
