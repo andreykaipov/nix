@@ -1,8 +1,0 @@
-# as npm is installed via Nix, installing global packages will fail, so we set
-# a custom prefix in our Home, and take of the environment in our sh/env
-
-# similar to GOPATH as it'll have a bin and a lib :)
-prefix = "${HOME}/npm"
-
-cache = "${XDG_CACHE_HOME}/npm"
-init-module= "${XDG_CONFIG_HOME}/npm/config/npm-init.js"
