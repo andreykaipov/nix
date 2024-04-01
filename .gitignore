@@ -1,1 +1,4 @@
 *.pem
+
+# nvim is an out of store symlink
+home/nvim/tmp
