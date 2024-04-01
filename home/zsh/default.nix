@@ -23,6 +23,11 @@
       expireDuplicatesFirst = false;
     };
     initExtraFirst = ''
+      # macos upgrades might nix install: https://github.com/NixOS/nix/issues/3616
+      if [ -e '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh' ]; then
+        . '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh'
+      fi
+
       # To customize prompt, run `p10k configure` or edit p10k.zsh.
       # The following enables instant-prompt for p10k. It should be at the top of our generated ~/.zshrc.
       # Initialization code that may require console input (password prompts, [y/n] confirmations, etc.)
