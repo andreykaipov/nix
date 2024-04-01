@@ -44,6 +44,7 @@ opt.cursorline = true -- highlight current line
 opt.cursorlineopt = "line,number" --
 opt.colorcolumn = "120" -- table.concat(vim.fn.range(81, 120), ",") -- highlight column 81 to 120
 opt.textwidth = 0 -- don't auto wrap lines at 120 characters
+opt.linebreak = true -- wrap lines at word boundaries
 
 opt.showcmd = true -- show (partial) command in status line
 opt.wildmenu = true -- visual autocomplete for command menu
