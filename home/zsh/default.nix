@@ -66,7 +66,7 @@
       ${builtins.readFile ./zshenv}
     '';
     shellAliases = {
-      ll = "eza --group --header --group-directories-first --long --git --all --icons --sort extension";
+      ll = "eza --group --header --group-directories-first --long --git --all --icons --sort name";
       g = "git";
       gs = "git status";
       cat = "bat";

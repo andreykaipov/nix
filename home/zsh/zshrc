@@ -11,6 +11,9 @@ bindkey -e # use emacs keymap
 setopt INC_APPEND_HISTORY_TIME
 
 # make things feel more like my old bash
+#
+setopt SHWORDSPLIT # makes zsh split new-line delimited strings as if they were space delimited
+
 # select-word-style bash is not good enough
 # https://zsh.sourceforge.io/Doc/Release/User-Contributions.html#index-select_002dword_002dstyle
 # so new shells will get the history of all previous shells
