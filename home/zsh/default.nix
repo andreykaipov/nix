@@ -63,7 +63,6 @@
     '';
     envExtra = ''
       export FZF_BASE=${pkgs.fzf}/share/fzf
-      export NIX_CONF_DIR=${config.root}
       ${builtins.readFile ./zshenv}
     '';
     shellAliases = {
