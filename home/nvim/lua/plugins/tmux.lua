@@ -81,7 +81,7 @@ return {
 				auto_save = "current", -- nil, 'current', or 'all' buffers
 
 				-- Disable navigation when the current mux pane is zoomed in
-				disable_on_zoom = true,
+				disable_on_zoom = false,
 
 				-- Multiplexer to use
 				-- 'auto' - Chooses mux based on priority (default)
