@@ -5,12 +5,14 @@
 }:
 {
   home = {
+    sessionVariables = {
+      NIX_REPO_GIT_ROOT = config.gitRoot;
+    };
+
+    file."bin".source = config.lib.file.mkOutOfStoreSymlink "${config.gitRoot}/home/scripts/bin";
+
     # to keep the user path intact when running the activation scripts
     emptyActivationPath = false;
-
-    # https://ryantm.github.io/nixpkgs/builders/trivial-builders/#trivial-builder-writeText
-    file."bin/example".text = ''but not executable'';
-
     activation = lib.my.activationScripts (map toString [
       ''
         mkdir -p ~/.{cache,config,local,run}
