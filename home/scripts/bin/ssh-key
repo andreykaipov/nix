@@ -13,7 +13,5 @@ if [ -z "$name" ]; then
         echo >&2 "Name was empty, so defaulting to '$name'"
 fi
 
-# TODO generate a new key on every new machine we configure when running install.sh
-
 #ssh-keygen -t rsa -b 4096 -f "$f" -C "$name"
 ssh-keygen -t ed25519 -f "$f" -C "$name"
