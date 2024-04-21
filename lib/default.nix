@@ -57,12 +57,12 @@ rec {
         # might not be necessary, could just use home.emptyActivationPath
         # export PATH=$PATH:/bin:/usr/bin:$HOME/.nix-profile/bin
         if [ -n "${dry_run}" ]; then
+          echo '#### THIS IS A DRY RUN FOR THE ACTIVATION SCRIPT ####'
           if [ -r "${script}" ]; then
             head -n3 "${script}"
           else
             echo '${script}' | head -n3
           fi
-          echo ${flake}
         else
           ${script}
         fi

@@ -1,3 +1,4 @@
+.DS_Store
 *.pem
 
 # nvim is an out of store symlink
