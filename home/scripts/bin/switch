@@ -21,10 +21,21 @@ if ! [ -r ~/.config/nix/nix.conf ]; then
         '
 fi
 
-if command -v home-manager >/dev/null; then
-        home-manager switch --flake ".#$host"
+homeman() {
+        if command -v home-manager >/dev/null; then
+                home-manager "$@"
+        else
+                echo >&2 "home-manager is not installed"
+                sleep 1
+                nix run home-manager -- "$@"
+        fi
+}
+
+if [ -n "${DRY_RUN-}" ]; then
+        # We can do a dry run by passing -n to home-manager, but this will still run our activation scripts.
+        # To get a fully dry run without changing home state, we must also set DRY_RUN=1 (see `lib/default.nix`).
+        export DRY_RUN
+        DRY_RUN=1 homeman --impure switch --flake ".#$host" -n
 else
-        echo "home-manager is not installed"
-        sleep 3
-        nix run home-manager -- switch --flake ".#$host"
+        homeman switch --flake ".#$host"
 fi

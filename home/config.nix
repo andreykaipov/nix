@@ -34,7 +34,7 @@ let
           ];
         }
         {
-          # so that after the first `nix run home-manager`, we can use home-manager directly
+          # so that after the first `nix run home-manager`, it gets added to our path as a standalone bin
           programs.home-manager.enable = true;
           home = {
             inherit username;
