@@ -1,0 +1,30 @@
+#!/bin/sh
+
+set -eu
+
+cd "$NIX_REPO_GIT_ROOT"
+
+host=${1:-}
+if [ -z "$host" ]; then
+        host=$(hostname)
+        echo >&2 "No host provided, using $host"
+fi
+
+if ! [ -r "hosts/$host.nix" ]; then
+        echo >&2 "No configuration for host $host"
+        exit 1
+fi
+
+if ! [ -r ~/.config/nix/nix.conf ]; then
+        export NIX_CONFIG='
+                experimental-features = nix-command flakes
+        '
+fi
+
+if command -v home-manager >/dev/null; then
+        home-manager switch --flake ".#$host"
+else
+        echo "home-manager is not installed"
+        sleep 3
+        nix run home-manager -- switch --flake ".#$host"
+fi

@@ -76,7 +76,4 @@
       G = "| grep";
     };
   };
-
-  # see LESSOPEN in zshenv
-  home.file."bin/lessfilter".source = ./lessfilter;
 }
