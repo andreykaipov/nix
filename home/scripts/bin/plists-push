@@ -1,9 +1,0 @@
-#!/bin/sh
-
-echo "Updating the following domains with our local plist config:"
-
-for plist in ~/.config/macos/*.plist; do
-    domain="$(basename "${plist%.*}")"
-    echo "$domain"
-    defaults import "$domain" "$plist"
-done

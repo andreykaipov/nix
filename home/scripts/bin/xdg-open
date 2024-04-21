@@ -1,7 +1,12 @@
 #!/bin/sh
-set -x
+# "polyfill" for xdg-open on WSL and macOS
 if [ -n "$WSL_DISTRO_NAME" ]; then
         explorer.exe "$(wslpath -w "$@")"
-        exit
+elif [ "$(uname)" = Darwin ]; then
+        open "$@"
+elif [ -z "$__opened__" ]; then
+        __opened__=1 xdg-open "$@"
+else
+        echo "xdg-open didn't work"
+        exit 1
 fi
-xdg-open "$@"
