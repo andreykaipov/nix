@@ -33,6 +33,7 @@ local config = {
 		{ import = "lazyvim.plugins.extras.lang.tex" },
 		{ import = "lazyvim.plugins.extras.lang.typescript" },
 		{ import = "lazyvim.plugins.extras.lang.yaml" },
+		-- { import = "lazyvim.plugins.extras.coding.copilot" },
 		{ import = "plugins" },
 		defaults = {
 			autocmds = true,

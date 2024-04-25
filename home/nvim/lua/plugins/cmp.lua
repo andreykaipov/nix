@@ -1,24 +1,24 @@
 return {
-	{
-		"github/copilot.vim",
-		event = { "InsertEnter", "VeryLazy" },
-		-- priority = 200,
-		-- cmd = "Copilot",
-		-- build = ":Copilot auth",
-		config = function()
-			vim.keymap.set("i", "<s-tab>", "<plug>(copilot-suggest)")
-			vim.keymap.set("i", "<c-e>", "<plug>(copilot-accept-line)")
-			vim.keymap.set("i", "<c-w>", "<plug>(copilot-next)")
-
-			-- vim.keymap.set("i", "<c-j>", 'copilot#accept("\\<cr>")', {
-			-- 	expr = true,
-			-- 	replace_keycodes = false,
-			-- })
-			-- vim.g.copilot_no_tab_map = true
-			-- vim.keymap.set('i', '<c-i>', '<plug>(copilot-previous)')
-			-- vim.keymap.set("i", "<c-l>", "<plug>(copilot-accept-word)")
-		end,
-	},
+	-- {
+	-- 	"github/copilot.vim",
+	-- 	event = { "InsertEnter", "VeryLazy" },
+	-- 	-- priority = 200,
+	-- 	-- cmd = "Copilot",
+	-- 	-- build = ":Copilot auth",
+	-- 	config = function()
+	-- 		vim.keymap.set("i", "<s-tab>", "<plug>(copilot-suggest)")
+	-- 		vim.keymap.set("i", "<c-e>", "<plug>(copilot-accept-line)")
+	-- 		vim.keymap.set("i", "<c-w>", "<plug>(copilot-next)")
+	--
+	-- 		-- vim.keymap.set("i", "<c-j>", 'copilot#accept("\\<cr>")', {
+	-- 		-- 	expr = true,
+	-- 		-- 	replace_keycodes = false,
+	-- 		-- })
+	-- 		-- vim.g.copilot_no_tab_map = true
+	-- 		-- vim.keymap.set('i', '<c-i>', '<plug>(copilot-previous)')
+	-- 		-- vim.keymap.set("i", "<c-l>", "<plug>(copilot-accept-word)")
+	-- 	end,
+	-- },
 	{
 		"L3MON4D3/LuaSnip",
 		event = { "InsertEnter", "VeryLazy" },
@@ -29,6 +29,39 @@ return {
 		-- use ^j and ^k instead
 		keys = false,
 	},
+	-- have to do this all manually instead of using
+	-- lazyvim.plugins.extras.coding.copilot because i'm using a fork of
+	-- copilot-cmp (see https://github.com/zbirenbaum/copilot-cmp/issues/5)
+	{
+		"zbirenbaum/copilot.lua",
+		cmd = "Copilot",
+		build = ":Copilot auth",
+		opts = {
+			suggestion = { enabled = false },
+			panel = { enabled = false },
+			filetypes = {
+				markdown = true,
+				help = true,
+			},
+		},
+	},
+	{
+		"JosefLitos/cmp-copilot",
+		event = { "InsertEnter", "VeryLazy" },
+		dependencies = "copilot.lua",
+		opts = {},
+		config = function(_, opts)
+			local copilot_cmp = require("cmp_copilot")
+			copilot_cmp.setup(opts)
+			-- attach cmp source whenever copilot attaches
+			-- fixes lazy-loading issues with the copilot cmp source
+			require("lazyvim.util").lsp.on_attach(function(client)
+				if client.name == "copilot" then
+					copilot_cmp._on_insert_enter({})
+				end
+			end)
+		end,
+	},
 	{
 		"hrsh7th/nvim-cmp",
 		event = { "InsertEnter", "VeryLazy" },
@@ -38,7 +71,7 @@ return {
 
 			-- ref: https://github.com/hrsh7th/nvim-cmp/blob/main/lua/cmp/config/default.lua
 			-- ghost text is off for cmp since we use copilot.vim, i like it more than copilot.lua
-			opts.experimental.ghost_text = false
+			opts.experimental.ghost_text = true
 			opts.window = { completion = {}, documentation = {} }
 			opts.window.completion.border = "solid"
 			opts.window.documentation.border = "solid"
@@ -54,6 +87,17 @@ return {
 				cmp.TriggerEvent.TextChanged,
 				cmp.TriggerEvent.InsertEnter,
 			}
+
+			opts.sources = cmp.config.sources({
+				-- Copilot Source
+				{ name = "copilot", group_index = 2, priority = 100 },
+				-- Other Sources
+				{ name = "nvim_lsp", group_index = 2 },
+				{ name = "path", group_index = 2 },
+				{ name = "luasnip", group_index = 2 },
+			}, {
+				{ name = "buffer" },
+			})
 
 			local has_words_before = function()
 				cmp.unpack = unpack or table.unpack
@@ -132,6 +176,14 @@ return {
 						fallback()
 					end
 				end),
+				["<S-CR>"] = function(fallback)
+					if cmp.visible() then
+						-- force carriage return if we ever want to insert newline without confirming completion
+						cmp.abort()
+						fallback()
+					end
+					vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<CR>", true, false, true), "i", true)
+				end,
 				["<CR>"] = cmp.mapping({
 					i = function(fallback)
 						if cmp.visible() then
@@ -163,13 +215,6 @@ return {
 						end
 					end,
 				}),
-				["<C-CR>"] = function()
-					if cmp.visible() then
-						-- force carriage return if we ever want to insert newline without confirming completion
-						cmp.abort()
-					end
-					vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<CR>", true, false, true), "i", true)
-				end,
 			})
 			cmp.setup(opts)
 		end,
