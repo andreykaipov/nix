@@ -1,4 +1,5 @@
-{ pkgs
+{ config
+, pkgs
 , ...
 }:
 let
@@ -25,6 +26,8 @@ in
       # substituters = builtins.attrNames substituters;
       trusted-substituters = builtins.attrNames substituters;
       trusted-public-keys = builtins.attrValues substituters;
+      # trusted-substituters = [ ];
+      # trusted-users = [ "root" config.home.username ];
       connect-timeout = 10;
       download-attempts = 5;
       max-jobs = "auto";

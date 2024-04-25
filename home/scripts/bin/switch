@@ -16,9 +16,20 @@ if ! [ -r "hosts/$host.nix" ]; then
 fi
 
 if ! [ -r ~/.config/nix/nix.conf ]; then
-        export NIX_CONFIG='
+        export NIX_CONFIG="
                 experimental-features = nix-command flakes
-        '
+                substitute = true
+                connect-timeout = 10
+                download-attempts = 5
+                always-allow-substitutes = true
+                substitute = true
+                trusted-users = root $USERNAME
+                max-jobs = auto
+                auto-optimise-store = true
+                keep-build-log = true
+                keep-derivations = false
+                keep-outputs = false
+        "
 fi
 
 homeman() {

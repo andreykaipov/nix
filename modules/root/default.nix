@@ -26,6 +26,7 @@ with flake.inputs.nixpkgs.lib;
       type = types.str;
       apply = toString;
       default = fileContents ./.gitRoot; # readFile will read the line feed
+      #default = "${config.home.homeDirectory}/gh/nix";
       description = "Path of the flake project directory (i.e. outside the Nix store, where it was cloned)";
     };
   };

@@ -5,7 +5,8 @@ and put it in `/tmp/age.decryption.key.pem`.
 Then run:
 
 ```console
-❯ home/scripts/bin/switch
+❯ cd ~/gh/nix
+❯ NIX_REPO_GIT_ROOT=$PWD home/scripts/bin/switch
 ```
 
 Subsequent runs can then just be `switch`, or just do it directly:
