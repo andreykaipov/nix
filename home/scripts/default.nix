@@ -17,9 +17,9 @@
       ''
         mkdir -p ~/.{cache,config,local,run}
         echo 1
-        echo '${config.root}'
         echo '${host.hostname}'
       ''
+      # echo '${host}'
       # echo '${lib.my.gitRoot}'
       # echo hello??
       # ''

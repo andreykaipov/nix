@@ -1,5 +1,0 @@
-# to be overwritten when setting up nix:
-git rev-parse --show-toplevel > .flakepath
-
-# it must exist in git for flakes to work, but we don't track it:
-❯ git update-index --assume-unchanged .flakepath
