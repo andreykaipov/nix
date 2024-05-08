@@ -4,7 +4,7 @@
 , ...
 }:
 let
-  inherit (flake.inputs) nixpkgs nixpkgs-stable home-manager neovim-nightly devenv;
+  inherit (flake.inputs) nixpkgs nixpkgs-stable home-manager neovim-nightly;
   inherit (builtins) mapAttrs map;
 
   configure = host:
@@ -53,7 +53,6 @@ let
       extraSpecialArgs = {
         inherit host;
         inherit (flake) inputs;
-        inherit (devenv.packages.${system}) devenv;
 
         # this import is not as efficient as using legacyPackages like above, but it's the only way to allow unfree for
         # nixpkgs-stable. thankfully this is not impure (using <...> would be), and we rarely use nixpkgs-stable anyway.
