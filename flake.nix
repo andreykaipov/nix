@@ -41,9 +41,7 @@
     homeConfigurations = import ./home/config.nix {
       flake = self;
       hosts = import ./hosts/config.nix { inherit (self.inputs.nixpkgs) lib; };
-      extraModules = [
-        (import ./modules/root { flake = self; })
-      ];
+      extraModules = [ ];
     };
   };
 }

@@ -26,7 +26,7 @@ let
   # the config property elsewhere in the module, see:
   # https://discourse.nixos.org/t/difference-between-a-modules-config-property-and-directly-defining-options/14972
   commonSecretsToDecrypt = { };
-  secretsDir = "${config.root}/secrets";
+  secretsDir = "${config.flakeRoot}/secrets";
   secretsFile = "${secretsDir}/secrets.nix";
   cfg = config.age;
 in
