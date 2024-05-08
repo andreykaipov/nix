@@ -8,6 +8,8 @@
     _1password
     bat
     cachix
+    coreutils
+    devbox
     dircolors_hex
     eza
     fd
@@ -80,6 +82,9 @@
     nodePackages.textlint-rule-stop-words
     nodePackages.textlint-rule-terminology
     nodePackages.textlint-rule-write-good
+
+    # tex
+    texlab
 
     # vim
     nodePackages.vim-language-server
