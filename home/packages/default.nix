@@ -1,6 +1,5 @@
 { pkgs
 , pkgs-stable
-, devenv
 , ...
 }:
 {
@@ -9,7 +8,6 @@
     _1password
     bat
     cachix
-    devenv
     dircolors_hex
     eza
     fd
