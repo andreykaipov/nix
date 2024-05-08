@@ -162,13 +162,13 @@ return {
 				["<C-j>"] = cmp.mapping(cmp_next),
 				-- i disabled the tab keys for luasnip because it broke things with copilot.vim
 				-- i still want to use them though, but only if luasnip is active
-				["<Tab>"] = cmp.mapping(function(fallback)
-					if luasnip.expand_or_jumpable() then
-						luasnip.expand_or_jump()
-					else
-						fallback()
-					end
-				end),
+				-- ["<Tab>"] = cmp.mapping(function(fallback)
+				-- 	if luasnip.expand_or_jumpable() then
+				-- 		luasnip.expand_or_jump()
+				-- 	else
+				-- 		fallback()
+				-- 	end
+				-- end),
 				["<S-Tab>"] = cmp.mapping(function(fallback)
 					if luasnip.jumpable(-1) then
 						luasnip.jump(-1)
@@ -184,23 +184,25 @@ return {
 					end
 					vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<CR>", true, false, true), "i", true)
 				end,
-				["<CR>"] = cmp.mapping({
+				["<Tab>"] = cmp.mapping({
 					i = function(fallback)
 						if cmp.visible() then
+							if luasnip.expand_or_jumpable() then
+								luasnip.expand_or_jump()
 							-- if there's only one choice
 							-- if #cmp.get_entries() == 1 then
 							-- cmp.confirm({ behavior = cmp.ConfirmBehavior.Replace, select = true })
-							if has_words_after() then
-								-- print("words after")
-								-- very annoying to go back earlier in the line and edit it, and then press enter
-								-- only to complete the text instead of inserting a newline, like in comments
-								cmp.abort()
-								fallback()
 							elseif cmp.get_selected_entry() then
 								-- print("selected entry")
 								-- selected enetry seems to apply to both preselected entries and explicitly
 								-- selected entries too, so we should use select true
 								cmp.confirm({ behavior = cmp.ConfirmBehavior.Insert, select = true })
+							elseif has_words_after() then
+								-- print("words after")
+								-- very annoying to go back earlier in the line and edit it, and then press enter
+								-- only to complete the text instead of inserting a newline, like in comments
+								cmp.abort()
+								fallback()
 							-- elseif cmp.get_active_entry() then
 							-- 	print("active entry")
 							-- 	-- active entry seems to mean it was explicitly selected so we should use select = false

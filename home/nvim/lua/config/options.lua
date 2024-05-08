@@ -26,7 +26,7 @@ opt.directory = { root .. "/tmp/swp//" }
 
 opt.number = true
 opt.relativenumber = true -- <leader>uL to toggle
-opt.scrolloff = 10
+opt.scrolloff = 20
 
 opt.list = false
 opt.listchars = {
