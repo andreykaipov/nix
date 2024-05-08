@@ -1,0 +1,19 @@
+# vim: filetype=gitconfig
+
+[user]
+    name = Andrey Kaipov
+    email = 9457739+andreykaipov@users.noreply.github.com
+
+    signingkey = ~/.config/ssh/keys/{{ host.hostname }}.pem.pub
+
+[gpg]
+    format = ssh
+
+[credential]
+    helper = cache --timeout=10000
+
+[diff "plist"]
+    textconv = plutil -convert xml1 -o -
+
+[url "git@github.com:"]
+    insteadOf = https://github.com/

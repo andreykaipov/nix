@@ -14,10 +14,6 @@
     eza
     fd
     fzf
-    lazygit
-    gh
-    git-filter-repo
-    git
     graphviz
     jq
     lesspipe
