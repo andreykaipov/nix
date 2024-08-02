@@ -21,7 +21,7 @@ Host *
     ControlPersist 600
 
 CanonicalizeHostname yes
-Include ~/.config/ssh/config.d/*
+Include ~/.ssh/config.d/*
 
 Host localhost
     HostName localhost
