@@ -2,12 +2,12 @@
 
 Match user git host github.com
     # TODO template this with nix since we know the hostnames
-    IdentityFile ~/.config/ssh/keys/smart-toaster.pem
-    IdentityFile ~/.config/ssh/keys/dustbox.pem
+    IdentityFile ~/.ssh/keys/smart-toaster.pem
+    IdentityFile ~/.ssh/keys/dustbox.pem
 
 Host gh* *.github.net
     User andreykaipov
-    IdentityFile ~/.config/ssh/keys/ghbastion.pem
+    IdentityFile ~/.ssh/keys/ghbastion.pem
     ForwardAgent yes
 
 Host *.github.net
