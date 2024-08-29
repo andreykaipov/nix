@@ -41,13 +41,12 @@
     enableCompletion = true; # this only enables completion for 'nix *' commands, literally only that
     completionInit = ''
       source "${inputs.zsh-completions}/zsh-completions.plugin.zsh"
-      # autoload -Uz +X compinit && compinit
-      # autoload -Uz +X bashcompinit && bashcompinit
+      autoload -Uz +X compinit && compinit
+      autoload -Uz +X bashcompinit && bashcompinit
       # fzf, enables it for ^r, ^s and tab completion
       source "${pkgs.oh-my-zsh}/share/oh-my-zsh/plugins/fzf/fzf.plugin.zsh"
       source "${inputs.zsh-fzf-tab}/fzf-tab.plugin.zsh"
       source "${inputs.zsh-fzf-tab-source}/fzf-tab-source.plugin.zsh"
-      source "${inputs.zsh-autocomplete}/zsh-autocomplete.plugin.zsh" # i like it only for the auto list
       source "${inputs.zsh-almostontop}/almostontop.plugin.zsh" # this goes really great with above
       complete -o nospace -C ${pkgs.terragrunt}/bin/terragrunt terragrunt
     '';
