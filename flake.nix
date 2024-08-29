@@ -10,7 +10,7 @@
 
     home-manager.url = "github:nix-community/home-manager/master";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
-    neovim-nightly.url = "github:neovim/neovim?dir=contrib"; #" #&rev=eb151a9730f0000ff46e0b3467e29bb9f02ae362";
+    neovim-nightly.url = "github:nix-community/neovim-nightly-overlay";
     neovim-nightly.inputs.nixpkgs.follows = "nixpkgs";
     agenix.url = "github:ryantm/agenix/main";
     agenix.inputs.nixpkgs.follows = "nixpkgs";

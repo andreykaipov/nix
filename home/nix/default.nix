@@ -9,7 +9,7 @@ let
 in
 {
   nix = {
-    package = pkgs.nixUnstable;
+    package = pkgs.nixVersions.latest; # pkgs.nixUnstable;
     checkConfig = true;
     settings = {
       allow-dirty = true;
