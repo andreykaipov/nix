@@ -57,7 +57,7 @@ bindkey "^[e" edit-command-line
 # i like ^j to go forward in history, but if there's a buffer we should complete
 # makes it feel like my nvim lsp setup
 ._complete-or-history-forward() {
-        if [[ $LASTWIDGET == h\istory-search-backward ]]; then
+        if [[ $LASTWIDGET == history-search-backward ]]; then
                 zle history-search-forward
         elif [[ $LASTWIDGET == ._complete-or-history-forward ]]; then
                 zle history-search-forward
@@ -181,3 +181,7 @@ zstyle ':autocomplete:*history*:*' insert-unambiguous no
 zstyle ':autocomplete:menu-search:*' insert-unambiguous no
 zstyle ':autocomplete:*' delay 0.5
 zstyle ':completion:*:*' matcher-list 'm:{[:lower:]-}={[:upper:]_}' '+r:|[.]=**'
+
+if which rbenv >/dev/null; then
+        eval "$(rbenv init - zsh)"
+fi
