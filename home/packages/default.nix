@@ -6,7 +6,10 @@
   home.packages = with pkgs; [
     # misc non-lang specific dev tools
     _1password
+    # azure-cli # homebrew...
+    azurite
     bat
+    upx
     cachix
     coreutils
     devbox
@@ -20,10 +23,15 @@
     mutagen
     nmap
     rclone
+    imagemagick_light
     ripgrep
     socat
     yq-go
     neofetch
+    qmk
+
+    # lint
+    nodePackages.prettier
 
     # sh
     nodePackages.bash-language-server
@@ -36,9 +44,12 @@
     gopls
 
     # tf
+    checkov
     terraform
+    terragrunt
     opentofu
     terraform-ls
+    tflint
 
     # nix
     nil
@@ -49,6 +60,7 @@
 
     # lua
     lua
+    luarocks
     lua-language-server
     stylua
 
