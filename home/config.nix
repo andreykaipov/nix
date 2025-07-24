@@ -46,6 +46,9 @@ let
           # see rakeLeaves: https://github.com/bangedorrunt/nix/blob/tdt/lib/importers.nix
           imports = map (path: ./${path}) (lib.my.subdirs ./.);
         }
+        {
+          config.flakeRoot = toString flake;
+        }
       ]
       ++ (host.extraModules or [ ])
       ++ extraModules;
