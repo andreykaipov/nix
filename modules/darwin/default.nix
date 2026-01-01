@@ -1,6 +1,14 @@
-{ agenix, config, pkgs, home-manager, nix-homebrew, ... }:
+{
+  agenix,
+  config,
+  pkgs,
+  nix-homebrew,
+  ...
+}:
 
-let user = "andrey"; in
+let
+  user = "andrey";
+in
 
 {
   imports = [
@@ -12,31 +20,30 @@ let user = "andrey"; in
     agenix.darwinModules.default
     ./secrets.nix
 
-    home-manager.darwinModules.home-manager
-    ./home-manager.nix
+    ./user.nix
   ];
 
   # Setup user, packages, programs
   nix = {
     enable = false;
 
-#    package = pkgs.nix;
-#
-#    settings = {
-#      trusted-users = [ "@admin" "${user}" ];
-#      substituters = [ "https://nix-community.cachix.org" "https://cache.nixos.org" ];
-#      trusted-public-keys = [ "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY=" ];
-#    };
-#
-#    gc = {
-#      automatic = true;
-#      interval = { Weekday = 0; Hour = 2; Minute = 0; };
-#      options = "--delete-older-than 30d";
-#    };
-#
-#    extraOptions = ''
-#      experimental-features = nix-command flakes
-#    '';
+    #    package = pkgs.nix;
+    #
+    #    settings = {
+    #      trusted-users = [ "@admin" "${user}" ];
+    #      substituters = [ "https://nix-community.cachix.org" "https://cache.nixos.org" ];
+    #      trusted-public-keys = [ "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY=" ];
+    #    };
+    #
+    #    gc = {
+    #      automatic = true;
+    #      interval = { Weekday = 0; Hour = 2; Minute = 0; };
+    #      options = "--delete-older-than 30d";
+    #    };
+    #
+    #    extraOptions = ''
+    #      experimental-features = nix-command flakes
+    #    '';
   };
 
   # Turn off NIX_PATH warnings now that we're using flakes
@@ -44,7 +51,8 @@ let user = "andrey"; in
   # Load configuration that is shared across systems
   environment.systemPackages = with pkgs; [
     agenix.packages."${pkgs.system}".default
-  ] ++ (import ../shared/packages.nix { inherit pkgs; });
+    dockutil
+  ];
 
   system = {
     checks.verifyNixPath = false;

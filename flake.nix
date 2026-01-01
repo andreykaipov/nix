@@ -1,5 +1,5 @@
 {
-  description = "Starter Configuration with secrets for MacOS and NixOS";
+  description = "Configuration with secrets for MacOS and NixOS";
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
     agenix.url = "github:ryantm/agenix";
@@ -23,9 +23,6 @@
 
     homebrew-cask.url = "github:homebrew/homebrew-cask";
     homebrew-cask.flake = false;
-
-    disko.url = "github:nix-community/disko";
-    disko.inputs.nixpkgs.follows = "nixpkgs";
 
     secrets.url = "git+ssh://git@github.com/andreykaipov/nix-secrets.git";
     secrets.flake = false;
@@ -64,30 +61,12 @@
         };
 
       hosts = import ./hosts { inherit lib; };
-      darwinSystems = hosts.darwin;
-      linuxSystems = hosts.linux;
     in
     {
       apps = forAllSystems mkApps; # nix run .#app
       devShells = forAllSystems devShell;
 
       homeConfigurations = lib.mkConfig "home" hosts;
-      linuxConfigurations = lib.mkConfig "linux" hosts;
       darwinConfigurations = lib.mkConfig "darwin" hosts;
-      # nixosConfigurations = nixpkgs.lib.genAttrs linuxSystems (system: nixpkgs.lib.nixosSystem {
-      #   inherit system;
-      #   specialArgs = inputs;
-      #   modules = [
-      #     disko.nixosModules.disko
-      #     home-manager.nixosModules.home-manager {
-      #       home-manager = {
-      #         useGlobalPkgs = true;
-      #         useUserPackages = true;
-      #         users.${user} = import ./modules/nixos/home-manager.nix;
-      #       };
-      #     }
-      #     ./hosts/nixos
-      #   ];
-      #});
     };
 }

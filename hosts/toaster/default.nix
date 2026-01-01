@@ -10,6 +10,5 @@ in
   inherit homeDirectory;
   gitRoot = "${homeDirectory}/gh/nixos-config";
   extraModules = [
-    # { andrey.agenix.secrets.secret1 = { }; }
   ];
 }

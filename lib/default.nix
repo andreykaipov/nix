@@ -45,7 +45,6 @@ extend (
 
             configuration = getAttr kind {
               home = home-manager.lib.homeManagerConfiguration;
-              linux = nixpkgs.lib.nixosSystem;
               darwin = darwin.lib.darwinSystem;
             };
 
@@ -57,7 +56,7 @@ extend (
                 };
                 modules = [
                   ../modules/roots
-                  ../home
+                  ../modules/home
                   # {
                   #   # I like to use
                   #   # https://github.com/nix-community/home-manager/issues/8336#issuecomment-3696615357
@@ -66,7 +65,6 @@ extend (
                   # }
                 ];
               };
-              linux = { };
               darwin = {
                 inherit system;
                 specialArgs = inputs // host // { inherit pkgs pkgs-stable; };
