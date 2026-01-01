@@ -1,13 +1,20 @@
 { pkgs }:
 
 with pkgs; [
+  wezterm
+  _1password-gui
+
+  home-manager
+
   # General packages for development and system management
   bash-completion
   bat
   btop
   coreutils
   killall
+  neovim
   openssh
+  ripgrep
   sqlite
   wget
   zip
@@ -17,6 +24,7 @@ with pkgs; [
   age-plugin-yubikey
   gnupg
   libfido2
+  _1password-cli
 
   # Cloud-related tools and SDKs
   # docker
@@ -50,7 +58,9 @@ with pkgs; [
   # Development tools
   curl
   gh
+  opentofu
   terraform
+  terragrunt
   kubectl
   awscli2
   lazygit
@@ -66,4 +76,9 @@ with pkgs; [
   # Python packages
   # python3
   # virtualenv
+
+  lua
+  luarocks
+  lua-language-server
+  stylua
 ]

@@ -2,20 +2,21 @@ _:
 
 [
   # Development Tools
-  "homebrew/cask/docker"
+  "homebrew/cask/docker-desktop"
   "visual-studio-code"
-  "iterm2"
-  "postman"
-  "cursor"
+  "ghostty"
+
+  # "iterm2"
+  # "postman"
+  # "cursor"
 
   # Productivity Tools
-  "raycast"
+  # "raycast"
 
   # Browsers
-  "google-chrome"
+  # "google-chrome"
 
   # Communication Tools - Examples (uncomment as needed)
-  # "discord"
   # "notion"
   # "slack"
   # "telegram"
@@ -27,6 +28,8 @@ _:
   # "rectangle"
 
   # Entertainment Tools - Examples (uncomment as needed)
-  # "spotify"
   # "vlc"
+
+  "spotify"
+  "discord"
 ]

@@ -2,11 +2,6 @@
 
 let
   user = "andrey";
-  # Define the content of your file as a derivation
-  myEmacsLauncher = pkgs.writeScript "emacs-launcher.command" ''
-    #!/bin/sh
-    emacsclient -c -n &
-  '';
   sharedFiles = import ../shared/files.nix { inherit config pkgs; };
   additionalFiles = import ./files.nix { inherit user config pkgs; };
 in
@@ -45,27 +40,33 @@ in
   };
 
   # Enable home-manager
-  home-manager = {
-    useGlobalPkgs = true;
-    users.${user} = { pkgs, config, lib, ... }:{
-      home = {
-        enableNixpkgsReleaseCheck = false;
-        packages = pkgs.callPackage ./packages.nix {};
-        file = lib.mkMerge [
-          sharedFiles
-          additionalFiles
-          { "emacs-launcher.command".source = myEmacsLauncher; }
-        ];
-
-        stateVersion = "23.11";
-      };
-      programs = {} // import ../shared/home-manager.nix { inherit config pkgs lib; };
-
-      # Marked broken Oct 20, 2022 check later to remove this
-      # https://github.com/nix-community/home-manager/issues/3344
-      manual.manpages.enable = false;
-    };
-  };
+#  home-manager = {
+#    useGlobalPkgs = true;
+#    users.${user} = { pkgs, config, lib, ... }:{
+#      home = {
+#        enableNixpkgsReleaseCheck = false;
+#        packages = pkgs.callPackage ./packages.nix {};
+#        file = lib.mkMerge [
+#          sharedFiles
+#          additionalFiles
+#        ];
+#
+#        stateVersion = "23.11";
+#      };
+#      programs = {
+##        home-manager.enable = true;
+#      } // import ../shared/home-manager.nix { inherit config pkgs lib; };
+#
+#      # Marked broken Oct 20, 2022 check later to remove this
+#      # https://github.com/nix-community/home-manager/issues/3344
+#      manual.manpages.enable = false;
+#      
+##      xdg.configFile = lib.mapAttrs
+##      	(f: _: config.lib.file.mkOutOfStoreSymlink "/home/user/Home/.config/${f}")
+##	(builtins.readDir "/Users/andrey/gh/nixos-config/home");
+#      #xdg.configFile."tmux".source = config.lib.file.mkOutOfStoreSymlink "/Users/andrey/gh/nixos-config/home/tmux";
+#    };
+  #};
 
   # Fully declarative dock using the latest from Nix Store
   local = {
@@ -73,23 +74,16 @@ in
       enable = true;
       username = user;
       entries = [
-        { path = "/Applications/Safari.app/"; }
+        { path = "${pkgs.wezterm}/Applications/Wezterm.app/"; }
+        #{ path = "${pkgs.ghostty}/Applications/Ghostty.app/"; }
         { path = "/System/Applications/Messages.app/"; }
         { path = "/System/Applications/Notes.app/"; }
-        { path = "${pkgs.alacritty}/Applications/Alacritty.app/"; }
-        { path = "/System/Applications/Music.app/"; }
-        { path = "/System/Applications/Photos.app/"; }
-        { path = "/System/Applications/Photo Booth.app/"; }
         { path = "/System/Applications/System Settings.app/"; }
-        {
-          path = toString myEmacsLauncher;
-          section = "others";
-        }
-        {
-          path = "${config.users.users.${user}.home}/Downloads";
-          section = "others";
-          options = "--sort name --view grid --display stack";
-        }
+        # {
+        #   path = "${config.users.users.${user}.home}/Downloads";
+        #   section = "others";
+        #   options = "--sort name --view grid --display stack";
+        # }
       ];
     };
   };

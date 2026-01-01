@@ -1,0 +1,4 @@
+#!/bin/sh
+
+gitRoot=$(git rev-parse --show-toplevel)
+sed -i '' -E 's@(default[ ]+=[ ]+")([^"]+)("; # bootstrap:gitRoot)$@\1'"$gitRoot"'\3@' modules/roots/default.nix
