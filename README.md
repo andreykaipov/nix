@@ -90,31 +90,34 @@ The host is auto-discovered — no changes to `flake.nix` needed.
 
 ```
 .
-├── flake.nix              # Flake entrypoint: inputs, outputs
-├── lib/                   # Helper functions (mkConfig, mkApp)
-├── hosts/                 # Per-host config (system, username, homeDirectory)
-│   ├── airfryer/          # macOS host
-│   └── toaster/           # macOS host
+├── flake.nix                 # Flake entrypoint: inputs, outputs
+├── lib/                      # Helper functions (mkConfig, mkApp)
+├── hosts/                    # Per-host config (system, username, homeDirectory, gitRoot)
+│   ├── airfryer/             # macOS host
+│   └── toaster/              # macOS host
 ├── modules/
-│   ├── darwin/            # nix-darwin modules (system-level)
-│   │   ├── default.nix    # Main darwin module: system defaults, packages
-│   │   ├── user.nix       # User account + dock layout
-│   │   ├── homebrew.nix   # nix-homebrew taps, casks, brews, masApps
-│   │   └── secrets.nix    # agenix secrets
-│   ├── home/              # home-manager modules (user-level)
-│   │   ├── default.nix    # Main home module: zsh, git, ssh
-│   │   ├── packages/      # User packages (dev tools, LSPs, etc.)
-│   │   ├── tmux/          # tmux configuration
-│   │   └── nvim/          # Neovim configuration
-│   ├── shared/            # Shared nixpkgs config (overlays, unfree)
-│   └── roots/             # gitRoot option for mkOutOfStoreSymlink
-├── apps/
-│   └── aarch64-darwin/    # App scripts (nix run .#<name>)
-│       ├── build-switch   # Build and switch nix-darwin
-│       ├── home-switch    # Switch home-manager configuration
-│       ├── clean          # Garbage collect old generations (>7 days)
-│       └── rollback       # Roll back to a previous darwin generation
-└── overlays/              # Nixpkgs overlays
+│   ├── darwin/               # nix-darwin modules (system-level)
+│   │   ├── default.nix       # Hub: imports all darwin sub-modules
+│   │   ├── dock/
+│   │   │   ├── default.nix   # dockutil module (options + activation script)
+│   │   │   └── settings/     # Dock appearance + entries
+│   │   ├── homebrew/
+│   │   │   ├── default.nix   # nix-homebrew setup + taps
+│   │   │   └── packages/     # Casks, brews, masApps
+│   │   ├── secrets/          # agenix identity paths + secrets
+│   │   ├── system/           # macOS defaults (keyboard, finder, trackpad, security)
+│   │   └── user/             # User account registration
+│   └── home/                 # home-manager modules (user-level)
+│       ├── default.nix       # Main home module: zsh, git, ssh
+│       ├── packages/         # User packages (dev tools, LSPs, etc.)
+│       ├── tmux/             # tmux configuration
+│       └── nvim/             # Neovim configuration
+└── apps/
+    └── aarch64-darwin/       # App scripts (nix run .#<name>)
+        ├── build-switch      # Build and switch nix-darwin
+        ├── home-switch       # Switch home-manager configuration
+        ├── clean             # Garbage collect old generations (>7 days)
+        └── rollback          # Roll back to a previous darwin generation
 ```
 
 ## Day-to-Day Usage
@@ -131,12 +134,12 @@ nix run .#home-switch
 
 ### Adding a Homebrew cask
 
-Edit `modules/darwin/homebrew.nix`:
+Edit `modules/darwin/homebrew/packages/default.nix`:
 
 ```nix
 homebrew.casks = [
   "docker-desktop"
-  "ghostty"
+  "wezterm"
   "my-new-app"  # add here
 ];
 ```

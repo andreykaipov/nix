@@ -45,6 +45,7 @@ extend (
 
             configuration = getAttr kind {
               home = home-manager.lib.homeManagerConfiguration;
+              linux = nixpkgs.lib.nixosSystem;
               darwin = darwin.lib.darwinSystem;
             };
 
@@ -55,16 +56,16 @@ extend (
                   inherit host pkgs-stable;
                 };
                 modules = [
-                  ../modules/roots
                   ../modules/home
-                  # {
-                  #   # I like to use
-                  #   # https://github.com/nix-community/home-manager/issues/8336#issuecomment-3696615357
-                  #   targets.darwin.copyApps.enable = false;
-                  #   targets.darwin.linkApps.enable = false;
-                  # }
+                  {
+                    # nix-darwin handles app linking, not home-manager
+                    # https://github.com/nix-community/home-manager/issues/8336#issuecomment-3696615357
+                    targets.darwin.copyApps.enable = false;
+                    targets.darwin.linkApps.enable = false;
+                  }
                 ];
               };
+              linux = { };
               darwin = {
                 inherit system;
                 specialArgs = inputs // host // { inherit pkgs pkgs-stable; };

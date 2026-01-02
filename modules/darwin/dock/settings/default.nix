@@ -1,0 +1,38 @@
+{
+  config,
+  username,
+  homeDirectory,
+  ...
+}:
+
+{
+  # Dock appearance
+  system.defaults.dock = {
+    autohide = true;
+    show-recents = false;
+    launchanim = true;
+    orientation = "bottom";
+    tilesize = 48;
+
+    # magnify on hover
+    magnification = true;
+    largesize = 16;
+  };
+
+  # Dock entries (managed via dockutil)
+  local.dock = {
+    enable = true;
+    inherit username;
+    entries = [
+      { path = "/Applications/WezTerm.app/"; }
+      { path = "/System/Applications/Messages.app/"; }
+      { path = "/System/Applications/Notes.app/"; }
+      { path = "/System/Applications/System Settings.app/"; }
+      {
+        path = "${homeDirectory}/Downloads";
+        section = "others";
+        options = "--sort name --view grid --display stack";
+      }
+    ];
+  };
+}
