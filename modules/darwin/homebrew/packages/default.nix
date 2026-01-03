@@ -1,6 +1,7 @@
 {
   ...
 }:
+
 {
   homebrew = {
     casks = [

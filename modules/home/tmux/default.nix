@@ -4,6 +4,7 @@
   host,
   ...
 }:
+
 {
   # we don't use programs.tmux.enable because we have a lot of custom written
   # configs and home-manager adds shit I don't like
