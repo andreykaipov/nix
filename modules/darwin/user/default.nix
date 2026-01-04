@@ -1,14 +1,13 @@
 {
   pkgs,
-  username,
-  homeDirectory,
+  host,
   ...
 }:
 
 {
-  users.users.${username} = {
-    name = username;
-    home = homeDirectory;
+  users.users.${host.username} = {
+    name = host.username;
+    home = host.homeDirectory;
     isHidden = false;
     shell = pkgs.zsh;
   };

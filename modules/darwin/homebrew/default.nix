@@ -3,7 +3,7 @@
   homebrew-cask,
   homebrew-bundle,
   nix-homebrew,
-  username,
+  host,
   ...
 }:
 
@@ -15,7 +15,7 @@
 
   # https://github.com/zhaofengli/nix-homebrew/tree/main#a-new-installation
   nix-homebrew = {
-    user = username;
+    user = host.username;
     enable = true;
     # enableRosetta = true;
     mutableTaps = false;
