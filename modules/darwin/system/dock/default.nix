@@ -4,18 +4,9 @@
 }:
 
 {
-  # Dock appearance
-  system.defaults.dock = {
-    autohide = true;
-    show-recents = false;
-    launchanim = true;
-    orientation = "bottom";
-    tilesize = 48;
-
-    # magnify on hover
-    magnification = true;
-    largesize = 16;
-  };
+  imports = [
+    ../../../_internal/dock
+  ];
 
   # Dock entries (managed via dockutil)
   local.dock = {
@@ -32,5 +23,17 @@
         options = "--sort name --view grid --display stack";
       }
     ];
+  };
+
+  system.defaults.dock = {
+    autohide = true;
+    show-recents = false;
+    launchanim = true;
+    orientation = "bottom";
+    tilesize = 48;
+
+    # magnify on hover
+    magnification = true;
+    largesize = 16;
   };
 }
