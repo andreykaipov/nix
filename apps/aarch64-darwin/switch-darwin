@@ -1,0 +1,22 @@
+#!/bin/sh -e
+
+green='\033[1;32m'
+yellow='\033[1;33m'
+reset='\033[0m'
+
+hostname="$(hostname)"
+flake_system="darwinConfigurations.${hostname}.system"
+
+export NIXPKGS_ALLOW_UNFREE=1
+
+printf "${yellow}Building nix-darwin...${reset}\n"
+nix --extra-experimental-features 'nix-command flakes' build ".#$flake_system" "$@"
+
+printf "${yellow}Switching to new generation...${reset}\n"
+# See https://github.com/nix-darwin/nix-darwin/issues/1457 on why we need sudo
+sudo ./result/sw/bin/darwin-rebuild switch --flake ".#${hostname}" "$@"
+
+printf "${yellow}Cleaning up...${reset}\n"
+unlink ./result
+
+printf "${green}nix-darwin switch complete!${reset}\n"

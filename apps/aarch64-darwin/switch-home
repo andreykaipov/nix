@@ -1,0 +1,19 @@
+#!/bin/sh -e
+
+green='\033[1;32m'
+yellow='\033[1;33m'
+reset='\033[0m'
+
+hostname="$(hostname)"
+
+export NIXPKGS_ALLOW_UNFREE=1
+
+printf "${yellow}Switching home-manager...${reset}\n"
+if command -v home-manager >/dev/null 2>&1; then
+  home-manager switch --flake ".#${hostname}" "$@"
+else
+  printf "${yellow}home-manager not in PATH, bootstrapping via nix run...${reset}\n"
+  nix run home-manager -- switch --flake ".#${hostname}" "$@"
+fi
+
+printf "${green}home-manager switch complete!${reset}\n"

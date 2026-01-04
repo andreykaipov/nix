@@ -1,24 +1,24 @@
 #!/bin/sh -e
 
-GREEN='\033[1;32m'
-YELLOW='\033[1;33m'
-RED='\033[1;31m'
-NC='\033[0m'
+green='\033[1;32m'
+yellow='\033[1;33m'
+red='\033[1;31m'
+reset='\033[0m'
 
-FLAKE="$(hostname)"
+flake="$(hostname)"
 
-echo "${YELLOW}Available generations:${NC}"
+printf "${yellow}Available generations:${reset}\n"
 /run/current-system/sw/bin/darwin-rebuild --list-generations
 
-echo "${YELLOW}Enter the generation number for rollback:${NC}"
-read GEN_NUM
+printf "${yellow}Enter the generation number for rollback:${reset}\n"
+read gen_num
 
-if [ -z "$GEN_NUM" ]; then
-  echo "${RED}No generation number entered. Aborting rollback.${NC}"
+if [ -z "$gen_num" ]; then
+  printf "${red}No generation number entered. Aborting rollback.${reset}\n"
   exit 1
 fi
 
-echo "${YELLOW}Rolling back to generation $GEN_NUM...${NC}"
-/run/current-system/sw/bin/darwin-rebuild switch --flake .#$FLAKE --switch-generation $GEN_NUM
+printf "${yellow}Rolling back to generation %s...${reset}\n" "$gen_num"
+/run/current-system/sw/bin/darwin-rebuild switch --flake ".#$flake" --switch-generation "$gen_num"
 
-echo "${GREEN}Rollback to generation $GEN_NUM complete!${NC}"
+printf "${green}Rollback to generation %s complete!${reset}\n" "$gen_num"
