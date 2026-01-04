@@ -27,46 +27,14 @@
     secrets.url = "git+ssh://git@github.com/andreykaipov/nix-secrets.git";
     secrets.flake = false;
   };
-  #outputs = { self, darwin, nix-homebrew, homebrew-bundle, homebrew-core, homebrew-cask, home-manager, nixpkgs, disko, agenix, secrets, ... } @inputs:
   outputs =
-    { self, ... }@inputs:
+    inputs:
     let
-      inherit (inputs) nixpkgs;
-
-      lib = import ./lib { inherit self; };
-
-      # forAllSystems = f: nixpkgs.lib.genAttrs (linuxSystems ++ darwinSystems) f;
-      forAllSystems = f: nixpkgs.lib.genAttrs (nixpkgs.lib.systems.flakeExposed) f;
-      mkApps =
-        system: lib.attrsets.mapAttrs (k: v: lib.mkApp k system) (builtins.readDir ./apps/${system});
-      devShell =
-        system:
-        let
-          pkgs = nixpkgs.legacyPackages.${system};
-        in
-        {
-          default =
-            with pkgs;
-            mkShell {
-              nativeBuildInputs = with pkgs; [
-                bashInteractive
-                git
-                age
-                age-plugin-yubikey
-              ];
-              shellHook = with pkgs; ''
-                export EDITOR=vim
-              '';
-            };
-        };
-
+      lib = import ./lib { inherit inputs; };
       hosts = import ./hosts { inherit lib; };
     in
     {
-      apps = forAllSystems mkApps; # nix run .#app
-      devShells = forAllSystems devShell;
-
-      homeConfigurations = lib.mkConfig "home" hosts;
-      darwinConfigurations = lib.mkConfig "darwin" hosts;
-    };
+      apps = lib.forAvailableSystems lib.mkApps;
+    }
+    // lib.mkConfigs hosts;
 }
