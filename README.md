@@ -98,24 +98,22 @@ The host is auto-discovered — no changes to `flake.nix` needed.
 ```
 .
 ├── flake.nix                 # Flake entrypoint: inputs, outputs
-├── lib/                      # Helper functions (mkConfig, mkApp)
+├── lib/                      # Helper functions (mkConfig, mkApp, discoverModules)
 ├── hosts/                    # Per-host config (system, username)
-│   ├── airfryer/             # macOS host
-│   └── toaster/              # macOS host
+│   ├── default.nix           # Auto-discovers host dirs → { darwin, linux, home }
+│   └── extend.nix            # HM module: injects host.symlinkTo via _module.args
 ├── modules/
-│   ├── darwin/               # nix-darwin modules (system-level)
-│   │   ├── default.nix       # Hub: imports all darwin sub-modules
-│   │   ├── dock/
-│   │   │   ├── default.nix   # dockutil module (options + activation script)
-│   │   │   └── settings/     # Dock appearance + entries
-│   │   ├── homebrew/
-│   │   │   ├── default.nix   # nix-homebrew setup + taps
-│   │   │   └── packages/     # Casks, brews, masApps
+│   ├── _internal/            # Plumbing modules (not user config)
+│   │   └── dock.nix          # dockutil module (options + activation script)
+│   ├── darwin/               # nix-darwin modules (auto-discovered)
+│   │   ├── default.nix       # Auto-imports subdirs via lib.discoverModules
+│   │   ├── homebrew/         # nix-homebrew setup, taps, casks, brews
 │   │   ├── secrets/          # agenix identity paths + secrets
 │   │   ├── system/           # macOS defaults (keyboard, finder, trackpad, security)
+│   │   │   └── dock/         # Dock appearance + entries (uses _internal/dock)
 │   │   └── user/             # User account registration
-│   └── home/                 # home-manager modules (user-level)
-│       ├── default.nix       # Hub: imports all home sub-modules
+│   └── home/                 # home-manager modules (auto-discovered)
+│       ├── default.nix       # Auto-imports subdirs via lib.discoverModules
 │       ├── shell/            # zsh + powerlevel10k
 │       ├── git/              # Git config (name, email, signing)
 │       ├── ssh/              # SSH config
@@ -130,6 +128,9 @@ The host is auto-discovered — no changes to `flake.nix` needed.
         ├── clean             # Garbage collect old generations (>30 days)
         └── rollback          # Roll back to a previous darwin generation
 ```
+
+Adding a new module is just creating a subdirectory with a `default.nix` —
+`lib.discoverModules` picks it up automatically.
 
 ## Day-to-Day Usage
 
@@ -148,7 +149,7 @@ nix run .#switch
 
 ### Adding a Homebrew cask
 
-Edit `modules/darwin/homebrew/packages/default.nix`:
+Edit `modules/darwin/homebrew/default.nix`:
 
 ```nix
 homebrew.casks = [
@@ -186,7 +187,7 @@ the repo so edits take effect immediately without rebuilding:
 }
 ```
 
-This creates `~/.config/nvim → ~/gh/nix/modules/home/nvim`. The directory name
+This creates `~/.config/nvim → ~/gh/nixos-config/modules/home/nvim`. The directory name
 is derived from the path you pass in (`./.` resolves to the current module's
 directory). See `hosts/extend.nix` for implementation details.
 
