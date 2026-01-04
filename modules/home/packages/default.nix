@@ -59,7 +59,6 @@
     # azure-cli-extensions.monitor-control-service
     curl
     gh
-    opentofu
     kubectl
     awscli2
     lazygit

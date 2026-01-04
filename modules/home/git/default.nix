@@ -10,15 +10,16 @@ in
   programs.git = {
     enable = true;
     ignores = [ "*.swp" ];
-    userName = name;
-    userEmail = email;
     lfs = {
       enable = true;
     };
-    extraConfig = {
+    settings = {
+      user = {
+        inherit name email;
+      };
       init.defaultBranch = "main";
       core = {
-        editor = "vim";
+        editor = "nvim";
         autocrlf = "input";
       };
       commit.gpgsign = true;
