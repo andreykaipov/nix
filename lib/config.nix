@@ -37,9 +37,10 @@ final: _: {
           args = getAttr kind {
             home = {
               inherit pkgs;
+              lib = final;
               extraSpecialArgs = inputs // {
-                # host is passed to _module by the extend.nix import below, not here
                 inherit pkgs-stable;
+                # host is passed to _module by the extend.nix import below, not here
               };
               modules = [
                 (import ../hosts/extend.nix host)
@@ -60,6 +61,7 @@ final: _: {
             linux = { };
             darwin = {
               specialArgs = inputs // {
+                lib = final;
                 inherit host pkgs pkgs-stable;
               };
               modules = [
