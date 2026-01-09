@@ -10,7 +10,11 @@
     bat
     btop
     coreutils
+    eza
+    fd
     killall
+    lesspipe
+    oh-my-zsh
     openssh
     ripgrep
     sqlite
