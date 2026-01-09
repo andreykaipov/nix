@@ -1,0 +1,23 @@
+# vim: ft=sshconfig
+
+Match user git host github.com
+    # TODO template this with nix since we know the hostnames
+    IdentityFile ~/.ssh/keys/smart-toaster.pem
+    IdentityFile ~/.ssh/keys/dustbox.pem
+
+Host gh* *.github.net
+    User andreykaipov
+    IdentityFile ~/.ssh/keys/ghbastion.pem
+    ForwardAgent yes
+
+Host *.github.net
+    ProxyJump ghbastion
+
+Host ghbastion
+    HostName bastion.githubapp.com
+
+Host ghshell
+    HostName shell.service.ac4-iad.github.net
+
+Host ghvault
+    HostName vault-bastion.githubapp.com
