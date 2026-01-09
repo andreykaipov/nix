@@ -1,0 +1,41 @@
+#!/bin/sh
+
+set -eu
+
+cd "$NIX_REPO_GIT_ROOT"
+
+host=${1:-}
+if [ -z "$host" ]; then
+        host=$(hostname)
+        echo >&2 "No host provided, using $host"
+fi
+
+if ! [ -r "hosts/$host.nix" ]; then
+        echo >&2 "No configuration for host $host"
+        exit 1
+fi
+
+if ! [ -r ~/.config/nix/nix.conf ]; then
+        export NIX_CONFIG='
+                experimental-features = nix-command flakes
+        '
+fi
+
+homeman() {
+        if command -v home-manager >/dev/null; then
+                home-manager "$@"
+        else
+                echo >&2 "home-manager is not installed"
+                sleep 1
+                nix run home-manager -- "$@"
+        fi
+}
+
+if [ -n "${DRY_RUN-}" ]; then
+        # We can do a dry run by passing -n to home-manager, but this will still run our activation scripts.
+        # To get a fully dry run without changing home state, we must also set DRY_RUN=1 (see `lib/default.nix`).
+        export DRY_RUN
+        DRY_RUN=1 homeman --impure switch --flake ".#$host" -n
+else
+        homeman switch --flake ".#$host"
+fi
