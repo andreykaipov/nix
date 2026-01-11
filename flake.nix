@@ -1,22 +1,34 @@
 {
-  description = "Andrey's Home Configurations";
-
+  description = "Configuration with secrets for MacOS and NixOS";
   inputs = {
-    # nix flake info
-    # https://status.nixos.org/
-    nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
-    nixpkgs-stable.url = "github:nixos/nixpkgs/nixos-23.11";
-    # nixpkgs-master.url = "github:nixos/nixpkgs/master";
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+    nixpkgs-stable.url = "github:nixos/nixpkgs/nixos-24.11";
+    agenix.url = "github:ryantm/agenix";
 
-    home-manager.url = "github:nix-community/home-manager/master";
+    home-manager.url = "github:nix-community/home-manager";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
+
     neovim-nightly.url = "github:nix-community/neovim-nightly-overlay";
     neovim-nightly.inputs.nixpkgs.follows = "nixpkgs";
-    agenix.url = "github:ryantm/agenix/main";
-    agenix.inputs.nixpkgs.follows = "nixpkgs";
+
+    darwin.url = "github:LnL7/nix-darwin/master";
+    darwin.inputs.nixpkgs.follows = "nixpkgs";
+
+    nix-homebrew.url = "github:zhaofengli-wip/nix-homebrew";
+
+    homebrew-bundle.url = "github:homebrew/homebrew-bundle";
+    homebrew-bundle.flake = false;
+
+    homebrew-core.url = "github:homebrew/homebrew-core";
+    homebrew-core.flake = false;
+
+    homebrew-cask.url = "github:homebrew/homebrew-cask";
+    homebrew-cask.flake = false;
+
+    secrets.url = "git+ssh://git@github.com/andreykaipov/nix-secrets.git";
+    secrets.flake = false;
 
     # zsh plugins
-    # (some are available via nixpkgs but this way we can always keep them up to date)
     zsh-powerlevel10k.url = "github:romkatv/powerlevel10k";
     zsh-powerlevel10k.flake = false;
     zsh-completions.url = "github:zsh-users/zsh-completions";
@@ -25,23 +37,19 @@
     zsh-fzf-tab.flake = false;
     zsh-fzf-tab-source.url = "github:Freed-Wu/fzf-tab-source";
     zsh-fzf-tab-source.flake = false;
-    zsh-fzf-zsh-plugin.url = "github:unixorn/fzf-zsh-plugin";
-    zsh-fzf-zsh-plugin.flake = false;
-    lscolors.url = "github:trapd00r/LS_COLORS";
-    lscolors.flake = false;
-    zsh-edit.url = "github:marlonrichert/zsh-edit";
-    zsh-edit.flake = false;
     zsh-almostontop.url = "github:Valiev/almostontop";
     zsh-almostontop.flake = false;
-    zsh-autocomplete.url = "github:marlonrichert/zsh-autocomplete";
-    zsh-autocomplete.flake = false;
+    lscolors.url = "github:trapd00r/LS_COLORS";
+    lscolors.flake = false;
   };
-
-  outputs = { self, ... }: {
-    homeConfigurations = import ./home/config.nix {
-      flake = self;
-      hosts = import ./hosts/config.nix { inherit (self.inputs.nixpkgs) lib; };
-      extraModules = [ ];
-    };
-  };
+  outputs =
+    inputs:
+    let
+      lib = import ./lib { inherit inputs; };
+      hosts = import ./hosts { inherit lib; };
+    in
+    {
+      apps = lib.forAvailableSystems lib.mkApps;
+    }
+    // lib.mkConfigs hosts;
 }

@@ -1,0 +1,12 @@
+#!/bin/sh -e
+
+green='\033[1;32m'
+yellow='\033[1;33m'
+reset='\033[0m'
+
+printf "${yellow}Cleaning up old system generations...${reset}\n"
+
+# Clean up old generations (older than 30 days)
+sudo nix-collect-garbage --delete-older-than 30d
+
+printf "${green}Cleanup complete!${reset}\n"

@@ -1,0 +1,17 @@
+#!/bin/sh -e
+
+green='\033[1;32m'
+yellow='\033[1;33m'
+reset='\033[0m'
+
+dir="$(cd "$(dirname "$0")" && pwd)"
+
+echo
+printf "${yellow}=== nix-darwin ===${reset}\n"
+"$dir/switch-darwin" "$@"
+
+echo
+printf "${yellow}=== home-manager ===${reset}\n"
+"$dir/switch-home" "$@"
+
+printf "${green}All switches complete!${reset}\n"

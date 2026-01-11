@@ -1,0 +1,103 @@
+#!/bin/sh
+# shellcheck source=/dev/null
+# vi: ft=sh
+#
+# Bootstrap script sourced by WezTerm as default_prog.
+# Manages the SSH agent and drops us into a tmux session.
+#
+# Requires BOOTSTRAP=1 to be set (done by wezterm config).
+
+# 1. If there's more than one agent running, terminate them all.
+# 2. Read ~/.cache/ssh/vars for the connection info.
+# 3. If `ssh-add -l` exits 2, we've failed to connect.
+#    Either the socket has been cleaned up, the process was killed, or the agent
+#    is just not running. In any case, kill the remaining agent process if any,
+#    and start up a new agent, writing its connection info to
+#    ~/.cache/ssh/vars.
+# 4. Otherwise, we're good and we add our keys.
+ensure_ssh_agent() {
+        mkdir -p ~/.cache/ssh
+        mkdir -p ~/.cache/ssh/sockets
+        cd ~/.cache/ssh || return
+
+        ssh_agent_pids="$(ps -e | awk '$NF == "ssh-agent" {print $1}')"
+        if [ "$(echo "$ssh_agent_pids" | wc -l)" -gt 1 ]; then
+                echo "More than one SSH agent is running. Terminating them all."
+                echo "$ssh_agent_pids" | xargs kill -TERM
+        fi
+
+        echo "Setting up SSH agent..."
+        if [ -r ./vars ]; then
+                echo "Previous SSH agent vars exist, using them..."
+                . ./vars
+        fi
+
+        # see http://man7.org/linux/man-pages/man1/ssh-add.1.html#EXIT_STATUS
+        ssh-add -l >/dev/null
+        ssh_status="$?"
+
+        if [ "$ssh_status" -eq 2 ]; then
+                echo "Was unable to contact the SSH agent, restarting..."
+                kill -TERM "$ssh_agent_pids" 2>/dev/null
+                echo "Starting ssh-agent"
+                (
+                        umask 0066
+                        ssh-agent -s >vars
+                )
+                . ./vars
+        else
+                echo "Looks like it was already running!"
+        fi
+
+        cd - || return
+
+        ssh-add ~/.ssh/keys/*.pem
+}
+
+ensure_tmux() {
+        if [ -n "$TMUX" ]; then
+                echo "We're already inside of a tmux session"
+                # If this login init script was ran again, make sure our Tmux session
+                # has got the latest SSH agent vars for any new panes
+                tmux set-environment -gt local SSH_AUTH_SOCK "$SSH_AUTH_SOCK"
+                tmux set-environment -gt local SSH_AGENT_PID "$SSH_AGENT_PID"
+                return
+        fi
+
+        if tmux ls -F '#{session_name}' | grep -qx local; then
+                echo "Tmux session 'local' already exists"
+                echo "If you'd really like to, we'll attach into it in 1 seconds"
+                echo "Otherwise, send ^C"
+                sleep 1
+                exec tmux -T 256 attach -t local
+        else
+                echo "Creating new tmux session 'local'"
+                exec tmux -T 256 -f ~/.config/tmux/core.conf new -s local
+        fi
+}
+
+main() {
+        if [ -z "$BOOTSTRAP" ]; then
+                echo "BOOTSTRAP is not set. Set if you really want to run this."
+                sleep 5
+                exit 1
+        fi
+
+        # on macos, sets system paths
+        # has to happen before zshenv because it appends its paths ahead of ours
+        if [ -x /usr/libexec/path_helper ]; then
+                echo "Setting system paths (macOS)"
+                eval "$(/usr/libexec/path_helper -s)"
+        fi
+
+        if [ -e '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh' ]; then
+                echo "Sourcing nix-daemon.sh"
+                . '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh'
+        fi
+
+        cd ~ || exit
+        ensure_ssh_agent
+        ensure_tmux
+}
+
+main "$@"
