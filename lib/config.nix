@@ -38,8 +38,8 @@ final: _: {
             home = {
               inherit pkgs;
               lib = final;
-              extraSpecialArgs = inputs // {
-                inherit pkgs-stable;
+              extraSpecialArgs = {
+                inherit inputs pkgs-stable;
                 # host is passed to _module by the extend.nix import below, not here
               };
               modules = [

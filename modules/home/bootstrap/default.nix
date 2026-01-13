@@ -15,5 +15,6 @@ in
   home.file.".bootstrap.sh" = {
     executable = true;
     text = content;
+    force = true;
   };
 }
