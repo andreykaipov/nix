@@ -17,8 +17,19 @@ These are fully independent — changing your shell config doesn't require a dar
 
 ### Prerequisites
 
-- [Nix](https://nixos.org/download) installed (with flakes enabled)
+- [Determinate Nix](https://docs.determinate.systems/ds-nix/how-to/install/) installed
 - SSH key added to GitHub (to clone this repo and the secrets repo)
+
+#### Installing Determinate Nix
+
+```sh
+curl -fsSL https://install.determinate.systems/nix | sh -s -- install
+```
+
+Determinate Nix comes with flakes enabled by default and manages the Nix daemon
+itself. Because of this, `nix.enable = false` is set in the nix-darwin config
+to avoid conflicts — nix-darwin won't try to manage the Nix daemon, settings,
+or garbage collection.
 
 ### 1. Set the hostname
 
@@ -114,12 +125,16 @@ The host is auto-discovered — no changes to `flake.nix` needed.
 │   │   └── user/             # User account registration
 │   └── home/                 # home-manager modules (auto-discovered)
 │       ├── default.nix       # Auto-imports subdirs via lib.discoverModules
-│       ├── shell/            # zsh + powerlevel10k
+│       ├── bin/              # User scripts (~/bin symlink)
+│       ├── bootstrap/        # SSH agent + tmux session bootstrap
+│       ├── direnv/           # direnv + nix-direnv
 │       ├── git/              # Git config (name, email, signing)
-│       ├── ssh/              # SSH config
+│       ├── nvim/             # Neovim configuration
 │       ├── packages/         # User packages (dev tools, LSPs, etc.)
+│       ├── shell/            # zsh + powerlevel10k
+│       ├── ssh/              # SSH config
 │       ├── tmux/             # tmux configuration
-│       └── nvim/             # Neovim configuration
+│       └── wezterm/          # WezTerm terminal config
 └── apps/
     └── aarch64-darwin/       # App scripts (nix run .#<name>)
         ├── switch            # Build and switch both darwin + home

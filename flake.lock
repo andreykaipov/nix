@@ -191,6 +191,22 @@
         "type": "github"
       }
     },
+    "lscolors": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1749219789,
+        "narHash": "sha256-MMzNknuELhpSkvcPgCL2Pp5A6DZrLajkz8qLphSNbjY=",
+        "owner": "trapd00r",
+        "repo": "LS_COLORS",
+        "rev": "810ce8cac886ac50e75d84fb438b549a1f9478ee",
+        "type": "github"
+      },
+      "original": {
+        "owner": "trapd00r",
+        "repo": "LS_COLORS",
+        "type": "github"
+      }
+    },
     "neovim-nightly": {
       "inputs": {
         "flake-parts": "flake-parts",
@@ -263,6 +279,22 @@
         "type": "github"
       }
     },
+    "nixpkgs-stable": {
+      "locked": {
+        "lastModified": 1751274312,
+        "narHash": "sha256-/bVBlRpECLVzjV19t5KMdMFWSwKLtb5RyXdjz3LJT+g=",
+        "owner": "nixos",
+        "repo": "nixpkgs",
+        "rev": "50ab793786d9de88ee30ec4e4c24fb4236fc2674",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nixos",
+        "ref": "nixos-24.11",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
     "nixpkgs_2": {
       "locked": {
         "lastModified": 1765779637,
@@ -287,10 +319,17 @@
         "homebrew-bundle": "homebrew-bundle",
         "homebrew-cask": "homebrew-cask",
         "homebrew-core": "homebrew-core",
+        "lscolors": "lscolors",
         "neovim-nightly": "neovim-nightly",
         "nix-homebrew": "nix-homebrew",
         "nixpkgs": "nixpkgs_2",
-        "secrets": "secrets"
+        "nixpkgs-stable": "nixpkgs-stable",
+        "secrets": "secrets",
+        "zsh-almostontop": "zsh-almostontop",
+        "zsh-completions": "zsh-completions",
+        "zsh-fzf-tab": "zsh-fzf-tab",
+        "zsh-fzf-tab-source": "zsh-fzf-tab-source",
+        "zsh-powerlevel10k": "zsh-powerlevel10k"
       }
     },
     "secrets": {
@@ -321,6 +360,86 @@
       "original": {
         "owner": "nix-systems",
         "repo": "default",
+        "type": "github"
+      }
+    },
+    "zsh-almostontop": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1568747795,
+        "narHash": "sha256-B7fZzafT7PpgnDkdhnUTB57WzfEWcsi1PnjxVOGUwGE=",
+        "owner": "Valiev",
+        "repo": "almostontop",
+        "rev": "aaf8a3e38d383cd179f04e814461acee66348dc8",
+        "type": "github"
+      },
+      "original": {
+        "owner": "Valiev",
+        "repo": "almostontop",
+        "type": "github"
+      }
+    },
+    "zsh-completions": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1771726804,
+        "narHash": "sha256-Rb1Pp3AlVt0/ZZP+QKlssa0BmrYGRdB+r6Pv+Vt6OK8=",
+        "owner": "zsh-users",
+        "repo": "zsh-completions",
+        "rev": "684021f2a1eb3ba1735d86268c07bce8b0ea0588",
+        "type": "github"
+      },
+      "original": {
+        "owner": "zsh-users",
+        "repo": "zsh-completions",
+        "type": "github"
+      }
+    },
+    "zsh-fzf-tab": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1772096724,
+        "narHash": "sha256-JrFUT0bxCWWKO3FWTpnFRK3DwNMZUstRdRaerKV2xZE=",
+        "owner": "Aloxaf",
+        "repo": "fzf-tab",
+        "rev": "0fbd5753f935dcb6899e5fb2a0fb9a3fd69f1ce0",
+        "type": "github"
+      },
+      "original": {
+        "owner": "Aloxaf",
+        "repo": "fzf-tab",
+        "type": "github"
+      }
+    },
+    "zsh-fzf-tab-source": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1768398004,
+        "narHash": "sha256-ar025RTlDFWEnE9Ql8WBz4tiBmz1B2tsZiRI2/mVCDI=",
+        "owner": "Freed-Wu",
+        "repo": "fzf-tab-source",
+        "rev": "5463698036f5e23ef275b4b55c42551879ebfab4",
+        "type": "github"
+      },
+      "original": {
+        "owner": "Freed-Wu",
+        "repo": "fzf-tab-source",
+        "type": "github"
+      }
+    },
+    "zsh-powerlevel10k": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1769621797,
+        "narHash": "sha256-xiUNt2zomP3TNiCW/PZn6rS/3pv+uW17YjkzEPc227I=",
+        "owner": "romkatv",
+        "repo": "powerlevel10k",
+        "rev": "8ed1f58e082e1cce85e1d69235d1a906cf3c643e",
+        "type": "github"
+      },
+      "original": {
+        "owner": "romkatv",
+        "repo": "powerlevel10k",
         "type": "github"
       }
     }
