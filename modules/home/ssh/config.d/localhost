@@ -1,0 +1,6 @@
+# vim: ft=sshconfig
+
+Host localhost
+    HostName localhost
+    UserKnownHostsFile /dev/null
+    NoHostAuthenticationForLocalhost yes

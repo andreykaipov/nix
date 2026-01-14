@@ -13,5 +13,9 @@
   "[nix]": {
     "editor.defaultFormatter": "jnoortheen.nix-ide",
     "editor.formatOnSave": true
+  },
+  "files.associations": {
+    "**/ssh/config": "ssh-config",
+    "**/ssh/config.d/*": "ssh-config"
   }
 }

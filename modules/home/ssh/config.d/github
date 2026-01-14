@@ -1,9 +1,7 @@
 # vim: ft=sshconfig
 
 Match user git host github.com
-    # TODO template this with nix since we know the hostnames
-    IdentityFile ~/.ssh/keys/smart-toaster.pem
-    IdentityFile ~/.ssh/keys/dustbox.pem
+    # Uses default IdentityFile from ~/.ssh/config
 
 Host gh* *.github.net
     User andreykaipov

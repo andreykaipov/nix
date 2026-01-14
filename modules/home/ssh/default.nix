@@ -1,5 +1,4 @@
 {
-  config,
   pkgs,
   host,
   ...
@@ -8,9 +7,34 @@
 {
   home.packages = with pkgs; [ openssh ];
 
-  # Symlink config files into ~/.ssh (not the whole dir — agenix places keys there)
-  home.file.".ssh/config".source = config.lib.file.mkOutOfStoreSymlink "${host.gitRoot}/modules/home/ssh/config";
-  home.file.".ssh/config.d".source = config.lib.file.mkOutOfStoreSymlink "${host.gitRoot}/modules/home/ssh/config.d";
+  home.file.".ssh/config".text = ''
+    # vim: ft=sshconfig
+    #
+    # To workaround SSH's lack of XDG path support, we have to specify full paths
+    # below, e.g. ~/.config/ssh/<blah>
+
+    Host *
+        # keys will still be added to our known hosts, and we'll still get the
+        # warning, so calm yourself, i just don't like typing yes
+        StrictHostKeyChecking no
+        HashKnownHosts no
+        UserKnownHostsFile ~/.cache/ssh/known_hosts
+
+        # don't try all keys, but only the ones we specify
+        IdentitiesOnly yes
+        IdentityFile ~/.ssh/keys/${host.hostname}.pem
+
+        # persist connections for 30 minutes
+        ControlMaster auto
+        ControlPath ~/.cache/ssh/sockets/%r.%C
+        ControlPersist 1800
+
+    CanonicalizeHostname yes
+    Include ~/.ssh/config.d/*
+  '';
+
+  home.file.".ssh/config.d" = host.symlinkTo ./config.d;
+  home.file.".ssh/keys" = host.symlinkTo ./keys;
 
   # Ensure socket dir exists for ControlPath
   home.file.".cache/ssh/sockets/.keep".text = "";

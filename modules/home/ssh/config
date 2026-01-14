@@ -1,7 +1,4 @@
 # vim: ft=sshconfig
-#
-# To workaround SSH's lack of XDG path support, we have to specify full paths
-# below, e.g. ~/.config/ssh/<blah>
 
 Host *
     # keys will still be added to our known hosts, and we'll still get the
@@ -22,22 +19,3 @@ Host *
 
 CanonicalizeHostname yes
 Include ~/.ssh/config.d/*
-
-Host localhost
-    HostName localhost
-    UserKnownHostsFile /dev/null
-    NoHostAuthenticationForLocalhost yes
-
-# alias for the following: `gh cs ssh --server-port 1234`
-# we can then access the codespace through native ssh, e.g. `ssh codespace`
-#
-# useful in mutagen configs for syncing local env with codespace, see:
-# https://icanthascheezburger.com/wordpress/2021/12/use-codespaces-with-mutagen-and-keep-your-local-dev-tools
-#
-# usernames seem to differ between codespaces. sometimes it's vscode too.
-Host codespace
-    User codespace
-    HostName localhost
-    Port 1234
-    IdentityFile ~/.ssh/codespaces.auto
-    PasswordAuthentication no
