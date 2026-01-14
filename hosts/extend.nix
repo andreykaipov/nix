@@ -6,22 +6,30 @@
 #
 # Currently adds:
 #   host.symlinkTo : path -> { source = ...; }
-#     Symlinks ~/.config/<name> back into the repo for live editing.
+#     Symlinks any repo path back into the filesystem for live editing.
+#     Works with module directories, subdirectories, and individual files.
 #     e.g. xdg.configFile."nvim" = host.symlinkTo ./.;
 #          creates: ~/.config/nvim → ~/gh/nix/modules/home/nvim
+#     e.g. home.file.".ssh/config" = host.symlinkTo ./config;
+#          creates: ~/.ssh/config → ~/gh/nix/modules/home/ssh/config
 host:
 
-{ config, ... }:
+{ config, lib, ... }:
 
+let
+  # Store path of the flake source root (e.g. /nix/store/hash-source)
+  sourceRoot = builtins.toString ../.;
+in
 {
   _module.args.host = host // {
     symlinkTo =
       path:
       let
-        name = builtins.baseNameOf (builtins.toString path);
+        fullPath = builtins.toString path;
+        relPath = lib.removePrefix sourceRoot fullPath;
       in
       {
-        source = config.lib.file.mkOutOfStoreSymlink "${host.gitRoot}/modules/home/${name}";
+        source = config.lib.file.mkOutOfStoreSymlink "${host.gitRoot}${relPath}";
       };
   };
 }
