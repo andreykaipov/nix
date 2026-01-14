@@ -19,6 +19,7 @@ These are fully independent — changing your shell config doesn't require a dar
 
 - [Determinate Nix](https://docs.determinate.systems/ds-nix/how-to/install/) installed
 - SSH key added to GitHub (to clone this repo and the secrets repo)
+- `~/.ssh/agenix` identity key (stored in 1Password)
 
 #### Installing Determinate Nix
 
@@ -48,10 +49,22 @@ git clone git@github.com:andreykaipov/nix.git ~/gh/nix
 cd ~/gh/nix
 ```
 
-### 3. Build and switch nix-darwin
+### 3. Place the agenix identity key
 
-This sets up macOS system defaults, homebrew casks, dock layout, and agenix
-secrets:
+Copy `~/.ssh/agenix` from 1Password. This is the only key that needs to be
+manually placed — all other SSH keys are encrypted in the
+[nix-secrets](https://github.com/andreykaipov/nix-secrets) repo and get
+decrypted automatically by agenix during the darwin activation.
+
+```sh
+# Paste from 1Password into ~/.ssh/agenix, then:
+chmod 600 ~/.ssh/agenix
+```
+
+### 4. Build and switch nix-darwin
+
+This sets up macOS system defaults, homebrew casks, dock layout, and decrypts
+SSH keys via agenix:
 
 ```sh
 nix run .#switch-darwin
@@ -61,7 +74,7 @@ nix run .#switch-darwin
 > not through Nix. Home-manager app linking is disabled since GUI apps come
 > from homebrew, not nix packages.
 
-### 4. Build and switch home-manager
+### 5. Build and switch home-manager
 
 This sets up your shell (zsh), git, ssh, tmux, neovim, and user packages:
 
