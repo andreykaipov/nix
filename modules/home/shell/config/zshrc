@@ -162,6 +162,20 @@ function instant_prompt_almostontop() {
         prompt_almostontop
 }
 
+# Override almostontop to fix duplicate history in scrollback.
+# The original just does `tput cup 0 0; zle redisplay` but never erases the
+# prompt+command at its original position, so both copies end up in scrollback.
+# Fix: erase the current line first, then move to top and redraw.
+function _accept_line_almostontop {
+        if [ "x$ALMOSONTOP" = "xtrue" ]; then
+                printf '\r\e[2K'
+                tput cup 0 0
+                zle redisplay
+        fi
+        zle .accept-line
+}
+zle -N accept-line _accept_line_almostontop
+
 ########
 ########
 ########
