@@ -155,7 +155,11 @@ MiniDeps.add({
 -- vim.cmd.colorscheme('night-owl')
 -- require('nightfox').setup({})
 vim.cmd.colorscheme('onedark_dark')
-require('tmux-colorscheme-sync').setup()
+require('tmux-colorscheme-sync').setup({
+	cache_file = '~/.local/state/tmux/colorscheme-cache.conf',
+	tmux_source_file = '~/.config/tmux/styles.conf', -- re-source styles when colors change
+	lighter_shade = 8, -- inactive pane bg: percent lighter than active
+})
 
 require('mini.basics').setup()
 
