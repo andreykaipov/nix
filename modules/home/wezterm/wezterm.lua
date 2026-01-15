@@ -26,12 +26,14 @@ config.colors = {
         -- the current cell background color, rather than replace it
         -- selection_bg = "rgba(50% 50% 50% 50%)",
 }
-config.window_background_opacity = 0.7
+config.window_background_opacity = 0.99 -- not 1.0: macOS draws a border line with the opaque rendering path
+-- config.window_padding = { left = 0, right = 0, top = 0, bottom = 0 }
+config.macos_window_background_blur = 0
 
 config.send_composed_key_when_left_alt_is_pressed = false
 config.send_composed_key_when_right_alt_is_pressed = false
 
 config.set_environment_variables = { BOOTSTRAP = "1" }
-config.default_prog = { os.getenv("HOME") .. "/.bootstrap.sh" }
+config.default_prog = { wezterm.config_dir .. "/bootstrap.sh" }
 
 return config
