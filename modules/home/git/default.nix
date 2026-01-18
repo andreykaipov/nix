@@ -10,7 +10,6 @@ let
 in
 {
   home.packages = with pkgs; [
-    git
     git-filter-repo
     gh
     lazygit
