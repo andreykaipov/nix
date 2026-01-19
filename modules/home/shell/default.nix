@@ -8,6 +8,14 @@
 }:
 
 {
+  home.packages = with pkgs; [
+    bat
+    eza
+    fzf
+    lesspipe
+    oh-my-zsh
+  ];
+
   xdg.configFile."zsh/config" = host.symlinkTo ./config;
 
   programs.zsh = {
