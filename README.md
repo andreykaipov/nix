@@ -11,87 +11,139 @@ The configuration is split into two independent layers:
 | **nix-darwin** | macOS system config (defaults, homebrew, dock, secrets) | `nix run .#switch-darwin` |
 | **home-manager** | User environment (shell, git, tmux, neovim, packages) | `nix run .#switch-home` |
 
-These are fully independent — changing your shell config doesn't require a darwin rebuild, and vice versa.
+These are fully independent — changing your shell config doesn't require a
+darwin rebuild, and vice versa.
 
-## Fresh Install
+## Bootstrapping a New Machine
+
+### TL;DR
+
+```sh
+# 1. Install Nix
+curl -fsSL https://install.determinate.systems/nix | sh -s -- install
+
+# 2. Set hostname (must match a directory under hosts/)
+sudo scutil --set LocalHostName airfryer
+sudo scutil --set HostName airfryer
+
+# 3. Clone the repo
+git clone git@github.com:andreykaipov/nix.git ~/gh/nix
+cd ~/gh/nix
+
+# 4. Place the agenix identity key from 1Password
+mkdir -p ~/.ssh/keys
+# paste key contents into ~/.ssh/keys/agenix.pem
+chmod 600 ~/.ssh/keys/agenix.pem
+
+# 5. Build everything
+nix run .#switch
+```
 
 ### Prerequisites
 
-- [Determinate Nix](https://docs.determinate.systems/ds-nix/how-to/install/) installed
-- SSH key added to GitHub (to clone this repo and the secrets repo)
-- `~/.ssh/keys/agenix` identity key (stored in 1Password)
+- macOS on Apple Silicon (aarch64-darwin)
+- SSH key added to GitHub (to clone this repo and the private secrets repo)
+- The `agenix.pem` identity key from 1Password
 
-#### Installing Determinate Nix
+### Step-by-step
+
+#### 1. Install Determinate Nix
 
 ```sh
 curl -fsSL https://install.determinate.systems/nix | sh -s -- install
 ```
 
-Determinate Nix comes with flakes enabled by default and manages the Nix daemon
-itself. Because of this, `nix.enable = false` is set in the nix-darwin config
-to avoid conflicts — nix-darwin won't try to manage the Nix daemon, settings,
-or garbage collection.
+[Determinate Nix](https://docs.determinate.systems/ds-nix/how-to/install/)
+comes with flakes enabled by default and manages the Nix daemon itself. Because
+of this, `nix.enable = false` is set in the nix-darwin config — nix-darwin
+won't try to manage the daemon, settings, or garbage collection.
 
-### 1. Set the hostname
+#### 2. Set the hostname
 
-The hostname determines which host config under `hosts/` is used. Set it to
-match an existing host directory (e.g. `airfryer`, `toaster`):
+The hostname determines which host config under `hosts/` is used. It must match
+an existing host directory (e.g. `airfryer`, `toaster`):
 
 ```sh
 sudo scutil --set LocalHostName airfryer
 sudo scutil --set HostName airfryer
 ```
 
-### 2. Clone and enter the repo
+If you're setting up a brand-new machine, see
+[Adding a New Host](#adding-a-new-host) first.
+
+#### 3. Clone and enter the repo
 
 ```sh
 git clone git@github.com:andreykaipov/nix.git ~/gh/nix
 cd ~/gh/nix
 ```
 
-### 3. Place the agenix identity key
+The repo must live at `~/gh/nix` — this path is used by `host.gitRoot` for
+symlinks and module resolution.
 
-Copy `~/.ssh/keys/agenix` from 1Password. This is the only key that needs to be
-manually placed — all other SSH keys are encrypted in the
+#### 4. Place the agenix identity key
+
+This is the **only** secret that must be placed manually. All other SSH keys
+are encrypted in the private
 [nix-secrets](https://github.com/andreykaipov/nix-secrets) repo and get
 decrypted automatically by agenix during the darwin activation.
 
 ```sh
-# Paste from 1Password into ~/.ssh/keys/agenix, then:
 mkdir -p ~/.ssh/keys
-chmod 600 ~/.ssh/keys/agenix
+# paste the agenix.pem private key from 1Password into ~/.ssh/keys/agenix.pem
+chmod 600 ~/.ssh/keys/agenix.pem
 ```
 
-### 4. Build and switch nix-darwin
-
-This sets up macOS system defaults, homebrew casks, dock layout, and decrypts
-SSH keys via agenix:
+#### 5. Build and switch nix-darwin
 
 ```sh
 nix run .#switch-darwin
 ```
 
-> **Note:** GUI apps are installed via homebrew casks into `/Applications/`,
-> not through Nix. Home-manager app linking is disabled since GUI apps come
-> from homebrew, not nix packages.
+This will prompt for your `sudo` password. It builds the nix-darwin
+configuration, then runs `darwin-rebuild switch` to apply it. On the first run,
+this:
 
-### 5. Build and switch home-manager
+- Configures macOS system defaults (keyboard, Finder, trackpad, security)
+- Installs homebrew and all casks/brews (GUI apps go into `/Applications/`)
+- Sets up the Dock layout
+- Decrypts all SSH keys from the secrets repo via agenix
+- Generates a per-host SSH key at `~/.ssh/keys/<hostname>.pem` if one doesn't
+  exist
 
-This sets up your shell (zsh), git, ssh, tmux, neovim, and user packages:
+> **Note:** GUI apps are installed via homebrew casks, not nix packages.
+> Home-manager app linking into `/Applications/` is disabled.
+
+#### 6. Build and switch home-manager
 
 ```sh
 nix run .#switch-home
 ```
 
-Or run both at once:
+On the first run, `home-manager` isn't in your PATH yet, so the script
+bootstraps it via `nix run home-manager`. After the first run,
+`home-manager switch --flake .#<hostname>` is available directly. This sets up:
+
+- zsh with powerlevel10k
+- git config
+- SSH config and agent
+- tmux
+- neovim
+- direnv + nix-direnv
+- User packages (dev tools, LSPs, etc.)
+- User scripts in `~/bin`
+- WezTerm terminal config
+
+Or run both steps at once:
 
 ```sh
 nix run .#switch
 ```
 
-After the first run, `home-manager` is in your PATH (via
-`programs.home-manager.enable`), so subsequent runs can use
-`home-manager switch --flake .#<hostname>` directly.
+#### 7. Post-bootstrap
+
+Open a new terminal (or `exec zsh`) to pick up the new shell environment.
+Everything should be ready — shell, editor, packages, and secrets.
 
 ## Adding a New Host
 
@@ -101,7 +153,7 @@ After the first run, `home-manager` is in your PATH (via
 mkdir -p hosts/my-machine
 ```
 
-2. Add a `default.nix`:
+2. Add a `default.nix` with at least `system` and `username`:
 
 ```nix
 { ... }:
@@ -112,11 +164,28 @@ mkdir -p hosts/my-machine
 }
 ```
 
-`homeDirectory` and `gitRoot` are derived automatically from `system` and `username`.
+`homeDirectory` and `gitRoot` are derived automatically by `lib.mkHost`:
+- darwin → `/Users/<username>/gh/nix`
+- linux → `/home/<username>/gh/nix`
 
-3. Set the machine's hostname and run the build commands.
+You can also pass `extraModules` for host-specific configuration:
 
-The host is auto-discovered — no changes to `flake.nix` needed.
+```nix
+{ ... }:
+
+{
+  system = "aarch64-darwin";
+  username = "myuser";
+  extraModules = [
+    # host-specific overrides
+  ];
+}
+```
+
+3. Set the machine's hostname to match, then run `nix run .#switch`.
+
+The host is auto-discovered from the directory name — no changes to `flake.nix`
+needed.
 
 ## Directory Structure
 
@@ -140,7 +209,6 @@ The host is auto-discovered — no changes to `flake.nix` needed.
 │   └── home/                 # home-manager modules (auto-discovered)
 │       ├── default.nix       # Auto-imports subdirs via lib.discoverModules
 │       ├── bin/              # User scripts (~/bin symlink)
-│       ├── bootstrap/        # SSH agent + tmux session bootstrap
 │       ├── direnv/           # direnv + nix-direnv
 │       ├── git/              # Git config (name, email, signing)
 │       ├── nvim/             # Neovim configuration
