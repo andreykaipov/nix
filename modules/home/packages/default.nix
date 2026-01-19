@@ -7,15 +7,10 @@
   home.packages = with pkgs; [
     # General packages for development and system management
     bash-completion
-    bat
     btop
     coreutils
-    eza
     fd
     killall
-    lesspipe
-    oh-my-zsh
-    openssh
     ripgrep
     sqlite
     wget
@@ -62,16 +57,10 @@
     # azure-cli
     # azure-cli-extensions.monitor-control-service
     curl
-    gh
     kubectl
     awscli2
-    lazygit
-    fzf
-    direnv
-    tree-sitter
 
-    # for copilot.lua server, misc web things
-    nodejs
+    # misc web things
     hugo
     # rustc
     # cargo
