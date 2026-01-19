@@ -90,6 +90,9 @@
       ll = "eza --group --header --group-directories-first --long --git --all --icons --sort name";
       g = "git";
       gs = "git status";
+      gd = "git diff";
+      gdc = "git diff --cached";
+      gdn = "git diff --name-only";
       cat = "bat";
     };
     shellGlobalAliases = {
