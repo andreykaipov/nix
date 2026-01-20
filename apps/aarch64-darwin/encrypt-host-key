@@ -1,0 +1,80 @@
+#!/bin/sh -e
+
+green='\033[1;32m'
+yellow='\033[1;33m'
+red='\033[1;31m'
+reset='\033[0m'
+
+root="$(git rev-parse --show-toplevel)"
+
+hostname="$(hostname)"
+key_name="${hostname}.pem"
+key_path="${root}/modules/home/ssh/keys/${key_name}"
+recipient="${root}/modules/home/ssh/keys/agenix.pem.pub"
+secrets_dir="${SECRETS_DIR:-$HOME/gh/nix-secrets}"
+
+if [ ! -f "${key_path}" ]; then
+  printf "${red}No SSH key found at ${key_path}${reset}\n"
+  echo "Run: nix run .#generate-host-key"
+  exit 1
+fi
+
+if [ ! -f "${recipient}" ]; then
+  printf "${red}agenix public key not found at ${recipient}${reset}\n"
+  exit 1
+fi
+
+if [ ! -d "${secrets_dir}" ]; then
+  printf "${red}nix-secrets not found at ${secrets_dir}${reset}\n"
+  echo "Set SECRETS_DIR to the path of your nix-secrets repo"
+  exit 1
+fi
+
+secret_path="${secrets_dir}/ssh/${key_name}.age"
+
+force=false
+for arg in "$@"; do
+  case "$arg" in -f|--force) force=true ;; esac
+done
+
+if [ -f "${secret_path}" ] && [ "$force" = false ]; then
+  printf "${yellow}Secret already exists: ${secret_path}${reset}\n"
+  printf "${yellow}Use --force to overwrite${reset}\n"
+  exit 0
+fi
+
+printf "${yellow}Encrypting ${key_name} into nix-secrets...${reset}\n"
+mkdir -p "${secrets_dir}/ssh"
+age -R "${recipient}" -o "${secret_path}" < "${key_path}"
+
+printf "${green}Encrypted to ${secret_path}${reset}\n"
+
+# Commit and push nix-secrets
+cd "${secrets_dir}"
+git add "ssh/${key_name}.age"
+git -c commit.gpgsign=false commit -m "Add ${key_name}"
+
+if git push 2>/dev/null; then
+  printf "${green}Pushed to nix-secrets!${reset}\n"
+
+  # Update flake.lock in nix repo
+  cd "${root}"
+  nix flake update secrets
+  printf "${green}Updated flake.lock!${reset}\n"
+
+  echo ""
+  printf "${yellow}Next steps:${reset}\n"
+  echo "1. Commit the flake.lock and public key changes in the nix repo"
+  echo "2. Run: nix run .#switch-home"
+else
+  printf "${yellow}Push failed — your SSH key may not be on GitHub yet.${reset}\n"
+  echo ""
+  echo "Public key:"
+  cat "${root}/modules/home/ssh/keys/${key_name}.pub"
+  echo ""
+  printf "${yellow}Next steps:${reset}\n"
+  echo "1. Add the public key above to GitHub: https://github.com/settings/ssh/new"
+  echo "2. Run: cd ${secrets_dir} && git push"
+  echo "3. Run: cd ${root} && nix flake update secrets"
+  echo "4. Run: nix run .#switch-home"
+fi

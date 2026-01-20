@@ -18,7 +18,7 @@ final: _: {
           #!/usr/bin/env bash
           PATH=${pkgs.git}/bin:$PATH
           echo "Running ${scriptName} for ${system}"
-          exec ${inputs.self}/apps/${system}/${scriptName}
+          exec ${inputs.self}/apps/${system}/${scriptName} "$@"
         '';
       in
       "${scriptBin}/bin/${scriptName}";

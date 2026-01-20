@@ -1,0 +1,44 @@
+#!/bin/sh -e
+
+green='\033[1;32m'
+yellow='\033[1;33m'
+red='\033[1;31m'
+reset='\033[0m'
+
+root="$(git rev-parse --show-toplevel)"
+
+hostname="$(hostname)"
+key_name="${hostname}.pem"
+key_dir="${root}/modules/home/ssh/keys"
+key_path="${key_dir}/${key_name}"
+
+if [ -f "${key_path}" ]; then
+  # Ensure .pub matches the private key
+  expected="$(ssh-keygen -y -f "${key_path}")"
+  if [ -f "${key_path}.pub" ]; then
+    actual="$(awk '{print $1, $2}' "${key_path}.pub")"
+    expected_short="$(echo "${expected}" | awk '{print $1, $2}')"
+    if [ "${actual}" != "${expected_short}" ]; then
+      printf "${yellow}Public key out of sync, deriving from private key...${reset}\n"
+      ssh-keygen -y -f "${key_path}" > "${key_path}.pub"
+    fi
+  else
+    printf "${yellow}Deriving missing public key...${reset}\n"
+    ssh-keygen -y -f "${key_path}" > "${key_path}.pub"
+  fi
+  printf "${yellow}SSH key already exists: ${key_path}${reset}\n"
+  exit 0
+fi
+
+printf "${yellow}Generating SSH key for ${hostname}...${reset}\n"
+mkdir -p "${key_dir}"
+ssh-keygen -t ed25519 -f "${key_path}" -N "" -C "$(whoami)@${hostname}"
+
+printf "${green}SSH key generated!${reset}\n"
+echo ""
+echo "Public key:"
+cat "${key_path}.pub"
+echo ""
+printf "${yellow}Next steps:${reset}\n"
+echo "1. Add this key to GitHub: https://github.com/settings/ssh/new"
+echo "2. Run: nix run .#encrypt-host-key"
