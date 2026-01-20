@@ -22,30 +22,24 @@ darwin rebuild, and vice versa.
 # 1. Install Nix
 curl -fsSL https://install.determinate.systems/nix | sh -s -- install
 
-# 2. Set hostname (must match a directory under hosts/)
-sudo scutil --set LocalHostName airfryer
-sudo scutil --set HostName airfryer
-
-# 3. Generate an SSH key and add it to GitHub
-ssh-keygen -t ed25519 -f ~/.ssh/id_ed25519 -N "" -C "$(whoami)@$(hostname)"
-# copy ~/.ssh/id_ed25519.pub to https://github.com/settings/ssh/new
-
-# 4. Clone the repo (git comes from nix, no Xcode CLI tools needed)
-nix run nixpkgs#git -- clone git@github.com:andreykaipov/nix.git ~/gh/nix
+# 2. Clone the repo via HTTPS (public, no SSH key needed)
+nix run nixpkgs#git -- clone https://github.com/andreykaipov/nix.git ~/gh/nix
 cd ~/gh/nix
 
-# 5. Place the agenix identity key from 1Password
+# 3. Bootstrap (sets hostname, generates SSH key into the repo)
+#    Can't use `nix run .#bootstrap` yet — the flake fetches nix-secrets over SSH
+./apps/aarch64-darwin/bootstrap <host>
+# add the printed public key to https://github.com/settings/ssh/new
+ssh-add modules/home/ssh/keys/$(hostname).pem
+
+# 4. Place the agenix identity key from 1Password
 # paste key contents into modules/home/ssh/keys/agenix.pem
 chmod 600 modules/home/ssh/keys/agenix.pem
 
-# 6. Move the SSH key into the repo as the host key
-mv ~/.ssh/id_ed25519 modules/home/ssh/keys/$(hostname).pem
-mv ~/.ssh/id_ed25519.pub modules/home/ssh/keys/$(hostname).pem.pub
-
-# 7. Encrypt the key into nix-secrets
+# 5. Encrypt the host key into nix-secrets
 nix run .#encrypt-host-key
 
-# 8. Build everything
+# 6. Build everything
 nix run .#switch
 ```
 
@@ -67,35 +61,12 @@ comes with flakes enabled by default and manages the Nix daemon itself. Because
 of this, `nix.enable = false` is set in the nix-darwin config — nix-darwin
 won't try to manage the daemon, settings, or garbage collection.
 
-#### 2. Set the hostname
+#### 2. Clone the repo
 
-The hostname determines which host config under `hosts/` is used. It must match
-an existing host directory (e.g. `airfryer`, `toaster`):
-
-```sh
-sudo scutil --set LocalHostName airfryer
-sudo scutil --set HostName airfryer
-```
-
-If you're setting up a brand-new machine, see
-[Adding a New Host](#adding-a-new-host) first.
-
-#### 3. Generate an SSH key and add it to GitHub
-
-The SSH key is needed before cloning because the flake fetches the private
-[nix-secrets](https://github.com/andreykaipov/nix-secrets) repo as an input.
+Clone via HTTPS — the repo is public, so no SSH key is needed yet:
 
 ```sh
-ssh-keygen -t ed25519 -f ~/.ssh/id_ed25519 -N "" -C "$(whoami)@$(hostname)"
-```
-
-Add the public key (`~/.ssh/id_ed25519.pub`) to GitHub at
-https://github.com/settings/ssh/new.
-
-#### 4. Clone and enter the repo
-
-```sh
-nix run nixpkgs#git -- clone git@github.com:andreykaipov/nix.git ~/gh/nix
+nix run nixpkgs#git -- clone https://github.com/andreykaipov/nix.git ~/gh/nix
 cd ~/gh/nix
 ```
 
@@ -104,7 +75,27 @@ No Xcode Command Line Tools needed — git comes straight from nix.
 The repo must live at `~/gh/nix` — this path is used by `host.gitRoot` for
 symlinks and module resolution.
 
-#### 5. Place the agenix identity key
+#### 3. Bootstrap
+
+Sets the hostname and generates a per-host SSH key into the repo:
+
+```sh
+./apps/aarch64-darwin/bootstrap airfryer
+```
+
+The hostname determines which host config under `hosts/` is used. It must match
+an existing host directory (e.g. `airfryer`, `toaster`). If you're setting up a
+brand-new machine, see [Adding a New Host](#adding-a-new-host) first.
+
+Add the printed public key to GitHub at https://github.com/settings/ssh/new,
+then add the key to the SSH agent so nix can fetch the private
+[nix-secrets](https://github.com/andreykaipov/nix-secrets) input:
+
+```sh
+ssh-add modules/home/ssh/keys/$(hostname).pem
+```
+
+#### 4. Place the agenix identity key
 
 This is the **only** secret that must be placed manually. All other SSH keys
 are encrypted in the private
@@ -116,16 +107,7 @@ decrypted automatically by agenix during the home-manager activation.
 chmod 600 modules/home/ssh/keys/agenix.pem
 ```
 
-#### 6. Move the SSH key into the repo
-
-Move the key generated in step 3 into the repo as the per-host key:
-
-```sh
-mv ~/.ssh/id_ed25519 modules/home/ssh/keys/$(hostname).pem
-mv ~/.ssh/id_ed25519.pub modules/home/ssh/keys/$(hostname).pem.pub
-```
-
-#### 7. Encrypt the host key into nix-secrets
+#### 5. Encrypt the host key into nix-secrets
 
 ```sh
 nix run .#encrypt-host-key
@@ -138,7 +120,7 @@ prints the remaining manual steps.
 
 Use `--force` to re-encrypt an existing key.
 
-#### 8. Build and switch nix-darwin
+#### 6. Build and switch nix-darwin
 
 ```sh
 nix run .#switch-darwin
@@ -155,7 +137,7 @@ this:
 > **Note:** GUI apps are installed via homebrew casks, not nix packages.
 > Home-manager app linking into `/Applications/` is disabled.
 
-#### 9. Build and switch home-manager
+#### 7. Build and switch home-manager
 
 ```sh
 nix run .#switch-home
@@ -184,7 +166,7 @@ Or run both steps at once:
 nix run .#switch
 ```
 
-#### 10. Post-bootstrap
+#### 8. Post-bootstrap
 
 Open a new terminal (or `exec zsh`) to pick up the new shell environment.
 Everything should be ready — shell, editor, packages, and secrets.

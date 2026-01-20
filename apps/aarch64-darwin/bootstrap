@@ -1,0 +1,25 @@
+#!/bin/sh -e
+
+green='\033[1;32m'
+yellow='\033[1;33m'
+red='\033[1;31m'
+reset='\033[0m'
+
+dir="$(cd "$(dirname "$0")" && pwd)"
+
+hostname="${1:?Usage: bootstrap <hostname>}"
+
+# Set hostname
+printf "${yellow}Setting hostname to ${hostname}...${reset}\n"
+sudo scutil --set LocalHostName "$hostname"
+sudo scutil --set HostName "$hostname"
+printf "${green}Hostname set!${reset}\n"
+
+# Generate host key
+"$dir/generate-host-key"
+
+echo ""
+printf "${yellow}Next steps:${reset}\n"
+echo "1. Add the public key above to GitHub: https://github.com/settings/ssh/new"
+echo "2. Run: ssh-add modules/home/ssh/keys/$hostname.pem"
+echo "3. Continue with the README"
