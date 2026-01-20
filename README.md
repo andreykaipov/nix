@@ -8,7 +8,7 @@ The configuration is split into two independent layers:
 
 | Layer | Purpose | Command |
 |---|---|---|
-| **nix-darwin** | macOS system config (defaults, homebrew, dock, secrets) | `nix run .#switch-darwin` |
+| **nix-darwin** | macOS system config (defaults, homebrew, dock) | `nix run .#switch-darwin` |
 | **home-manager** | User environment (shell, git, tmux, neovim, packages) | `nix run .#switch-home` |
 
 These are fully independent — changing your shell config doesn't require a
@@ -26,23 +26,32 @@ curl -fsSL https://install.determinate.systems/nix | sh -s -- install
 sudo scutil --set LocalHostName airfryer
 sudo scutil --set HostName airfryer
 
-# 3. Clone the repo
-git clone git@github.com:andreykaipov/nix.git ~/gh/nix
+# 3. Generate an SSH key and add it to GitHub
+ssh-keygen -t ed25519 -f ~/.ssh/id_ed25519 -N "" -C "$(whoami)@$(hostname)"
+# copy ~/.ssh/id_ed25519.pub to https://github.com/settings/ssh/new
+
+# 4. Clone the repo (git comes from nix, no Xcode CLI tools needed)
+nix run nixpkgs#git -- clone git@github.com:andreykaipov/nix.git ~/gh/nix
 cd ~/gh/nix
 
-# 4. Place the agenix identity key from 1Password
-mkdir -p ~/.ssh/keys
-# paste key contents into ~/.ssh/keys/agenix.pem
-chmod 600 ~/.ssh/keys/agenix.pem
+# 5. Place the agenix identity key from 1Password
+# paste key contents into modules/home/ssh/keys/agenix.pem
+chmod 600 modules/home/ssh/keys/agenix.pem
 
-# 5. Build everything
+# 6. Move the SSH key into the repo as the host key
+mv ~/.ssh/id_ed25519 modules/home/ssh/keys/$(hostname).pem
+mv ~/.ssh/id_ed25519.pub modules/home/ssh/keys/$(hostname).pem.pub
+
+# 7. Encrypt the key into nix-secrets
+nix run .#encrypt-host-key
+
+# 8. Build everything
 nix run .#switch
 ```
 
 ### Prerequisites
 
 - macOS on Apple Silicon (aarch64-darwin)
-- SSH key added to GitHub (to clone this repo and the private secrets repo)
 - The `agenix.pem` identity key from 1Password
 
 ### Step-by-step
@@ -71,30 +80,65 @@ sudo scutil --set HostName airfryer
 If you're setting up a brand-new machine, see
 [Adding a New Host](#adding-a-new-host) first.
 
-#### 3. Clone and enter the repo
+#### 3. Generate an SSH key and add it to GitHub
+
+The SSH key is needed before cloning because the flake fetches the private
+[nix-secrets](https://github.com/andreykaipov/nix-secrets) repo as an input.
 
 ```sh
-git clone git@github.com:andreykaipov/nix.git ~/gh/nix
+ssh-keygen -t ed25519 -f ~/.ssh/id_ed25519 -N "" -C "$(whoami)@$(hostname)"
+```
+
+Add the public key (`~/.ssh/id_ed25519.pub`) to GitHub at
+https://github.com/settings/ssh/new.
+
+#### 4. Clone and enter the repo
+
+```sh
+nix run nixpkgs#git -- clone git@github.com:andreykaipov/nix.git ~/gh/nix
 cd ~/gh/nix
 ```
+
+No Xcode Command Line Tools needed — git comes straight from nix.
 
 The repo must live at `~/gh/nix` — this path is used by `host.gitRoot` for
 symlinks and module resolution.
 
-#### 4. Place the agenix identity key
+#### 5. Place the agenix identity key
 
 This is the **only** secret that must be placed manually. All other SSH keys
 are encrypted in the private
 [nix-secrets](https://github.com/andreykaipov/nix-secrets) repo and get
-decrypted automatically by agenix during the darwin activation.
+decrypted automatically by agenix during the home-manager activation.
 
 ```sh
-mkdir -p ~/.ssh/keys
-# paste the agenix.pem private key from 1Password into ~/.ssh/keys/agenix.pem
-chmod 600 ~/.ssh/keys/agenix.pem
+# paste the agenix.pem private key from 1Password into the repo
+chmod 600 modules/home/ssh/keys/agenix.pem
 ```
 
-#### 5. Build and switch nix-darwin
+#### 6. Move the SSH key into the repo
+
+Move the key generated in step 3 into the repo as the per-host key:
+
+```sh
+mv ~/.ssh/id_ed25519 modules/home/ssh/keys/$(hostname).pem
+mv ~/.ssh/id_ed25519.pub modules/home/ssh/keys/$(hostname).pem.pub
+```
+
+#### 7. Encrypt the host key into nix-secrets
+
+```sh
+nix run .#encrypt-host-key
+```
+
+This encrypts the private key with the agenix public key, commits and pushes
+it to the [nix-secrets](https://github.com/andreykaipov/nix-secrets) repo, and
+updates `flake.lock`. If the push fails (e.g. SSH key not yet on GitHub), it
+prints the remaining manual steps.
+
+Use `--force` to re-encrypt an existing key.
+
+#### 8. Build and switch nix-darwin
 
 ```sh
 nix run .#switch-darwin
@@ -107,14 +151,11 @@ this:
 - Configures macOS system defaults (keyboard, Finder, trackpad, security)
 - Installs homebrew and all casks/brews (GUI apps go into `/Applications/`)
 - Sets up the Dock layout
-- Decrypts all SSH keys from the secrets repo via agenix
-- Generates a per-host SSH key at `~/.ssh/keys/<hostname>.pem` if one doesn't
-  exist
 
 > **Note:** GUI apps are installed via homebrew casks, not nix packages.
 > Home-manager app linking into `/Applications/` is disabled.
 
-#### 6. Build and switch home-manager
+#### 9. Build and switch home-manager
 
 ```sh
 nix run .#switch-home
@@ -122,7 +163,10 @@ nix run .#switch-home
 
 On the first run, `home-manager` isn't in your PATH yet, so the script
 bootstraps it via `nix run home-manager`. After the first run,
-`home-manager switch --flake .#<hostname>` is available directly. This sets up:
+`home-manager switch --flake .#<hostname>` is available directly.
+
+agenix decrypts the host SSH key from nix-secrets via a LaunchAgent on every
+switch. This sets up:
 
 - zsh with powerlevel10k
 - git config
@@ -140,7 +184,7 @@ Or run both steps at once:
 nix run .#switch
 ```
 
-#### 7. Post-bootstrap
+#### 10. Post-bootstrap
 
 Open a new terminal (or `exec zsh`) to pick up the new shell environment.
 Everything should be ready — shell, editor, packages, and secrets.
@@ -202,7 +246,6 @@ needed.
 │   ├── darwin/               # nix-darwin modules (auto-discovered)
 │   │   ├── default.nix       # Auto-imports subdirs via lib.discoverModules
 │   │   ├── homebrew/         # nix-homebrew setup, taps, casks, brews
-│   │   ├── secrets/          # agenix identity paths + secrets
 │   │   ├── system/           # macOS defaults (keyboard, finder, trackpad, security)
 │   │   │   └── dock/         # Dock appearance + entries (uses _internal/dock)
 │   │   └── user/             # User account registration
@@ -213,8 +256,9 @@ needed.
 │       ├── git/              # Git config (name, email, signing)
 │       ├── nvim/             # Neovim configuration
 │       ├── packages/         # User packages (dev tools, LSPs, etc.)
+│       ├── secrets/          # agenix plumbing (identity paths, imports)
 │       ├── shell/            # zsh + powerlevel10k
-│       ├── ssh/              # SSH config
+│       ├── ssh/              # SSH config, key management, agenix secrets
 │       ├── tmux/             # tmux configuration
 │       └── wezterm/          # WezTerm terminal config
 └── apps/
@@ -222,6 +266,8 @@ needed.
         ├── switch            # Build and switch both darwin + home
         ├── switch-darwin     # Build and switch nix-darwin
         ├── switch-home       # Switch home-manager configuration
+        ├── generate-host-key # Generate per-host SSH key pair
+        ├── encrypt-host-key  # Encrypt host key into nix-secrets
         ├── clean             # Garbage collect old generations (>30 days)
         └── rollback          # Roll back to a previous darwin generation
 ```
