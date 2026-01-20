@@ -1,11 +1,27 @@
 {
   pkgs,
+  lib,
+  secrets,
   host,
   ...
 }:
 
+let
+  hostKey = "${host.hostname}.pem";
+  hostKeyAge = "${secrets}/ssh/${hostKey}.age";
+  hasHostKey = builtins.pathExists hostKeyAge;
+in
 {
   home.packages = with pkgs; [ openssh ];
+
+  age.secrets = lib.optionalAttrs hasHostKey {
+    ${hostKey} = {
+      symlink = false;
+      path = "${host.gitRoot}/modules/home/ssh/keys/${hostKey}";
+      file = hostKeyAge;
+      mode = "600";
+    };
+  };
 
   home.file.".ssh/config".text = ''
     # vim: ft=sshconfig
@@ -38,4 +54,16 @@
 
   # Ensure socket dir exists for ControlPath
   home.file.".cache/ssh/sockets/.keep".text = "";
+
+  # Surface agenix decryption results after the LaunchAgent runs.
+  home.activation.reportSSHKeys = lib.hm.dag.entryAfter [ "setupLaunchAgents" ] ''
+    echo "Fetching SSH keys from secrets..."
+    sleep 1
+    if [ -f "${host.homeDirectory}/Library/Logs/agenix/stderr" ] && [ -s "${host.homeDirectory}/Library/Logs/agenix/stderr" ]; then
+      echo "agenix errors:"
+      cat "${host.homeDirectory}/Library/Logs/agenix/stderr"
+    fi
+    echo "SSH keys available:"
+    ls -1 "${host.gitRoot}/modules/home/ssh/keys/"*.pem 2>/dev/null | xargs -n1 basename
+  '';
 }
