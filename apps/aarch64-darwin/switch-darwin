@@ -13,6 +13,14 @@ printf "${yellow}Building nix-darwin...${reset}\n"
 nix --extra-experimental-features 'nix-command flakes' build ".#$flake_system" "$@"
 
 printf "${yellow}Switching to new generation...${reset}\n"
+# Move away any /etc files that would conflict with nix-darwin's activation.
+# This handles stale files from previous installs or the Nix installer.
+for f in /etc/zshenv /etc/zshrc /etc/zprofile /etc/bashrc; do
+  if [ -e "$f" ] && [ ! -L "$f" ]; then
+    printf "${yellow}Moving $f to $f.before-nix-darwin${reset}\n"
+    sudo mv "$f" "$f.before-nix-darwin"
+  fi
+done
 # See https://github.com/nix-darwin/nix-darwin/issues/1457 on why we need sudo
 sudo ./result/sw/bin/darwin-rebuild switch --flake ".#${hostname}" "$@"
 
