@@ -48,4 +48,11 @@
   security.sudo.extraConfig = ''
     Defaults timestamp_timeout=60
   '';
+
+  # Restart cfprefsd after defaults are written so NSGlobalDomain changes
+  # (scroll direction, key repeat, etc.) take effect without logging out.
+  system.activationScripts.postUserDefaults.text = ''
+    echo >&2 "restarting cfprefsd..."
+    killall cfprefsd 2>/dev/null || true
+  '';
 }
