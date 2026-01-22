@@ -29,7 +29,7 @@ cd ~/gh/nix
 # 3. Bootstrap (sets hostname, generates SSH key into the repo)
 nix run .#bootstrap <host>
 
-# 4. Place agenix key from 1Password into modules/home/ssh/keys/agenix.pem
+# 4. Place agenix identity key from 1Password into ~/.config/agenix/identity
 
 # 5. Encrypt the host key into nix-secrets
 nix run .#encrypt-host-key
@@ -41,7 +41,7 @@ nix run .#switch
 ### Prerequisites
 
 - macOS on Apple Silicon (aarch64-darwin)
-- The `agenix.pem` identity key from 1Password
+- The agenix identity key from 1Password
 
 ### Step-by-step
 
@@ -98,7 +98,8 @@ are encrypted in the private
 decrypted automatically by agenix during the home-manager activation.
 
 ```sh
-# paste the agenix.pem private key from 1Password into the repo
+# paste the agenix identity key from 1Password
+# save key to ~/.config/agenix/identity
 ```
 
 #### 5. Encrypt the host key into nix-secrets

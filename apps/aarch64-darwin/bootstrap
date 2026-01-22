@@ -27,16 +27,18 @@ printf "${green}Hostname set!${reset}\n"
 "$dir/generate-host-key"
 
 # Wait for agenix key
-agenix_key="modules/home/ssh/keys/agenix.pem"
+agenix_key="$HOME/.config/agenix/identity"
 echo ""
-printf "${yellow}Place the agenix.pem private key from 1Password into:${reset}\n"
+mkdir -p "$HOME/.config/agenix"
+chmod 700 "$HOME/.config/agenix"
+printf "${yellow}Place the agenix identity key from 1Password into:${reset}\n"
 echo "  $agenix_key"
 echo ""
 printf "${yellow}Press Enter when ready...${reset}\n"
 read -r
 
 if [ ! -f "$agenix_key" ]; then
-  printf "${red}agenix.pem not found at $agenix_key${reset}\n"
+  printf "${red}agenix identity key not found at $agenix_key${reset}\n"
   exit 1
 fi
 

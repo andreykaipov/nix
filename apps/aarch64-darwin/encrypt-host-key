@@ -25,7 +25,7 @@ if [ ! -f "${recipient}" ]; then
 fi
 
 # Ensure correct permissions on agenix identity key
-agenix_key="${root}/modules/home/ssh/keys/agenix.pem"
+agenix_key="$HOME/.config/agenix/identity"
 if [ -f "${agenix_key}" ]; then
   chmod 600 "${agenix_key}"
 fi

@@ -27,6 +27,6 @@
   ];
 
   age.identityPaths = [
-    "${host.homeDirectory}/.ssh/keys/agenix.pem"
+    "${host.homeDirectory}/.config/agenix/identity"
   ];
 }
