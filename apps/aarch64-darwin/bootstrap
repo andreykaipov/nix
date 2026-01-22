@@ -26,8 +26,34 @@ printf "${green}Hostname set!${reset}\n"
 # Generate host key
 "$dir/generate-host-key"
 
+# Wait for agenix key
+agenix_key="modules/home/ssh/keys/agenix.pem"
 echo ""
-printf "${yellow}Next steps:${reset}\n"
-echo "1. Add the public key above to GitHub: https://github.com/settings/ssh/new"
-echo "2. Run: ssh-add modules/home/ssh/keys/$hostname.pem"
-echo "3. Continue with the README"
+printf "${yellow}Place the agenix.pem private key from 1Password into:${reset}\n"
+echo "  $agenix_key"
+echo ""
+printf "${yellow}Press Enter when ready...${reset}\n"
+read -r
+
+if [ ! -f "$agenix_key" ]; then
+  printf "${red}agenix.pem not found at $agenix_key${reset}\n"
+  exit 1
+fi
+
+# Wait for GitHub SSH key
+host_key="modules/home/ssh/keys/${hostname}.pem"
+echo ""
+printf "${yellow}Add the host public key to GitHub:${reset}\n"
+echo "  https://github.com/settings/ssh/new"
+echo ""
+echo "Public key:"
+cat "${host_key}.pub"
+echo ""
+printf "${yellow}Then add it to the SSH agent:${reset}\n"
+echo "  ssh-add ${host_key}"
+echo ""
+printf "${yellow}Press Enter when ready...${reset}\n"
+read -r
+
+# Encrypt host key into nix-secrets
+"$dir/encrypt-host-key"

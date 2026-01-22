@@ -27,14 +27,9 @@ nix run nixpkgs#git -- clone https://github.com/andreykaipov/nix.git ~/gh/nix
 cd ~/gh/nix
 
 # 3. Bootstrap (sets hostname, generates SSH key into the repo)
-#    Can't use `nix run .#bootstrap` yet — the flake fetches nix-secrets over SSH
-./apps/aarch64-darwin/bootstrap <host>
-# add the printed public key to https://github.com/settings/ssh/new
-ssh-add modules/home/ssh/keys/$(hostname).pem
+nix run .#bootstrap <host>
 
-# 4. Place the agenix identity key from 1Password
-# paste key contents into modules/home/ssh/keys/agenix.pem
-chmod 600 modules/home/ssh/keys/agenix.pem
+# 4. Place agenix key from 1Password into modules/home/ssh/keys/agenix.pem
 
 # 5. Encrypt the host key into nix-secrets
 nix run .#encrypt-host-key
@@ -80,7 +75,7 @@ symlinks and module resolution.
 Sets the hostname and generates a per-host SSH key into the repo:
 
 ```sh
-./apps/aarch64-darwin/bootstrap airfryer
+nix run .#bootstrap <host>
 ```
 
 The hostname determines which host config under `hosts/` is used. It must match
@@ -104,7 +99,6 @@ decrypted automatically by agenix during the home-manager activation.
 
 ```sh
 # paste the agenix.pem private key from 1Password into the repo
-chmod 600 modules/home/ssh/keys/agenix.pem
 ```
 
 #### 5. Encrypt the host key into nix-secrets

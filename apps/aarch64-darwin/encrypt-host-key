@@ -24,6 +24,12 @@ if [ ! -f "${recipient}" ]; then
   exit 1
 fi
 
+# Ensure correct permissions on agenix identity key
+agenix_key="${root}/modules/home/ssh/keys/agenix.pem"
+if [ -f "${agenix_key}" ]; then
+  chmod 600 "${agenix_key}"
+fi
+
 if [ ! -d "${secrets_dir}" ]; then
   printf "${yellow}nix-secrets not found at ${secrets_dir}, cloning...${reset}\n"
   git clone git@github.com:andreykaipov/nix-secrets.git "${secrets_dir}"
