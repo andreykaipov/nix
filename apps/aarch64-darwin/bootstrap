@@ -9,6 +9,14 @@ dir="$(cd "$(dirname "$0")" && pwd)"
 
 hostname="${1:?Usage: bootstrap <hostname>}"
 
+# Install Xcode Command Line Tools if missing
+if ! xcode-select -p >/dev/null 2>&1; then
+  printf "${yellow}Installing Xcode Command Line Tools...${reset}\n"
+  xcode-select --install
+  printf "${yellow}Waiting for installation to complete (press Enter when done)...${reset}\n"
+  read -r
+fi
+
 # Set hostname
 printf "${yellow}Setting hostname to ${hostname}...${reset}\n"
 sudo scutil --set LocalHostName "$hostname"
