@@ -84,6 +84,7 @@ host_key="modules/home/ssh/keys/${hostname}.pem"
 host_pubkey="$(cat "${host_key}.pub")"
 git_config="${dir}/../../modules/home/git/default.nix"
 github_user="$(grep 'email = "' "$git_config" | head -1 | sed 's/.*+\(.*\)@.*/\1/')"
+nix_user="$(whoami)"
 
 # Check if key is already on GitHub
 key_on_github=false
@@ -95,29 +96,19 @@ if github_keys="$(curl -sf "https://api.github.com/users/${github_user}/keys")";
   fi
 fi
 
-if [ "$key_on_github" = false ]; then
-  echo ""
-  printf "${yellow}Host public key doesn't exist on GitHub${reset}\n"
-  printf "${yellow}Add the host public key from above:${reset}\n"
-  echo "  https://github.com/settings/ssh/new"
-  echo ""
-  printf "${yellow}Press Enter when you've done that...${reset}\n"
-  read -r
+gh() { nix run nixpkgs#gh -- "$@"; }
 
-  # Verify key was added
-  if github_keys="$(curl -sf "https://api.github.com/users/${github_user}/keys")"; then
-    if echo "$github_keys" | grep -q "$key_data"; then
-      printf "${green}Host public key found on GitHub${reset}\n"
-    else
-      printf "${red}Host public key still not found on GitHub${reset}\n"
-      exit 1
-    fi
+if [ "$key_on_github" = false ]; then
+  printf "${yellow}Adding host public key to GitHub...${reset}\n"
+  if ! gh auth status >/dev/null 2>&1; then
+    gh auth login --web --git-protocol ssh --skip-ssh-key --scopes admin:public_key
   fi
+  gh ssh-key add "${host_key}.pub" --title "${nix_user}@${hostname} (via andreykaipov/nix#bootstrap)"
+  printf "${green}Host public key added to GitHub${reset}\n"
 fi
 
 printf "${yellow}Adding host key to SSH agent...${reset}\n"
 ssh-add "${host_key}"
-echo
 
 # Clear stale SSH control sockets so the new key is used
 rm -rf "$HOME/.cache/ssh/sockets"

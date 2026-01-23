@@ -53,6 +53,15 @@ if [ -f "${secret_path}" ] && [ "$force" = false ]; then
   exit 0
 fi
 
+# If the secret already exists, decrypt and compare to avoid unnecessary changes
+if [ -f "${secret_path}" ] && [ -f "${agenix_key}" ]; then
+  existing="$(nix run nixpkgs#age -- -d -i "${agenix_key}" "${secret_path}" 2>/dev/null)" || true
+  if [ "$existing" = "$(cat "${key_path}")" ]; then
+    printf "${green}Secret $secret already up to date${reset}\n"
+    exit 0
+  fi
+fi
+
 printf "${yellow}Encrypting ${key_name} into nix-secrets...${reset}\n"
 mkdir -p "${secrets_dir}/ssh"
 nix run nixpkgs#age -- -R "${recipient}" -o "${secret_path}" < "${key_path}"
@@ -78,6 +87,8 @@ if git push; then
   printf "${green}Pushed to nix-secrets!${reset}\n"
 
   # Update flake.lock in nix repo
+  echo ""
+  printf "${yellow}Updating flake.lock in nix repo...${reset}\n"
   cd "${root}"
   nix flake update secrets
   printf "${green}Updated flake.lock!${reset}\n"
