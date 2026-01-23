@@ -5,7 +5,7 @@ Match user git host github.com
 
 Host gh* *.github.net
     User andreykaipov
-    IdentityFile ~/.ssh/keys/ghbastion.pem
+    IdentityFile ~/.ssh/ghbastion.pem
     ForwardAgent yes
 
 Host *.github.net

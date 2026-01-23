@@ -77,11 +77,11 @@ else
 fi
 
 # Generate host key
-BOOTSTRAP=1 "$dir/generate-host-key"
+BOOTSTRAP=1 "$dir/setup-host"
 
 # Wait for GitHub SSH key
-host_key="modules/home/ssh/keys/${hostname}.pem"
-host_pubkey="$(cat "${host_key}.pub")"
+host_key="$HOME/.ssh/${hostname}.pem"
+host_pubkey="$(ssh-keygen -y -f "${host_key}")"
 git_config="${dir}/../../modules/home/git/default.nix"
 github_user="$(grep 'email = "' "$git_config" | head -1 | sed 's/.*+\(.*\)@.*/\1/')"
 nix_user="$(whoami)"
@@ -103,7 +103,7 @@ if [ "$key_on_github" = false ]; then
   if ! gh auth status >/dev/null 2>&1; then
     gh auth login --web --git-protocol ssh --skip-ssh-key --scopes admin:public_key
   fi
-  gh ssh-key add "${host_key}.pub" --title "${nix_user}@${hostname} (via andreykaipov/nix#bootstrap)"
+  gh ssh-key add "$HOME/.ssh/${hostname}.pem.pub" --title "${nix_user}@${hostname} (via andreykaipov/nix#bootstrap)"
   printf "${green}Host public key added to GitHub${reset}\n"
 fi
 
@@ -114,4 +114,4 @@ ssh-add "${host_key}"
 rm -rf "$HOME/.cache/ssh/sockets"
 
 # Encrypt host key into nix-secrets
-"$dir/encrypt-host-key" --force
+"$dir/sync-host-key" --force

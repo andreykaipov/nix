@@ -10,6 +10,7 @@ let
   hostKey = "${host.hostname}.pem";
   hostKeyAge = "${secrets}/ssh/${hostKey}.age";
   hasHostKey = builtins.pathExists hostKeyAge;
+  hasPublicKey = (host.publicKey or "") != "";
 in
 {
   home.packages = with pkgs; [ openssh ];
@@ -17,7 +18,7 @@ in
   age.secrets = lib.optionalAttrs hasHostKey {
     ${hostKey} = {
       symlink = false;
-      path = "${host.gitRoot}/modules/home/ssh/keys/${hostKey}";
+      path = "${host.homeDirectory}/.ssh/${hostKey}";
       file = hostKeyAge;
       mode = "600";
     };
@@ -38,7 +39,7 @@ in
 
         # don't try all keys, but only the ones we specify
         IdentitiesOnly yes
-        IdentityFile ~/.ssh/keys/${host.hostname}.pem
+        IdentityFile ~/.ssh/${host.hostname}.pem
 
         # persist connections for 30 minutes
         ControlMaster auto
@@ -50,7 +51,11 @@ in
   '';
 
   home.file.".ssh/config.d" = host.symlinkTo ./config.d;
-  home.file.".ssh/keys" = host.symlinkTo ./keys;
+
+  # Write public key from host config (no symlink needed — private key is decrypted by agenix)
+  home.file.".ssh/${hostKey}.pub" = lib.mkIf hasPublicKey {
+    text = host.publicKey + "\n";
+  };
 
   # Ensure socket dir exists for ControlPath
   home.file.".cache/ssh/sockets/.keep".text = "";
@@ -64,6 +69,6 @@ in
       cat "${host.homeDirectory}/Library/Logs/agenix/stderr"
     fi
     echo "SSH keys available:"
-    ls -1 "${host.gitRoot}/modules/home/ssh/keys/"*.pem 2>/dev/null | xargs -n1 basename
+    ls -1 "${host.homeDirectory}/.ssh/"*.pem 2>/dev/null | xargs -n1 basename
   '';
 }

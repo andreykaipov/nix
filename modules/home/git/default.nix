@@ -24,7 +24,7 @@ in
     settings = {
       user = {
         inherit name email;
-        signingkey = "${host.homeDirectory}/.ssh/keys/${host.hostname}.pem.pub";
+        signingkey = "${host.homeDirectory}/.ssh/${host.hostname}.pem.pub";
       };
       gpg.format = "ssh";
       init.defaultBranch = "main";

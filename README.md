@@ -65,50 +65,26 @@ symlinks and module resolution.
 
 #### 3. Bootstrap
 
-Sets the hostname and generates a per-host SSH key into the repo:
+Sets the hostname, generates a per-host SSH key, uploads it to GitHub, and
+encrypts it into nix-secrets — all in one command:
 
 ```sh
 nix run .#bootstrap <host>
 ```
 
-The hostname determines which host config under `hosts/` is used. It must match
-an existing host directory (e.g. `airfryer`, `toaster`). If you're setting up a
-brand-new machine, see [Adding a New Host](#adding-a-new-host) first.
+The hostname determines which host config under `hosts/` is used. If the host
+directory doesn't exist yet, the script creates one automatically.
 
-Add the printed public key to GitHub at https://github.com/settings/ssh/new,
-then add the key to the SSH agent so nix can fetch the private
-[nix-secrets](https://github.com/andreykaipov/nix-secrets) input:
+The bootstrap script will:
 
-```sh
-ssh-add modules/home/ssh/keys/$(hostname).pem
-```
+1. Set the machine hostname
+2. Prompt you to place the agenix identity key from 1Password into
+   `~/.config/agenix/identity` (the **only** manual secret)
+3. Generate a per-host SSH key at `~/.ssh/<host>.pem`
+4. Upload the public key to GitHub via `gh` CLI
+5. Encrypt the private key into nix-secrets and update `flake.lock`
 
-#### 4. Place the agenix identity key
-
-This is the **only** secret that must be placed manually. All other SSH keys
-are encrypted in the private
-[nix-secrets](https://github.com/andreykaipov/nix-secrets) repo and get
-decrypted automatically by agenix during the home-manager activation.
-
-```sh
-# paste the agenix identity key from 1Password
-# save key to ~/.config/agenix/identity
-```
-
-#### 5. Encrypt the host key into nix-secrets
-
-```sh
-nix run .#encrypt-host-key
-```
-
-This encrypts the private key with the agenix public key, commits and pushes
-it to the [nix-secrets](https://github.com/andreykaipov/nix-secrets) repo, and
-updates `flake.lock`. If the push fails (e.g. SSH key not yet on GitHub), it
-prints the remaining manual steps.
-
-Use `--force` to re-encrypt an existing key.
-
-#### 6. Build and switch nix-darwin
+#### 4. Build and switch nix-darwin
 
 ```sh
 nix run .#switch-darwin
@@ -125,7 +101,7 @@ this:
 > **Note:** GUI apps are installed via homebrew casks, not nix packages.
 > Home-manager app linking into `/Applications/` is disabled.
 
-#### 7. Build and switch home-manager
+#### 5. Build and switch home-manager
 
 ```sh
 nix run .#switch-home
@@ -154,7 +130,7 @@ Or run both steps at once:
 nix run .#switch
 ```
 
-#### 8. Post-bootstrap
+#### 6. Post-bootstrap
 
 Open a new terminal (or `exec zsh`) to pick up the new shell environment.
 Everything should be ready — shell, editor, packages, and secrets.
@@ -236,8 +212,8 @@ needed.
         ├── switch            # Build and switch both darwin + home
         ├── switch-darwin     # Build and switch nix-darwin
         ├── switch-home       # Switch home-manager configuration
-        ├── generate-host-key # Generate per-host SSH key pair
-        ├── encrypt-host-key  # Encrypt host key into nix-secrets
+        ├── setup-host        # Generate host key and write host config
+        ├── sync-host-key     # Encrypt host key into nix-secrets
         ├── clean             # Garbage collect old generations (>30 days)
         └── rollback          # Roll back to a previous darwin generation
 ```

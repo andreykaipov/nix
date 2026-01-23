@@ -9,14 +9,14 @@ root="$(git rev-parse --show-toplevel 2>/dev/null || echo "$HOME/gh/nix")"
 
 hostname="$(hostname)"
 key_name="${hostname}.pem"
-key_path="${root}/modules/home/ssh/keys/${key_name}"
+key_path="$HOME/.ssh/${key_name}"
 recipient="$HOME/.config/agenix/recipient"
 recipient_repo="${root}/modules/home/secrets/recipient"
 secrets_dir="${SECRETS_DIR:-$HOME/gh/nix-secrets}"
 
 if [ ! -f "${key_path}" ]; then
   printf "${red}No SSH key found at ${key_path}${reset}\n"
-  echo "Run: nix run .#generate-host-key"
+  echo "Run: nix run .#setup-host"
   exit 1
 fi
 
@@ -95,14 +95,14 @@ if git push; then
 
   echo ""
   printf "${yellow}Next steps:${reset}\n"
-  echo "1. Commit the flake.lock and public key changes in the nix repo"
+  echo "1. Commit the flake.lock and host config changes in the nix repo"
   echo "2. Run: nix run .#switch-home"
 else
   printf "${red}Push failed.${reset}\n"
   echo ""
   printf "${yellow}Manual steps:${reset}\n"
   echo "1. Ensure your SSH key is on GitHub: https://github.com/settings/ssh/new"
-  echo "2. Run: ssh-add ${root}/modules/home/ssh/keys/${key_name}"
+  echo "2. Run: ssh-add ~/.ssh/${key_name}"
   echo "3. Run: rm -rf ~/.cache/ssh/sockets"
   echo "4. Run: cd ${secrets_dir} && git push"
   echo "5. Run: cd ${root} && nix flake update secrets"
