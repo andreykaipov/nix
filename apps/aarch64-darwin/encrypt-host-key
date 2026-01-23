@@ -10,7 +10,8 @@ root="$(git rev-parse --show-toplevel 2>/dev/null || echo "$HOME/gh/nix")"
 hostname="$(hostname)"
 key_name="${hostname}.pem"
 key_path="${root}/modules/home/ssh/keys/${key_name}"
-recipient="${root}/modules/home/ssh/keys/agenix.pem.pub"
+recipient="$HOME/.config/agenix/recipient"
+recipient_repo="${root}/modules/home/secrets/recipient"
 secrets_dir="${SECRETS_DIR:-$HOME/gh/nix-secrets}"
 
 if [ ! -f "${key_path}" ]; then
@@ -19,8 +20,12 @@ if [ ! -f "${key_path}" ]; then
   exit 1
 fi
 
+# Prefer the deployed recipient, fall back to the repo copy (e.g. during bootstrap)
 if [ ! -f "${recipient}" ]; then
-  printf "${red}agenix public key not found at ${recipient}${reset}\n"
+  recipient="${recipient_repo}"
+fi
+if [ ! -f "${recipient}" ]; then
+  printf "${red}agenix public key not found${reset}\n"
   exit 1
 fi
 
@@ -82,37 +87,13 @@ if git push; then
   echo "1. Commit the flake.lock and public key changes in the nix repo"
   echo "2. Run: nix run .#switch-home"
 else
+  printf "${red}Push failed.${reset}\n"
   echo ""
-  echo "Public key:"
-  cat "${root}/modules/home/ssh/keys/${key_name}.pub"
-  echo ""
-  printf "${yellow}Push failed. Ensure the key above is on GitHub:${reset}\n"
-  echo "  https://github.com/settings/ssh/new"
-  echo ""
-  printf "${yellow}Then add it to the SSH agent:${reset}\n"
-  echo "  ssh-add ${root}/modules/home/ssh/keys/${key_name}"
-  echo ""
-  printf "${yellow}Press Enter to retry push...${reset}\n"
-  read -r
-
-  cd "${secrets_dir}"
-  if git push; then
-    printf "${green}Pushed to nix-secrets!${reset}\n"
-
-    cd "${root}"
-    nix flake update secrets
-    printf "${green}Updated flake.lock!${reset}\n"
-
-    echo ""
-    printf "${yellow}Next steps:${reset}\n"
-    echo "1. Commit the flake.lock and public key changes in the nix repo"
-    echo "2. Run: nix run .#switch-home"
-  else
-    printf "${red}Push failed again.${reset}\n"
-    echo ""
-    printf "${yellow}Manual steps:${reset}\n"
-    echo "1. Run: cd ${secrets_dir} && git push"
-    echo "2. Run: cd ${root} && nix flake update secrets"
-    echo "3. Run: nix run .#switch-home"
-  fi
+  printf "${yellow}Manual steps:${reset}\n"
+  echo "1. Ensure your SSH key is on GitHub: https://github.com/settings/ssh/new"
+  echo "2. Run: ssh-add ${root}/modules/home/ssh/keys/${key_name}"
+  echo "3. Run: rm -rf ~/.cache/ssh/sockets"
+  echo "4. Run: cd ${secrets_dir} && git push"
+  echo "5. Run: cd ${root} && nix flake update secrets"
+  echo "6. Run: nix run .#switch-home"
 fi

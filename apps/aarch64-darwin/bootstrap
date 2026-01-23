@@ -77,7 +77,7 @@ else
 fi
 
 # Generate host key
-"$dir/generate-host-key"
+BOOTSTRAP=1 "$dir/generate-host-key"
 
 # Wait for GitHub SSH key
 host_key="modules/home/ssh/keys/${hostname}.pem"
@@ -97,15 +97,27 @@ fi
 
 if [ "$key_on_github" = false ]; then
   echo ""
-  printf "${yellow}Add the host public key from above to GitHub:${reset}\n"
+  printf "${yellow}Host public key doesn't exist on GitHub${reset}\n"
+  printf "${yellow}Add the host public key from above:${reset}\n"
   echo "  https://github.com/settings/ssh/new"
   echo ""
   printf "${yellow}Press Enter when you've done that...${reset}\n"
   read -r
+
+  # Verify key was added
+  if github_keys="$(curl -sf "https://api.github.com/users/${github_user}/keys")"; then
+    if echo "$github_keys" | grep -q "$key_data"; then
+      printf "${green}Host public key found on GitHub${reset}\n"
+    else
+      printf "${red}Host public key still not found on GitHub${reset}\n"
+      exit 1
+    fi
+  fi
 fi
 
 printf "${yellow}Adding host key to SSH agent...${reset}\n"
 ssh-add "${host_key}"
+echo
 
 # Clear stale SSH control sockets so the new key is used
 rm -rf "$HOME/.cache/ssh/sockets"

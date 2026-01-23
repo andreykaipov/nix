@@ -38,7 +38,10 @@ printf "${green}SSH key generated!${reset}\n"
 echo ""
 echo "Public key:"
 cat "${key_path}.pub"
-echo ""
-printf "${yellow}Next steps:${reset}\n"
-echo "1. Add this key to GitHub: https://github.com/settings/ssh/new"
-echo "2. Run: nix run .#encrypt-host-key"
+
+if [ "${BOOTSTRAP:-}" != "1" ]; then
+  echo ""
+  printf "${yellow}Next steps:${reset}\n"
+  echo "1. Add this key to GitHub: https://github.com/settings/ssh/new"
+  echo "2. Run: nix run .#encrypt-host-key"
+fi

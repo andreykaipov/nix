@@ -23,7 +23,7 @@ darwin rebuild, and vice versa.
 curl -fsSL https://install.determinate.systems/nix | sh -s -- install
 
 # 2. Bootstrap (clones repo, sets hostname, generates keys, encrypts secrets)
-nix run github:andreykaipov/nix#bootstrap -- <host>
+nix run --refresh github:andreykaipov/nix#bootstrap -- <host>
 
 # 3. Build everything
 nix run .#switch
