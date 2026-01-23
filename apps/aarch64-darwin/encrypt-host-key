@@ -66,7 +66,10 @@ git -c commit.gpgsign=false \
   -c user.email="$git_email" \
   commit -m "Add ${key_name}"
 
-if git push 2>/dev/null; then
+# Disable SSH connection reuse — stale control sockets can cause push failures
+export GIT_SSH_COMMAND="ssh -o ControlMaster=no"
+
+if git push; then
   printf "${green}Pushed to nix-secrets!${reset}\n"
 
   # Update flake.lock in nix repo
@@ -79,14 +82,37 @@ if git push 2>/dev/null; then
   echo "1. Commit the flake.lock and public key changes in the nix repo"
   echo "2. Run: nix run .#switch-home"
 else
-  printf "${yellow}Push failed — your SSH key may not be on GitHub yet.${reset}\n"
   echo ""
   echo "Public key:"
   cat "${root}/modules/home/ssh/keys/${key_name}.pub"
   echo ""
-  printf "${yellow}Next steps:${reset}\n"
-  echo "1. Add the public key above to GitHub: https://github.com/settings/ssh/new"
-  echo "2. Run: cd ${secrets_dir} && git push"
-  echo "3. Run: cd ${root} && nix flake update secrets"
-  echo "4. Run: nix run .#switch-home"
+  printf "${yellow}Push failed. Ensure the key above is on GitHub:${reset}\n"
+  echo "  https://github.com/settings/ssh/new"
+  echo ""
+  printf "${yellow}Then add it to the SSH agent:${reset}\n"
+  echo "  ssh-add ${root}/modules/home/ssh/keys/${key_name}"
+  echo ""
+  printf "${yellow}Press Enter to retry push...${reset}\n"
+  read -r
+
+  cd "${secrets_dir}"
+  if git push; then
+    printf "${green}Pushed to nix-secrets!${reset}\n"
+
+    cd "${root}"
+    nix flake update secrets
+    printf "${green}Updated flake.lock!${reset}\n"
+
+    echo ""
+    printf "${yellow}Next steps:${reset}\n"
+    echo "1. Commit the flake.lock and public key changes in the nix repo"
+    echo "2. Run: nix run .#switch-home"
+  else
+    printf "${red}Push failed again.${reset}\n"
+    echo ""
+    printf "${yellow}Manual steps:${reset}\n"
+    echo "1. Run: cd ${secrets_dir} && git push"
+    echo "2. Run: cd ${root} && nix flake update secrets"
+    echo "3. Run: nix run .#switch-home"
+  fi
 fi

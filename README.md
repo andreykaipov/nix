@@ -22,19 +22,10 @@ darwin rebuild, and vice versa.
 # 1. Install Nix
 curl -fsSL https://install.determinate.systems/nix | sh -s -- install
 
-# 2. Clone the repo via HTTPS (public, no SSH key needed)
-nix run nixpkgs#git -- clone https://github.com/andreykaipov/nix.git ~/gh/nix
-cd ~/gh/nix
+# 2. Bootstrap (clones repo, sets hostname, generates keys, encrypts secrets)
+nix run github:andreykaipov/nix#bootstrap -- <host>
 
-# 3. Bootstrap (sets hostname, generates SSH key into the repo)
-nix run .#bootstrap <host>
-
-# 4. Place agenix identity key from 1Password into ~/.config/agenix/identity
-
-# 5. Encrypt the host key into nix-secrets
-nix run .#encrypt-host-key
-
-# 6. Build everything
+# 3. Build everything
 nix run .#switch
 ```
 
@@ -61,11 +52,13 @@ won't try to manage the daemon, settings, or garbage collection.
 Clone via HTTPS — the repo is public, so no SSH key is needed yet:
 
 ```sh
-nix run nixpkgs#git -- clone https://github.com/andreykaipov/nix.git ~/gh/nix
+GIT_CONFIG_GLOBAL=/dev/null nix run nixpkgs#git -- clone https://github.com/andreykaipov/nix.git ~/gh/nix
 cd ~/gh/nix
 ```
 
-No Xcode Command Line Tools needed — git comes straight from nix.
+No Xcode Command Line Tools needed — git comes straight from nix. The `-c`
+flag overrides the HTTPS→SSH rewrite that may exist from a previous
+home-manager run.
 
 The repo must live at `~/gh/nix` — this path is used by `host.gitRoot` for
 symlinks and module resolution.

@@ -7,14 +7,47 @@ reset='\033[0m'
 
 dir="$(cd "$(dirname "$0")" && pwd)"
 
-hostname="${1:?Usage: bootstrap <hostname>}"
+hostname=""
+skip_xcode=false
+for arg in "$@"; do
+  case "$arg" in
+    --no-xcode) skip_xcode=true ;;
+    *) hostname="$arg" ;;
+  esac
+done
+
+if [ -z "$hostname" ]; then
+  echo "Usage: bootstrap <hostname> [--no-xcode]" >&2
+  exit 1
+fi
+
+repo="$HOME/gh/nix"
+
+# Clone repo if missing or incomplete
+if [ ! -d "$repo/.git" ]; then
+  rm -rf "$repo"
+  rm -f "$HOME/.config/git/config" "$HOME/.gitconfig"
+  printf "${yellow}Cloning nix repo...${reset}\n"
+  git clone https://github.com/andreykaipov/nix.git "$repo"
+  printf "${green}Cloned to $repo${reset}\n"
+else
+  printf "${green}Repo already exists at $repo${reset}\n"
+fi
+cd "$repo"
 
 # Install Xcode Command Line Tools if missing
-if ! xcode-select -p >/dev/null 2>&1; then
-  printf "${yellow}Installing Xcode Command Line Tools...${reset}\n"
-  xcode-select --install
-  printf "${yellow}Waiting for installation to complete (press Enter when done)...${reset}\n"
-  read -r
+if [ "$skip_xcode" = false ]; then
+  if ! xcode-select -p >/dev/null 2>&1; then
+    printf "${yellow}Installing Xcode Command Line Tools...${reset}\n"
+    xcode-select --install
+    printf "${yellow}Click 'Install' in the dialog, then wait...${reset}\n"
+    until xcode-select -p >/dev/null 2>&1; do
+      sleep 5
+    done
+    printf "${green}Xcode Command Line Tools installed!${reset}\n"
+  else
+    printf "${green}Xcode Command Line Tools already installed${reset}\n"
+  fi
 fi
 
 # Set hostname
@@ -23,39 +56,59 @@ sudo scutil --set LocalHostName "$hostname"
 sudo scutil --set HostName "$hostname"
 printf "${green}Hostname set!${reset}\n"
 
+# Wait for agenix identity key
+agenix_key="$HOME/.config/agenix/identity"
+mkdir -p "$HOME/.config/agenix"
+chmod 700 "$HOME/.config/agenix"
+if [ ! -f "$agenix_key" ]; then
+  echo ""
+  printf "${yellow}Place the agenix identity key from 1Password into:${reset}\n"
+  echo "  $agenix_key"
+  echo ""
+  printf "${yellow}Press Enter when you've done that...${reset}\n"
+  read -r
+
+  if [ ! -f "$agenix_key" ]; then
+    printf "${red}agenix identity key not found at $agenix_key${reset}\n"
+    exit 1
+  fi
+else
+  printf "${green}agenix identity key already exists at $agenix_key${reset}\n"
+fi
+
 # Generate host key
 "$dir/generate-host-key"
 
-# Wait for agenix key
-agenix_key="$HOME/.config/agenix/identity"
-echo ""
-mkdir -p "$HOME/.config/agenix"
-chmod 700 "$HOME/.config/agenix"
-printf "${yellow}Place the agenix identity key from 1Password into:${reset}\n"
-echo "  $agenix_key"
-echo ""
-printf "${yellow}Press Enter when ready...${reset}\n"
-read -r
-
-if [ ! -f "$agenix_key" ]; then
-  printf "${red}agenix identity key not found at $agenix_key${reset}\n"
-  exit 1
-fi
-
 # Wait for GitHub SSH key
 host_key="modules/home/ssh/keys/${hostname}.pem"
-echo ""
-printf "${yellow}Add the host public key to GitHub:${reset}\n"
-echo "  https://github.com/settings/ssh/new"
-echo ""
-echo "Public key:"
-cat "${host_key}.pub"
-echo ""
-printf "${yellow}Then add it to the SSH agent:${reset}\n"
-echo "  ssh-add ${host_key}"
-echo ""
-printf "${yellow}Press Enter when ready...${reset}\n"
-read -r
+host_pubkey="$(cat "${host_key}.pub")"
+git_config="${dir}/../../modules/home/git/default.nix"
+github_user="$(grep 'email = "' "$git_config" | head -1 | sed 's/.*+\(.*\)@.*/\1/')"
+
+# Check if key is already on GitHub
+key_on_github=false
+if github_keys="$(curl -sf "https://api.github.com/users/${github_user}/keys")"; then
+  key_data="$(echo "$host_pubkey" | awk '{print $2}')"
+  if echo "$github_keys" | grep -q "$key_data"; then
+    key_on_github=true
+    printf "${green}Host public key already on GitHub${reset}\n"
+  fi
+fi
+
+if [ "$key_on_github" = false ]; then
+  echo ""
+  printf "${yellow}Add the host public key from above to GitHub:${reset}\n"
+  echo "  https://github.com/settings/ssh/new"
+  echo ""
+  printf "${yellow}Press Enter when you've done that...${reset}\n"
+  read -r
+fi
+
+printf "${yellow}Adding host key to SSH agent...${reset}\n"
+ssh-add "${host_key}"
+
+# Clear stale SSH control sockets so the new key is used
+rm -rf "$HOME/.cache/ssh/sockets"
 
 # Encrypt host key into nix-secrets
-"$dir/encrypt-host-key"
+"$dir/encrypt-host-key" --force
