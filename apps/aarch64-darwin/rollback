@@ -1,4 +1,5 @@
 #!/bin/sh -e
+# Roll back to a previous nix-darwin generation.
 
 green='\033[1;32m'
 yellow='\033[1;33m'

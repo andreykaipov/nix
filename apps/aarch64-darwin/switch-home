@@ -1,4 +1,6 @@
 #!/bin/sh -e
+# Build and apply the home-manager configuration (shell, git, ssh,
+# tmux, neovim, packages, secrets).
 
 green='\033[1;32m'
 yellow='\033[1;33m'

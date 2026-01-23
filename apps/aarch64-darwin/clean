@@ -1,4 +1,5 @@
 #!/bin/sh -e
+# Garbage collect nix store and old generations (>30 days).
 
 green='\033[1;32m'
 yellow='\033[1;33m'

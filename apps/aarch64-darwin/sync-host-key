@@ -1,4 +1,6 @@
 #!/bin/sh -e
+# Encrypt the host's SSH private key with the agenix public key, commit
+# and push it to the nix-secrets repo, then update flake.lock.
 
 green='\033[1;32m'
 yellow='\033[1;33m'

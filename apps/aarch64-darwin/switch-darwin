@@ -1,4 +1,6 @@
 #!/bin/sh -e
+# Build and apply the nix-darwin configuration (system defaults,
+# homebrew, dock layout).
 
 green='\033[1;32m'
 yellow='\033[1;33m'

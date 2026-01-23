@@ -1,4 +1,5 @@
 #!/bin/sh -e
+# Build and switch both nix-darwin and home-manager configurations.
 
 green='\033[1;32m'
 yellow='\033[1;33m'
