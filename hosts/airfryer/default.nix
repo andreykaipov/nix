@@ -1,7 +1,6 @@
 {
   ...
 }:
-
 {
   system = "aarch64-darwin";
   username = "andrey";

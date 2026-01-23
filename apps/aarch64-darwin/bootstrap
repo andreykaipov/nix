@@ -1,45 +1,78 @@
 #!/bin/sh -e
 # Bootstrap a fresh macOS machine. Clones the repo, installs Xcode CLT,
 # sets the hostname, generates a host SSH key, uploads it to GitHub,
-# and encrypts it into nix-secrets. After this, `nix run .#switch` finishes setup.
+# encrypts it into nix-secrets, and commits everything.
+# After this, `nix run .#switch` finishes setup.
 
 green='\033[1;32m'
 yellow='\033[1;33m'
 red='\033[1;31m'
 reset='\033[0m'
 
-dir="$(cd "$(dirname "$0")" && pwd)"
-
-hostname=""
-skip_xcode=false
-for arg in "$@"; do
-  case "$arg" in
-    --no-xcode) skip_xcode=true ;;
-    *) hostname="$arg" ;;
-  esac
-done
-
-if [ -z "$hostname" ]; then
-  echo "Usage: bootstrap <hostname> [--no-xcode]" >&2
-  exit 1
-fi
+export GIT_SSH_COMMAND="ssh -o StrictHostKeyChecking=no -o ControlMaster=no"
 
 repo="$HOME/gh/nix"
+key_dir="$HOME/.ssh"
+secrets_dir="${SECRETS_DIR:-$HOME/gh/nix-secrets}"
+agenix_key="$HOME/.config/agenix/identity"
 
-# Clone repo if missing or incomplete
-if [ ! -d "$repo/.git" ]; then
-  rm -rf "$repo"
-  rm -f "$HOME/.config/git/config" "$HOME/.gitconfig"
-  printf "${yellow}Cloning nix repo...${reset}\n"
-  git clone https://github.com/andreykaipov/nix.git "$repo"
-  printf "${green}Cloned to $repo${reset}\n"
-else
-  printf "${green}Repo already exists at $repo${reset}\n"
-fi
-cd "$repo"
+# --- helpers ---
 
-# Install Xcode Command Line Tools if missing
-if [ "$skip_xcode" = false ]; then
+git_commit() {
+  git_config="$repo/modules/home/git/default.nix"
+  git_name="$(grep 'name = "' "$git_config" | head -1 | sed 's/.*name = "\(.*\)";/\1/')"
+  git_email="$(grep 'email = "' "$git_config" | head -1 | sed 's/.*email = "\(.*\)";/\1/')"
+  git -c commit.gpgsign=false \
+    -c user.name="$git_name" \
+    -c user.email="$git_email" \
+    commit "$@"
+}
+
+# Write or update the public key in the host config
+write_pubkey() {
+  pubkey="$1"
+  if [ ! -f "${host_config}" ]; then
+    printf "${yellow}Creating host config: ${host_config}${reset}\n"
+    mkdir -p "$(dirname "${host_config}")"
+    cat > "${host_config}" <<EOF
+{
+  ...
+}:
+{
+  system = "$(uname -m)-darwin";
+  username = "$(whoami)";
+  publicKey = "${pubkey}";
+}
+EOF
+    printf "${green}Host config created${reset}\n"
+  elif grep -q 'publicKey' "${host_config}"; then
+    sed -i '' "s|publicKey = \".*\";|publicKey = \"${pubkey}\";|" "${host_config}"
+    printf "${green}Public key updated in host config${reset}\n"
+  else
+    sed -i '' "s|username = \".*\";|&\n  publicKey = \"${pubkey}\";|" "${host_config}"
+    printf "${green}Public key written to host config${reset}\n"
+  fi
+}
+
+# --- step functions ---
+
+clone_repo() {
+  if [ ! -d "$repo/.git" ]; then
+    rm -rf "$repo"
+    rm -f "$HOME/.config/git/config" "$HOME/.gitconfig"
+    printf "${yellow}Cloning nix repo...${reset}\n"
+    git clone https://github.com/andreykaipov/nix.git "$repo"
+    printf "${green}Cloned to $repo${reset}\n"
+  else
+    printf "${green}Repo already exists at $repo${reset}\n"
+  fi
+  cd "$repo"
+}
+
+install_xcode() {
+  if [ "$skip_xcode" = true ]; then
+    return
+  fi
   if ! xcode-select -p >/dev/null 2>&1; then
     printf "${yellow}Installing Xcode Command Line Tools...${reset}\n"
     xcode-select --install
@@ -51,70 +84,214 @@ if [ "$skip_xcode" = false ]; then
   else
     printf "${green}Xcode Command Line Tools already installed${reset}\n"
   fi
-fi
+}
 
-# Set hostname
-printf "${yellow}Setting hostname to ${hostname}...${reset}\n"
-sudo scutil --set LocalHostName "$hostname"
-sudo scutil --set HostName "$hostname"
-printf "${green}Hostname set!${reset}\n"
+set_hostname() {
+  printf "${yellow}Setting hostname to ${hostname}...${reset}\n"
+  sudo scutil --set LocalHostName "$hostname"
+  sudo scutil --set HostName "$hostname"
+  printf "${green}Hostname set!${reset}\n"
+}
 
-# Wait for agenix identity key
-agenix_key="$HOME/.config/agenix/identity"
-mkdir -p "$HOME/.config/agenix"
-chmod 700 "$HOME/.config/agenix"
-if [ ! -f "$agenix_key" ]; then
-  echo ""
-  printf "${yellow}Place the agenix identity key from 1Password into:${reset}\n"
-  echo "  $agenix_key"
-  echo ""
-  printf "${yellow}Press Enter when you've done that...${reset}\n"
-  read -r
-
+wait_for_agenix_key() {
+  mkdir -p "$HOME/.config/agenix"
+  chmod 700 "$HOME/.config/agenix"
   if [ ! -f "$agenix_key" ]; then
-    printf "${red}agenix identity key not found at $agenix_key${reset}\n"
+    echo ""
+    printf "${yellow}Place the agenix identity key from 1Password into:${reset}\n"
+    echo "  $agenix_key"
+    echo ""
+    printf "${yellow}Press Enter when you've done that...${reset}\n"
+    read -r
+
+    if [ ! -f "$agenix_key" ]; then
+      printf "${red}agenix identity key not found at $agenix_key${reset}\n"
+      exit 1
+    fi
+  else
+    printf "${green}agenix identity key already exists at $agenix_key${reset}\n"
+  fi
+}
+
+commit_and_push() {
+  # Switch remote from HTTPS to SSH (repo was cloned over HTTPS before SSH was set up)
+  git remote set-url origin git@github.com:andreykaipov/nix.git
+
+  printf "${yellow}Updating flake.lock...${reset}\n"
+  nix flake update secrets
+  printf "${green}Updated flake.lock!${reset}\n"
+
+  printf "${yellow}Committing nix repo changes...${reset}\n"
+  git reset --quiet
+  git add flake.lock "hosts/${hostname}/"
+  if git diff --cached --quiet; then
+    printf "${green}Nothing to commit, already up to date${reset}\n"
+  else
+    git_commit -m "Bootstrap ${hostname}"
+    git push
+    printf "${green}Pushed nix repo!${reset}\n"
+  fi
+}
+
+setup_host() {
+  key_name="${hostname}.pem"
+  key_path="${key_dir}/${key_name}"
+  host_config="${repo}/hosts/${hostname}/default.nix"
+
+  if [ -f "${key_path}" ]; then
+    printf "${yellow}SSH key already exists: ${key_path}${reset}\n"
+    pubkey="$(ssh-keygen -y -f "${key_path}")"
+    echo "$pubkey" > "${key_dir}/${key_name}.pub"
+  else
+    printf "${yellow}Generating SSH key for ${hostname}...${reset}\n"
+    mkdir -p "${key_dir}"
+    ssh-keygen -t ed25519 -f "${key_path}" -N "" -C ""
+    chmod 600 "${key_path}"
+    pubkey="$(cat "${key_path}.pub")"
+
+    printf "${green}SSH key generated!${reset}\n"
+    echo "Public key:"
+    cat "${key_dir}/${key_name}.pub"
+  fi
+
+  write_pubkey "$pubkey"
+  cat "${host_config}"
+
+  # Upload public key to GitHub if not already there
+  git_config_nix="${repo}/modules/home/git/default.nix"
+  github_user="$(grep 'email = "' "$git_config_nix" | head -1 | sed 's/.*+\(.*\)@.*/\1/')"
+  nix_user="$(whoami)"
+  host_pubkey="$(ssh-keygen -y -f "${key_path}")"
+
+  key_on_github=false
+  if github_keys="$(curl -sf "https://api.github.com/users/${github_user}/keys")"; then
+    key_data="$(echo "$host_pubkey" | awk '{print $2}')"
+    if echo "$github_keys" | grep -q "$key_data"; then
+      key_on_github=true
+      printf "${green}Host public key already on GitHub${reset}\n"
+    fi
+  fi
+
+  if [ "$key_on_github" = false ]; then
+    printf "${yellow}Adding host public key to GitHub...${reset}\n"
+    if ! gh auth status >/dev/null 2>&1; then
+      gh auth login --web --git-protocol ssh --skip-ssh-key --scopes admin:public_key
+    elif ! gh auth status 2>&1 | grep -q 'admin:public_key'; then
+      gh auth refresh -h github.com -s admin:public_key
+    fi
+    gh ssh-key add "${key_path}.pub" --title "${nix_user}@${hostname} (via andreykaipov/nix#bootstrap)"
+    printf "${green}Host public key added to GitHub${reset}\n"
+  fi
+
+  # Add to SSH agent and clear stale sockets
+  printf "${yellow}Adding host key to SSH agent...${reset}\n"
+  ssh-add "${key_path}"
+  rm -rf "$HOME/.cache/ssh/sockets/*"
+}
+
+encrypt_host_key() {
+  key_name="${hostname}.pem"
+  key_path="${key_dir}/${key_name}"
+  recipient="${repo}/modules/home/secrets/recipient"
+  secret_path="${secrets_dir}/ssh/${key_name}.age"
+
+  if [ ! -f "${key_path}" ]; then
+    printf "${red}No SSH key found at ${key_path}${reset}\n"
     exit 1
   fi
-else
-  printf "${green}agenix identity key already exists at $agenix_key${reset}\n"
-fi
 
-# Generate host key
-BOOTSTRAP=1 "$dir/setup-host" "$hostname"
-
-# Wait for GitHub SSH key
-host_key="$HOME/.ssh/${hostname}.pem"
-host_pubkey="$(ssh-keygen -y -f "${host_key}")"
-git_config="${dir}/../../modules/home/git/default.nix"
-github_user="$(grep 'email = "' "$git_config" | head -1 | sed 's/.*+\(.*\)@.*/\1/')"
-nix_user="$(whoami)"
-
-# Check if key is already on GitHub
-key_on_github=false
-if github_keys="$(curl -sf "https://api.github.com/users/${github_user}/keys")"; then
-  key_data="$(echo "$host_pubkey" | awk '{print $2}')"
-  if echo "$github_keys" | grep -q "$key_data"; then
-    key_on_github=true
-    printf "${green}Host public key already on GitHub${reset}\n"
+  if [ ! -f "${recipient}" ]; then
+    printf "${red}agenix public key not found${reset}\n"
+    exit 1
   fi
-fi
 
-gh() { nix run nixpkgs#gh -- "$@"; }
-
-if [ "$key_on_github" = false ]; then
-  printf "${yellow}Adding host public key to GitHub...${reset}\n"
-  if ! gh auth status >/dev/null 2>&1; then
-    gh auth login --web --git-protocol ssh --skip-ssh-key --scopes admin:public_key
+  # Ensure correct permissions on agenix identity key
+  if [ -f "${agenix_key}" ]; then
+    chmod 600 "${agenix_key}"
   fi
-  gh ssh-key add "$HOME/.ssh/${hostname}.pem.pub" --title "${nix_user}@${hostname} (via andreykaipov/nix#bootstrap)"
-  printf "${green}Host public key added to GitHub${reset}\n"
-fi
 
-printf "${yellow}Adding host key to SSH agent...${reset}\n"
-ssh-add "${host_key}"
+  if [ ! -d "${secrets_dir}" ]; then
+    printf "${yellow}nix-secrets not found at ${secrets_dir}, cloning...${reset}\n"
+    git clone git@github.com:andreykaipov/nix-secrets.git "${secrets_dir}"
+  fi
 
-# Clear stale SSH control sockets so the new key is used
-rm -rf "$HOME/.cache/ssh/sockets"
+  # If the secret already exists, decrypt and compare to avoid unnecessary changes
+  if [ -f "${secret_path}" ] && [ -f "${agenix_key}" ]; then
+    printf "${yellow}Checking if secret is already up to date...${reset}\n"
+    existing="$(age -d -i "${agenix_key}" "${secret_path}" 2>/dev/null)" || true
+    if [ "$existing" = "$(cat "${key_path}")" ]; then
+      printf "${green}Secret ${secret_path} already up to date${reset}\n"
+      return
+    fi
+  fi
 
-# Encrypt host key into nix-secrets
-"$dir/sync-host-key" --force
+  printf "${yellow}Encrypting ${key_name} into nix-secrets...${reset}\n"
+  mkdir -p "${secrets_dir}/ssh"
+  age -R "${recipient}" -o "${secret_path}" < "${key_path}"
+
+  printf "${green}Encrypted to ${secret_path}${reset}\n"
+
+  # Commit and push nix-secrets
+  cd "${secrets_dir}"
+  git reset --quiet
+  git add "ssh/${key_name}.age"
+  if git diff --cached --quiet; then
+    printf "${green}nix-secrets already up to date${reset}\n"
+    cd "$repo"
+    return
+  fi
+  git_commit -m "Add ${key_name}"
+
+  printf "${yellow}Pushing to nix-secrets...${reset}\n"
+  if git push; then
+    printf "${green}Pushed to nix-secrets!${reset}\n"
+  else
+    printf "${red}Push failed.${reset}\n"
+    printf "${yellow}Manual steps:${reset}\n"
+    echo "1. Ensure your SSH key is on GitHub: https://github.com/settings/ssh/new"
+    echo "2. Run: ssh-add ~/.ssh/${key_name}"
+    echo "3. Run: rm -rf ~/.cache/ssh/sockets"
+    echo "4. Run: cd ${secrets_dir} && git push"
+  fi
+
+  cd "$repo"
+}
+
+# --- main ---
+
+main() {
+  hostname=""
+  skip_xcode=false
+  for arg in "$@"; do
+    case "$arg" in
+      --no-xcode) skip_xcode=true ;;
+      *) hostname="$arg" ;;
+    esac
+  done
+
+  if [ -z "$hostname" ]; then
+    echo "Usage: bootstrap <hostname> [--no-xcode]" >&2
+    exit 1
+  fi
+
+  clone_repo
+  install_xcode
+  set_hostname
+  wait_for_agenix_key
+  setup_host
+  encrypt_host_key
+  commit_and_push
+
+  echo ""
+  echo "======================================="
+  printf "${green}          Bootstrap complete!${reset}\n"
+  echo "======================================="
+  echo ""
+  printf "${yellow}  Run the following to finish setup:${reset}\n"
+  echo ""
+  echo "    cd ~/gh/nix"
+  echo "    nix run .#switch"
+  echo ""
+}
+
+main "$@"

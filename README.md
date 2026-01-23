@@ -212,8 +212,7 @@ needed.
         ├── switch            # Build and switch both darwin + home
         ├── switch-darwin     # Build and switch nix-darwin
         ├── switch-home       # Switch home-manager configuration
-        ├── setup-host        # Generate host key and write host config
-        ├── sync-host-key     # Encrypt host key into nix-secrets
+        ├── bootstrap         # Bootstrap a fresh macOS machine end-to-end
         ├── clean             # Garbage collect old generations (>30 days)
         └── rollback          # Roll back to a previous darwin generation
 ```

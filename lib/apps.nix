@@ -5,7 +5,7 @@
 
 with builtins;
 final: _: {
-  # Wraps a shell script from apps/<system>/<name> into a nix app with git on PATH
+  # Wraps a shell script from apps/<system>/<name> into a nix app with common tools on PATH
   mkApp = scriptName: system: {
     type = "app";
     meta = {
@@ -16,7 +16,7 @@ final: _: {
         pkgs = inputs.nixpkgs.legacyPackages.${system};
         scriptBin = pkgs.writeScriptBin scriptName ''
           #!/usr/bin/env bash
-          PATH=${pkgs.git}/bin:$PATH
+          PATH=${pkgs.git}/bin:${pkgs.gh}/bin:${pkgs.age}/bin:$PATH
           echo "Running ${scriptName} for ${system}"
           exec ${inputs.self}/apps/${system}/${scriptName} "$@"
         '';
