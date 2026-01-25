@@ -10,7 +10,7 @@
 set -eu
 
 identity="$HOME/.config/agenix/identity"
-recipient="$HOME/.config/agenix/recipient"
+recipient="$HOME/gh/nix/modules/home/secrets/recipient"
 secrets_dir="${SECRETS_DIR:-$HOME/gh/nix-secrets}"
 
 red='\033[0;31m'

@@ -29,6 +29,4 @@
   age.identityPaths = [
     "${host.homeDirectory}/.config/agenix/identity"
   ];
-
-  xdg.configFile."agenix" = host.symlinkTo ./.;
 }
