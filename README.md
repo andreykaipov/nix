@@ -79,7 +79,7 @@ The bootstrap script will:
 
 1. Set the machine hostname
 2. Prompt you to place the agenix identity key from 1Password into
-   `~/.config/agenix/identity` (the **only** manual secret)
+   `~/.config/agenix/agenix.pem` (the **only** manual secret)
 3. Generate a per-host SSH key at `~/.ssh/<host>.pem`
 4. Upload the public key to GitHub via `gh` CLI
 5. Encrypt the private key into nix-secrets and update `flake.lock`

@@ -14,7 +14,7 @@ export GIT_SSH_COMMAND="ssh -o StrictHostKeyChecking=no -o ControlMaster=no"
 repo="$HOME/gh/nix"
 key_dir="$HOME/.ssh"
 secrets_dir="${SECRETS_DIR:-$HOME/gh/nix-secrets}"
-agenix_key="$HOME/.config/agenix/identity"
+agenix_key="$HOME/.config/agenix/agenix.pem"
 
 # --- helpers ---
 
@@ -192,7 +192,6 @@ setup_host() {
 encrypt_host_key() {
   key_name="${hostname}.pem"
   key_path="${key_dir}/${key_name}"
-  recipient="${repo}/modules/home/secrets/recipient"
   secret_path="${secrets_dir}/ssh/${key_name}.age"
 
   if [ ! -f "${key_path}" ]; then
@@ -200,15 +199,15 @@ encrypt_host_key() {
     exit 1
   fi
 
-  if [ ! -f "${recipient}" ]; then
-    printf "${red}agenix public key not found${reset}\n"
+  if [ ! -f "${agenix_key}" ]; then
+    printf "${red}agenix identity key not found at ${agenix_key}${reset}\n"
     exit 1
   fi
 
-  # Ensure correct permissions on agenix identity key
-  if [ -f "${agenix_key}" ]; then
-    chmod 600 "${agenix_key}"
-  fi
+  # Derive recipient (public key) from agenix identity
+  chmod 600 "${agenix_key}"
+  recipient="$(mktemp)"
+  ssh-keygen -y -f "${agenix_key}" > "${recipient}"
 
   if [ ! -d "${secrets_dir}" ]; then
     printf "${yellow}nix-secrets not found at ${secrets_dir}, cloning...${reset}\n"
@@ -221,6 +220,7 @@ encrypt_host_key() {
     existing="$(age -d -i "${agenix_key}" "${secret_path}" 2>/dev/null)" || true
     if [ "$existing" = "$(cat "${key_path}")" ]; then
       printf "${green}Secret ${secret_path} already up to date${reset}\n"
+      rm -f "${recipient}"
       return
     fi
   fi
@@ -237,6 +237,7 @@ encrypt_host_key() {
   git add "ssh/${key_name}.age"
   if git diff --cached --quiet; then
     printf "${green}nix-secrets already up to date${reset}\n"
+    rm -f "${recipient}"
     cd "$repo"
     return
   fi
@@ -254,6 +255,7 @@ encrypt_host_key() {
     echo "4. Run: cd ${secrets_dir} && git push"
   fi
 
+  rm -f "${recipient}"
   cd "$repo"
 }
 

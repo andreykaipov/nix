@@ -23,6 +23,8 @@
 
   home.activation.nvimPlugins = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
     echo "Installing nvim plugins..."
-    ${inputs.neovim-nightly.packages.${pkgs.stdenv.hostPlatform.system}.default}/bin/nvim --headless +qa 2>&1 || true
+    ${
+      inputs.neovim-nightly.packages.${pkgs.stdenv.hostPlatform.system}.default
+    }/bin/nvim --headless +qa 2>&1 || true
   '';
 }

@@ -27,6 +27,6 @@
   ];
 
   age.identityPaths = [
-    "${host.homeDirectory}/.config/agenix/identity"
+    "${host.homeDirectory}/.config/agenix/agenix.pem"
   ];
 }

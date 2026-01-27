@@ -9,8 +9,7 @@
 
 set -eu
 
-identity="$HOME/.config/agenix/identity"
-recipient="$HOME/gh/nix/modules/home/secrets/recipient"
+identity="$HOME/.config/agenix/agenix.pem"
 secrets_dir="${SECRETS_DIR:-$HOME/gh/nix-secrets}"
 
 red='\033[0;31m'
@@ -22,9 +21,11 @@ die() { printf "${red}%s${reset}\n" "$*" >&2; exit 1; }
 
 preflight() {
   [ -f "$identity" ]  || die "Identity key not found at $identity"
-  [ -f "$recipient" ] || die "Recipient key not found at $recipient"
   [ -d "$secrets_dir" ] || die "nix-secrets not found at $secrets_dir"
   chmod 600 "$identity"
+  recipient="$(mktemp)"
+  ssh-keygen -y -f "$identity" > "$recipient" || die "Failed to derive recipient from identity"
+  trap 'rm -f "$recipient"' EXIT
 }
 
 # Encrypt a plaintext file to an age-encrypted secret.

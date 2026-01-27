@@ -3,4 +3,3 @@
 
 # nvim is an out of store symlink
 modules/home/nvim/tmp
-modules/home/secrets/identity
