@@ -335,11 +335,11 @@
     "secrets": {
       "flake": false,
       "locked": {
-        "lastModified": 1772510385,
-        "narHash": "sha256-uchFcjBrC+9nJSjLLmJPV3OoUVwlnOLN52pQnW+lqXc=",
+        "lastModified": 1772511686,
+        "narHash": "sha256-Tt/omGS83yRD4Dur+l7qPRE9N8oj1SBUiaQSwZYAbyM=",
         "ref": "refs/heads/main",
-        "rev": "e3dfbabe2017bf50da84b740b9fa0cb98c720ff5",
-        "revCount": 51,
+        "rev": "572ec13b75ff7022916b19e0ec9eed8483f16c63",
+        "revCount": 53,
         "type": "git",
         "url": "ssh://git@github.com/andreykaipov/nix-secrets.git"
       },
