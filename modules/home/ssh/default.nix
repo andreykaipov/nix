@@ -52,23 +52,14 @@ in
 
   home.file.".ssh/config.d" = host.symlinkTo ./config.d;
 
-  # Write public key from host config (no symlink needed — private key is decrypted by agenix)
+  # Write public key from host config (no symlink needed — private key is decrypted by agenix).
+  # force: bootstrap would have already generated a host key before home-manager runs
+  # but now we're going to manage it with home-manager, even if it has the same contents
   home.file.".ssh/${hostKey}.pub" = lib.mkIf hasPublicKey {
     text = host.publicKey + "\n";
+    force = true;
   };
 
   # Ensure socket dir exists for ControlPath
   home.file.".cache/ssh/sockets/.keep".text = "";
-
-  # Surface agenix decryption results after the LaunchAgent runs.
-  home.activation.reportSSHKeys = lib.hm.dag.entryAfter [ "setupLaunchAgents" ] ''
-    echo "Fetching SSH keys from secrets..."
-    sleep 1
-    if [ -f "${host.homeDirectory}/Library/Logs/agenix/stderr" ] && [ -s "${host.homeDirectory}/Library/Logs/agenix/stderr" ]; then
-      echo "agenix errors:"
-      cat "${host.homeDirectory}/Library/Logs/agenix/stderr"
-    fi
-    echo "SSH keys available:"
-    ls -1 "${host.homeDirectory}/.ssh/"*.pem 2>/dev/null | xargs -n1 basename
-  '';
 }
