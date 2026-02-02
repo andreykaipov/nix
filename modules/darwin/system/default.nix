@@ -52,7 +52,18 @@
   # Restart cfprefsd after defaults are written so NSGlobalDomain changes
   # (scroll direction, key repeat, etc.) take effect without logging out.
   system.activationScripts.postUserDefaults.text = ''
-    echo >&2 "restarting cfprefsd..."
+    echo "restarting cfprefsd..."
     killall cfprefsd 2>/dev/null || true
+  '';
+
+  # Launch apps that need a first run to register their login items.
+  # Runs as the user since activation scripts execute under sudo.
+  system.activationScripts.launchApps.text = ''
+    for app in Rectangle; do
+      if [ -d "/Applications/$app.app" ] && ! sudo -u ${host.username} pgrep -xq "$app"; then
+        echo "launching $app..."
+        sudo -u ${host.username} open -a "$app"
+      fi
+    done
   '';
 }

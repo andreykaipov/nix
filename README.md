@@ -56,9 +56,9 @@ GIT_CONFIG_GLOBAL=/dev/null nix run nixpkgs#git -- clone https://github.com/andr
 cd ~/gh/nix
 ```
 
-No Xcode Command Line Tools needed — git comes straight from nix. The `-c`
-flag overrides the HTTPS→SSH rewrite that may exist from a previous
-home-manager run.
+No Xcode Command Line Tools needed — git comes straight from nix. The
+`GIT_CONFIG_GLOBAL` override avoids the HTTPS→SSH rewrite that may exist from a
+previous home-manager run.
 
 The repo must live at `~/gh/nix` — this path is used by `host.gitRoot` for
 symlinks and module resolution.
@@ -90,13 +90,18 @@ The bootstrap script will:
 nix run .#switch-darwin
 ```
 
-This will prompt for your `sudo` password. It builds the nix-darwin
-configuration, then runs `darwin-rebuild switch` to apply it. On the first run,
-this:
+This will prompt for your `sudo` password. On the first run, `darwin-rebuild`
+isn't in your PATH yet, so the script bootstraps it via
+`nix run nix-darwin -- switch`. After the first run, `darwin-rebuild` is
+available directly.
+
+This:
 
 - Configures macOS system defaults (keyboard, Finder, trackpad, security)
 - Installs homebrew and all casks/brews (GUI apps go into `/Applications/`)
 - Sets up the Dock layout
+- Launches Rectangle (and any other apps that need a first run to register
+  their login items)
 
 > **Note:** GUI apps are installed via homebrew casks, not nix packages.
 > Home-manager app linking into `/Applications/` is disabled.
@@ -111,14 +116,14 @@ On the first run, `home-manager` isn't in your PATH yet, so the script
 bootstraps it via `nix run home-manager`. After the first run,
 `home-manager switch --flake .#<hostname>` is available directly.
 
-agenix decrypts the host SSH key from nix-secrets via a LaunchAgent on every
-switch. This sets up:
+agenix decrypts the host SSH key from nix-secrets via a LaunchAgent. This
+sets up:
 
 - zsh with powerlevel10k
 - git config
-- SSH config and agent
+- SSH config and keys
 - tmux
-- neovim
+- neovim (with auto-installed plugins via MiniDeps)
 - direnv + nix-direnv
 - User packages (dev tools, LSPs, etc.)
 - User scripts in `~/bin`
@@ -134,6 +139,44 @@ nix run .#switch
 
 Open a new terminal (or `exec zsh`) to pick up the new shell environment.
 Everything should be ready — shell, editor, packages, and secrets.
+
+## Secrets Management
+
+Secrets are managed via [agenix](https://github.com/ryantm/agenix) +
+[agenix-home-manager](https://github.com/ryantm/agenix#home-manager).
+
+| File | Purpose |
+|---|---|
+| `~/.config/agenix/agenix.pem` | age identity key (private, from 1Password) |
+| `~/gh/nix-secrets/` | Encrypted secrets repo (`ssh/<host>.pem.age`, etc.) |
+
+The identity key and its recipient (public key) are **not stored in git**. The
+recipient is derived at runtime from the identity via `ssh-keygen -y -f`.
+
+Any module can declare secrets via `age.secrets`:
+
+```nix
+age.secrets."someapp-token" = {
+  file = "${secrets}/someapp/token.age";
+  path = "${host.homeDirectory}/.config/someapp/token";
+  mode = "600";
+};
+```
+
+### Updating secrets
+
+A utility script is available on `PATH` after the first switch:
+
+```sh
+# Edit a secret in $EDITOR (decrypt → edit → re-encrypt)
+update-agenix-secret ssh/airfryer.pem.age
+
+# Encrypt a plaintext file
+update-agenix-secret ssh/airfryer.pem.age ~/.ssh/airfryer.pem
+
+# Re-encrypt all secrets (e.g. after key rotation)
+update-agenix-secret --rekey
+```
 
 ## Adding a New Host
 
@@ -192,15 +235,17 @@ needed.
 │   ├── darwin/               # nix-darwin modules (auto-discovered)
 │   │   ├── default.nix       # Auto-imports subdirs via lib.discoverModules
 │   │   ├── homebrew/         # nix-homebrew setup, taps, casks, brews
+│   │   ├── secrets/          # nix-darwin agenix plumbing
 │   │   ├── system/           # macOS defaults (keyboard, finder, trackpad, security)
-│   │   │   └── dock/         # Dock appearance + entries (uses _internal/dock)
+│   │   │   ├── dock/         # Dock appearance + entries (uses _internal/dock)
+│   │   │   └── rectangle/    # Rectangle window manager preferences
 │   │   └── user/             # User account registration
 │   └── home/                 # home-manager modules (auto-discovered)
 │       ├── default.nix       # Auto-imports subdirs via lib.discoverModules
 │       ├── bin/              # User scripts (~/bin symlink)
 │       ├── direnv/           # direnv + nix-direnv
 │       ├── git/              # Git config (name, email, signing)
-│       ├── nvim/             # Neovim configuration
+│       ├── nvim/             # Neovim config (nightly + MiniDeps plugin management)
 │       ├── packages/         # User packages (dev tools, LSPs, etc.)
 │       ├── secrets/          # agenix plumbing (identity paths, imports)
 │       ├── shell/            # zsh + powerlevel10k
@@ -210,8 +255,8 @@ needed.
 └── apps/
     └── aarch64-darwin/       # App scripts (nix run .#<name>)
         ├── switch            # Build and switch both darwin + home
-        ├── switch-darwin     # Build and switch nix-darwin
-        ├── switch-home       # Switch home-manager configuration
+        ├── switch-darwin     # Build and switch nix-darwin only
+        ├── switch-home       # Switch home-manager only
         ├── bootstrap         # Bootstrap a fresh macOS machine end-to-end
         ├── clean             # Garbage collect old generations (>30 days)
         └── rollback          # Roll back to a previous darwin generation
