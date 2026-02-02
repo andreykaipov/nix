@@ -127,7 +127,7 @@ commit_and_push() {
   if git diff --cached --quiet; then
     printf "${green}Nothing to commit, already up to date${reset}\n"
   else
-    git_commit -m "Bootstrap ${hostname}"
+    git_commit -m "hosts: bootstrap ${hostname}"
     git push
     printf "${green}Pushed nix repo!${reset}\n"
   fi
