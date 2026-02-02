@@ -10,12 +10,15 @@ hostname="$(hostname)"
 
 export NIXPKGS_ALLOW_UNFREE=1
 
-printf "${yellow}Switching home-manager...${reset}\n"
-if command -v home-manager >/dev/null 2>&1; then
-  home-manager switch --flake ".#${hostname}" "$@"
-else
-  printf "${yellow}home-manager not in PATH, bootstrapping via nix run...${reset}\n"
-  nix run home-manager -- switch --flake ".#${hostname}" "$@"
-fi
+home_manager() {
+  if command -v home-manager >/dev/null 2>&1; then
+    home-manager "$@"
+  else
+    printf "${yellow}home-manager not in PATH, bootstrapping via nix run...${reset}\n"
+    nix --extra-experimental-features 'nix-command flakes' run home-manager -- "$@"
+  fi
+}
 
+printf "${yellow}Switching home-manager...${reset}\n"
+home_manager switch --flake ".#${hostname}" "$@"
 printf "${green}home-manager switch complete!${reset}\n"
