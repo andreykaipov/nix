@@ -1,5 +1,6 @@
 .DS_Store
 *.pem
+result
 
 # nvim is an out of store symlink
 modules/home/nvim/tmp
