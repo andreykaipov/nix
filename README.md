@@ -22,11 +22,11 @@ darwin rebuild, and vice versa.
 # 1. Install Nix
 curl -fsSL https://install.determinate.systems/nix | sh -s -- install
 
-# 2. Bootstrap (clones repo, sets hostname, generates keys, encrypts secrets)
+# 2. Bootstrap (blocking, expects input from you)
 nix run --refresh github:andreykaipov/nix#bootstrap -- <host>
 
-# 3. Build everything
-nix run .#switch
+# 3. Build and switch everything
+cd ~/gh/nix && nix run .#switch
 ```
 
 ### Prerequisites
@@ -47,23 +47,7 @@ comes with flakes enabled by default and manages the Nix daemon itself. Because
 of this, `nix.enable = false` is set in the nix-darwin config — nix-darwin
 won't try to manage the daemon, settings, or garbage collection.
 
-#### 2. Clone the repo
-
-Clone via HTTPS — the repo is public, so no SSH key is needed yet:
-
-```sh
-GIT_CONFIG_GLOBAL=/dev/null nix run nixpkgs#git -- clone https://github.com/andreykaipov/nix.git ~/gh/nix
-cd ~/gh/nix
-```
-
-No Xcode Command Line Tools needed — git comes straight from nix. The
-`GIT_CONFIG_GLOBAL` override avoids the HTTPS→SSH rewrite that may exist from a
-previous home-manager run.
-
-The repo must live at `~/gh/nix` — this path is used by `host.gitRoot` for
-symlinks and module resolution.
-
-#### 3. Bootstrap
+#### 2. Bootstrap
 
 Sets the hostname, generates a per-host SSH key, uploads it to GitHub, and
 encrypts it into nix-secrets — all in one command:
@@ -72,19 +56,21 @@ encrypts it into nix-secrets — all in one command:
 nix run .#bootstrap <host>
 ```
 
-The hostname determines which host config under `hosts/` is used. If the host
-directory doesn't exist yet, the script creates one automatically.
+Give the host a distinguishable name, like `airfryer`, or `toaster`, or `goonermania`.
+The hostname determines which host config under [`hosts/`](./hosts) is used. If the host's
+config doesn't exist yet, the script creates one automatically.
 
 The bootstrap script will:
 
 1. Set the machine hostname
-2. Prompt you to place the agenix identity key from 1Password into
-   `~/.config/agenix/agenix.pem` (the **only** manual secret)
-3. Generate a per-host SSH key at `~/.ssh/<host>.pem`
-4. Upload the public key to GitHub via `gh` CLI
-5. Encrypt the private key into nix-secrets and update `flake.lock`
+2. Prompt you to place the agenix identity key into `~/.config/agenix/agenix.pem` (get it from 1Password)
+3. Generate a new host under `hosts`
+4. Generate a per-host SSH key at `~/.ssh/<host>.pem`
+4. Upload the public key to GitHub (the `gh` CLI will prompt you)
+5. Encrypt the private key into nix-secrets
+6. Update `flake.lock` and commit these changes back up to `~/gh/nix`
 
-#### 4. Build and switch nix-darwin
+#### 3a. Build and switch nix-darwin
 
 ```sh
 nix run .#switch-darwin
@@ -106,7 +92,7 @@ This:
 > **Note:** GUI apps are installed via homebrew casks, not nix packages.
 > Home-manager app linking into `/Applications/` is disabled.
 
-#### 5. Build and switch home-manager
+#### 3b. Build and switch home-manager
 
 ```sh
 nix run .#switch-home
@@ -134,11 +120,6 @@ Or run both steps at once:
 ```sh
 nix run .#switch
 ```
-
-#### 6. Post-bootstrap
-
-Open a new terminal (or `exec zsh`) to pick up the new shell environment.
-Everything should be ready — shell, editor, packages, and secrets.
 
 ## Secrets Management
 
@@ -180,6 +161,9 @@ update-agenix-secret --rekey
 
 ## Adding a New Host
 
+The bootstrap script will create a host config for you automatically,
+but if you want to do it yourself, you can.
+ 
 1. Create a directory under `hosts/` matching the machine's hostname:
 
 ```sh
@@ -190,76 +174,28 @@ mkdir -p hosts/my-machine
 
 ```nix
 { ... }:
-
 {
   system = "aarch64-darwin";
   username = "myuser";
-}
-```
-
-`homeDirectory` and `gitRoot` are derived automatically by `lib.mkHost`:
-- darwin → `/Users/<username>/gh/nix`
-- linux → `/home/<username>/gh/nix`
-
-You can also pass `extraModules` for host-specific configuration:
-
-```nix
-{ ... }:
-
-{
-  system = "aarch64-darwin";
-  username = "myuser";
-  extraModules = [
-    # host-specific overrides
-  ];
+  publicKey = "ssh-ed25519 AAAA...";
+  extraModules = [ ... ];
 }
 ```
 
 3. Set the machine's hostname to match, then run `nix run .#switch`.
 
-The host is auto-discovered from the directory name — no changes to `flake.nix`
-needed.
-
 ## Directory Structure
 
 ```
 .
-├── flake.nix                 # Flake entrypoint: inputs, outputs
-├── lib/                      # Helper functions (mkConfig, mkApp, discoverModules)
-├── hosts/                    # Per-host config (system, username)
-│   ├── default.nix           # Auto-discovers host dirs → { darwin, linux, home }
-│   └── extend.nix            # HM module: injects host.symlinkTo via _module.args
+├── flake.nix          # Flake entrypoint
+├── lib/               # Helper functions (mkConfig, mkApp, discoverModules)
+├── hosts/             # Per-host config (system, username, publicKey)
 ├── modules/
-│   ├── _internal/            # Plumbing modules (not user config)
-│   │   └── dock.nix          # dockutil module (options + activation script)
-│   ├── darwin/               # nix-darwin modules (auto-discovered)
-│   │   ├── default.nix       # Auto-imports subdirs via lib.discoverModules
-│   │   ├── homebrew/         # nix-homebrew setup, taps, casks, brews
-│   │   ├── secrets/          # nix-darwin agenix plumbing
-│   │   ├── system/           # macOS defaults (keyboard, finder, trackpad, security)
-│   │   │   ├── dock/         # Dock appearance + entries (uses _internal/dock)
-│   │   │   └── rectangle/    # Rectangle window manager preferences
-│   │   └── user/             # User account registration
-│   └── home/                 # home-manager modules (auto-discovered)
-│       ├── default.nix       # Auto-imports subdirs via lib.discoverModules
-│       ├── bin/              # User scripts (~/bin symlink)
-│       ├── direnv/           # direnv + nix-direnv
-│       ├── git/              # Git config (name, email, signing)
-│       ├── nvim/             # Neovim config (nightly + MiniDeps plugin management)
-│       ├── packages/         # User packages (dev tools, LSPs, etc.)
-│       ├── secrets/          # agenix plumbing (identity paths, imports)
-│       ├── shell/            # zsh + powerlevel10k
-│       ├── ssh/              # SSH config, key management, agenix secrets
-│       ├── tmux/             # tmux configuration
-│       └── wezterm/          # WezTerm terminal config
+│   ├── darwin/        # nix-darwin modules (system defaults, homebrew, dock, etc.)
+│   └── home/          # home-manager modules (shell, git, ssh, tmux, nvim, etc.)
 └── apps/
-    └── aarch64-darwin/       # App scripts (nix run .#<name>)
-        ├── switch            # Build and switch both darwin + home
-        ├── switch-darwin     # Build and switch nix-darwin only
-        ├── switch-home       # Switch home-manager only
-        ├── bootstrap         # Bootstrap a fresh macOS machine end-to-end
-        ├── clean             # Garbage collect old generations (>30 days)
-        └── rollback          # Roll back to a previous darwin generation
+    └── aarch64-darwin/ # App scripts (switch, switch-darwin, switch-home, bootstrap, etc.)
 ```
 
 Adding a new module is just creating a subdirectory with a `default.nix` —
@@ -282,7 +218,7 @@ nix run .#switch
 
 ### Adding a Homebrew cask
 
-Edit `modules/darwin/homebrew/default.nix`:
+In any darwin module, but most likely would go in `modules/darwin/homebrew/default.nix`:
 
 ```nix
 homebrew.casks = [
@@ -296,7 +232,7 @@ Then `nix run .#switch-darwin`.
 
 ### Adding a user package
 
-Edit `modules/home/packages/default.nix`:
+In any home module, but most likely would go in `modules/home/packages/default.nix`:
 
 ```nix
 home.packages = with pkgs; [
@@ -314,7 +250,6 @@ the repo so edits take effect immediately without rebuilding:
 
 ```nix
 { host, ... }:
-
 {
   xdg.configFile."nvim" = host.symlinkTo ./.;
 }
