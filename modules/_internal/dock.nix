@@ -81,11 +81,14 @@ in
           ]
           (normalize path)
         );
-      wantURIs = concatMapStrings (entry: "${entryURI entry.path}\n") cfg.entries;
-      createEntries = concatMapStrings (
-        entry:
-        "${dockutil}/bin/dockutil --no-restart --add '${entry.path}' --section ${entry.section} ${entry.options}\n"
-      ) cfg.entries;
+      # Build want URIs and dockutil commands with runtime path checks
+      # so missing apps (e.g. Slack) are silently skipped.
+      wantURIs = concatMapStrings (entry: ''
+        [ -e '${entry.path}' ] && printf '%s\n' '${entryURI entry.path}'
+      '') cfg.entries;
+      createEntries = concatMapStrings (entry: ''
+        [ -e '${entry.path}' ] && ${dockutil}/bin/dockutil --no-restart --add '${entry.path}' --section ${entry.section} ${entry.options}
+      '') cfg.entries;
     in
     {
       environment.systemPackages = [ dockutil ];
@@ -93,8 +96,11 @@ in
       system.activationScripts.postActivation.text = ''
           echo >&2 "Setting up the Dock for ${cfg.username}..."
           su ${cfg.username} -s /bin/sh <<'USERBLOCK'
+        wantURIs="$(
+        ${wantURIs}
+        )"
         haveURIs="$(${dockutil}/bin/dockutil --list | ${pkgs.coreutils}/bin/cut -f2)"
-        if ! diff -wu <(echo -n "$haveURIs") <(echo -n '${wantURIs}') >&2 ; then
+        if ! diff -wu <(echo -n "$haveURIs") <(echo -n "$wantURIs") >&2 ; then
           echo >&2 "Resetting Dock."
           ${dockutil}/bin/dockutil --no-restart --remove all
           ${createEntries}

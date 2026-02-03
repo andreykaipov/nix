@@ -8,13 +8,15 @@
     ../../../_internal/dock.nix
   ];
 
-  # Dock entries (managed via dockutil)
+  # Dock entries (managed via dockutil).
+  # Missing paths are silently skipped at activation time.
   local.dock = {
     enable = true;
     username = host.username;
     entries = [
       { path = "/Applications/WezTerm.app/"; }
       { path = "/Applications/Google Chrome.app/"; }
+      { path = "/Applications/Slack.app/"; }
       { path = "/System/Applications/Messages.app/"; }
       { path = "/System/Applications/Notes.app/"; }
       { path = "/System/Applications/System Settings.app/"; }
