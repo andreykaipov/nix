@@ -14,6 +14,7 @@
     username = host.username;
     entries = [
       { path = "/Applications/WezTerm.app/"; }
+      { path = "/Applications/Google Chrome.app/"; }
       { path = "/System/Applications/Messages.app/"; }
       { path = "/System/Applications/Notes.app/"; }
       { path = "/System/Applications/System Settings.app/"; }

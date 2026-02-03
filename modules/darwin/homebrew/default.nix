@@ -41,6 +41,9 @@
 
       # Utilities
       "1password"
+
+      # Browsers
+      "google-chrome"
     ];
 
     brews = [
