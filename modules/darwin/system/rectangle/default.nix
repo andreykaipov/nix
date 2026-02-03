@@ -1,8 +1,19 @@
 {
+  host,
   ...
 }:
 
 {
+  homebrew.casks = [ "rectangle" ];
+
+  # Launch Rectangle on switch so it registers its login item on first run.
+  system.activationScripts.postActivation.text = ''
+    if [ -d "/Applications/Rectangle.app" ] && ! sudo -u ${host.username} pgrep -xq Rectangle; then
+      echo "launching Rectangle..."
+      sudo -u ${host.username} open -a Rectangle
+    fi
+  '';
+
   system.defaults.CustomUserPreferences."com.knollsoft.Rectangle" = {
     # Launch on login
     launchOnLogin = true;

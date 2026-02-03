@@ -65,19 +65,13 @@
   # nix-darwin only executes well-known activation script names. Custom names
   # like "postUserDefaults" or "launchApps" are silently ignored. Use
   # postActivation which runs after defaults, launchd, fonts, etc.
+  #
+  # postActivation.text is concatenated across modules, so each module
+  # (e.g. rectangle/) can append its own snippet.
   system.activationScripts.postActivation.text = ''
     # Restart cfprefsd after defaults are written so NSGlobalDomain changes
     # (scroll direction, key repeat, etc.) take effect without logging out.
     echo "restarting cfprefsd..."
     killall cfprefsd 2>/dev/null || true
-
-    # Launch apps that need a first run to register their login items.
-    apps=(Rectangle)
-    for app in "''${apps[@]}"; do
-      if [ -d "/Applications/$app.app" ] && ! sudo -u ${host.username} pgrep -xq "$app"; then
-        echo "launching $app..."
-        sudo -u ${host.username} open -a "$app"
-      fi
-    done
   '';
 }

@@ -41,7 +41,6 @@
 
       # Utilities
       "1password"
-      "rectangle"
     ];
 
     brews = [
