@@ -12,6 +12,19 @@
     primaryUser = host.username;
     stateVersion = 5;
 
+    # To discover defaults for an app you want to configure:
+    #
+    #   $ defaults domains | tr ',' '\n' | grep -i <app>
+    #   $ defaults read <domain>
+    #
+    # Or diff before/after changing a setting in the app's UI:
+    #
+    #   $ defaults read <domain> > /tmp/before
+    #   # ... change the setting in the app ...
+    #   $ defaults read <domain> > /tmp/after
+    #   $ diff /tmp/before /tmp/after
+    #
+    # Use `defaults read NSGlobalDomain` for system-wide preferences.
     defaults = {
       NSGlobalDomain = {
         AppleInterfaceStyle = "Dark";
@@ -49,17 +62,18 @@
     Defaults timestamp_timeout=60
   '';
 
-  # Restart cfprefsd after defaults are written so NSGlobalDomain changes
-  # (scroll direction, key repeat, etc.) take effect without logging out.
-  system.activationScripts.postUserDefaults.text = ''
+  # nix-darwin only executes well-known activation script names. Custom names
+  # like "postUserDefaults" or "launchApps" are silently ignored. Use
+  # postActivation which runs after defaults, launchd, fonts, etc.
+  system.activationScripts.postActivation.text = ''
+    # Restart cfprefsd after defaults are written so NSGlobalDomain changes
+    # (scroll direction, key repeat, etc.) take effect without logging out.
     echo "restarting cfprefsd..."
     killall cfprefsd 2>/dev/null || true
-  '';
 
-  # Launch apps that need a first run to register their login items.
-  # Runs as the user since activation scripts execute under sudo.
-  system.activationScripts.launchApps.text = ''
-    for app in Rectangle; do
+    # Launch apps that need a first run to register their login items.
+    apps=(Rectangle)
+    for app in "''${apps[@]}"; do
       if [ -d "/Applications/$app.app" ] && ! sudo -u ${host.username} pgrep -xq "$app"; then
         echo "launching $app..."
         sudo -u ${host.username} open -a "$app"
