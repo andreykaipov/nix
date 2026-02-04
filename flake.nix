@@ -41,6 +41,8 @@
     zsh-almostontop.flake = false;
     lscolors.url = "github:trapd00r/LS_COLORS";
     lscolors.flake = false;
+
+    llm-agents.url = "github:numtide/llm-agents.nix";
   };
   outputs =
     inputs:

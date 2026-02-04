@@ -24,6 +24,9 @@ final: _: {
             import pkgs {
               inherit system;
               config.allowUnfree = true;
+              overlays = [
+                inputs.llm-agents.overlays.default
+              ];
             };
           pkgs = unfree nixpkgs;
           pkgs-stable = unfree nixpkgs-stable;
