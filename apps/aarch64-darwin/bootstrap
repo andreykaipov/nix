@@ -214,11 +214,11 @@ encrypt_host_key() {
     git clone git@github.com:andreykaipov/nix-secrets.git "${secrets_dir}"
   fi
 
-  # If the secret already exists, decrypt and compare to avoid unnecessary changes
-  if [ -f "${secret_path}" ] && [ -f "${agenix_key}" ]; then
-    printf "${yellow}Checking if secret is already up to date...${reset}\n"
-    existing="$(age -d -i "${agenix_key}" "${secret_path}" 2>/dev/null)" || true
-    if [ "$existing" = "$(cat "${key_path}")" ]; then
+  # Skip if the key hasn't changed since the last encryption
+  if [ -f "${secret_path}" ]; then
+    hash_file="${secrets_dir}/ssh/${key_name}.sha256"
+    current_hash="$(shasum -a 256 "${key_path}" | cut -d' ' -f1)"
+    if [ -f "$hash_file" ] && [ "$(cat "$hash_file")" = "$current_hash" ]; then
       printf "${green}Secret ${secret_path} already up to date${reset}\n"
       rm -f "${recipient}"
       return
@@ -228,13 +228,14 @@ encrypt_host_key() {
   printf "${yellow}Encrypting ${key_name} into nix-secrets...${reset}\n"
   mkdir -p "${secrets_dir}/ssh"
   age -R "${recipient}" -o "${secret_path}" < "${key_path}"
+  printf '%s' "$(shasum -a 256 "${key_path}" | cut -d' ' -f1)" > "${secrets_dir}/ssh/${key_name}.sha256"
 
   printf "${green}Encrypted to ${secret_path}${reset}\n"
 
   # Commit and push nix-secrets
   cd "${secrets_dir}"
   git reset --quiet
-  git add "ssh/${key_name}.age"
+  git add "ssh/${key_name}.age" "ssh/${key_name}.sha256"
   if git diff --cached --quiet; then
     printf "${green}nix-secrets already up to date${reset}\n"
     rm -f "${recipient}"
