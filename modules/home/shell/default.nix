@@ -18,6 +18,12 @@
 
   xdg.configFile."zsh/config" = host.symlinkTo ./config;
 
+  # Redirect `npm install -g` to a writable directory instead of /nix/store.
+  # ~/.npm-global/bin is added to PATH via zshenv.
+  xdg.configFile."npm/npmrc".text = ''
+    prefix=~/.npm-global
+  '';
+
   programs.zsh = {
     enable = true;
     autocd = true;
