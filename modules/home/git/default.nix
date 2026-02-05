@@ -1,5 +1,6 @@
 {
   pkgs,
+  lib,
   host,
   ...
 }:
@@ -14,6 +15,14 @@ in
     gh
     lazygit
   ];
+
+  # Set per-repo hooksPath for the nix repo so our pre-commit hook
+  # encrypts zshenv.work to nix-secrets on commit.
+  home.activation.setNixRepoHooksPath = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+    if [ -d "${host.gitRoot}/.git" ]; then
+      ${pkgs.git}/bin/git -C "${host.gitRoot}" config core.hooksPath "${host.gitRoot}/modules/home/git/hooks"
+    fi
+  '';
 
   programs.git = {
     enable = true;

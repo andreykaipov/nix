@@ -4,10 +4,37 @@
   pkgs,
   lib,
   host,
+  secrets,
   ...
 }:
 
+let
+  envDir = "${secrets}/env";
+  hasEnvDir = builtins.pathExists envDir;
+
+  # Discover all zshenv.*.age files in nix-secrets/env/
+  secretEnvFiles =
+    if hasEnvDir then
+      lib.pipe (builtins.readDir envDir) [
+        (lib.filterAttrs (name: _: lib.hasPrefix "zshenv." name && lib.hasSuffix ".age" name))
+        (lib.mapAttrsToList (name: _: lib.removeSuffix ".age" name))
+      ]
+    else
+      [ ];
+in
 {
+  age.secrets = lib.listToAttrs (
+    map (name: {
+      inherit name;
+      value = {
+        file = "${envDir}/${name}.age";
+        path = "${host.gitRoot}/modules/home/shell/config/${name}";
+        symlink = false;
+        mode = "600";
+      };
+    }) secretEnvFiles
+  );
+
   home.packages = with pkgs; [
     bat
     eza
@@ -46,7 +73,11 @@
     envExtra = ''
       export FZF_BASE=${pkgs.fzf}/share/fzf
       source "$ZDOTDIR/config/zshenv"
-    '';
+    ''
+    + lib.concatMapStrings (name: ''
+      # Source secret env: ${name}
+      source "${host.gitRoot}/modules/home/shell/config/${name}"
+    '') secretEnvFiles;
     initContent = lib.mkMerge [
       (lib.mkBefore ''
         # To customize prompt, run `p10k configure` or edit p10k.zsh.

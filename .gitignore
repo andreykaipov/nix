@@ -4,3 +4,6 @@ result
 
 # nvim is an out of store symlink
 modules/home/nvim/tmp
+
+# plaintext secret env vars — encrypted via age on commit
+modules/home/shell/config/zshenv.*
