@@ -18,9 +18,13 @@ in
 
   # Set per-repo hooksPath for the nix repo so our pre-commit hook
   # encrypts zshenv.work to nix-secrets on commit.
+  # The hook is named descriptively in the repo (encrypt-secret-env) but
+  # symlinked as pre-commit so git recognises it.
   home.activation.setNixRepoHooksPath = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+    hooks_dir="${host.gitRoot}/.git/hooks"
     if [ -d "${host.gitRoot}/.git" ]; then
-      ${pkgs.git}/bin/git -C "${host.gitRoot}" config core.hooksPath "${host.gitRoot}/modules/home/git/hooks"
+      mkdir -p "$hooks_dir"
+      ln -sf "${host.gitRoot}/modules/home/git/hooks/encrypt-secret-env" "$hooks_dir/pre-commit"
     fi
   '';
 

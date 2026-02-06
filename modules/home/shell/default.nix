@@ -72,12 +72,13 @@ in
     autosuggestion.enable = true;
     envExtra = ''
       export FZF_BASE=${pkgs.fzf}/share/fzf
-      source "$ZDOTDIR/config/zshenv"
-    ''
-    + lib.concatMapStrings (name: ''
-      # Source secret env: ${name}
-      source "${host.gitRoot}/modules/home/shell/config/${name}"
-    '') secretEnvFiles;
+
+      # Source all zshenv files (zshenv, zshenv.work, etc.) from the config dir.
+      # These are either decrypted by agenix or created locally on disk.
+      for f in "$ZDOTDIR"/config/zshenv*; do
+        [ -f "$f" ] && source "$f"
+      done
+    '';
     initContent = lib.mkMerge [
       (lib.mkBefore ''
         # To customize prompt, run `p10k configure` or edit p10k.zsh.
