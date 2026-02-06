@@ -1,30 +1,32 @@
 {
   description = "Configuration with secrets for MacOS and NixOS";
   inputs = {
+    # i'll have the usual
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
     nixpkgs-stable.url = "github:nixos/nixpkgs/nixos-24.11";
-    agenix.url = "github:ryantm/agenix";
-
+    darwin.url = "github:LnL7/nix-darwin/master";
+    darwin.inputs.nixpkgs.follows = "nixpkgs";
     home-manager.url = "github:nix-community/home-manager";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
 
+    # extras
     neovim-nightly.url = "github:nix-community/neovim-nightly-overlay";
-    neovim-nightly.inputs.nixpkgs.follows = "nixpkgs";
+    llm-agents.url = "github:numtide/llm-agents.nix";
 
-    darwin.url = "github:LnL7/nix-darwin/master";
-    darwin.inputs.nixpkgs.follows = "nixpkgs";
-
+    # homebrew
     nix-homebrew.url = "github:zhaofengli-wip/nix-homebrew";
-
     homebrew-bundle.url = "github:homebrew/homebrew-bundle";
     homebrew-bundle.flake = false;
-
     homebrew-core.url = "github:homebrew/homebrew-core";
     homebrew-core.flake = false;
-
     homebrew-cask.url = "github:homebrew/homebrew-cask";
     homebrew-cask.flake = false;
 
+    # secrets
+    agenix.url = "github:ryantm/agenix";
+    agenix.inputs.nixpkgs.follows = "nixpkgs";
+    agenix.inputs.darwin.follows = "darwin";
+    agenix.inputs.home-manager.follows = "home-manager";
     secrets.url = "git+ssh://git@github.com/andreykaipov/nix-secrets.git";
     secrets.flake = false;
 
@@ -41,8 +43,6 @@
     zsh-almostontop.flake = false;
     lscolors.url = "github:trapd00r/LS_COLORS";
     lscolors.flake = false;
-
-    llm-agents.url = "github:numtide/llm-agents.nix";
   };
   outputs =
     inputs:
