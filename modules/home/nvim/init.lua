@@ -11,9 +11,31 @@ vim.o.relativenumber = true
 vim.o.scrolloff = 20
 vim.o.winborder = 'rounded'
 vim.o.signcolumn = 'auto:2-5' -- so new gutter signs don't move the text
+vim.o.equalalways = false -- don't auto-resize windows when opening/closing splits
+vim.o.cmdheight = 0 -- hide command line when not in use
+vim.o.laststatus = 3 -- single global statusline across all splits
 
--- vim.o.cursorline = true
--- vim.o.cursorlineopt = 'line,number' --
+-- Alt+hjkl to navigate between splits, falling through to tmux at edges
+local function nav(dir, tmux_dir)
+	return function()
+		local win = vim.api.nvim_get_current_win()
+		vim.cmd('wincmd ' .. dir)
+		if vim.api.nvim_get_current_win() == win then
+			vim.fn.system('tmux select-pane -' .. tmux_dir)
+		end
+	end
+end
+vim.keymap.set('n', '<M-h>', nav('h', 'L'), { desc = 'Move left' })
+vim.keymap.set('n', '<M-j>', nav('j', 'D'), { desc = 'Move down' })
+vim.keymap.set('n', '<M-k>', nav('k', 'U'), { desc = 'Move up' })
+vim.keymap.set('n', '<M-l>', nav('l', 'R'), { desc = 'Move right' })
+vim.keymap.set('n', '<M-Left>', '<M-h>', { remap = true, desc = 'Move left' })
+vim.keymap.set('n', '<M-Down>', '<M-j>', { remap = true, desc = 'Move down' })
+vim.keymap.set('n', '<M-Up>', '<M-k>', { remap = true, desc = 'Move up' })
+vim.keymap.set('n', '<M-Right>', '<M-l>', { remap = true, desc = 'Move right' })
+
+vim.o.cursorline = true
+vim.o.cursorlineopt = 'both' -- highlight entire line including line number
 
 -- vim.o.ignorecase = true
 -- vim.o.smartcase = true
@@ -34,6 +56,10 @@ vim.o.signcolumn = 'auto:2-5' -- so new gutter signs don't move the text
 vim.g.is_posix = 1
 vim.opt.clipboard = 'unnamedplus' -- share system clipboard
 
+-- Disable netrw in favor of nvim-tree sidebar
+vim.g.loaded_netrw = 1
+vim.g.loaded_netrwPlugin = 1
+
 -- User Config
 -- ---
 vim.g.user = {
@@ -47,6 +73,27 @@ vim.g.user = {
 
 -- Global user group to register other custom autocmds
 vim.api.nvim_create_augroup(vim.g.user.event, {})
+
+-- When entering Neovim from a tmux pane, jump to the edge split closest
+-- to where we came from (so vim splits behave like tmux panes).
+-- tmux sets @nav_dir before select-pane; we read+clear it in one call.
+vim.api.nvim_create_autocmd('FocusGained', {
+	group = vim.g.user.event,
+	callback = function()
+		-- single tmux invocation: print @nav_dir then unset it (halves subprocess overhead)
+		local dir = vim.fn
+			.system({ 'tmux', 'display-message', '-p', '#{@nav_dir}', ';', 'set-option', '-qu', '@nav_dir' })
+			:gsub('%s+', '')
+		if dir == '' then
+			return
+		end
+		-- opposite direction: e.g. pressed h (went left) → entered from right → go to rightmost split
+		local opposite = { h = 'l', l = 'h', j = 'k', k = 'j' }
+		if opposite[dir] then
+			vim.cmd('99wincmd ' .. opposite[dir])
+		end
+	end,
+})
 
 -- When editing a file, always jump to the last known cursor position.
 -- Don't do it when the position is invalid, when inside an event handler
@@ -110,20 +157,6 @@ MiniDeps.setup({
 	},
 })
 
-MiniDeps.add('folke/tokyonight.nvim')
-MiniDeps.add('oxfist/night-owl.nvim')
-MiniDeps.add('EdenEast/nightfox.nvim')
-MiniDeps.add('olimorris/onedarkpro.nvim')
-MiniDeps.add('andreykaipov/tmux-colorscheme-sync.nvim')
-
-MiniDeps.add('neovim/nvim-lspconfig')
-MiniDeps.add({
-	source = 'nvimtools/none-ls.nvim',
-	depends = { 'nvim-lua/plenary.nvim' },
-})
-
-MiniDeps.add('lukas-reineke/indent-blankline.nvim')
-
 MiniDeps.add('folke/which-key.nvim')
 MiniDeps.add('VonHeikemen/ts-enable.nvim')
 
@@ -142,19 +175,12 @@ MiniDeps.add({
 	},
 	auto_install = true,
 })
+
 -- ========================================================================== --
 -- ==                         PLUGIN CONFIGURATION                         == --
 -- ========================================================================== --
 
--- require('night-owl').setup()
--- vim.cmd.colorscheme('night-owl')
--- require('nightfox').setup({})
-vim.cmd.colorscheme('onedark_dark')
-require('tmux-colorscheme-sync').setup({
-	cache_file = '~/.local/state/tmux/colorscheme-cache.conf',
-	tmux_source_file = '~/.config/tmux/styles.conf', -- re-source styles when colors change
-	lighter_shade = 8, -- inactive pane bg: percent lighter than active
-})
+require('custom.colors').setup()
 
 require('mini.basics').setup()
 
@@ -175,16 +201,16 @@ require('mini.align').setup({
 	},
 })
 
--- for more symbols, see :h ibl.config.indent.char
--- ╎┆┊│
-require('mini.indentscope').setup({ symbol = '│' })
-require('ibl').setup({ indent = { char = '┊', tab_char = '╎' } })
+require('custom.guides').setup()
 
 -- See :help MiniIcons.config
--- Change style to 'glyph' if you have a font with fancy icons
 require('mini.icons').setup({
-	style = 'ascii',
+	style = 'glyph',
 })
+MiniIcons.mock_nvim_web_devicons()
+
+-- See :help MiniPairs.config
+require('mini.pairs').setup({})
 
 -- See :help MiniSurround.config
 require('mini.surround').setup({})
@@ -194,28 +220,45 @@ require('mini.notify').setup({
 	lsp_progress = { enable = false },
 })
 
+-- See :help MiniGit.config
+require('mini.git').setup({})
+
+-- See :help MiniDiff.config
+require('mini.diff').setup({
+	view = {
+		style = 'sign',
+		signs = { add = '+', change = '~', delete = '-' },
+	},
+})
+
 -- See :help MiniBufremove.config
 require('mini.bufremove').setup({})
 
 -- Close buffer and preserve window layout
-vim.keymap.set('n', '<leader>bc', '<cmd>lua pcall(MiniBufremove.delete)<cr>', { desc = 'Close buffer' })
-
--- See :help MiniFiles.config
-local mini_files = require('mini.files')
-mini_files.setup({})
-
--- Toggle file explorer
--- See :help MiniFiles-navigation
-vim.keymap.set('n', '<leader>e', function()
-	if mini_files.close() then
+local function close_buffer()
+	local buf = vim.api.nvim_get_current_buf()
+	local ft = vim.bo[buf].filetype
+	-- Don't close special buffers (NvimTree, etc.)
+	if ft == 'NvimTree' or vim.bo[buf].buftype ~= '' then
 		return
 	end
+	MiniBufremove.delete(buf, true)
+end
+vim.keymap.set('n', '<leader>bc', close_buffer, { desc = 'Close buffer' })
+vim.keymap.set('n', '<M-w>', close_buffer, { desc = 'Close buffer (Cmd+W)' })
+vim.keymap.set('n', '<C-w>', close_buffer, { desc = 'Close buffer (Ctrl+W)', nowait = true })
 
-	mini_files.open()
-end, { desc = 'File explorer' })
+-- Sidebar file tree (VS Code style)
+-- See :help nvim-tree
+require('custom.nvim-tree').setup()
 
 -- See :help MiniPick.config
-require('mini.pick').setup({})
+require('mini.pick').setup({
+	mappings = {
+		move_down = '<C-j>',
+		move_up = '<C-k>',
+	},
+})
 
 -- See available pickers
 -- :help MiniPick.builtin
@@ -227,8 +270,9 @@ vim.keymap.set('n', '<leader>fg', '<cmd>Pick grep_live<cr>', { desc = 'Search in
 vim.keymap.set('n', '<leader>fd', '<cmd>Pick diagnostic<cr>', { desc = 'Search diagnostics' })
 vim.keymap.set('n', '<leader>fs', '<cmd>Pick buf_lines<cr>', { desc = 'Buffer local search' })
 
--- See :help MiniStatusline.config
-require('mini.statusline').setup({})
+require('custom.statusline').setup()
+
+
 
 -- See :help MiniExtra
 -- require('mini.extra').setup({})
@@ -280,107 +324,4 @@ vim.g.ts_enable = {
 	highlights = true,
 }
 
--- LSP setup
--- https://neovim.io/doc/user/lsp.html#lsp-attach
-vim.api.nvim_create_autocmd('LspAttach', {
-	desc = 'LSP actions',
-	group = vim.g.user.event,
-	callback = function(event)
-		local opts = { buffer = event.buf }
-		vim.keymap.set('n', 'K', '<cmd>lua vim.lsp.buf.hover()<cr>', opts)
-		vim.keymap.set('n', 'gd', '<cmd>lua vim.lsp.buf.definition()<cr>', opts)
-		vim.keymap.set('n', 'grd', '<cmd>lua vim.lsp.buf.declaration()<cr>', opts)
-		vim.keymap.set({ 'n', 'v', 'x' }, 'gq', '<cmd>lua vim.lsp.buf.format({async = true})<cr>', opts)
-		vim.keymap.set({ 'n', 'v' }, 'N', '<cmd>lua vim.diagnostic.open_float()<cr>', opts)
-
-		local id = vim.tbl_get(event, 'data', 'client_id')
-		local client = id and vim.lsp.get_client_by_id(id)
-
-		if client and client:supports_method('textDocument/completion') then
-			vim.bo[event.buf].omnifunc = 'v:lua.MiniCompletion.completefunc_lsp'
-		end
-
-		vim.o.updatetime = 500
-		vim.api.nvim_create_autocmd('CursorHold', {
-			group = vim.g.user.event,
-			buffer = event.buf,
-			callback = function()
-				vim.diagnostic.open_float({
-					scope = 'line',
-					focus = false,
-				})
-			end,
-		})
-
-		if
-		    not client:supports_method('textDocument/willSaveWaitUntil')
-		    and client:supports_method('textDocument/formatting')
-		then
-			vim.api.nvim_create_autocmd('BufWritePre', {
-				group = vim.g.user.event,
-				buffer = event.buf,
-				callback = function()
-					vim.lsp.buf.format({
-						-- async = false,
-						bufnr = event.buf,
-						id = event.data.id, -- id = client.id
-						timeout_ms = 1000,
-					})
-				end,
-			})
-		end
-		-- vim.api.nvim_create_autocmd("BufWritePre", {
-		-- 	buffer = event.buf,
-		-- 	callback = function()
-		-- 		vim.lsp.buf.format({ async = false, id = event.data.client_id })
-		-- 	end,
-		-- })
-	end,
-})
-
--- See :help MiniCompletion.config
-require('mini.completion').setup({
-	lsp_completion = {
-		source_func = 'completefunc',
-		auto_setup = false,
-	},
-})
-vim.keymap.set('i', '<C-j>', function()
-	return vim.fn.pumvisible() == 1 and '<C-n>' or '<C-j>'
-end, { expr = true, noremap = true })
-vim.keymap.set('i', '<C-k>', function()
-	return vim.fn.pumvisible() == 1 and '<C-p>' or '<C-k>'
-end, { expr = true, noremap = true })
-vim.keymap.set('i', '<CR>', function()
-	return vim.fn.pumvisible() == 1 and '<C-y>' or '<CR>'
-end, { expr = true, noremap = true })
-
-local nls = require('null-ls')
-nls.setup({
-	sources = {
-		nls.builtins.formatting.stylua,
-		nls.builtins.formatting.terraform_fmt.with({
-			filetypes = { 'terraform', 'tf', 'terraform-vars', 'hcl' },
-		}),
-		nls.builtins.diagnostics.terraform_validate.with({
-			filetypes = { 'terraform', 'tf', 'terraform-vars', 'hcl' },
-		}),
-	},
-})
-
-vim.lsp.enable('lua_ls')
-vim.lsp.enable('gopls')
-vim.lsp.enable('golangci_lint_ls')
-vim.lsp.enable('terraformls')
--- vim.lsp.enable('terraform_lsp') --
-vim.lsp.config('nixd', {
-	settings = {
-		formatting = {
-			command = 'nixfmt',
-		},
-	},
-})
-vim.lsp.enable('nixd')
-vim.lsp.enable('bashls')
-vim.lsp.enable('yamlls')
-vim.lsp.enable('jsonls')
+require('custom.lsp').setup()

@@ -1,0 +1,234 @@
+-- nvim-tree + bufferline setup with persistent width across file opens and toggles
+local M = {}
+
+function M.setup()
+	MiniDeps.add('nvim-tree/nvim-tree.lua')
+	MiniDeps.add('akinsho/bufferline.nvim')
+
+	local width_cache = vim.fn.stdpath('cache') .. '/nvim-tree-width'
+	local function load_width()
+		local f = io.open(width_cache, 'r')
+		if f then
+			local w = tonumber(f:read('*a'))
+			f:close()
+			if w and w > 0 then
+				return w
+			end
+		end
+		return 30
+	end
+	local function save_width(w)
+		-- Don't cache unreasonable widths (max half the nvim/tmux pane)
+		local max_width = math.floor(vim.o.columns * 0.5)
+		if w < 10 or w > max_width then
+			return
+		end
+		local f = io.open(width_cache, 'w')
+		if f then
+			f:write(tostring(w))
+			f:close()
+		end
+	end
+	local nvim_tree_width = math.min(load_width(), math.max(30, math.floor(vim.o.columns * 0.5)))
+
+	require('nvim-tree').setup({
+		on_attach = function(bufnr)
+			local api = require('nvim-tree.api')
+			api.config.mappings.default_on_attach(bufnr)
+			-- Single click to open files/folders (like VS Code)
+			vim.keymap.set('n', '<LeftRelease>', api.node.open.edit, {
+				buffer = bufnr,
+				noremap = true,
+				silent = true,
+				desc = 'Open',
+			})
+			-- Middle click in NvimTree: position cursor then open (like left click)
+			vim.keymap.set('n', '<MiddleMouse>', '<LeftMouse>', {
+				buffer = bufnr,
+				noremap = true,
+				silent = true,
+			})
+			vim.keymap.set('n', '<MiddleRelease>', '<LeftRelease>', {
+				buffer = bufnr,
+				noremap = true,
+				silent = true,
+			})
+		end,
+		actions = {
+			open_file = {
+				resize_window = false,
+			},
+		},
+		update_focused_file = { enable = true },
+		git = { enable = true },
+		renderer = {
+			indent_width = 1,
+			icons = {
+				padding = ' ',
+			},
+		},
+		view = {
+			signcolumn = 'no',
+			width = nvim_tree_width,
+		},
+	})
+
+	-- Override NvimTree window options that aren't exposed in view config
+	require('nvim-tree.view').View.winopts.statuscolumn = ' '
+
+	-- See :help bufferline-configuration
+	require('bufferline').setup({
+		options = {
+			themable = false,
+			middle_mouse_command = 'bdelete! %d',
+			separator_style = 'thin',
+			indicator = { style = 'none' },
+		},
+		highlights = {
+			fill = {
+				bg = {
+					attribute = 'bg',
+					highlight = 'NormalNC',
+				},
+			},
+			background = {
+				bg = {
+					attribute = 'bg',
+					highlight = 'NormalNC',
+				},
+			},
+			separator = {
+				bg = {
+					attribute = 'bg',
+					highlight = 'NormalNC',
+				},
+			},
+			close_button = {
+				bg = {
+					attribute = 'bg',
+					highlight = 'NormalNC',
+				},
+			},
+			duplicate = {
+				bg = {
+					attribute = 'bg',
+					highlight = 'NormalNC',
+				},
+			},
+			modified = {
+				bg = {
+					attribute = 'bg',
+					highlight = 'NormalNC',
+				},
+			},
+			diagnostic = {
+				bg = {
+					attribute = 'bg',
+					highlight = 'NormalNC',
+				},
+			},
+			offset_separator = {
+				bg = {
+					attribute = 'bg',
+					highlight = 'NvimTreeNormal',
+				},
+			},
+			trunc_marker = {
+				bg = {
+					attribute = 'bg',
+					highlight = 'NormalNC',
+				},
+			},
+			tab_close = {
+				bg = {
+					attribute = 'bg',
+					highlight = 'NormalNC',
+				},
+			},
+			buffer_selected = {
+				italic = false,
+			},
+		},
+	})
+
+	-- Scroll through bufferline tabs with mouse wheel when hovering the tab bar
+	local function tabline_scroll(direction)
+		return function()
+			local pos = vim.fn.getmousepos()
+			if pos.screenrow == 1 then
+				vim.cmd('BufferLineCycle' .. direction)
+			else
+				-- Pass through normal scroll
+				local key = direction == 'Next' and '<ScrollWheelDown>' or '<ScrollWheelUp>'
+				vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes(key, true, false, true), 'n', false)
+			end
+		end
+	end
+	vim.keymap.set('n', '<ScrollWheelUp>', tabline_scroll('Prev'), { desc = 'Scroll tabline or file' })
+	vim.keymap.set('n', '<ScrollWheelDown>', tabline_scroll('Next'), { desc = 'Scroll tabline or file' })
+
+	-- Remove window split border entirely
+	vim.o.fillchars = vim.o.fillchars .. ',vert: ,horiz: ,horizup: ,horizdown: ,vertleft: ,vertright: ,verthoriz: '
+	vim.api.nvim_set_hl(0, 'WinSeparator', { bg = 'none', fg = 'none' })
+
+	-- Use a thin line cursor in NvimTree instead of a block
+	-- To hide entirely: 'a:NvimTreeHiddenCursor' with highlight { blend = 100, nocombine = true }
+	local saved_guicursor
+	vim.api.nvim_create_autocmd('BufEnter', {
+		group = vim.g.user.event,
+		callback = function()
+			if vim.bo.filetype == 'NvimTree' then
+				saved_guicursor = vim.o.guicursor
+				vim.o.guicursor = 'a:ver1'
+			end
+		end,
+	})
+	vim.api.nvim_create_autocmd('BufLeave', {
+		group = vim.g.user.event,
+		callback = function()
+			if vim.bo.filetype == 'NvimTree' and saved_guicursor then
+				vim.o.guicursor = saved_guicursor
+			end
+		end,
+	})
+
+	-- Track nvim-tree width on manual resize
+	vim.api.nvim_create_autocmd('WinResized', {
+		group = vim.g.user.event,
+		callback = function()
+			for _, win in ipairs(vim.v.event.windows or {}) do
+				if vim.api.nvim_win_is_valid(win) then
+					local buf = vim.api.nvim_win_get_buf(win)
+					if vim.bo[buf].filetype == 'NvimTree' then
+						nvim_tree_width = vim.api.nvim_win_get_width(win)
+						save_width(nvim_tree_width)
+					end
+				end
+			end
+		end,
+	})
+
+	local function restore_nvimtree_width()
+		for _, win in ipairs(vim.api.nvim_list_wins()) do
+			local buf = vim.api.nvim_win_get_buf(win)
+			if vim.bo[buf].filetype == 'NvimTree' then
+				vim.api.nvim_win_set_width(win, nvim_tree_width)
+				return
+			end
+		end
+	end
+
+	vim.api.nvim_create_autocmd('BufEnter', {
+		group = vim.g.user.event,
+		callback = restore_nvimtree_width,
+	})
+
+	vim.keymap.set('n', '<leader>e', function()
+		local api = require('nvim-tree.api')
+		api.tree.toggle()
+		-- defer to let nvim-tree finish rendering before we resize
+		vim.defer_fn(restore_nvimtree_width, 50)
+	end, { desc = 'File explorer (sidebar)' })
+end
+
+return M
