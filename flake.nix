@@ -5,9 +5,7 @@
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
     nixpkgs-stable.url = "github:nixos/nixpkgs/nixos-24.11";
     darwin.url = "github:LnL7/nix-darwin/master";
-    darwin.inputs.nixpkgs.follows = "nixpkgs";
     home-manager.url = "github:nix-community/home-manager";
-    home-manager.inputs.nixpkgs.follows = "nixpkgs";
 
     # extras
     neovim-nightly.url = "github:nix-community/neovim-nightly-overlay";
@@ -24,9 +22,6 @@
 
     # secrets
     agenix.url = "github:ryantm/agenix";
-    agenix.inputs.nixpkgs.follows = "nixpkgs";
-    agenix.inputs.darwin.follows = "darwin";
-    agenix.inputs.home-manager.follows = "home-manager";
     secrets.url = "git+ssh://git@github.com/andreykaipov/nix-secrets.git";
     secrets.flake = false;
 
