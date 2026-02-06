@@ -59,7 +59,7 @@ final: _: {
                   # https://github.com/nix-community/home-manager/issues/7935
                   manual.manpages.enable = false;
                 }
-              ];
+              ] ++ (host.extraHomeModules or []);
             };
             linux = { };
             darwin = {
@@ -70,7 +70,7 @@ final: _: {
               modules = [
                 ../modules/darwin
                 { nixpkgs.hostPlatform = system; }
-              ];
+              ] ++ (host.extraDarwinModules or []);
             };
           };
         in
