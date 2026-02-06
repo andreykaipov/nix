@@ -159,6 +159,31 @@ update-agenix-secret ssh/airfryer.pem.age ~/.ssh/airfryer.pem
 update-agenix-secret --rekey
 ```
 
+### Secret environment variables
+
+You can store encrypted environment variables that get sourced by zsh on
+shell startup. Create a file named `zshenv.<name>` under
+`modules/home/shell/config/` — for example:
+
+```sh
+# modules/home/shell/config/zshenv.work
+export CORP_API_TOKEN=sk-abc123
+export WORK_NPM_TOKEN=npm_xyz789
+```
+
+These plaintext files are gitignored. On every `git commit` in this repo, a
+pre-commit hook automatically encrypts any changed `zshenv.*` files into
+`nix-secrets/env/` and pushes — so the encrypted copies are always in sync.
+
+On a fresh machine, `switch` decrypts them back to the same path via agenix, so
+new shells have the variables immediately.
+
+**Adding a new secret env:**
+
+1. Create `modules/home/shell/config/zshenv.<name>` with `export` statements
+2. Commit — the hook encrypts and pushes to nix-secrets
+3. Run `switch` — agenix registers the new secret, zsh sources the file
+
 ## Adding a New Host
 
 The bootstrap script will create a host config for you automatically,
@@ -258,6 +283,33 @@ the repo so edits take effect immediately without rebuilding:
 This creates `~/.config/nvim → ~/gh/nix/modules/home/nvim`. The directory name
 is derived from the path you pass in (`./.` resolves to the current module's
 directory). See `hosts/extend.nix` for implementation details.
+
+### Flake management
+
+The `flake.lock` pins every input to a specific revision. Inputs share
+`nixpkgs` via `follows` so there's only one copy in the closure — but the
+pinned revision can go stale. Update regularly:
+
+```sh
+# Update everything (nixpkgs, home-manager, agenix, neovim-nightly, etc.)
+nix flake update
+
+# Update just nixpkgs (e.g. to pick up a new package version)
+nix flake update nixpkgs
+
+# Update a single input
+nix flake update home-manager
+
+# Update nix-secrets (e.g. after encrypting a new secret on another machine)
+nix flake update secrets
+```
+
+After updating, rebuild with `nix run .#switch` to activate the new versions.
+Commit the updated `flake.lock` so other machines get the same pins.
+
+> **Tip:** If a build fails after updating nixpkgs, check whether a transitive
+> dependency (like `llm-agents`) needs a package that only exists in a newer
+> nixpkgs. Updating nixpkgs to the latest unstable usually fixes it.
 
 ### Garbage collection
 
