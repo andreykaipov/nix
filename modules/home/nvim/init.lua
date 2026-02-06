@@ -142,11 +142,6 @@ MiniDeps.add({
 	},
 	auto_install = true,
 })
-MiniDeps.add({
-	source = 'zbirenbaum/copilot.lua',
-	depends = { 'copilotlsp-nvim/copilot-lsp' },
-})
-
 -- ========================================================================== --
 -- ==                         PLUGIN CONFIGURATION                         == --
 -- ========================================================================== --
@@ -343,28 +338,6 @@ vim.api.nvim_create_autocmd('LspAttach', {
 	end,
 })
 
-MiniDeps.later(function()
-	require('copilot').setup({
-		suggestion = {
-			enabled = true,
-			auto_trigger = true,
-			trigger_on_accept = true,
-			keymap = {
-				accept = '<Tab>',
-			},
-			-- hide_during_completion = false,
-		},
-		nes = {
-			enabled = true,
-			auto_trigger = true,
-			keymap = {
-				accept_and_goto = '<C-i>',
-				dismiss = '<Esc>',
-			},
-		},
-	})
-end)
-
 -- See :help MiniCompletion.config
 require('mini.completion').setup({
 	lsp_completion = {
@@ -373,7 +346,7 @@ require('mini.completion').setup({
 	},
 })
 vim.keymap.set('i', '<C-j>', function()
-	return vim.fn.pumvisible() == 1 and '<C-n>' or require('copilot.suggestion').next()
+	return vim.fn.pumvisible() == 1 and '<C-n>' or '<C-j>'
 end, { expr = true, noremap = true })
 vim.keymap.set('i', '<C-k>', function()
 	return vim.fn.pumvisible() == 1 and '<C-p>' or '<C-k>'
