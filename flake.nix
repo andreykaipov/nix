@@ -47,6 +47,8 @@
     in
     {
       apps = lib.forAvailableSystems lib.mkApps;
-    }
-    // lib.mkConfigs hosts;
+      homeConfigurations = lib.mkConfig "home" hosts;
+      darwinConfigurations = lib.mkConfig "darwin" hosts;
+      # nixosConfigurations = lib.mkConfig "linux" hosts;
+    };
 }
