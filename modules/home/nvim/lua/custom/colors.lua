@@ -34,7 +34,7 @@ function M.setup()
 	require('tmux-colorscheme-sync').setup({
 		cache_file = '~/.local/state/tmux/colorscheme-cache.conf',
 		tmux_source_file = '~/.config/tmux/styles.conf', -- re-source styles when colors change
-		lighter_shade = 30,                -- inactive pane bg: percent lighter than active
+		lighter_shade = 30,                -- inactive pane bg: percent lighter than active, effectively the color of the entire terminal
 		-- Extra highlight groups to set to dim_bg on FocusLost (avoids flicker
 		-- vs bg='none' since Neovim can redraw before FocusGained fires)
 		focus_lost_highlights = {
@@ -129,12 +129,12 @@ function M.setup()
 		local function resync_all_windows()
 			local cur = vim.api.nvim_get_current_win()
 			local nvimtree_active = false
+			if vim.api.nvim_win_is_valid(cur) and vim.bo[vim.api.nvim_win_get_buf(cur)].filetype == 'NvimTree' then
+				nvimtree_active = true
+			end
 			for _, win in ipairs(vim.api.nvim_list_wins()) do
 				if win == cur then
 					clear_active_wh(win)
-					if vim.api.nvim_win_is_valid(win) and vim.bo[vim.api.nvim_win_get_buf(win)].filetype == 'NvimTree' then
-						nvimtree_active = true
-					end
 				else
 					set_inactive_wh(win)
 				end
