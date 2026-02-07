@@ -5,9 +5,6 @@
 
 {
   home.packages = with pkgs; [
-    llm-agents.claude-code
-    llm-agents.opencode
-
     # General packages for development and system management
     bash-completion
     btop

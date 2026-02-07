@@ -1,0 +1,12 @@
+{
+    "permissions": {
+        "allow": [
+            "Bash(git:*)",
+            "Bash(gh:*)",
+            "Bash(nix:*)",
+            "Read"
+        ],
+        "deny": []
+    },
+    "env": {}
+}

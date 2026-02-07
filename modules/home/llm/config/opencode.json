@@ -1,0 +1,32 @@
+{
+    "$schema": "https://opencode.ai/config.json",
+    "shell": {
+        "path": "zsh",
+        "args": [
+            "-l"
+        ]
+    },
+    "provider": {
+        "amazon-bedrock": {
+            "options": {
+                "region": "us-east-1"
+            }
+        }
+    },
+    "agents": {
+        "coder": {
+            "model": "claude-sonnet-4-6",
+            "maxTokens": 16000
+        },
+        "task": {
+            "model": "claude-sonnet-4-6",
+            "maxTokens": 8000
+        },
+        "title": {
+            "model": "claude-sonnet-4-6",
+            "maxTokens": 80
+        }
+    },
+    "autoCompact": true,
+    "debug": false
+}
