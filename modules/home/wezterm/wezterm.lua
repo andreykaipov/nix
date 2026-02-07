@@ -17,21 +17,54 @@ config.initial_rows = 45
 config.font_size = 16
 -- config.color_scheme = 'AdventureTime'
 --
-config.colors = {
-
-        -- Make the selection text color fully transparent.
-        -- When fully transparent, the current text color will be used.
-        -- Set the selection background color with alpha.
-        -- When selection_bg is transparent, it will be alpha blended over
-        -- the current cell background color, rather than replace it
-        -- selection_bg = "rgba(50% 50% 50% 50%)",
-}
+-- config.colors = {
+--         -- Make the selection text color fully transparent.
+--         -- When fully transparent, the current text color will be used.
+--         -- Set the selection background color with alpha.
+--         -- When selection_bg is transparent, it will be alpha blended over
+--         -- the current cell background color, rather than replace it
+--         -- selection_bg = "rgba(50% 50% 50% 50%)",
+-- }
 config.window_background_opacity = 0.99 -- not 1.0: macOS draws a border line with the opaque rendering path
 -- config.window_padding = { left = 0, right = 0, top = 0, bottom = 0 }
+config.window_padding = { left = 20, right = 20, top = 5, bottom = 0 }
+
+-- Read cached bg color written by nvim's colorscheme sync so the
+-- terminal background is correct even before nvim starts.
+local bg_cache = wezterm.home_dir .. "/.local/state/wezterm/bg-color.txt"
+local f = io.open(bg_cache, "r")
+if f then
+	local color = f:read("*a")
+	f:close()
+	if color and #color > 0 then
+		config.colors = config.colors or {}
+		config.colors.background = color
+	end
+end
+
 config.macos_window_background_blur = 0
 
 config.send_composed_key_when_left_alt_is_pressed = false
 config.send_composed_key_when_right_alt_is_pressed = false
+
+-- Pass middle-click through to apps (e.g. nvim bufferline close-tab)
+config.mouse_bindings = {
+	{
+		event = { Up = { streak = 1, button = "Middle" } },
+		mods = "NONE",
+		action = wezterm.action.DisableDefaultAssignment,
+	},
+}
+
+config.keys = {
+	-- Cmd+W closes the buffer/tab in nvim instead of the WezTerm window
+	{ key = "w", mods = "SUPER", action = wezterm.action.SendString("\x17") },
+	-- Disable WezTerm's default Alt+Arrow bindings so they pass through to tmux/nvim
+	{ key = "LeftArrow", mods = "ALT", action = wezterm.action.SendKey({ key = "LeftArrow", mods = "ALT" }) },
+	{ key = "RightArrow", mods = "ALT", action = wezterm.action.SendKey({ key = "RightArrow", mods = "ALT" }) },
+	{ key = "UpArrow", mods = "ALT", action = wezterm.action.SendKey({ key = "UpArrow", mods = "ALT" }) },
+	{ key = "DownArrow", mods = "ALT", action = wezterm.action.SendKey({ key = "DownArrow", mods = "ALT" }) },
+}
 
 config.set_environment_variables = { BOOTSTRAP = "1" }
 config.default_prog = { wezterm.config_dir .. "/bootstrap.sh" }
