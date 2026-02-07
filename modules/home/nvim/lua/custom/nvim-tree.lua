@@ -60,11 +60,25 @@ function M.setup()
 			},
 		},
 		update_focused_file = { enable = true },
-		git = { enable = true },
+		git = { enable = true, show_on_open_dirs = true },
+		filters = { git_ignored = false },
 		renderer = {
 			indent_width = 1,
+			highlight_git = 'name',
 			icons = {
 				padding = ' ',
+				git_placement = 'right_align',
+				glyphs = {
+					git = {
+						unstaged = 'M',
+						staged = 'S',
+						unmerged = '!',
+						renamed = 'R',
+						untracked = 'U',
+						deleted = 'D',
+						ignored = '◌',
+					},
+				},
 			},
 		},
 		view = {
@@ -73,8 +87,26 @@ function M.setup()
 		},
 	})
 
+	-- NvimTree git status colors
+	vim.api.nvim_set_hl(0, 'NvimTreeGitNewIcon', { fg = '#98c379' })       -- untracked: green
+	vim.api.nvim_set_hl(0, 'NvimTreeGitDirtyIcon', { fg = '#e5c07b' })     -- modified: yellow
+	vim.api.nvim_set_hl(0, 'NvimTreeGitIgnoredIcon', { fg = '#5c6370' })   -- ignored: gray
+	vim.api.nvim_set_hl(0, 'NvimTreeGitFileNewHL', { fg = '#98c379' })     -- untracked filename
+	vim.api.nvim_set_hl(0, 'NvimTreeGitFileDirtyHL', { fg = '#e5c07b' })   -- modified filename
+	vim.api.nvim_set_hl(0, 'NvimTreeGitFileIgnoredHL', { fg = '#5c6370' }) -- ignored filename
+	vim.api.nvim_set_hl(0, 'NvimTreeGitStagedIcon', { fg = '#98c379' })    -- staged: green
+	vim.api.nvim_set_hl(0, 'NvimTreeGitMergeIcon', { fg = '#e06c75' })     -- merge conflict: red
+	vim.api.nvim_set_hl(0, 'NvimTreeGitDeletedIcon', { fg = '#e06c75' })   -- deleted: red
+	vim.api.nvim_set_hl(0, 'NvimTreeGitRenamedIcon', { fg = '#98c379' })   -- renamed: green
+	-- Clean / non-git files: white
+	vim.api.nvim_set_hl(0, 'NvimTreeNormal', vim.tbl_extend('force', vim.api.nvim_get_hl(0, { name = 'NvimTreeNormal' }), { fg = '#ffffff' }))
+	vim.api.nvim_set_hl(0, 'NvimTreeFileName', { fg = '#ffffff' })         -- regular filenames: white
+	vim.api.nvim_set_hl(0, 'NvimTreeFolderName', { fg = '#ffffff' })       -- folder names: white
+	vim.api.nvim_set_hl(0, 'NvimTreeOpenedFolderName', { fg = '#ffffff' }) -- opened folder names: white
+	vim.api.nvim_set_hl(0, 'NvimTreeEmptyFolderName', { fg = '#ffffff' })  -- empty folder names: white
+
 	-- Override NvimTree window options that aren't exposed in view config
-	require('nvim-tree.view').View.winopts.statuscolumn = ' '
+	require('nvim-tree.view').View.winopts.statuscolumn = ''
 
 	-- See :help bufferline-configuration
 	require('bufferline').setup({
