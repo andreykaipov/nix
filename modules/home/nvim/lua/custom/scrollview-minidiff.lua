@@ -30,7 +30,9 @@ function M.setup(config)
 	end
 
 	local group = 'minidiff'
-	scrollview.register_sign_group(group)
+	if not pcall(scrollview.register_sign_group, group) then
+		return -- already registered (e.g. config reload)
+	end
 
 	local add = scrollview.register_sign_spec({
 		extend = true,
@@ -113,12 +115,12 @@ function M.setup(config)
 		vim.cmd('silent! ScrollViewRefresh')
 	end
 
-	-- Refresh on events that mini.diff updates on
+	-- Refresh sign data when mini.diff computes new hunks
 	api.nvim_create_autocmd('User', {
 		pattern = 'MiniDiffUpdated',
 		callback = refresh,
 	})
-	-- Also refresh on buffer changes as a fallback
+	-- Fallback for buffer changes where MiniDiffUpdated may lag
 	api.nvim_create_autocmd({ 'BufWritePost', 'BufEnter' }, {
 		callback = function()
 			vim.defer_fn(refresh, 100)

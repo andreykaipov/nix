@@ -10,7 +10,6 @@ function M.setup()
 	MiniDeps.add('andreykaipov/tmux-colorscheme-sync.nvim')
 
 	-- require('night-owl').setup()
-	-- vim.cmd.colorscheme('night-owl')
 	-- require('nightfox').setup({})
 	-- https://github.com/projekt0n/github-nvim-theme?tab=readme-ov-file#supported-colorschemes--comparisons
 	require('github-theme').setup({
@@ -20,7 +19,10 @@ function M.setup()
 			},
 		},
 	})
-	vim.cmd.colorscheme('github_dark_default')
+	-- vim.cmd.colorscheme('night-owl')
+	-- vim.cmd.colorscheme('github_dark_default')
+	-- vim.cmd.colorscheme('minisummer')
+	vim.cmd.colorscheme('miniautumn')
 
 	-- Cursorline across the entire gutter (must be after colorscheme to avoid being overridden)
 	vim.api.nvim_set_hl(0, 'CursorLineSign', { link = 'CursorLine' })
@@ -32,7 +34,15 @@ function M.setup()
 	require('tmux-colorscheme-sync').setup({
 		cache_file = '~/.local/state/tmux/colorscheme-cache.conf',
 		tmux_source_file = '~/.config/tmux/styles.conf', -- re-source styles when colors change
-		lighter_shade = 30, -- inactive pane bg: percent lighter than active
+		lighter_shade = 30,                -- inactive pane bg: percent lighter than active
+		-- Extra highlight groups to set to dim_bg on FocusLost (avoids flicker
+		-- vs bg='none' since Neovim can redraw before FocusGained fires)
+		focus_lost_highlights = {
+			'SignColumn',
+			'SignColumnNC',
+			'NvimTreeNormal',
+			'NvimTreeNormalNC',
+		},
 	})
 
 	-- Sync terminal background to the inactive pane color via OSC 11.
@@ -63,9 +73,6 @@ function M.setup()
 	end
 
 	-- Dim inactive splits using the same bg tmux uses for inactive panes
-	local dim_groups = { 'SignColumn', 'LineNr', 'FoldColumn', 'CursorLineNr' }
-	local saved_gutter_hls = {} -- original colorscheme highlights for gutter groups
-
 	local function dim_inactive_splits()
 		local dim_bg = tcs_config.get_color_mapping().normal_lighter.bg
 		if not dim_bg or dim_bg == 'default' then
@@ -95,19 +102,11 @@ function M.setup()
 			end,
 		})
 
-		-- Save originals and set gutter NC variants
-		for _, name in ipairs(dim_groups) do
-			local existing = vim.api.nvim_get_hl(0, { name = name })
-			saved_gutter_hls[name] = existing
-			vim.api.nvim_set_hl(0, name .. 'NC', vim.tbl_extend('force', existing, { bg = dim_bg }))
-		end
+		-- Dim SignColumn in inactive windows (some colorschemes give it its own bg)
+		local sc_hl = vim.api.nvim_get_hl(0, { name = 'SignColumn' })
+		vim.api.nvim_set_hl(0, 'SignColumnNC', vim.tbl_extend('force', sc_hl, { bg = dim_bg }))
 
-		local wh = 'Normal:NormalNC,' .. table.concat(
-			vim.tbl_map(function(g)
-				return g .. ':' .. g .. 'NC'
-			end, dim_groups),
-			','
-		)
+		local wh = 'Normal:NormalNC,SignColumn:SignColumnNC'
 		local function set_inactive_wh(win)
 			if vim.api.nvim_win_is_valid(win) and vim.wo[win].winhighlight == '' then
 				vim.wo[win].winhighlight = wh
@@ -118,78 +117,59 @@ function M.setup()
 				vim.wo[win].winhighlight = ''
 			end
 		end
+		-- Refresh scrollview after winhighlight changes so its floats
+		-- pick up the correct bg from the base window immediately.
+		local function refresh_scrollview()
+			vim.cmd('silent! ScrollViewRefresh')
+		end
 
 		local group = vim.api.nvim_create_augroup('DimInactiveSplits', { clear = true })
-		vim.api.nvim_create_autocmd('WinLeave', {
-			group = group,
-			callback = function()
-				set_inactive_wh(vim.api.nvim_get_current_win())
-			end,
-		})
-		vim.api.nvim_create_autocmd('WinEnter', {
-			group = group,
-			callback = function()
-				clear_active_wh(vim.api.nvim_get_current_win())
-			end,
-		})
-		-- Save statusline highlights for FocusLost/FocusGained toggle
-		local saved_statusline_hls = {
-			StatusLine = vim.api.nvim_get_hl(0, { name = 'StatusLine' }),
-			MiniStatuslineDevinfo = vim.api.nvim_get_hl(0, { name = 'MiniStatuslineDevinfo' }),
-			MiniStatuslineFilename = vim.api.nvim_get_hl(0, { name = 'MiniStatuslineFilename' }),
-			MiniStatuslineFileinfo = vim.api.nvim_get_hl(0, { name = 'MiniStatuslineFileinfo' }),
-		}
 
-		-- On FocusLost the plugin makes Normal/NormalNC/LineNr transparent.
-		-- Clear our gutter groups and dim the statusline too.
+		-- Resync all windows and NvimTree title highlight.
+		local function resync_all_windows()
+			local cur = vim.api.nvim_get_current_win()
+			local nvimtree_active = false
+			for _, win in ipairs(vim.api.nvim_list_wins()) do
+				if win == cur then
+					clear_active_wh(win)
+					if vim.api.nvim_win_is_valid(win) and vim.bo[vim.api.nvim_win_get_buf(win)].filetype == 'NvimTree' then
+						nvimtree_active = true
+					end
+				else
+					set_inactive_wh(win)
+				end
+			end
+			-- Update NvimTreeNormal so the bufferline offset title bg matches
+			vim.api.nvim_set_hl(0, 'NvimTreeNormal', { bg = nvimtree_active and normal_bg_hex or dim_bg })
+			refresh_scrollview()
+		end
+
+		vim.api.nvim_create_autocmd('User', {
+			group = group,
+			pattern = 'DimInactiveSplitsResync',
+			callback = resync_all_windows,
+		})
+		vim.api.nvim_create_autocmd({ 'WinEnter', 'WinLeave' }, {
+			group = group,
+			callback = resync_all_windows,
+		})
+		-- On FocusLost, everything is inactive — force NvimTreeNormal to dim.
 		vim.api.nvim_create_autocmd('FocusLost', {
 			group = group,
 			callback = function()
-				for _, g in ipairs(dim_groups) do
-					vim.api.nvim_set_hl(0, g, { bg = 'none' })
-					vim.api.nvim_set_hl(0, g .. 'NC', { bg = 'none' })
-				end
-				vim.api.nvim_set_hl(0, 'NvimTreeNormal', { bg = 'none' })
-				vim.api.nvim_set_hl(0, 'NvimTreeNormalNC', { bg = 'none' })
-				-- Dim statusline to inactive
-				vim.api.nvim_set_hl(0, 'StatusLine', { bg = 'none' })
-				vim.api.nvim_set_hl(0, 'MiniStatuslineDevinfo', { bg = 'none' })
-				vim.api.nvim_set_hl(0, 'MiniStatuslineFilename', { bg = 'none' })
-				vim.api.nvim_set_hl(0, 'MiniStatuslineFileinfo', { bg = 'none' })
-				vim.cmd('silent! ScrollViewRefresh')
+				resync_all_windows()
+				vim.api.nvim_set_hl(0, 'NvimTreeNormal', { bg = dim_bg })
 			end,
 		})
-		-- On FocusGained the plugin restores Normal/NormalNC/LineNr.
-		-- Re-apply our dim highlights after it runs.
+		-- On FocusGained, also restore highlight groups the plugin may have changed.
 		vim.api.nvim_create_autocmd('FocusGained', {
 			group = group,
 			callback = function()
-				vim.defer_fn(function()
-					vim.api.nvim_set_hl(0, 'NormalNC', { bg = dim_bg })
-					for _, g in ipairs(dim_groups) do
-						if saved_gutter_hls[g] then
-							vim.api.nvim_set_hl(0, g, saved_gutter_hls[g])
-						end
-						local existing = vim.api.nvim_get_hl(0, { name = g })
-						vim.api.nvim_set_hl(0, g .. 'NC', vim.tbl_extend('force', existing, { bg = dim_bg }))
-					end
-					apply_nvimtree_dim()
-					-- Restore statusline highlights
-					vim.api.nvim_set_hl(0, 'StatusLine', saved_statusline_hls.StatusLine)
-					vim.api.nvim_set_hl(0, 'MiniStatuslineDevinfo', saved_statusline_hls.MiniStatuslineDevinfo)
-					vim.api.nvim_set_hl(0, 'MiniStatuslineFilename', saved_statusline_hls.MiniStatuslineFilename)
-					vim.api.nvim_set_hl(0, 'MiniStatuslineFileinfo', saved_statusline_hls.MiniStatuslineFileinfo)
-					vim.cmd('silent! ScrollViewRefresh')
-					-- Re-apply winhighlight state: clear active window, set inactive ones
-					local cur = vim.api.nvim_get_current_win()
-					for _, win in ipairs(vim.api.nvim_list_wins()) do
-						if win == cur then
-							clear_active_wh(win)
-						else
-							set_inactive_wh(win)
-						end
-					end
-				end, 0)
+				vim.api.nvim_set_hl(0, 'NormalNC', { bg = dim_bg })
+				vim.api.nvim_set_hl(0, 'SignColumn', sc_hl)
+				vim.api.nvim_set_hl(0, 'SignColumnNC', vim.tbl_extend('force', sc_hl, { bg = dim_bg }))
+				apply_nvimtree_dim()
+				resync_all_windows()
 			end,
 		})
 

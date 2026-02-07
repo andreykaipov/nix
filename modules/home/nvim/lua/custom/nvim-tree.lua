@@ -83,6 +83,15 @@ function M.setup()
 			middle_mouse_command = 'bdelete! %d',
 			separator_style = 'thin',
 			indicator = { style = 'none' },
+			offsets = {
+				{
+					filetype = 'NvimTree',
+					text = 'Explorer',					
+					text_align = 'left',
+					highlight = 'NvimTreeNormal',
+					separator = ' ',
+				},
+			},
 		},
 		highlights = {
 			fill = {
@@ -212,7 +221,9 @@ function M.setup()
 		for _, win in ipairs(vim.api.nvim_list_wins()) do
 			local buf = vim.api.nvim_win_get_buf(win)
 			if vim.bo[buf].filetype == 'NvimTree' then
-				vim.api.nvim_win_set_width(win, nvim_tree_width)
+				if vim.api.nvim_win_get_width(win) ~= nvim_tree_width then
+					vim.api.nvim_win_set_width(win, nvim_tree_width)
+				end
 				return
 			end
 		end

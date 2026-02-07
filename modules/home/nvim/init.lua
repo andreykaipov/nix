@@ -77,21 +77,31 @@ vim.api.nvim_create_augroup(vim.g.user.event, {})
 -- When entering Neovim from a tmux pane, jump to the edge split closest
 -- to where we came from (so vim splits behave like tmux panes).
 -- tmux sets @nav_dir before select-pane; we read+clear it in one call.
+-- Uses vim.system() (async) so the subprocess doesn't block highlight
+-- restoration on FocusGained — a synchronous vim.fn.system() here would
+-- hold up the event loop while colors are still transparent from FocusLost,
+-- causing a visible flicker.
 vim.api.nvim_create_autocmd('FocusGained', {
 	group = vim.g.user.event,
 	callback = function()
-		-- single tmux invocation: print @nav_dir then unset it (halves subprocess overhead)
-		local dir = vim.fn
-			.system({ 'tmux', 'display-message', '-p', '#{@nav_dir}', ';', 'set-option', '-qu', '@nav_dir' })
-			:gsub('%s+', '')
-		if dir == '' then
-			return
-		end
-		-- opposite direction: e.g. pressed h (went left) → entered from right → go to rightmost split
-		local opposite = { h = 'l', l = 'h', j = 'k', k = 'j' }
-		if opposite[dir] then
-			vim.cmd('99wincmd ' .. opposite[dir])
-		end
+		vim.system(
+			{ 'tmux', 'display-message', '-p', '#{@nav_dir}', ';', 'set-option', '-qu', '@nav_dir' },
+			{},
+			vim.schedule_wrap(function(result)
+				local dir = (result.stdout or ''):gsub('%s+', '')
+				if dir == '' then
+					return
+				end
+				local opposite = { h = 'l', l = 'h', j = 'k', k = 'j' }
+				if opposite[dir] then
+					vim.cmd('noautocmd 99wincmd ' .. opposite[dir])
+					-- noautocmd suppressed WinEnter/WinLeave, so the
+					-- DimInactiveSplits winhighlight state is stale.
+					-- Resync all windows: dim inactive, clear active.
+					vim.api.nvim_exec_autocmds('User', { pattern = 'DimInactiveSplitsResync' })
+				end
+			end)
+		)
 	end,
 })
 
@@ -297,6 +307,23 @@ require('which-key').add({
 	{ '<leader>f', group = 'Fuzzy Find' },
 	{ '<leader>b', group = 'Buffer' },
 })
+
+-- Reload colorscheme and custom highlights without restarting
+vim.keymap.set('n', '<leader>cc', function()
+	package.loaded['custom.colors'] = nil
+	require('custom.colors').setup()
+end, { desc = 'Reload colorscheme' })
+
+-- Reload entire lua config without restarting
+vim.keymap.set('n', '<leader>cr', function()
+	for name, _ in pairs(package.loaded) do
+		if name:match('^custom%.') then
+			package.loaded[name] = nil
+		end
+	end
+	dofile(vim.fn.stdpath('config') .. '/init.lua')
+	vim.notify('Config reloaded', vim.log.levels.INFO)
+end, { desc = 'Reload config' })
 
 -- Treesitter setup
 -- NOTE: the list of supported parsers is in the documentation:
