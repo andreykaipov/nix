@@ -77,31 +77,25 @@ vim.api.nvim_create_augroup(vim.g.user.event, {})
 -- When entering Neovim from a tmux pane, jump to the edge split closest
 -- to where we came from (so vim splits behave like tmux panes).
 -- tmux sets @nav_dir before select-pane; we read+clear it in one call.
--- Uses vim.system() (async) so the subprocess doesn't block highlight
--- restoration on FocusGained — a synchronous vim.fn.system() here would
--- hold up the event loop while colors are still transparent from FocusLost,
--- causing a visible flicker.
+-- This must be synchronous so the wincmd runs before colors.lua's
+-- FocusGained resync — otherwise the resync highlights the stale
+-- active window and a redraw between the two causes a flicker.
 vim.api.nvim_create_autocmd('FocusGained', {
 	group = vim.g.user.event,
 	callback = function()
-		vim.system(
-			{ 'tmux', 'display-message', '-p', '#{@nav_dir}', ';', 'set-option', '-qu', '@nav_dir' },
-			{},
-			vim.schedule_wrap(function(result)
-				local dir = (result.stdout or ''):gsub('%s+', '')
-				if dir == '' then
-					return
-				end
-				local opposite = { h = 'l', l = 'h', j = 'k', k = 'j' }
-				if opposite[dir] then
-					vim.cmd('noautocmd 99wincmd ' .. opposite[dir])
-					-- noautocmd suppressed WinEnter/WinLeave, so the
-					-- DimInactiveSplits winhighlight state is stale.
-					-- Resync all windows: dim inactive, clear active.
-					vim.api.nvim_exec_autocmds('User', { pattern = 'DimInactiveSplitsResync' })
-				end
-			end)
-		)
+		local raw = vim.fn.system('tmux display-message -p "#{@nav_dir}" \\; set-option -qu @nav_dir')
+		local dir = raw:gsub('%s+', '')
+		if dir == '' then
+			return
+		end
+		local opposite = { h = 'l', l = 'h', j = 'k', k = 'j' }
+		if opposite[dir] then
+			vim.cmd('noautocmd 99wincmd ' .. opposite[dir])
+			-- noautocmd suppressed WinEnter/WinLeave, so the
+			-- DimInactiveSplits winhighlight state is stale.
+			-- Resync all windows: dim inactive, clear active.
+			vim.api.nvim_exec_autocmds('User', { pattern = 'DimInactiveSplitsResync' })
+		end
 	end,
 })
 
