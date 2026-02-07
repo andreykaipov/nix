@@ -118,10 +118,11 @@ function M.setup()
 			offsets = {
 				{
 					filetype = 'NvimTree',
-					text = 'Explorer',					
-					text_align = 'left',
+					text = 'Explorer',
+					text_align = 'center',
+					padding = 0,
 					highlight = 'NvimTreeNormal',
-					separator = ' ',
+					separator = true,
 				},
 			},
 		},
@@ -171,7 +172,11 @@ function M.setup()
 			offset_separator = {
 				bg = {
 					attribute = 'bg',
-					highlight = 'NvimTreeNormal',
+					highlight = 'NormalNC',
+				},
+				fg = {
+					attribute = 'bg',
+					highlight = 'Normal',
 				},
 			},
 			trunc_marker = {
@@ -188,6 +193,18 @@ function M.setup()
 			},
 			buffer_selected = {
 				italic = false,
+			},
+			buffer_visible = {
+				bg = {
+					attribute = 'bg',
+					highlight = 'Normal',
+				},
+			},
+			indicator_visible = {
+				bg = {
+					attribute = 'bg',
+					highlight = 'Normal',
+				},
 			},
 		},
 	})
@@ -208,9 +225,12 @@ function M.setup()
 	vim.keymap.set('n', '<ScrollWheelUp>', tabline_scroll('Prev'), { desc = 'Scroll tabline or file' })
 	vim.keymap.set('n', '<ScrollWheelDown>', tabline_scroll('Next'), { desc = 'Scroll tabline or file' })
 
-	-- Remove window split border entirely
-	vim.o.fillchars = vim.o.fillchars .. ',vert: ,horiz: ,horizup: ,horizdown: ,vertleft: ,vertright: ,verthoriz: '
-	vim.api.nvim_set_hl(0, 'WinSeparator', { bg = 'none', fg = 'none' })
+	-- Hide window split border entirely
+	-- vim.o.fillchars = vim.o.fillchars .. ',vert: ,horiz: ,horizup: ,horizdown: ,vertleft: ,vertright: ,verthoriz: '
+	vim.api.nvim_set_hl(0, 'WinSeparator', {
+		fg = vim.api.nvim_get_hl(0, { name = 'Normal' }).bg,
+		bg = vim.api.nvim_get_hl(0, { name = 'NormalNC' }).bg,
+	})
 
 	-- Use a thin line cursor in NvimTree instead of a block
 	-- To hide entirely: 'a:NvimTreeHiddenCursor' with highlight { blend = 100, nocombine = true }
