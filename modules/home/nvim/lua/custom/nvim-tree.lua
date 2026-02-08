@@ -99,7 +99,8 @@ function M.setup()
 	vim.api.nvim_set_hl(0, 'NvimTreeGitDeletedIcon', { fg = '#e06c75' })   -- deleted: red
 	vim.api.nvim_set_hl(0, 'NvimTreeGitRenamedIcon', { fg = '#98c379' })   -- renamed: green
 	-- Clean / non-git files: white
-	vim.api.nvim_set_hl(0, 'NvimTreeNormal', vim.tbl_extend('force', vim.api.nvim_get_hl(0, { name = 'NvimTreeNormal' }), { fg = '#ffffff' }))
+	vim.api.nvim_set_hl(0, 'NvimTreeNormal', { bg = vim.api.nvim_get_hl(0, { name = 'NvimTreeNormal' }).bg, fg = '#ffffff' })
+	vim.api.nvim_set_hl(0, 'NvimTreeNormalNC', { bg = vim.api.nvim_get_hl(0, { name = 'NvimTreeNormalNC' }).bg, fg = '#ffffff' })
 	vim.api.nvim_set_hl(0, 'NvimTreeFileName', { fg = '#ffffff' })         -- regular filenames: white
 	vim.api.nvim_set_hl(0, 'NvimTreeFolderName', { fg = '#ffffff' })       -- folder names: white
 	vim.api.nvim_set_hl(0, 'NvimTreeOpenedFolderName', { fg = '#ffffff' }) -- opened folder names: white
@@ -107,6 +108,10 @@ function M.setup()
 
 	-- Override NvimTree window options that aren't exposed in view config
 	require('nvim-tree.view').View.winopts.statuscolumn = ''
+
+	-- Permanent highlight for the Explorer title — never modified by dim/focus logic
+	local normal_hl = vim.api.nvim_get_hl(0, { name = 'Normal' })
+	vim.api.nvim_set_hl(0, 'BufferLineExplorerTitle', { bg = normal_hl.bg, fg = normal_hl.fg })
 
 	-- See :help bufferline-configuration
 	require('bufferline').setup({
@@ -121,7 +126,7 @@ function M.setup()
 					text = 'Explorer',
 					text_align = 'center',
 					padding = 0,
-					highlight = 'NvimTreeNormal',
+					highlight = 'BufferLineExplorerTitle',
 					separator = true,
 				},
 			},
@@ -201,6 +206,18 @@ function M.setup()
 				},
 			},
 			indicator_visible = {
+				bg = {
+					attribute = 'bg',
+					highlight = 'Normal',
+				},
+			},
+			close_button_visible = {
+				bg = {
+					attribute = 'bg',
+					highlight = 'Normal',
+				},
+			},
+			separator_visible = {
 				bg = {
 					attribute = 'bg',
 					highlight = 'Normal',
@@ -292,6 +309,20 @@ function M.setup()
 		-- defer to let nvim-tree finish rendering before we resize
 		vim.defer_fn(restore_nvimtree_width, 50)
 	end, { desc = 'File explorer (sidebar)' })
+
+	-- Auto-open nvim-tree when opening a file
+	vim.api.nvim_create_autocmd('VimEnter', {
+		group = vim.g.user.event,
+		callback = function()
+			-- Only open if nvim was started with a file or directory argument
+			if vim.fn.argc() > 0 then
+				require('nvim-tree.api').tree.open()
+				vim.defer_fn(restore_nvimtree_width, 50)
+				-- Return focus to the file buffer
+				vim.cmd('wincmd p')
+			end
+		end,
+	})
 end
 
 return M

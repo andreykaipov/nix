@@ -87,9 +87,16 @@ function M.setup()
 		-- in its winhighlight.
 		local normal_bg = vim.api.nvim_get_hl(0, { name = 'Normal' }).bg
 		local normal_bg_hex = normal_bg and string.format('#%06x', normal_bg) or nil
+		local function set_nvimtree_bg(bg)
+			local hl = vim.api.nvim_get_hl(0, { name = 'NvimTreeNormal' })
+			hl.bg = bg
+			vim.api.nvim_set_hl(0, 'NvimTreeNormal', hl)
+		end
 		local function apply_nvimtree_dim()
-			vim.api.nvim_set_hl(0, 'NvimTreeNormal', { bg = normal_bg_hex })
-			vim.api.nvim_set_hl(0, 'NvimTreeNormalNC', { bg = dim_bg })
+			set_nvimtree_bg(normal_bg_hex)
+			local nc = vim.api.nvim_get_hl(0, { name = 'NvimTreeNormalNC' })
+			nc.bg = dim_bg
+			vim.api.nvim_set_hl(0, 'NvimTreeNormalNC', nc)
 		end
 		-- Apply immediately (covers colorscheme changes)
 		apply_nvimtree_dim()
@@ -141,7 +148,7 @@ function M.setup()
 				end
 			end
 			-- Update NvimTreeNormal so the bufferline offset title bg matches
-			vim.api.nvim_set_hl(0, 'NvimTreeNormal', { bg = nvimtree_active and normal_bg_hex or dim_bg })
+			set_nvimtree_bg(nvimtree_active and normal_bg_hex or dim_bg)
 			refresh_scrollview()
 		end
 
@@ -155,11 +162,29 @@ function M.setup()
 			callback = resync_all_windows,
 		})
 		-- On FocusLost, everything is inactive — force NvimTreeNormal to dim.
+		-- Also dim selected tab fg so it matches visible tab behavior.
+		local selected_fg_cache = nil
+		local close_btn_fg_cache = nil
 		vim.api.nvim_create_autocmd('FocusLost', {
 			group = group,
 			callback = function()
 				resync_all_windows()
-				vim.api.nvim_set_hl(0, 'NvimTreeNormal', { bg = dim_bg })
+				set_nvimtree_bg(dim_bg)
+				local vis = vim.api.nvim_get_hl(0, { name = 'BufferLineBufferVisible' })
+				local sel = vim.api.nvim_get_hl(0, { name = 'BufferLineBufferSelected' })
+				if sel.fg then
+					selected_fg_cache = sel.fg
+					sel.fg = vis.fg
+					sel.bold = false
+					vim.api.nvim_set_hl(0, 'BufferLineBufferSelected', sel)
+				end
+				local close_sel = vim.api.nvim_get_hl(0, { name = 'BufferLineCloseButtonSelected' })
+				local close_vis = vim.api.nvim_get_hl(0, { name = 'BufferLineCloseButtonVisible' })
+				if close_sel.fg then
+					close_btn_fg_cache = close_sel.fg
+					close_sel.fg = close_vis.fg
+					vim.api.nvim_set_hl(0, 'BufferLineCloseButtonSelected', close_sel)
+				end
 			end,
 		})
 		-- On FocusGained, also restore highlight groups the plugin may have changed.
@@ -170,6 +195,19 @@ function M.setup()
 				vim.api.nvim_set_hl(0, 'SignColumn', sc_hl)
 				vim.api.nvim_set_hl(0, 'SignColumnNC', vim.tbl_extend('force', sc_hl, { bg = dim_bg }))
 				apply_nvimtree_dim()
+				if selected_fg_cache then
+					local sel = vim.api.nvim_get_hl(0, { name = 'BufferLineBufferSelected' })
+					sel.fg = selected_fg_cache
+					sel.bold = true
+					vim.api.nvim_set_hl(0, 'BufferLineBufferSelected', sel)
+					selected_fg_cache = nil
+				end
+				if close_btn_fg_cache then
+					local close_sel = vim.api.nvim_get_hl(0, { name = 'BufferLineCloseButtonSelected' })
+					close_sel.fg = close_btn_fg_cache
+					vim.api.nvim_set_hl(0, 'BufferLineCloseButtonSelected', close_sel)
+					close_btn_fg_cache = nil
+				end
 				resync_all_windows()
 			end,
 		})
