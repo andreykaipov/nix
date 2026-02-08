@@ -203,7 +203,8 @@ function M.setup()
 					selected_fg_cache = nil
 				end
 				if close_btn_fg_cache then
-					local close_sel = vim.api.nvim_get_hl(0, { name = 'BufferLineCloseButtonSelected' })
+					local close_sel = vim.api.nvim_get_hl(0,
+						{ name = 'BufferLineCloseButtonSelected' })
 					close_sel.fg = close_btn_fg_cache
 					vim.api.nvim_set_hl(0, 'BufferLineCloseButtonSelected', close_sel)
 					close_btn_fg_cache = nil

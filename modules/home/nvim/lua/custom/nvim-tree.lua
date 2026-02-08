@@ -309,20 +309,6 @@ function M.setup()
 		-- defer to let nvim-tree finish rendering before we resize
 		vim.defer_fn(restore_nvimtree_width, 50)
 	end, { desc = 'File explorer (sidebar)' })
-
-	-- Auto-open nvim-tree when opening a file
-	vim.api.nvim_create_autocmd('VimEnter', {
-		group = vim.g.user.event,
-		callback = function()
-			-- Only open if nvim was started with a file or directory argument
-			if vim.fn.argc() > 0 then
-				require('nvim-tree.api').tree.open()
-				vim.defer_fn(restore_nvimtree_width, 50)
-				-- Return focus to the file buffer
-				vim.cmd('wincmd p')
-			end
-		end,
-	})
 end
 
 return M
