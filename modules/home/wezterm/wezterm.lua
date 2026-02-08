@@ -27,7 +27,7 @@ config.font_size = 16
 -- }
 config.window_background_opacity = 0.99 -- not 1.0: macOS draws a border line with the opaque rendering path
 -- config.window_padding = { left = 0, right = 0, top = 0, bottom = 0 }
-config.window_padding = { left = 20, right = 20, top = 5, bottom = 0 }
+config.window_padding = { left = 10, right = 10, top = 5, bottom = 0 }
 
 -- Read cached bg color written by nvim's colorscheme sync so the
 -- terminal background is correct even before nvim starts.
@@ -58,12 +58,12 @@ config.mouse_bindings = {
 
 config.keys = {
 	-- Cmd+W closes the buffer/tab in nvim instead of the WezTerm window
-	{ key = "w", mods = "SUPER", action = wezterm.action.SendString("\x17") },
+	{ key = "w",          mods = "SUPER", action = wezterm.action.SendString("\x17") },
 	-- Disable WezTerm's default Alt+Arrow bindings so they pass through to tmux/nvim
-	{ key = "LeftArrow", mods = "ALT", action = wezterm.action.SendKey({ key = "LeftArrow", mods = "ALT" }) },
-	{ key = "RightArrow", mods = "ALT", action = wezterm.action.SendKey({ key = "RightArrow", mods = "ALT" }) },
-	{ key = "UpArrow", mods = "ALT", action = wezterm.action.SendKey({ key = "UpArrow", mods = "ALT" }) },
-	{ key = "DownArrow", mods = "ALT", action = wezterm.action.SendKey({ key = "DownArrow", mods = "ALT" }) },
+	{ key = "LeftArrow",  mods = "ALT",   action = wezterm.action.SendKey({ key = "LeftArrow", mods = "ALT" }) },
+	{ key = "RightArrow", mods = "ALT",   action = wezterm.action.SendKey({ key = "RightArrow", mods = "ALT" }) },
+	{ key = "UpArrow",    mods = "ALT",   action = wezterm.action.SendKey({ key = "UpArrow", mods = "ALT" }) },
+	{ key = "DownArrow",  mods = "ALT",   action = wezterm.action.SendKey({ key = "DownArrow", mods = "ALT" }) },
 }
 
 config.set_environment_variables = { BOOTSTRAP = "1" }
