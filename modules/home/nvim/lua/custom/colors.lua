@@ -87,6 +87,11 @@ function M.setup()
 		-- in its winhighlight.
 		local normal_bg = vim.api.nvim_get_hl(0, { name = 'Normal' }).bg
 		local normal_bg_hex = normal_bg and string.format('#%06x', normal_bg) or nil
+		-- LESSON: set_nvimtree_bg merges bg into the existing NvimTreeNormal hl
+		-- instead of replacing it. This is critical because nvim-tree.lua sets
+		-- fg='#ffffff' on NvimTreeNormal/NC, and nvim_set_hl({bg=x}) would clear fg.
+		-- The tmux-colorscheme-sync plugin was also fixed to do the same merge
+		-- for focus_lost_highlights entries.
 		local function set_nvimtree_bg(bg)
 			local hl = vim.api.nvim_get_hl(0, { name = 'NvimTreeNormal' })
 			hl.bg = bg
@@ -162,7 +167,10 @@ function M.setup()
 			callback = resync_all_windows,
 		})
 		-- On FocusLost, everything is inactive — force NvimTreeNormal to dim.
-		-- Also dim selected tab fg so it matches visible tab behavior.
+		-- LESSON: When switching to a tmux pane, the Neovim window stays current
+		-- (no WinLeave fires), so the selected tab stays "selected" not "visible".
+		-- We must manually dim BufferLineBufferSelected and BufferLineCloseButtonSelected
+		-- fg/bold to match the visible tab style, then restore on FocusGained.
 		local selected_fg_cache = nil
 		local close_btn_fg_cache = nil
 		vim.api.nvim_create_autocmd('FocusLost', {

@@ -99,6 +99,12 @@ function M.setup()
 	vim.api.nvim_set_hl(0, 'NvimTreeGitDeletedIcon', { fg = '#e06c75' })   -- deleted: red
 	vim.api.nvim_set_hl(0, 'NvimTreeGitRenamedIcon', { fg = '#98c379' })   -- renamed: green
 	-- Clean / non-git files: white
+	-- IMPORTANT: Set fg explicitly on both NvimTreeNormal AND NvimTreeNormalNC.
+	-- colors.lua dynamically changes their bg (for dim/focus), and nvim_set_hl
+	-- clears any attributes not specified. set_nvimtree_bg() in colors.lua merges
+	-- bg into the existing hl to preserve fg, but NvimTreeNormalNC must have fg
+	-- set here first or there's nothing to preserve. Don't use tbl_extend on the
+	-- existing hl — it can inherit unwanted attrs like bold from the colorscheme.
 	vim.api.nvim_set_hl(0, 'NvimTreeNormal', { bg = vim.api.nvim_get_hl(0, { name = 'NvimTreeNormal' }).bg, fg = '#ffffff' })
 	vim.api.nvim_set_hl(0, 'NvimTreeNormalNC', { bg = vim.api.nvim_get_hl(0, { name = 'NvimTreeNormalNC' }).bg, fg = '#ffffff' })
 	vim.api.nvim_set_hl(0, 'NvimTreeFileName', { fg = '#ffffff' })         -- regular filenames: white
@@ -109,7 +115,9 @@ function M.setup()
 	-- Override NvimTree window options that aren't exposed in view config
 	require('nvim-tree.view').View.winopts.statuscolumn = ''
 
-	-- Permanent highlight for the Explorer title — never modified by dim/focus logic
+	-- Permanent highlight for the Explorer title — never modified by dim/focus logic.
+	-- Uses a dedicated hl group so colors.lua and tmux-colorscheme-sync don't
+	-- accidentally clear it when they update NvimTreeNormal or Normal.
 	local normal_hl = vim.api.nvim_get_hl(0, { name = 'Normal' })
 	vim.api.nvim_set_hl(0, 'BufferLineExplorerTitle', { bg = normal_hl.bg, fg = normal_hl.fg })
 
@@ -190,6 +198,11 @@ function M.setup()
 					highlight = 'NormalNC',
 				},
 			},
+			-- LESSON: When NvimTree is focused, the buffer's tab becomes "visible"
+			-- (not "selected"). Bufferline's default visible bg is tint(normal_bg, -8)
+			-- which is darker. Set *_visible bg to Normal so the tab looks the same
+			-- whether you're in the buffer or NvimTree. This matches tmux pane switch
+			-- behavior where the tab stays bright.
 			buffer_selected = {
 				italic = false,
 			},
@@ -211,6 +224,11 @@ function M.setup()
 					highlight = 'Normal',
 				},
 			},
+			-- LESSON: 'thin' separator draws │ on both sides of each tab.
+			-- The left │ of a tab uses that tab's separator_* highlight.
+			-- The right │ of a tab is actually the left │ of the NEXT tab.
+			-- With 'thick' style, ▐ and ▌ are used instead.
+			-- fg draws the separator character, bg fills the cell behind it.
 			separator = {
 				bg = {
 					attribute = 'bg',
