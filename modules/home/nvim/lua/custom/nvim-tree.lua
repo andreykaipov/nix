@@ -144,12 +144,6 @@ function M.setup()
 					highlight = 'NormalNC',
 				},
 			},
-			separator = {
-				bg = {
-					attribute = 'bg',
-					highlight = 'NormalNC',
-				},
-			},
 			close_button = {
 				bg = {
 					attribute = 'bg',
@@ -217,12 +211,16 @@ function M.setup()
 					highlight = 'Normal',
 				},
 			},
-			separator_visible = {
+			separator = {
 				bg = {
+					attribute = 'bg',
+					highlight = 'NormalNC',
+				},
+				fg = {
 					attribute = 'bg',
 					highlight = 'Normal',
 				},
-			},
+			}
 		},
 	})
 
