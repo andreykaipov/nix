@@ -175,12 +175,33 @@ setup_host() {
   if [ "$key_on_github" = false ]; then
     printf "${yellow}Adding host public key to GitHub...${reset}\n"
     if ! gh auth status >/dev/null 2>&1; then
-      gh auth login --web --git-protocol ssh --skip-ssh-key --scopes admin:public_key
+      gh auth login --web --git-protocol ssh --skip-ssh-key --scopes admin:public_key,write:gpg_key
     elif ! gh auth status 2>&1 | grep -q 'admin:public_key'; then
-      gh auth refresh -h github.com -s admin:public_key
+      gh auth refresh -h github.com -s admin:public_key,write:gpg_key
     fi
     gh ssh-key add "${key_path}.pub" --title "${nix_user}@${hostname} (via andreykaipov/nix#bootstrap)"
     printf "${green}Host public key added to GitHub${reset}\n"
+  fi
+
+  # Upload as a signing key too so GitHub can verify commits
+  signing_key_on_github=false
+  if signing_keys="$(gh api user/ssh_signing_keys 2>/dev/null)"; then
+    key_data="$(echo "$host_pubkey" | awk '{print $2}')"
+    if echo "$signing_keys" | grep -q "$key_data"; then
+      signing_key_on_github=true
+      printf "${green}Host signing key already on GitHub${reset}\n"
+    fi
+  fi
+
+  if [ "$signing_key_on_github" = false ]; then
+    printf "${yellow}Adding host signing key to GitHub...${reset}\n"
+    if ! gh auth status >/dev/null 2>&1; then
+      gh auth login --web --git-protocol ssh --skip-ssh-key --scopes admin:public_key,write:gpg_key
+    elif ! gh auth status 2>&1 | grep -q 'write:gpg_key'; then
+      gh auth refresh -h github.com -s admin:public_key,write:gpg_key
+    fi
+    gh ssh-key add "${key_path}.pub" --type signing --title "${nix_user}@${hostname} (via andreykaipov/nix#bootstrap)"
+    printf "${green}Host signing key added to GitHub${reset}\n"
   fi
 
   # Add to SSH agent and clear stale sockets
