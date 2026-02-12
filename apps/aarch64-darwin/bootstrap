@@ -267,8 +267,8 @@ encrypt_host_key() {
   if git push; then
     printf "${green}Pushed to nix-secrets!${reset}\n"
   else
-    printf "${red}Push failed.${reset}\n"
-    printf "${yellow}Manual steps:${reset}\n"
+    printf "${red}Push failed for some reason.${reset}\n"
+    printf "${yellow}Either you will need to rebase, or follow the manual steps:${reset}\n"
     echo "1. Ensure your SSH key is on GitHub: https://github.com/settings/ssh/new"
     echo "2. Run: ssh-add ~/.ssh/${key_name}"
     echo "3. Run: rm -rf ~/.cache/ssh/sockets"
