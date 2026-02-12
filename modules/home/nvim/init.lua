@@ -11,9 +11,9 @@ vim.o.relativenumber = true
 vim.o.scrolloff = 20
 vim.o.winborder = 'rounded'
 vim.o.signcolumn = 'auto:2-5' -- so new gutter signs don't move the text
-vim.o.equalalways = false -- don't auto-resize windows when opening/closing splits
-vim.o.cmdheight = 0 -- hide command line when not in use
-vim.o.laststatus = 3 -- single global statusline across all splits
+vim.o.equalalways = false     -- don't auto-resize windows when opening/closing splits
+vim.o.cmdheight = 0           -- hide command line when not in use
+vim.o.laststatus = 3          -- single global statusline across all splits
 
 -- Alt+hjkl to navigate between splits, falling through to tmux at edges
 local function nav(dir, tmux_dir)
@@ -33,6 +33,20 @@ vim.keymap.set('n', '<M-Left>', '<M-h>', { remap = true, desc = 'Move left' })
 vim.keymap.set('n', '<M-Down>', '<M-j>', { remap = true, desc = 'Move down' })
 vim.keymap.set('n', '<M-Up>', '<M-k>', { remap = true, desc = 'Move up' })
 vim.keymap.set('n', '<M-Right>', '<M-l>', { remap = true, desc = 'Move right' })
+
+-- Center jumps
+vim.keymap.set('n', '<C-d>', '<C-d>zz', { desc = 'Scroll down (centered)' })
+vim.keymap.set('n', '<C-u>', '<C-u>zz', { desc = 'Scroll up (centered)' })
+vim.keymap.set('n', 'n', 'nzzzv', { desc = 'Next search result (centered)' })
+vim.keymap.set('n', 'N', 'Nzzzv', { desc = 'Prev search result (centered)' })
+
+-- Buffer switching (Shift+H/L)
+vim.keymap.set('n', 'H', '<cmd>bprevious<cr>', { desc = 'Prev buffer' })
+vim.keymap.set('n', 'L', '<cmd>bnext<cr>', { desc = 'Next buffer' })
+
+-- Move selection (J/K)
+vim.keymap.set('v', 'J', ":m '>+1<cr>gv=gv", { desc = 'Move selection down' })
+vim.keymap.set('v', 'K', ":m '<-2<cr>gv=gv", { desc = 'Move selection up' })
 
 vim.o.cursorline = true
 vim.o.cursorlineopt = 'both' -- highlight entire line including line number
@@ -98,6 +112,8 @@ vim.api.nvim_create_autocmd('FocusGained', {
 		end
 	end,
 })
+
+require('custom.autosave').setup()
 
 -- When editing a file, always jump to the last known cursor position.
 -- Don't do it when the position is invalid, when inside an event handler
@@ -165,6 +181,7 @@ MiniDeps.add('folke/which-key.nvim')
 MiniDeps.add('VonHeikemen/ts-enable.nvim')
 
 MiniDeps.add('tpope/vim-sleuth')
+MiniDeps.add('nickjvandyke/opencode.nvim')
 MiniDeps.add({
 	source = 'nvim-mini/mini.nvim',
 	checkout = mini.branch,
@@ -234,9 +251,70 @@ require('mini.diff').setup({
 		signs = { add = '+', change = '~', delete = '-' },
 	},
 })
+vim.keymap.set('n', '<leader>do', function()
+	vim.b.minidiff_overlay_manual = true
+	MiniDiff.toggle_overlay()
+end, { desc = 'Toggle diff overlay' })
+
+-- Enable diff overlay by default on all buffers (unless manually toggled)
+vim.api.nvim_create_autocmd('User', {
+	group = vim.g.user.event,
+	pattern = 'MiniDiffUpdated',
+	callback = function(args)
+		if vim.b[args.buf].minidiff_overlay_manual then return end
+		local data = MiniDiff.get_buf_data(args.buf)
+		if data and not data.overlay then
+			MiniDiff.toggle_overlay(args.buf)
+		end
+	end,
+	desc = 'Auto-enable diff overlay',
+})
+
+-- See :help opencode.nvim
+---@type opencode.Opts
+vim.g.opencode_opts = {
+	server = {
+		start = function()
+			vim.fn.system('tmux split-window -h -l 40% "opencode --port"')
+		end,
+		stop = function()
+			vim.fn.system('tmux kill-pane -t opencode 2>/dev/null')
+		end,
+		toggle = function()
+			-- If there's already a pane running opencode, select it; otherwise create one
+			local pane = vim.fn
+			    .system(
+			    'tmux list-panes -F "#{pane_id} #{pane_current_command}" | grep opencode | head -1 | cut -d" " -f1')
+			    :gsub('%s+', '')
+			if pane ~= '' then
+				vim.fn.system('tmux select-pane -t ' .. pane)
+			else
+				vim.fn.system('tmux split-window -h -l 40% "opencode --port"')
+			end
+		end,
+	},
+}
+vim.keymap.set({ 'n', 'x' }, '<leader>oa', function()
+	require('opencode').ask(nil, { clear = true, submit = true })
+end, { desc = 'Ask opencode' })
+vim.keymap.set({ 'n', 'x' }, '<leader>os', function()
+	require('opencode').select()
+end, { desc = 'Opencode select' })
+vim.keymap.set({ 'n', 't' }, '<leader>oo', function()
+	require('opencode').toggle()
+end, { desc = 'Toggle opencode' })
+vim.keymap.set({ 'n', 'x' }, 'go', function()
+	return require('opencode').operator('@this ')
+end, { desc = 'Send to opencode', expr = true })
+vim.keymap.set('n', 'goo', function()
+	return require('opencode').operator('@this ') .. '_'
+end, { desc = 'Send line to opencode', expr = true })
 
 -- See :help MiniBufremove.config
 require('mini.bufremove').setup({})
+
+-- Track recently closed buffers for Ctrl+Shift+T reopen
+local closed_buffers = {}
 
 -- Close buffer and preserve window layout
 local function close_buffer()
@@ -246,11 +324,27 @@ local function close_buffer()
 	if ft == 'NvimTree' or vim.bo[buf].buftype ~= '' then
 		return
 	end
+	local name = vim.api.nvim_buf_get_name(buf)
+	if name ~= '' then
+		table.insert(closed_buffers, name)
+	end
 	MiniBufremove.delete(buf, true)
 end
+
+local function reopen_buffer()
+	while #closed_buffers > 0 do
+		local name = table.remove(closed_buffers)
+		if vim.uv.fs_stat(name) then
+			vim.cmd.edit(vim.fn.fnameescape(name))
+			return
+		end
+	end
+end
+
 vim.keymap.set('n', '<leader>bc', close_buffer, { desc = 'Close buffer' })
-vim.keymap.set('n', '<M-w>', close_buffer, { desc = 'Close buffer (Cmd+W)' })
-vim.keymap.set('n', '<C-w>', close_buffer, { desc = 'Close buffer (Ctrl+W)', nowait = true })
+-- F1/F2 are sent by WezTerm for Cmd+W / Cmd+Shift+T (see wezterm.lua)
+vim.keymap.set('n', '<F1>', close_buffer, { desc = 'Close buffer (Cmd+W)' })
+vim.keymap.set('n', '<F2>', reopen_buffer, { desc = 'Reopen closed buffer (Cmd+Shift+T)' })
 
 -- Sidebar file tree (VS Code style)
 -- See :help nvim-tree
@@ -275,8 +369,6 @@ vim.keymap.set('n', '<leader>fd', '<cmd>Pick diagnostic<cr>', { desc = 'Search d
 vim.keymap.set('n', '<leader>fs', '<cmd>Pick buf_lines<cr>', { desc = 'Buffer local search' })
 
 require('custom.statusline').setup()
-
-
 
 -- See :help MiniExtra
 -- require('mini.extra').setup({})

@@ -53,6 +53,31 @@ function M.setup()
 				noremap = true,
 				silent = true,
 			})
+			-- Open file in buffer but keep focus on the tree
+			vim.keymap.set('n', 'o', function()
+				local node = api.tree.get_node_under_cursor()
+				if node and node.type == 'file' then
+					vim.cmd('badd ' .. vim.fn.fnameescape(node.absolute_path))
+					vim.cmd('BufferLineSortByDirectory')
+				else
+					api.node.open.edit()
+				end
+			end, { buffer = bufnr, noremap = true, silent = true, desc = 'Add file to buffer' })
+			-- Open all marked files, or current file if none marked
+			vim.keymap.set('n', 'O', function()
+				local marks = api.marks.list()
+				if #marks == 0 then
+					api.node.open.edit()
+					return
+				end
+				for _, node in ipairs(marks) do
+					if node.type == 'file' then
+						vim.cmd('badd ' .. vim.fn.fnameescape(node.absolute_path))
+					end
+				end
+				api.marks.clear()
+				vim.cmd('BufferLineSortByDirectory')
+			end, { buffer = bufnr, noremap = true, silent = true, desc = 'Open all marked files' })
 		end,
 		actions = {
 			open_file = {

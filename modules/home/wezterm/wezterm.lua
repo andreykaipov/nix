@@ -49,6 +49,12 @@ config.send_composed_key_when_right_alt_is_pressed = false
 
 -- Pass middle-click through to apps (e.g. nvim bufferline close-tab)
 config.mouse_bindings = {
+	-- Single-click opens hyperlinks (when cursor is a hand)
+	{
+		event = { Up = { streak = 1, button = "Left" } },
+		mods = "NONE",
+		action = wezterm.action.OpenLinkAtMouseCursor,
+	},
 	{
 		event = { Up = { streak = 1, button = "Middle" } },
 		mods = "NONE",
@@ -57,8 +63,9 @@ config.mouse_bindings = {
 }
 
 config.keys = {
-	-- Cmd+W closes the buffer/tab in nvim instead of the WezTerm window
-	{ key = "w",          mods = "SUPER", action = wezterm.action.SendString("\x17") },
+	-- Cmd+W / Cmd+Shift+T → F1/F2 so they don't shadow Ctrl-W or Alt-T
+	{ key = "w",          mods = "SUPER",       action = wezterm.action.SendKey({ key = "F1" }) },
+	{ key = "t",          mods = "SUPER|SHIFT", action = wezterm.action.SendKey({ key = "F2" }) },
 	-- Disable WezTerm's default Alt+Arrow bindings so they pass through to tmux/nvim
 	{ key = "LeftArrow",  mods = "ALT",   action = wezterm.action.SendKey({ key = "LeftArrow", mods = "ALT" }) },
 	{ key = "RightArrow", mods = "ALT",   action = wezterm.action.SendKey({ key = "RightArrow", mods = "ALT" }) },
