@@ -54,7 +54,7 @@ function M.setup()
 				silent = true,
 			})
 			-- Open file in buffer but keep focus on the tree
-			vim.keymap.set('n', 'o', function()
+			local function add_file_to_buffer()
 				local node = api.tree.get_node_under_cursor()
 				if node and node.type == 'file' then
 					vim.cmd('badd ' .. vim.fn.fnameescape(node.absolute_path))
@@ -62,7 +62,25 @@ function M.setup()
 				else
 					api.node.open.edit()
 				end
-			end, { buffer = bufnr, noremap = true, silent = true, desc = 'Add file to buffer' })
+			end
+			vim.keymap.set('n', 'o', add_file_to_buffer, { buffer = bufnr, noremap = true, silent = true, desc = 'Add file to buffer' })
+			vim.keymap.set('n', '<Tab>', function()
+				local node = api.tree.get_node_under_cursor()
+				if node and node.type == 'file' then
+					-- Find the first non-NvimTree window and display the file there
+					local tree_win = vim.api.nvim_get_current_win()
+					for _, win in ipairs(vim.api.nvim_list_wins()) do
+						if win ~= tree_win and vim.api.nvim_win_is_valid(win) then
+							vim.api.nvim_win_set_buf(win, vim.fn.bufadd(node.absolute_path))
+							vim.bo[vim.fn.bufadd(node.absolute_path)].buflisted = true
+							break
+						end
+					end
+					vim.cmd('BufferLineSortByDirectory')
+				else
+					api.node.open.edit()
+				end
+			end, { buffer = bufnr, noremap = true, silent = true, desc = 'Open file in pane (keep focus on tree)' })
 			-- Open all marked files, or current file if none marked
 			vim.keymap.set('n', 'O', function()
 				local marks = api.marks.list()
@@ -282,13 +300,6 @@ function M.setup()
 	end
 	vim.keymap.set('n', '<ScrollWheelUp>', tabline_scroll('Prev'), { desc = 'Scroll tabline or file' })
 	vim.keymap.set('n', '<ScrollWheelDown>', tabline_scroll('Next'), { desc = 'Scroll tabline or file' })
-
-	-- Hide window split border entirely
-	-- vim.o.fillchars = vim.o.fillchars .. ',vert: ,horiz: ,horizup: ,horizdown: ,vertleft: ,vertright: ,verthoriz: '
-	vim.api.nvim_set_hl(0, 'WinSeparator', {
-		fg = vim.api.nvim_get_hl(0, { name = 'Normal' }).bg,
-		bg = vim.api.nvim_get_hl(0, { name = 'NormalNC' }).bg,
-	})
 
 	-- Use a thin line cursor in NvimTree instead of a block
 	-- To hide entirely: 'a:NvimTreeHiddenCursor' with highlight { blend = 100, nocombine = true }

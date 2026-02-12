@@ -20,11 +20,16 @@ function M.setup()
 		},
 	})
 	-- vim.cmd.colorscheme('night-owl')
+	-- vim.cmd.colorscheme('github_dark')
 	-- vim.cmd.colorscheme('github_dark_default')
-	-- vim.cmd.colorscheme('minisummer')
+	-- vim.cmd.colorscheme('minischeme')
+	-- vim.cmd.colorscheme('minicyan')
 	-- vim.cmd.colorscheme('miniautumn')
-	vim.cmd.colorscheme('github_dark')
-	
+	-- vim.cmd.colorscheme('miniwinter')
+	-- vim.cmd.colorscheme('minispring')
+	vim.cmd.colorscheme('minisummer')
+	-- vim.cmd.colorscheme('tokyonight')
+
 	-- -- Subtler diff overlay colors (mini.diff)
 	-- vim.api.nvim_set_hl(0, 'MiniDiffOverAdd', { bg = '#1a2e1a' })
 	-- vim.api.nvim_set_hl(0, 'MiniDiffOverChange', { bg = '#2a2e1a' })
@@ -93,6 +98,14 @@ function M.setup()
 		-- in its winhighlight.
 		local normal_bg = vim.api.nvim_get_hl(0, { name = 'Normal' }).bg
 		local normal_bg_hex = normal_bg and string.format('#%06x', normal_bg) or nil
+
+		-- Hide window separator: fg matches Normal bg so the line is invisible.
+		-- Must also set NvimTreeWinSeparator because some colorschemes (e.g.
+		-- tokyonight) define it explicitly, overriding the global WinSeparator
+		-- for the NvimTree window.
+		vim.api.nvim_set_hl(0, 'WinSeparator', { fg = normal_bg, bg = dim_bg })
+		vim.api.nvim_set_hl(0, 'NvimTreeWinSeparator', { link = 'WinSeparator' })
+		
 		-- LESSON: set_nvimtree_bg merges bg into the existing NvimTreeNormal hl
 		-- instead of replacing it. This is critical because nvim-tree.lua sets
 		-- fg='#ffffff' on NvimTreeNormal/NC, and nvim_set_hl({bg=x}) would clear fg.
