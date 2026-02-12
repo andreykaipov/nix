@@ -14,8 +14,9 @@
   # Claude Code: ~/.claude/settings.json
   home.file.".claude/settings.json" = host.symlinkTo ./config/claude-settings.json;
 
-  # OpenCode: ~/.config/opencode/.opencode.json
-  xdg.configFile."opencode/.opencode.json" = host.symlinkTo ./config/opencode.json;
+  # OpenCode: ~/.config/opencode/
+  xdg.configFile."opencode/opencode.json" = host.symlinkTo ./config/opencode/opencode.json;
+  xdg.configFile."opencode/tui.json" = host.symlinkTo ./config/opencode/tui.json;
 
   # Crush: ~/.config/crush/crush.json
   xdg.configFile."crush/crush.json" = host.symlinkTo ./config/crush.json;
@@ -27,7 +28,8 @@
 
   programs.zsh.shellAliases = {
     cc = "claude";
-    oc = "opencode";
+    oc = "opencode --port";
+    opencode = "opencode --port";
     cr = "crush";
   };
 }

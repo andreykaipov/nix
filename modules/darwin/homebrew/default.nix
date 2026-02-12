@@ -48,6 +48,7 @@
 
     brews = [
       # CLI formulae installed via Homebrew (for things not in nixpkgs)
+      "gemini-cli"
     ];
 
     # These app IDs are from using the mas CLI app
