@@ -32,10 +32,12 @@ function M.setup()
 				group = vim.g.user.event,
 				buffer = event.buf,
 				callback = function()
-					vim.diagnostic.open_float({
-						scope = 'line',
-						focus = false,
-					})
+					-- vim.schedule(function()
+						vim.diagnostic.open_float({
+							scope = 'line',
+							focus = false,
+						})
+					-- end)
 				end,
 			})
 

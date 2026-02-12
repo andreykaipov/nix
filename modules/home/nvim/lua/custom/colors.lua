@@ -24,6 +24,12 @@ function M.setup()
 	-- vim.cmd.colorscheme('minisummer')
 	-- vim.cmd.colorscheme('miniautumn')
 	vim.cmd.colorscheme('github_dark')
+	
+	-- -- Subtler diff overlay colors (mini.diff)
+	-- vim.api.nvim_set_hl(0, 'MiniDiffOverAdd', { bg = '#1a2e1a' })
+	-- vim.api.nvim_set_hl(0, 'MiniDiffOverChange', { bg = '#2a2e1a' })
+	-- vim.api.nvim_set_hl(0, 'MiniDiffOverContext', { bg = '#1a1e2e' })
+	-- vim.api.nvim_set_hl(0, 'MiniDiffOverDelete', { bg = '#2e1a1a' })
 
 	-- Cursorline across the entire gutter (must be after colorscheme to avoid being overridden)
 	vim.api.nvim_set_hl(0, 'CursorLineSign', { link = 'CursorLine' })
