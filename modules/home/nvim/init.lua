@@ -1,19 +1,22 @@
 -- User Config
 vim.g.user = {
 	leader = ' ',
-	lighter_shade = 30,
 	scrolloff = 20,
 	sidebar_width = 30,
-	-- colorscheme = 'tokyonight',
-	-- colorscheme = 'night-owl',
-	-- colorscheme = 'github_dark',
-	-- colorscheme = 'github_dark_default',
-	-- colorscheme = 'minischeme',
-	-- colorscheme = 'minicyan',
-	-- colorscheme = 'minispring',
-	-- colorscheme = 'minisummer',
-	colorscheme = 'miniautumn',
-	-- colorscheme = 'miniwinter',
+	color = {
+		-- scheme = { name, lighter_shade [, black_bg] }
+		-- scheme = { 'tokyonight', 30 },
+		-- scheme = { 'night-owl', 30 },
+		-- scheme = { 'github_dark_default', 30 },
+		-- scheme = { 'minischeme', 30 },
+		-- scheme = { 'minicyan', 30 },
+		-- scheme = { 'minispring', 30 },
+		-- scheme = { 'minisummer', 30 },
+		-- scheme = { 'miniautumn', 30 },
+		-- scheme = { 'miniwinter', 30 },
+		-- scheme = { 'carbonfox', 10, true },
+		scheme = { 'moonfly', 30, true },
+	},
 }
 
 -- Bootstrap mini.nvim

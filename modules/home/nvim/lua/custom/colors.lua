@@ -5,11 +5,28 @@ function M.setup()
 	MiniDeps.add('folke/tokyonight.nvim')
 	MiniDeps.add('oxfist/night-owl.nvim')
 	MiniDeps.add('EdenEast/nightfox.nvim')
-	MiniDeps.add('olimorris/onedarkpro.nvim')
+	-- MiniDeps.add('olimorris/onedarkpro.nvim')
 	MiniDeps.add('projekt0n/github-nvim-theme')
 	MiniDeps.add('andreykaipov/tmux-colorscheme-sync.nvim')
+	MiniDeps.add('bluz71/vim-moonfly-colors')
 
-	vim.cmd.colorscheme(vim.g.user.colorscheme or 'minisummer')
+	local color = vim.g.user.color or {}
+	local scheme = color.scheme or { 'minisummer', 30 }
+	local scheme_name, lighter_shade, black_bg = scheme[1], scheme[2] or 30, scheme[3]
+
+	vim.cmd.colorscheme(scheme_name)
+
+	-- Force black background if requested
+	if black_bg then
+		vim.api.nvim_create_autocmd('ColorScheme', {
+			callback = function()
+				vim.api.nvim_set_hl(0, 'Normal', vim.tbl_extend('force',
+					vim.api.nvim_get_hl(0, { name = 'Normal' }), { bg = '#000000' }))
+			end,
+		})
+		vim.api.nvim_set_hl(0, 'Normal', vim.tbl_extend('force',
+			vim.api.nvim_get_hl(0, { name = 'Normal' }), { bg = '#000000' }))
+	end
 
 	-- -- Subtler diff overlay colors (mini.diff)
 	-- vim.api.nvim_set_hl(0, 'MiniDiffOverAdd', { bg = '#1a2e1a' })
@@ -27,7 +44,7 @@ function M.setup()
 	require('tmux-colorscheme-sync').setup({
 		cache_file = '~/.local/state/tmux/colorscheme-cache.conf',
 		tmux_source_file = '~/.config/tmux/styles.conf', -- re-source styles when colors change
-		lighter_shade = vim.g.user.lighter_shade or 30, -- inactive pane bg: percent lighter than active, effectively the color of the entire terminal
+		lighter_shade = lighter_shade, -- inactive pane bg: percent lighter than active, effectively the color of the entire terminal
 		-- Extra highlight groups to set to dim_bg on FocusLost (avoids flicker
 		-- vs bg='none' since Neovim can redraw before FocusGained fires)
 		focus_lost_highlights = {
@@ -86,7 +103,7 @@ function M.setup()
 		-- for the NvimTree window.
 		vim.api.nvim_set_hl(0, 'WinSeparator', { fg = normal_bg, bg = dim_bg })
 		vim.api.nvim_set_hl(0, 'NvimTreeWinSeparator', { link = 'WinSeparator' })
-		
+
 		-- LESSON: set_nvimtree_bg merges bg into the existing NvimTreeNormal hl
 		-- instead of replacing it. This is critical because nvim-tree.lua sets
 		-- fg='#ffffff' on NvimTreeNormal/NC, and nvim_set_hl({bg=x}) would clear fg.
@@ -211,8 +228,7 @@ function M.setup()
 					selected_fg_cache = nil
 				end
 				if close_btn_fg_cache then
-					local close_sel = vim.api.nvim_get_hl(0,
-						{ name = 'BufferLineCloseButtonSelected' })
+					local close_sel = vim.api.nvim_get_hl(0, { name = 'BufferLineCloseButtonSelected' })
 					close_sel.fg = close_btn_fg_cache
 					vim.api.nvim_set_hl(0, 'BufferLineCloseButtonSelected', close_sel)
 					close_btn_fg_cache = nil
