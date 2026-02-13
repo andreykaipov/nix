@@ -15,7 +15,7 @@ function M.setup()
 				return w
 			end
 		end
-		return 30
+		return vim.g.user.sidebar_width or 30
 	end
 	local function save_width(w)
 		-- Don't cache unreasonable widths (max half the nvim/tmux pane)
@@ -29,7 +29,8 @@ function M.setup()
 			f:close()
 		end
 	end
-	local nvim_tree_width = math.min(load_width(), math.max(30, math.floor(vim.o.columns * 0.5)))
+	local default_width = vim.g.user.sidebar_width or 30
+	local nvim_tree_width = math.min(load_width(), math.max(default_width, math.floor(vim.o.columns * 0.5)))
 
 	require('nvim-tree').setup({
 		on_attach = function(bufnr)

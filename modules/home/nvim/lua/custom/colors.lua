@@ -9,26 +9,7 @@ function M.setup()
 	MiniDeps.add('projekt0n/github-nvim-theme')
 	MiniDeps.add('andreykaipov/tmux-colorscheme-sync.nvim')
 
-	-- require('night-owl').setup()
-	-- require('nightfox').setup({})
-	-- https://github.com/projekt0n/github-nvim-theme?tab=readme-ov-file#supported-colorschemes--comparisons
-	require('github-theme').setup({
-		options = {
-			darken = {
-				sidebars = { enable = false }, -- we handle NvimTree bg in dim_inactive_splits
-			},
-		},
-	})
-	-- vim.cmd.colorscheme('night-owl')
-	-- vim.cmd.colorscheme('github_dark')
-	-- vim.cmd.colorscheme('github_dark_default')
-	-- vim.cmd.colorscheme('minischeme')
-	-- vim.cmd.colorscheme('minicyan')
-	-- vim.cmd.colorscheme('miniautumn')
-	-- vim.cmd.colorscheme('miniwinter')
-	-- vim.cmd.colorscheme('minispring')
-	vim.cmd.colorscheme('minisummer')
-	-- vim.cmd.colorscheme('tokyonight')
+	vim.cmd.colorscheme(vim.g.user.colorscheme or 'minisummer')
 
 	-- -- Subtler diff overlay colors (mini.diff)
 	-- vim.api.nvim_set_hl(0, 'MiniDiffOverAdd', { bg = '#1a2e1a' })
@@ -46,7 +27,7 @@ function M.setup()
 	require('tmux-colorscheme-sync').setup({
 		cache_file = '~/.local/state/tmux/colorscheme-cache.conf',
 		tmux_source_file = '~/.config/tmux/styles.conf', -- re-source styles when colors change
-		lighter_shade = 30,                -- inactive pane bg: percent lighter than active, effectively the color of the entire terminal
+		lighter_shade = vim.g.user.lighter_shade or 30, -- inactive pane bg: percent lighter than active, effectively the color of the entire terminal
 		-- Extra highlight groups to set to dim_bg on FocusLost (avoids flicker
 		-- vs bg='none' since Neovim can redraw before FocusGained fires)
 		focus_lost_highlights = {

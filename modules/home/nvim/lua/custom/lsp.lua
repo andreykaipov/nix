@@ -106,6 +106,9 @@ function M.setup()
 	vim.lsp.enable('bashls')
 	vim.lsp.enable('yamlls')
 	vim.lsp.enable('jsonls')
+
+	-- See :help MiniSnippets.config
+	-- require('mini.snippets').setup({})
 end
 
 return M
