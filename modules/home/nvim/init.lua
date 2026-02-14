@@ -4,18 +4,24 @@ vim.g.user = {
 	scrolloff = 20,
 	sidebar_width = 30,
 	color = {
-		-- scheme = { name, lighter_shade [, black_bg] }
-		-- scheme = { 'tokyonight', 30 },
-		-- scheme = { 'night-owl', 30 },
-		-- scheme = { 'github_dark_default', 30 },
-		-- scheme = { 'minischeme', 30 },
-		-- scheme = { 'minicyan', 30 },
-		-- scheme = { 'minispring', 30 },
-		-- scheme = { 'minisummer', 30 },
-		-- scheme = { 'miniautumn', 30 },
-		-- scheme = { 'miniwinter', 30 },
-		-- scheme = { 'carbonfox', 10, true },
-		scheme = { 'moonfly', 30, true },
+		-- colorscheme = { name, lighter_shade [, black_bg] }
+		-- colorscheme = { 'tokyonight', 30, true },
+		-- colorscheme = { 'night-owl', 30 },
+		-- colorscheme = { 'github_dark_default', 30 },
+		-- colorscheme = { 'minischeme', 30 },
+		-- colorscheme = { 'minicyan', 30 },
+		-- colorscheme = { 'minispring', 30 },
+		-- colorscheme = { 'minisummer', 30 },
+		-- colorscheme = { 'miniautumn', 30 },
+		-- colorscheme = { 'miniwinter', 30 },
+		-- colorscheme = { 'carbonfox', 10, true },
+		-- colorscheme = { 'moonfly', 10, true },
+		colorscheme = { 'onedark_dark', 10, true },
+		tmux = {
+			pane = 'subtle', -- subtle|chunky
+			border = 'all', -- all|unfocused, when pane is chunky, 'unfocused' looks like 'all'
+			bg = 'inactive', -- active|inactive, sets tmux status bg + wezterm terminal bg
+		},
 	},
 }
 

@@ -5,27 +5,43 @@ function M.setup()
 	MiniDeps.add('folke/tokyonight.nvim')
 	MiniDeps.add('oxfist/night-owl.nvim')
 	MiniDeps.add('EdenEast/nightfox.nvim')
-	-- MiniDeps.add('olimorris/onedarkpro.nvim')
+	MiniDeps.add('olimorris/onedarkpro.nvim')
 	MiniDeps.add('projekt0n/github-nvim-theme')
 	MiniDeps.add('andreykaipov/tmux-colorscheme-sync.nvim')
 	MiniDeps.add('bluz71/vim-moonfly-colors')
 
 	local color = vim.g.user.color or {}
-	local scheme = color.scheme or { 'minisummer', 30 }
-	local scheme_name, lighter_shade, black_bg = scheme[1], scheme[2] or 30, scheme[3]
+	local cs = color.colorscheme or { 'minisummer', 30 }
+	local scheme_name, lighter_shade, black_bg = cs[1], cs[2] or 30, cs[3]
+	local tmux = color.tmux or {}
+	local tmux_bg = tmux.bg or 'inactive'
+
+	-- Tell tmux style overrides and re-source styles so %if conditionals re-evaluate.
+	-- The plugin also sources styles.conf on ColorScheme, but that may not fire on
+	-- initial setup, so this explicit source ensures the options always take effect.
+	if vim.env.TMUX then
+		vim.fn.system({ 'tmux', 'set-option', '-g', '@nvim_status_bg', tmux_bg })
+		vim.fn.system({ 'tmux', 'set-option', '-g', '@nvim_pane_style', tmux.pane or 'red' })
+		vim.fn.system({ 'tmux', 'set-option', '-g', '@nvim_pane_border_style', tmux.border or 'blue' })
+		vim.fn.system({ 'tmux', 'source-file', vim.fn.expand('~/.config/tmux/styles.conf') })
+	end
 
 	vim.cmd.colorscheme(scheme_name)
 
 	-- Force black background if requested
 	if black_bg then
-		vim.api.nvim_create_autocmd('ColorScheme', {
-			callback = function()
-				vim.api.nvim_set_hl(0, 'Normal', vim.tbl_extend('force',
-					vim.api.nvim_get_hl(0, { name = 'Normal' }), { bg = '#000000' }))
-			end,
-		})
-		vim.api.nvim_set_hl(0, 'Normal', vim.tbl_extend('force',
-			vim.api.nvim_get_hl(0, { name = 'Normal' }), { bg = '#000000' }))
+		local function apply_black_bg()
+			for _, group in ipairs({ 'Normal', 'SignColumn', 'LineNr' }) do
+				vim.api.nvim_set_hl(
+					0,
+					group,
+					vim.tbl_extend('force', vim.api.nvim_get_hl(0, { name = group }),
+						{ bg = '#000000' })
+				)
+			end
+		end
+		vim.api.nvim_create_autocmd('ColorScheme', { callback = apply_black_bg })
+		apply_black_bg()
 	end
 
 	-- -- Subtler diff overlay colors (mini.diff)
@@ -44,7 +60,7 @@ function M.setup()
 	require('tmux-colorscheme-sync').setup({
 		cache_file = '~/.local/state/tmux/colorscheme-cache.conf',
 		tmux_source_file = '~/.config/tmux/styles.conf', -- re-source styles when colors change
-		lighter_shade = lighter_shade, -- inactive pane bg: percent lighter than active, effectively the color of the entire terminal
+		lighter_shade = lighter_shade,     -- inactive pane bg: percent lighter than active, effectively the color of the entire terminal
 		-- Extra highlight groups to set to dim_bg on FocusLost (avoids flicker
 		-- vs bg='none' since Neovim can redraw before FocusGained fires)
 		focus_lost_highlights = {
@@ -55,17 +71,24 @@ function M.setup()
 		},
 	})
 
-	-- Sync terminal background to the inactive pane color via OSC 11.
+	-- Sync terminal background via OSC 11.
+	-- tmux_bg: 'active' uses Normal bg; 'inactive' (default) uses dimmed bg.
 	-- This way when nvim goes transparent on FocusLost, the terminal bg
-	-- shows through as the dimmed inactive color — matching tmux.
+	-- shows through as the chosen color — matching tmux.
 	-- Also cache the color so wezterm can read it on cold start.
 	local bg_cache_path = vim.fn.expand('~/.local/state/wezterm/bg-color.txt')
 	local function sync_terminal_bg()
-		local dim_bg = tcs_config.get_color_mapping().normal_lighter.bg
-		if not dim_bg or dim_bg == 'default' then
+		local mapping = tcs_config.get_color_mapping()
+		local bg
+		if tmux_bg == 'active' then
+			bg = mapping.normal.bg
+		else
+			bg = mapping.normal_lighter.bg
+		end
+		if not bg or bg == 'default' then
 			return
 		end
-		local osc = string.format('\027]11;%s\027\\', dim_bg)
+		local osc = string.format('\027]11;%s\027\\', bg)
 		if vim.env.TMUX then
 			osc = string.format('\027Ptmux;\027%s\027\\', osc)
 		end
@@ -77,7 +100,7 @@ function M.setup()
 		end
 		local f = io.open(bg_cache_path, 'w')
 		if f then
-			f:write(dim_bg)
+			f:write(bg)
 			f:close()
 		end
 	end
@@ -132,11 +155,13 @@ function M.setup()
 			end,
 		})
 
-		-- Dim SignColumn in inactive windows (some colorschemes give it its own bg)
+		-- Dim SignColumn and LineNr in inactive windows (some colorschemes give them their own bg)
 		local sc_hl = vim.api.nvim_get_hl(0, { name = 'SignColumn' })
 		vim.api.nvim_set_hl(0, 'SignColumnNC', vim.tbl_extend('force', sc_hl, { bg = dim_bg }))
+		local ln_hl = vim.api.nvim_get_hl(0, { name = 'LineNr' })
+		vim.api.nvim_set_hl(0, 'LineNrNC', vim.tbl_extend('force', ln_hl, { bg = dim_bg }))
 
-		local wh = 'Normal:NormalNC,SignColumn:SignColumnNC'
+		local wh = 'Normal:NormalNC,SignColumn:SignColumnNC,LineNr:LineNrNC'
 		local function set_inactive_wh(win)
 			if vim.api.nvim_win_is_valid(win) and vim.wo[win].winhighlight == '' then
 				vim.wo[win].winhighlight = wh
@@ -228,7 +253,8 @@ function M.setup()
 					selected_fg_cache = nil
 				end
 				if close_btn_fg_cache then
-					local close_sel = vim.api.nvim_get_hl(0, { name = 'BufferLineCloseButtonSelected' })
+					local close_sel = vim.api.nvim_get_hl(0,
+						{ name = 'BufferLineCloseButtonSelected' })
 					close_sel.fg = close_btn_fg_cache
 					vim.api.nvim_set_hl(0, 'BufferLineCloseButtonSelected', close_sel)
 					close_btn_fg_cache = nil
