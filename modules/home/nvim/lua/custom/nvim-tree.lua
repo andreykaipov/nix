@@ -286,6 +286,41 @@ function M.setup()
 		},
 	})
 
+	-- Hide bufferline when there's only one buffer AND NvimTree is closed.
+	-- Show it whenever NvimTree is open (for the Explorer offset) or multiple buffers exist.
+	local function update_showtabline()
+		local nvimtree_open = false
+		for _, win in ipairs(vim.api.nvim_list_wins()) do
+			if vim.api.nvim_win_get_config(win).relative == '' then
+				local buf = vim.api.nvim_win_get_buf(win)
+				if vim.bo[buf].filetype == 'NvimTree' then
+					nvimtree_open = true
+					break
+				end
+			end
+		end
+		if nvimtree_open then
+			vim.o.showtabline = 2
+			return
+		end
+		local listed = 0
+		for _, b in ipairs(vim.api.nvim_list_bufs()) do
+			if vim.bo[b].buflisted then
+				listed = listed + 1
+				if listed > 1 then
+					vim.o.showtabline = 2
+					return
+				end
+			end
+		end
+		vim.o.showtabline = 0
+	end
+	vim.api.nvim_create_autocmd({ 'BufEnter', 'BufWinEnter', 'BufAdd', 'BufDelete', 'FileType' }, {
+		group = vim.g.user.event,
+		callback = function() vim.schedule(update_showtabline) end,
+	})
+	update_showtabline()
+
 	-- Scroll through bufferline tabs with mouse wheel when hovering the tab bar
 	local function tabline_scroll(direction)
 		return function()
@@ -327,12 +362,17 @@ function M.setup()
 	vim.api.nvim_create_autocmd('WinResized', {
 		group = vim.g.user.event,
 		callback = function()
+			local max_width = math.floor(vim.o.columns * 0.5)
 			for _, win in ipairs(vim.v.event.windows or {}) do
 				if vim.api.nvim_win_is_valid(win) then
 					local buf = vim.api.nvim_win_get_buf(win)
 					if vim.bo[buf].filetype == 'NvimTree' then
-						nvim_tree_width = vim.api.nvim_win_get_width(win)
-						save_width(nvim_tree_width)
+						local w = vim.api.nvim_win_get_width(win)
+						-- Ignore unreasonable widths (e.g. full-screen from directory hijack)
+						if w >= 10 and w <= max_width then
+							nvim_tree_width = w
+							save_width(nvim_tree_width)
+						end
 					end
 				end
 			end
@@ -360,7 +400,10 @@ function M.setup()
 		local api = require('nvim-tree.api')
 		api.tree.toggle()
 		-- defer to let nvim-tree finish rendering before we resize
-		vim.defer_fn(restore_nvimtree_width, 50)
+		vim.defer_fn(function()
+			restore_nvimtree_width()
+			update_showtabline()
+		end, 50)
 	end, { desc = 'File explorer (sidebar)' })
 end
 
