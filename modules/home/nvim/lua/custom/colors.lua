@@ -6,6 +6,7 @@ function M.setup()
 	MiniDeps.add('oxfist/night-owl.nvim')
 	MiniDeps.add('EdenEast/nightfox.nvim')
 	MiniDeps.add('olimorris/onedarkpro.nvim')
+	require('onedarkpro').setup({ options = { cursorline = true } }) -- why is cursorline false by default???
 	MiniDeps.add('projekt0n/github-nvim-theme')
 	MiniDeps.add('andreykaipov/tmux-colorscheme-sync.nvim')
 	MiniDeps.add('bluz71/vim-moonfly-colors')
