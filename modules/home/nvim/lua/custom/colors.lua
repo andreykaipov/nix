@@ -20,7 +20,7 @@ function M.setup()
 	-- Tell tmux style overrides and re-source styles so %if conditionals re-evaluate.
 	-- The plugin also sources styles.conf on ColorScheme, but that may not fire on
 	-- initial setup, so this explicit source ensures the options always take effect.
-	if vim.env.TMUX then
+	if vim.env.TMUX and vim.fn.executable('tmux') == 1 then
 		vim.fn.system({ 'tmux', 'set-option', '-g', '@nvim_status_bg', tmux_bg })
 		vim.fn.system({ 'tmux', 'set-option', '-g', '@nvim_pane_style', tmux.pane or 'red' })
 		vim.fn.system({ 'tmux', 'set-option', '-g', '@nvim_pane_border_style', tmux.border or 'blue' })
