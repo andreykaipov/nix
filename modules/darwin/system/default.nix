@@ -59,7 +59,8 @@
   security.pam.services.sudo_local.watchIdAuth = true;
   security.pam.services.sudo_local.reattach = true;
   security.sudo.extraConfig = ''
-    Defaults timestamp_timeout=60
+    Defaults timestamp_timeout=120
+    Defaults !tty_tickets
   '';
 
   # nix-darwin only executes well-known activation script names. Custom names
