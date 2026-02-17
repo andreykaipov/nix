@@ -1,3 +1,4 @@
-modules/home/bin/* linguist-vendored
+apps/*/* linguist-detectable=false
+modules/home/bin/* linguist-detectable=false
+modules/home/nvim/lua/custom/*.lua linguist-detectable=false
 modules/home/shell/config/p10k.zsh linguist-vendored
-apps/*/* linguist-vendored
