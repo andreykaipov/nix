@@ -61,6 +61,7 @@
   security.sudo.extraConfig = ''
     Defaults timestamp_timeout=120
     Defaults !tty_tickets
+    ${host.username} ALL=(ALL:ALL) NOPASSWD: /run/current-system/sw/bin/darwin-rebuild, /run/current-system/sw/bin/nix
   '';
 
   # nix-darwin only executes well-known activation script names. Custom names
