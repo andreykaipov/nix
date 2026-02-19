@@ -64,12 +64,7 @@ function M.setup()
 		lighter_shade = lighter_shade,     -- inactive pane bg: percent lighter than active, effectively the color of the entire terminal
 		-- Extra highlight groups to set to dim_bg on FocusLost (avoids flicker
 		-- vs bg='none' since Neovim can redraw before FocusGained fires)
-		focus_lost_highlights = {
-			'SignColumn',
-			'SignColumnNC',
-			'NvimTreeNormal',
-			'NvimTreeNormalNC',
-		},
+		manage_focus = false, -- we handle FocusLost/FocusGained ourselves below
 	})
 
 	-- Sync terminal background via OSC 11.
@@ -162,14 +157,30 @@ function M.setup()
 		local ln_hl = vim.api.nvim_get_hl(0, { name = 'LineNr' })
 		vim.api.nvim_set_hl(0, 'LineNrNC', vim.tbl_extend('force', ln_hl, { bg = dim_bg }))
 
+		-- Dim mini.diff sign highlights so git gutter signs match the inactive bg
+		local diff_sign_groups = { 'MiniDiffSignAdd', 'MiniDiffSignChange', 'MiniDiffSignDelete' }
+		local function create_diff_nc_variants()
+			for _, name in ipairs(diff_sign_groups) do
+				local hl = vim.api.nvim_get_hl(0, { name = name, link = false })
+				vim.api.nvim_set_hl(0, name .. 'NC', vim.tbl_extend('force', hl, { bg = dim_bg }))
+			end
+		end
+		create_diff_nc_variants()
+
 		local wh = 'Normal:NormalNC,SignColumn:SignColumnNC,LineNr:LineNrNC'
+			.. ',MiniDiffSignAdd:MiniDiffSignAddNC'
+			.. ',MiniDiffSignChange:MiniDiffSignChangeNC'
+			.. ',MiniDiffSignDelete:MiniDiffSignDeleteNC'
+		local function is_our_wh(s)
+			return s == '' or s:find('^Normal:NormalNC') ~= nil
+		end
 		local function set_inactive_wh(win)
-			if vim.api.nvim_win_is_valid(win) and vim.wo[win].winhighlight == '' then
+			if vim.api.nvim_win_is_valid(win) and is_our_wh(vim.wo[win].winhighlight) then
 				vim.wo[win].winhighlight = wh
 			end
 		end
 		local function clear_active_wh(win)
-			if vim.api.nvim_win_is_valid(win) and vim.wo[win].winhighlight == wh then
+			if vim.api.nvim_win_is_valid(win) and is_our_wh(vim.wo[win].winhighlight) then
 				vim.wo[win].winhighlight = ''
 			end
 		end
@@ -200,10 +211,13 @@ function M.setup()
 			refresh_scrollview()
 		end
 
+		-- Recreate NC variants once mini.diff initializes (covers
+		-- startup race where git.lua loads after colors.lua).
 		vim.api.nvim_create_autocmd('User', {
 			group = group,
-			pattern = 'DimInactiveSplitsResync',
-			callback = resync_all_windows,
+			pattern = 'MiniDiffUpdated',
+			once = true,
+			callback = create_diff_nc_variants,
 		})
 		vim.api.nvim_create_autocmd({ 'WinEnter', 'WinLeave' }, {
 			group = group,
@@ -219,8 +233,23 @@ function M.setup()
 		vim.api.nvim_create_autocmd('FocusLost', {
 			group = group,
 			callback = function()
-				resync_all_windows()
+				-- Set all highlight groups to dim_bg so the frame tmux
+				-- caches is uniformly dimmed. (Absorbs the plugin's
+				-- FocusLost logic that we cleared above.)
+				vim.api.nvim_set_hl(0, 'Normal', { bg = dim_bg })
+				vim.api.nvim_set_hl(0, 'NormalNC', { bg = dim_bg })
+				vim.api.nvim_set_hl(0, 'LineNr', { fg = ln_hl.fg, bg = dim_bg })
+				vim.api.nvim_set_hl(0, 'SignColumn', vim.tbl_extend('force', sc_hl, { bg = dim_bg }))
+				vim.api.nvim_set_hl(0, 'SignColumnNC', vim.tbl_extend('force', sc_hl, { bg = dim_bg }))
+				-- Dim ALL windows (including current) so tmux caches an
+				-- all-dimmed frame. This prevents the flicker where tmux
+				-- shows the old "active" window from the cached frame
+				-- before FocusGained fires and moves the cursor.
+				for _, win in ipairs(vim.api.nvim_list_wins()) do
+					set_inactive_wh(win)
+				end
 				set_nvimtree_bg(dim_bg)
+				refresh_scrollview()
 				local vis = vim.api.nvim_get_hl(0, { name = 'BufferLineBufferVisible' })
 				local sel = vim.api.nvim_get_hl(0, { name = 'BufferLineBufferSelected' })
 				if sel.fg then
@@ -239,10 +268,21 @@ function M.setup()
 			end,
 		})
 		-- On FocusGained, also restore highlight groups the plugin may have changed.
+		-- The @nav_dir wincmd and highlight restore MUST be in a single callback
+		-- to avoid an intermediate redraw between them (which causes flicker).
 		vim.api.nvim_create_autocmd('FocusGained', {
 			group = group,
 			callback = function()
+				-- 1. Move cursor to edge split if entering from tmux.
+				-- Must happen first so resync highlights the correct window.
+				require('custom.navigation').apply_tmux_nav_dir()
+				-- 2. Restore all highlight groups in one shot.
+				-- (Absorbs the plugin's FocusGained logic that we cleared.)
+				local normal_hl = vim.api.nvim_get_hl(0, { name = 'Normal' })
+				normal_hl.bg = normal_bg
+				vim.api.nvim_set_hl(0, 'Normal', normal_hl)
 				vim.api.nvim_set_hl(0, 'NormalNC', { bg = dim_bg })
+				vim.api.nvim_set_hl(0, 'LineNr', ln_hl)
 				vim.api.nvim_set_hl(0, 'SignColumn', sc_hl)
 				vim.api.nvim_set_hl(0, 'SignColumnNC', vim.tbl_extend('force', sc_hl, { bg = dim_bg }))
 				apply_nvimtree_dim()
@@ -260,6 +300,7 @@ function M.setup()
 					vim.api.nvim_set_hl(0, 'BufferLineCloseButtonSelected', close_sel)
 					close_btn_fg_cache = nil
 				end
+				-- 3. Resync winhighlight for all windows now that cursor + hls are correct.
 				resync_all_windows()
 			end,
 		})
