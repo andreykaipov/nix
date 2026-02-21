@@ -175,7 +175,7 @@ function M.setup()
 			.. ',MiniDiffSignChange:MiniDiffSignChangeNC'
 			.. ',MiniDiffSignDelete:MiniDiffSignDeleteNC'
 		local function is_our_wh(s)
-			return s == '' or s:find('^Normal:NormalNC') ~= nil
+			return s == '' or s == wh
 		end
 		local function set_inactive_wh(win)
 			if vim.api.nvim_win_is_valid(win) and is_our_wh(vim.wo[win].winhighlight) then
@@ -239,6 +239,9 @@ function M.setup()
 				-- Hide cursor so tmux caches a cursorless frame.
 				-- Restored on BufEnter in nvim-tree.lua.
 				vim.o.guicursor = 'a:CursorHidden'
+				-- Undraw indentscope — it only redraws on CursorMoved/TextChanged,
+				-- so leaving to tmux (no WinLeave) leaves the solid line visible.
+				MiniIndentscope.undraw()
 				-- Set all highlight groups to dim_bg so the frame tmux
 				-- caches is uniformly dimmed.
 				vim.api.nvim_set_hl(0, 'Normal', { bg = dim_bg })
@@ -310,6 +313,9 @@ function M.setup()
 				-- for the current buffer to let other handlers run
 				-- (e.g. nvim-tree.lua's guicursor restore).
 				vim.api.nvim_exec_autocmds('BufEnter', { buffer = 0 })
+				-- 5. Redraw indentscope (undone on FocusLost).
+				-- CursorMoved doesn't fire on FocusGained alone.
+				vim.api.nvim_exec_autocmds('CursorMoved', { buffer = 0 })
 			end,
 		})
 
