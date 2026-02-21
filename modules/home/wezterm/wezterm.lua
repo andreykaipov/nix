@@ -63,9 +63,10 @@ config.mouse_bindings = {
 }
 
 config.keys = {
-	-- Cmd+W / Cmd+Shift+T → F1/F2 so they don't shadow Ctrl-W or Alt-T
+	-- Cmd+W / Cmd+Shift+T / Cmd+S → F1/F2/F3 so they don't shadow Ctrl-W, Alt-T, or get swallowed
 	{ key = "w",          mods = "SUPER",       action = wezterm.action.SendKey({ key = "F1" }) },
 	{ key = "t",          mods = "SUPER|SHIFT", action = wezterm.action.SendKey({ key = "F2" }) },
+	{ key = "s",          mods = "SUPER",       action = wezterm.action.SendKey({ key = "F3" }) },
 	-- Disable WezTerm's default Alt+Arrow bindings so they pass through to tmux/nvim
 	{ key = "LeftArrow",  mods = "ALT",   action = wezterm.action.SendKey({ key = "LeftArrow", mods = "ALT" }) },
 	{ key = "RightArrow", mods = "ALT",   action = wezterm.action.SendKey({ key = "RightArrow", mods = "ALT" }) },

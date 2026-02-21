@@ -62,6 +62,9 @@ function M.setup()
 	vim.g.is_posix = 1
 	vim.opt.clipboard = 'unnamedplus' -- share system clipboard
 
+	-- Cmd+S to save (WezTerm sends F3, see wezterm.lua)
+	vim.keymap.set({ 'n', 'i', 'v' }, '<F3>', '<Cmd>wall<CR>', { desc = 'Save all files' })
+
 	-- Disable netrw in favor of nvim-tree sidebar
 	vim.g.loaded_netrw = 1
 	vim.g.loaded_netrwPlugin = 1
