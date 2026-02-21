@@ -16,15 +16,12 @@ in
     lazygit
   ];
 
-  # Set per-repo hooksPath for the nix repo so our pre-commit hook
-  # encrypts zshenv.work to nix-secrets on commit.
-  # The hook is named descriptively in the repo (encrypt-secret-env) but
-  # symlinked as pre-commit so git recognises it.
+  # Point the nix repo's hooks at our hooks directory.
+  # The pre-commit dispatcher there runs all sibling scripts automatically,
+  # so new hooks can be added as separate files.
   home.activation.setNixRepoHooksPath = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-    hooks_dir="${host.gitRoot}/.git/hooks"
     if [ -d "${host.gitRoot}/.git" ]; then
-      mkdir -p "$hooks_dir"
-      ln -sf "${host.gitRoot}/modules/home/git/hooks/encrypt-secret-env" "$hooks_dir/pre-commit"
+      ${pkgs.git}/bin/git -C "${host.gitRoot}" config core.hooksPath "${host.gitRoot}/modules/home/git/hooks"
     fi
   '';
 

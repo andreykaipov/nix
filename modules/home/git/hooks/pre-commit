@@ -1,0 +1,9 @@
+#!/bin/sh
+#
+# Pre-commit dispatcher. Add new hooks below as needed.
+
+set -eu
+
+dir="$(cd "$(dirname "$0")" && pwd)"
+
+"$dir/encrypt-secret-env"
