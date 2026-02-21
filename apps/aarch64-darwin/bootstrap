@@ -264,6 +264,7 @@ encrypt_host_key() {
   git_commit -m "Add ${key_name}"
 
   printf "${yellow}Pushing to nix-secrets...${reset}\n"
+  git pull --rebase
   if git push; then
     printf "${green}Pushed to nix-secrets!${reset}\n"
   else
