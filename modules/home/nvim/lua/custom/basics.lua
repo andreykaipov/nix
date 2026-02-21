@@ -4,14 +4,16 @@
 local M = {}
 
 function M.setup()
-	local user = vim.g.user or {}
-	user.event = 'UserGroup'
-	vim.g.user = user
+	vim.g.user = {
+		leader = ' ',
+		event = 'UserGroup',
+		guicursor = 'n-v-c-sm:block,i-ci-ve:ver25,r-cr-o:hor20,t:block-blinkon500-blinkoff500-TermCursor',
+	}
 
-	vim.api.nvim_create_augroup(user.event, {})
+	vim.api.nvim_create_augroup(vim.g.user.event, {})
 
 	-- Leader key (must be set before mini.basics so it doesn't override)
-	vim.g.mapleader = user.leader or ' '
+	vim.g.mapleader = vim.g.user.leader
 
 	-- Sensible defaults (undo, mouse, etc.)
 	-- Must come before our overrides so we can customize on top.
@@ -30,7 +32,7 @@ function M.setup()
 
 	vim.o.number = true
 	vim.o.relativenumber = true
-	vim.o.scrolloff = user.scrolloff or 20
+	vim.o.scrolloff = vim.g.user.scrolloff or 20
 	vim.o.winborder = 'rounded'
 	vim.o.signcolumn = 'auto:2-5' -- so new gutter signs don't move the text
 	vim.o.equalalways = false     -- don't auto-resize windows when opening/closing splits
@@ -39,6 +41,7 @@ function M.setup()
 
 	vim.o.cursorline = true
 	vim.o.cursorlineopt = 'both' -- highlight entire line including line number
+	vim.o.guicursor = vim.g.user.guicursor
 
 	-- vim.o.ignorecase = true
 	-- vim.o.smartcase = true

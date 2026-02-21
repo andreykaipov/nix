@@ -110,6 +110,9 @@ function M.setup()
 
 		vim.api.nvim_set_hl(0, 'NormalNC', { bg = dim_bg })
 
+		-- Transparent cursor highlight for FocusLost cursor hiding
+		vim.api.nvim_set_hl(0, 'CursorHidden', { blend = 100, nocombine = true })
+
 		-- NvimTree: match editor bg when active, dim when inactive.
 		-- NvimTree maps Normal:NvimTreeNormal and NormalNC:NvimTreeNormalNC
 		-- in its winhighlight.
@@ -233,9 +236,11 @@ function M.setup()
 		vim.api.nvim_create_autocmd('FocusLost', {
 			group = group,
 			callback = function()
+				-- Hide cursor so tmux caches a cursorless frame.
+				-- Restored on BufEnter in nvim-tree.lua.
+				vim.o.guicursor = 'a:CursorHidden'
 				-- Set all highlight groups to dim_bg so the frame tmux
-				-- caches is uniformly dimmed. (Absorbs the plugin's
-				-- FocusLost logic that we cleared above.)
+				-- caches is uniformly dimmed.
 				vim.api.nvim_set_hl(0, 'Normal', { bg = dim_bg })
 				vim.api.nvim_set_hl(0, 'NormalNC', { bg = dim_bg })
 				vim.api.nvim_set_hl(0, 'LineNr', { fg = ln_hl.fg, bg = dim_bg })
@@ -277,7 +282,6 @@ function M.setup()
 				-- Must happen first so resync highlights the correct window.
 				require('custom.navigation').apply_tmux_nav_dir()
 				-- 2. Restore all highlight groups in one shot.
-				-- (Absorbs the plugin's FocusGained logic that we cleared.)
 				local normal_hl = vim.api.nvim_get_hl(0, { name = 'Normal' })
 				normal_hl.bg = normal_bg
 				vim.api.nvim_set_hl(0, 'Normal', normal_hl)
@@ -302,6 +306,10 @@ function M.setup()
 				end
 				-- 3. Resync winhighlight for all windows now that cursor + hls are correct.
 				resync_all_windows()
+				-- 4. The noautocmd wincmd suppressed BufEnter, so fire it
+				-- for the current buffer to let other handlers run
+				-- (e.g. nvim-tree.lua's guicursor restore).
+				vim.api.nvim_exec_autocmds('BufEnter', { buffer = 0 })
 			end,
 		})
 

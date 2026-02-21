@@ -339,21 +339,13 @@ function M.setup()
 
 	-- Use a thin line cursor in NvimTree instead of a block
 	-- To hide entirely: 'a:NvimTreeHiddenCursor' with highlight { blend = 100, nocombine = true }
-	local saved_guicursor
 	vim.api.nvim_create_autocmd('BufEnter', {
 		group = vim.g.user.event,
 		callback = function()
 			if vim.bo.filetype == 'NvimTree' then
-				saved_guicursor = vim.o.guicursor
 				vim.o.guicursor = 'a:ver1'
-			end
-		end,
-	})
-	vim.api.nvim_create_autocmd('BufLeave', {
-		group = vim.g.user.event,
-		callback = function()
-			if vim.bo.filetype == 'NvimTree' and saved_guicursor then
-				vim.o.guicursor = saved_guicursor
+			else
+				vim.o.guicursor = vim.g.user.guicursor
 			end
 		end,
 	})
