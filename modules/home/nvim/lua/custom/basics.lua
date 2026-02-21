@@ -4,11 +4,10 @@
 local M = {}
 
 function M.setup()
-	vim.g.user = {
-		leader = ' ',
+	vim.g.user = vim.tbl_deep_extend('keep', vim.g.user or {}, {
 		event = 'UserGroup',
 		guicursor = 'n-v-c-sm:block,i-ci-ve:ver25,r-cr-o:hor20,t:block-blinkon500-blinkoff500-TermCursor',
-	}
+	})
 
 	vim.api.nvim_create_augroup(vim.g.user.event, {})
 
