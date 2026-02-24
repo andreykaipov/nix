@@ -67,6 +67,7 @@ config.keys = {
 	{ key = "w",          mods = "SUPER",       action = wezterm.action.SendKey({ key = "F1" }) },
 	{ key = "t",          mods = "SUPER|SHIFT", action = wezterm.action.SendKey({ key = "F2" }) },
 	{ key = "s",          mods = "SUPER",       action = wezterm.action.SendKey({ key = "F3" }) },
+	{ key = "f",          mods = "SUPER|SHIFT", action = wezterm.action.SendKey({ key = "F4" }) },
 	-- Disable WezTerm's default Alt+Arrow bindings so they pass through to tmux/nvim
 	{ key = "LeftArrow",  mods = "ALT",   action = wezterm.action.SendKey({ key = "LeftArrow", mods = "ALT" }) },
 	{ key = "RightArrow", mods = "ALT",   action = wezterm.action.SendKey({ key = "RightArrow", mods = "ALT" }) },
