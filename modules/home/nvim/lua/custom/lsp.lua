@@ -63,10 +63,29 @@ function M.setup()
 	-- See :help MiniCompletion.config
 	require('mini.completion').setup({
 		lsp_completion = {
-			source_func = 'completefunc',
+			source_func = 'omnifunc',
 			auto_setup = false,
 		},
+		delay = { completion = 100, info = 100, signature = 50 },
 	})
+
+	-- Tab: trigger completion, or cycle through items, or insert a tab
+	vim.keymap.set('i', '<Tab>', function()
+		if vim.fn.pumvisible() == 1 then
+			return '<C-n>'
+		end
+		local col = vim.fn.col('.') - 1
+		if col == 0 or vim.fn.getline('.'):sub(col, col):match('%s') then
+			return '<Tab>'
+		elseif #vim.lsp.get_clients({ bufnr = 0 }) > 0 then
+			return '<C-x><C-o>'
+		else
+			return '<Tab>'
+		end
+	end, { expr = true, noremap = true })
+	vim.keymap.set('i', '<S-Tab>', function()
+		return vim.fn.pumvisible() == 1 and '<C-p>' or '<S-Tab>'
+	end, { expr = true, noremap = true })
 	vim.keymap.set('i', '<C-j>', function()
 		return vim.fn.pumvisible() == 1 and '<C-n>' or '<C-j>'
 	end, { expr = true, noremap = true })
