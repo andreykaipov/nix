@@ -37,6 +37,12 @@ function M.setup()
 	require('mini.notify').setup({
 		lsp_progress = { enable = false },
 	})
+	vim.keymap.set('n', '<leader>nn', function()
+		MiniNotify.show_history()
+		vim.bo.buftype = ''
+		vim.bo.bufhidden = 'wipe'
+		vim.bo.modified = false
+	end, { desc = 'Notification history' })
 
 	-- See :help which-key.nvim-which-key-setup
 	MiniDeps.add('folke/which-key.nvim')
