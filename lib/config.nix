@@ -8,6 +8,8 @@ let
   inherit (inputs) nixpkgs nixpkgs-stable;
   inherit (inputs) home-manager darwin;
   inherit (nixpkgs) lib;
+
+  overlays = import ../overlays { inherit inputs; };
 in
 final: _: {
   # Builds configurations for a given kind (home, darwin, linux) across all matching hosts
@@ -24,9 +26,7 @@ final: _: {
             import pkgs {
               inherit system;
               config.allowUnfree = true;
-              overlays = [
-                inputs.llm-agents.overlays.default
-              ];
+              inherit overlays;
             };
           pkgs = unfree nixpkgs;
           pkgs-stable = unfree nixpkgs-stable;
@@ -59,7 +59,8 @@ final: _: {
                   # https://github.com/nix-community/home-manager/issues/7935
                   manual.manpages.enable = false;
                 }
-              ] ++ (host.extraHomeModules or []);
+              ]
+              ++ (host.extraHomeModules or [ ]);
             };
             linux = { };
             darwin = {
@@ -70,7 +71,8 @@ final: _: {
               modules = [
                 ../modules/darwin
                 { nixpkgs.hostPlatform = system; }
-              ] ++ (host.extraDarwinModules or []);
+              ]
+              ++ (host.extraDarwinModules or [ ]);
             };
           };
         in

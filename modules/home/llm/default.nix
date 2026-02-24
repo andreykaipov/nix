@@ -9,6 +9,7 @@
     llm-agents.claude-code
     llm-agents.opencode
     llm-agents.crush
+    spec-kit
   ];
 
   # Claude Code: ~/.claude/settings.json
