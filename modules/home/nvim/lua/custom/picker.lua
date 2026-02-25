@@ -13,6 +13,20 @@ function M.setup()
 		},
 	})
 
+	-- Allow Cmd+V (terminal paste) to work in mini.pick
+	local orig_paste = vim.paste
+	vim.paste = function(lines, phase)
+		if not MiniPick.is_picker_active() then
+			return orig_paste(lines, phase)
+		end
+		local text = table.concat(lines, ''):gsub('[\n\t]', ' ')
+		local query = MiniPick.get_picker_query() or {}
+		for i = 1, vim.fn.strchars(text) do
+			table.insert(query, vim.fn.strcharpart(text, i - 1, 1))
+		end
+		MiniPick.set_picker_query(query)
+	end
+
 	-- See available pickers
 	-- :help MiniPick.builtin
 	-- :help MiniExtra.pickers
