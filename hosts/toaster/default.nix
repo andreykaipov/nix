@@ -8,4 +8,13 @@
   extraDarwinModules = [
     { homebrew.casks = [ "cursor" ]; }
   ];
+  extraHomeModules = [
+    (
+      { pkgs, host, ... }:
+      {
+        home.packages = [ pkgs.uv ];
+        programs.zsh.sessionVariables.OPENCODE_CONFIG = "${host.gitRoot}/hosts/${host.hostname}/opencode.json";
+      }
+    )
+  ];
 }

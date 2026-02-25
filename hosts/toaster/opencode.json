@@ -1,0 +1,19 @@
+{
+    "$schema": "https://opencode.ai/config.json",
+    "mcp": {
+        "atlassian": {
+            "enabled": true
+        }
+    },
+    "tools": {
+        "atlassian_jira_search": true,
+        "atlassian_jira_get_issue": true,
+        "atlassian_jira_get_issue_comments": true,
+        "atlassian_jira_add_comment": true,
+        "atlassian_jira_update_issue": true,
+        "atlassian_jira_transition_issue": true,
+        "atlassian_confluence_search": true,
+        "atlassian_confluence_get_page": true,
+        "atlassian_confluence_get_page_children": true
+    }
+}

@@ -4,6 +4,24 @@
     "plugin": [
         "opencode-gemini-auth@latest"
     ],
+    "mcp": {
+        "atlassian": {
+            "type": "local",
+            "command": ["uvx", "mcp-atlassian"],
+            "enabled": false,
+            "environment": {
+                "JIRA_URL": "{env:ATLASSIAN_URL}",
+                "JIRA_USERNAME": "{env:ATLASSIAN_USERNAME}",
+                "JIRA_API_TOKEN": "{env:ATLASSIAN_API_TOKEN}",
+                "CONFLUENCE_URL": "{env:ATLASSIAN_WIKI_URL}/wiki",
+                "CONFLUENCE_USERNAME": "{env:ATLASSIAN_USERNAME}",
+                "CONFLUENCE_API_TOKEN": "{env:ATLASSIAN_API_TOKEN}"
+            }
+        }
+    },
+    "tools": {
+        "atlassian_*": false
+    },
     "provider": {
         "amazon-bedrock": {
             "options": {
