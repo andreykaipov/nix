@@ -8,6 +8,8 @@
   home.packages = with pkgs; [
     llm-agents.opencode
     spec-kit
+    terraform-mcp-server
+    slack-mcp-server
   ];
 
   # OpenCode: ~/.config/opencode/
