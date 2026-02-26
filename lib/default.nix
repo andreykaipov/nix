@@ -9,7 +9,7 @@ let
   # auto-discover all .nix files in this directory, excluding this one
   currentFile = baseNameOf __curPos.file;
   files = builtins.attrNames (builtins.readDir ./.);
-  overlayFiles = builtins.filter (f: f != currentFile && lib.hasSuffix ".nix" f) files;
-  overlays = map (f: import ./${f} { inherit inputs; }) overlayFiles;
+  libFiles = builtins.filter (f: f != currentFile && lib.hasSuffix ".nix" f) files;
+  libs = map (f: import ./${f} { inherit inputs; }) libFiles;
 in
-lib.extend (lib.composeManyExtensions overlays)
+lib.extend (lib.composeManyExtensions libs)
