@@ -12,6 +12,10 @@
 #          creates: ~/.config/nvim → ~/gh/nix/modules/home/nvim
 #     e.g. home.file.".ssh/config" = host.symlinkTo ./config;
 #          creates: ~/.ssh/config → ~/gh/nix/modules/home/ssh/config
+#
+#   host.mkLaunchdAgent : { name, interval, ... } -> agent config
+#     Creates a home-manager launchd.agents entry with sensible defaults.
+#     e.g. launchd.agents.foo = host.mkLaunchdAgent { name = "foo"; interval = 1800; };
 host:
 
 { config, lib, ... }:
@@ -30,6 +34,28 @@ in
       in
       {
         source = config.lib.file.mkOutOfStoreSymlink "${host.gitRoot}${relPath}";
+      };
+
+    mkLaunchdAgent =
+      {
+        name,
+        interval,
+        command ? [ "${host.homeDirectory}/bin/${name}" ],
+        extra ? { },
+      }:
+      let
+        logFile = "${host.homeDirectory}/Library/Logs/${name}.log";
+      in
+      {
+        enable = true;
+        config = {
+          Label = name;
+          ProgramArguments = command;
+          StartInterval = interval;
+          StandardOutPath = logFile;
+          StandardErrorPath = logFile;
+        }
+        // extra;
       };
   };
 }
