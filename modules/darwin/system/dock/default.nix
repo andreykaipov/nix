@@ -5,7 +5,7 @@
 
 {
   imports = [
-    ../../../_internal/dock
+    ../../../_internal/dock.nix
   ];
 
   # Dock entries (managed via dockutil)
