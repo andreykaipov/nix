@@ -10,7 +10,7 @@ in
   system = "aarch64-darwin";
   username = "andrey";
   inherit homeDirectory;
-  gitRoot = "${homeDirectory}/gh/nixos-config";
+  gitRoot = "${homeDirectory}/gh/nix";
   extraModules = [
   ];
 }

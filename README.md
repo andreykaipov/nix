@@ -1,6 +1,6 @@
-# nixos-config
+# nix
 
-Nix configuration for my macOS system and home environment.
+Nix configuration for my macOS systems and home environment.
 
 ## Architecture
 
@@ -33,8 +33,8 @@ sudo scutil --set HostName airfryer
 ### 2. Clone and enter the repo
 
 ```sh
-git clone git@github.com:andreykaipov/nixos-config.git ~/gh/nixos-config
-cd ~/gh/nixos-config
+git clone git@github.com:andreykaipov/nix.git ~/gh/nix
+cd ~/gh/nix
 ```
 
 ### 3. Build and switch nix-darwin
@@ -187,7 +187,7 @@ the repo so edits take effect immediately without rebuilding:
 }
 ```
 
-This creates `~/.config/nvim → ~/gh/nixos-config/modules/home/nvim`. The directory name
+This creates `~/.config/nvim → ~/gh/nix/modules/home/nvim`. The directory name
 is derived from the path you pass in (`./.` resolves to the current module's
 directory). See `hosts/extend.nix` for implementation details.
 
