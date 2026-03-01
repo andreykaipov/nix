@@ -1,9 +1,12 @@
 {
+  lib,
   host,
   ...
 }:
 
 {
+  imports = lib.discoverModules ./.;
+
   system = {
     checks.verifyNixPath = false;
     primaryUser = host.username;
