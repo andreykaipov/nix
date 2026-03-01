@@ -1,8 +1,9 @@
 #!/bin/sh -e
 # Bootstrap a fresh macOS machine. Clones the repo, installs Xcode CLT,
 # sets the hostname, generates a host SSH key, uploads it to GitHub,
-# encrypts it into nix-secrets, and commits everything.
-# After this, `nix run .#switch` finishes setup.
+# and commits everything.
+#
+# After this, `nix run .#switch` finishes setup (packages, dotfiles, etc.).
 
 green='\033[1;32m'
 yellow='\033[1;33m'
@@ -13,8 +14,6 @@ export GIT_SSH_COMMAND="ssh -o StrictHostKeyChecking=no -o ControlMaster=no"
 
 repo="$HOME/gh/nix"
 key_dir="$HOME/.ssh"
-secrets_dir="${SECRETS_DIR:-$HOME/gh/nix-secrets}"
-agenix_key="$HOME/.config/agenix/agenix.pem"
 
 # --- helpers ---
 
@@ -93,37 +92,13 @@ set_hostname() {
   printf "${green}Hostname set!${reset}\n"
 }
 
-wait_for_agenix_key() {
-  mkdir -p "$HOME/.config/agenix"
-  chmod 700 "$HOME/.config/agenix"
-  if [ ! -f "$agenix_key" ]; then
-    echo ""
-    printf "${yellow}Place the agenix identity key from 1Password into:${reset}\n"
-    echo "  $agenix_key"
-    echo ""
-    printf "${yellow}Press Enter when you've done that...${reset}\n"
-    read -r
-
-    if [ ! -f "$agenix_key" ]; then
-      printf "${red}agenix identity key not found at $agenix_key${reset}\n"
-      exit 1
-    fi
-  else
-    printf "${green}agenix identity key already exists at $agenix_key${reset}\n"
-  fi
-}
-
 commit_and_push() {
   # Switch remote from HTTPS to SSH (repo was cloned over HTTPS before SSH was set up)
   git remote set-url origin git@github.com:andreykaipov/nix.git
 
-  printf "${yellow}Updating flake.lock...${reset}\n"
-  nix flake update secrets
-  printf "${green}Updated flake.lock!${reset}\n"
-
   printf "${yellow}Committing nix repo changes...${reset}\n"
   git reset --quiet
-  git add flake.lock "hosts/${hostname}/"
+  git add "hosts/${hostname}/"
   if git diff --cached --quiet; then
     printf "${green}Nothing to commit, already up to date${reset}\n"
   else
@@ -208,78 +183,6 @@ setup_host() {
   rm -rf "$HOME/.cache/ssh/sockets/*"
 }
 
-encrypt_host_key() {
-  key_name="${hostname}.pem"
-  key_path="${key_dir}/${key_name}"
-  secret_path="${secrets_dir}/ssh/${key_name}.age"
-
-  if [ ! -f "${key_path}" ]; then
-    printf "${red}No SSH key found at ${key_path}${reset}\n"
-    exit 1
-  fi
-
-  if [ ! -f "${agenix_key}" ]; then
-    printf "${red}agenix identity key not found at ${agenix_key}${reset}\n"
-    exit 1
-  fi
-
-  # Derive recipient (public key) from agenix identity
-  chmod 600 "${agenix_key}"
-  recipient="$(mktemp)"
-  ssh-keygen -y -f "${agenix_key}" > "${recipient}"
-
-  if [ ! -d "${secrets_dir}" ]; then
-    printf "${yellow}nix-secrets not found at ${secrets_dir}, cloning...${reset}\n"
-    git clone git@github.com:andreykaipov/nix-secrets.git "${secrets_dir}"
-  fi
-
-  # Skip if the key hasn't changed since the last encryption
-  if [ -f "${secret_path}" ]; then
-    hash_file="${secrets_dir}/ssh/${key_name}.sha256"
-    current_hash="$(shasum -a 256 "${key_path}" | cut -d' ' -f1)"
-    if [ -f "$hash_file" ] && [ "$(cat "$hash_file")" = "$current_hash" ]; then
-      printf "${green}Secret ${secret_path} already up to date${reset}\n"
-      rm -f "${recipient}"
-      return
-    fi
-  fi
-
-  printf "${yellow}Encrypting ${key_name} into nix-secrets...${reset}\n"
-  mkdir -p "${secrets_dir}/ssh"
-  age -R "${recipient}" -o "${secret_path}" < "${key_path}"
-  printf '%s' "$(shasum -a 256 "${key_path}" | cut -d' ' -f1)" > "${secrets_dir}/ssh/${key_name}.sha256"
-
-  printf "${green}Encrypted to ${secret_path}${reset}\n"
-
-  # Commit and push nix-secrets
-  cd "${secrets_dir}"
-  git reset --quiet
-  git add "ssh/${key_name}.age" "ssh/${key_name}.sha256"
-  if git diff --cached --quiet; then
-    printf "${green}nix-secrets already up to date${reset}\n"
-    rm -f "${recipient}"
-    cd "$repo"
-    return
-  fi
-  git_commit -m "Add ${key_name}"
-
-  printf "${yellow}Pushing to nix-secrets...${reset}\n"
-  git pull --rebase
-  if git push; then
-    printf "${green}Pushed to nix-secrets!${reset}\n"
-  else
-    printf "${red}Push failed for some reason.${reset}\n"
-    printf "${yellow}Either you will need to rebase, or follow the manual steps:${reset}\n"
-    echo "1. Ensure your SSH key is on GitHub: https://github.com/settings/ssh/new"
-    echo "2. Run: ssh-add ~/.ssh/${key_name}"
-    echo "3. Run: rm -rf ~/.cache/ssh/sockets"
-    echo "4. Run: cd ${secrets_dir} && git push"
-  fi
-
-  rm -f "${recipient}"
-  cd "$repo"
-}
-
 # --- main ---
 
 main() {
@@ -300,9 +203,7 @@ main() {
   clone_repo
   install_xcode
   set_hostname
-  wait_for_agenix_key
   setup_host
-  encrypt_host_key
   commit_and_push
 
   echo ""
@@ -310,7 +211,7 @@ main() {
   printf "${green}          Bootstrap complete!${reset}\n"
   echo "======================================="
   echo ""
-  printf "${yellow}  Run the following to finish setup:${reset}\n"
+  printf "${yellow}  Next steps:${reset}\n"
   echo ""
   echo "    cd ~/gh/nix"
   echo "    nix run .#switch"

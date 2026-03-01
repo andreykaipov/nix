@@ -1,5 +1,5 @@
 {
-  description = "Configuration with secrets for MacOS and NixOS";
+  description = "Configuration for MacOS and NixOS";
   inputs = {
     # i'll have the usual
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
@@ -19,11 +19,6 @@
     homebrew-core.flake = false;
     homebrew-cask.url = "github:homebrew/homebrew-cask";
     homebrew-cask.flake = false;
-
-    # secrets
-    agenix.url = "github:ryantm/agenix";
-    secrets.url = "git+ssh://git@github.com/andreykaipov/nix-secrets.git";
-    secrets.flake = false;
 
     # zsh plugins
     zsh-powerlevel10k.url = "github:romkatv/powerlevel10k";

@@ -32,7 +32,6 @@ cd ~/gh/nix && nix run .#switch
 ### Prerequisites
 
 - macOS on Apple Silicon (aarch64-darwin)
-- The agenix identity key from 1Password
 
 ### Step-by-step
 
@@ -49,8 +48,8 @@ won't try to manage the daemon, settings, or garbage collection.
 
 #### 2. Bootstrap
 
-Sets the hostname, generates a per-host SSH key, uploads it to GitHub, and
-encrypts it into nix-secrets — all in one command:
+Sets the hostname, generates a per-host SSH key, and uploads it to GitHub — all
+in one command:
 
 ```sh
 nix run .#bootstrap <host>
@@ -63,12 +62,10 @@ config doesn't exist yet, the script creates one automatically.
 The bootstrap script will:
 
 1. Set the machine hostname
-2. Prompt you to place the agenix identity key into `~/.config/agenix/agenix.pem` (get it from 1Password)
-3. Generate a new host under `hosts`
-4. Generate a per-host SSH key at `~/.ssh/<host>.pem`
+2. Generate a new host under `hosts`
+3. Generate a per-host SSH key at `~/.ssh/<host>.pem`
 4. Upload the public key to GitHub (the `gh` CLI will prompt you)
-5. Encrypt the private key into nix-secrets
-6. Update `flake.lock` and commit these changes back up to `~/gh/nix`
+5. Commit these changes back up to `~/gh/nix`
 
 #### 3a. Build and switch nix-darwin
 
@@ -102,7 +99,7 @@ On the first run, `home-manager` isn't in your PATH yet, so the script
 bootstraps it via `nix run home-manager`. After the first run,
 `home-manager switch --flake .#<hostname>` is available directly.
 
-agenix decrypts the host SSH key from nix-secrets via a LaunchAgent. This
+This
 sets up:
 
 - zsh with powerlevel10k
@@ -121,47 +118,9 @@ Or run both steps at once:
 nix run .#switch
 ```
 
-## Secrets Management
+## Secret Environment Variables
 
-Secrets are managed via [agenix](https://github.com/ryantm/agenix) +
-[agenix-home-manager](https://github.com/ryantm/agenix#home-manager).
-
-| File | Purpose |
-|---|---|
-| `~/.config/agenix/agenix.pem` | age identity key (private, from 1Password) |
-| `~/gh/nix-secrets/` | Encrypted secrets repo (`ssh/<host>.pem.age`, etc.) |
-
-The identity key and its recipient (public key) are **not stored in git**. The
-recipient is derived at runtime from the identity via `ssh-keygen -y -f`.
-
-Any module can declare secrets via `age.secrets`:
-
-```nix
-age.secrets."someapp-token" = {
-  file = "${secrets}/someapp/token.age";
-  path = "${host.homeDirectory}/.config/someapp/token";
-  mode = "600";
-};
-```
-
-### Updating secrets
-
-A utility script is available on `PATH` after the first switch:
-
-```sh
-# Edit a secret in $EDITOR (decrypt → edit → re-encrypt)
-update-agenix-secret ssh/airfryer.pem.age
-
-# Encrypt a plaintext file
-update-agenix-secret ssh/airfryer.pem.age ~/.ssh/airfryer.pem
-
-# Re-encrypt all secrets (e.g. after key rotation)
-update-agenix-secret --rekey
-```
-
-### Secret environment variables
-
-You can store encrypted environment variables that get sourced by zsh on
+You can store secret environment variables that get sourced by zsh on
 shell startup. Create a file named `zshenv.<name>` under
 `modules/home/shell/config/` — for example:
 
@@ -171,18 +130,9 @@ export CORP_API_TOKEN=sk-abc123
 export WORK_NPM_TOKEN=npm_xyz789
 ```
 
-These plaintext files are gitignored. On every `git commit` in this repo, a
-pre-commit hook automatically encrypts any changed `zshenv.*` files into
-`nix-secrets/env/` and pushes — so the encrypted copies are always in sync.
-
-On a fresh machine, `switch` decrypts them back to the same path via agenix, so
-new shells have the variables immediately.
-
-**Adding a new secret env:**
-
-1. Create `modules/home/shell/config/zshenv.<name>` with `export` statements
-2. Commit — the hook encrypts and pushes to nix-secrets
-3. Run `switch` — agenix registers the new secret, zsh sources the file
+These plaintext files are gitignored. They live only on the machine where
+you create them. On shell startup, zsh sources all `zshenv*` files from
+the config directory.
 
 ## Adding a New Host
 
@@ -291,7 +241,7 @@ The `flake.lock` pins every input to a specific revision. Inputs share
 pinned revision can go stale. Update regularly:
 
 ```sh
-# Update everything (nixpkgs, home-manager, agenix, neovim-nightly, etc.)
+# Update everything (nixpkgs, home-manager, neovim-nightly, etc.)
 nix flake update
 
 # Update just nixpkgs (e.g. to pick up a new package version)
@@ -299,9 +249,6 @@ nix flake update nixpkgs
 
 # Update a single input
 nix flake update home-manager
-
-# Update nix-secrets (e.g. after encrypting a new secret on another machine)
-nix flake update secrets
 ```
 
 After updating, rebuild with `nix run .#switch` to activate the new versions.

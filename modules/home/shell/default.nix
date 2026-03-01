@@ -4,37 +4,10 @@
   pkgs,
   lib,
   host,
-  secrets,
   ...
 }:
 
-let
-  envDir = "${secrets}/env";
-  hasEnvDir = builtins.pathExists envDir;
-
-  # Discover all zshenv.*.age files in nix-secrets/env/
-  secretEnvFiles =
-    if hasEnvDir then
-      lib.pipe (builtins.readDir envDir) [
-        (lib.filterAttrs (name: _: lib.hasPrefix "zshenv." name && lib.hasSuffix ".age" name))
-        (lib.mapAttrsToList (name: _: lib.removeSuffix ".age" name))
-      ]
-    else
-      [ ];
-in
 {
-  age.secrets = lib.listToAttrs (
-    map (name: {
-      inherit name;
-      value = {
-        file = "${envDir}/${name}.age";
-        path = "${host.gitRoot}/modules/home/shell/config/${name}";
-        symlink = false;
-        mode = "600";
-      };
-    }) secretEnvFiles
-  );
-
   home.packages = with pkgs; [
     bat
     eza
@@ -74,7 +47,6 @@ in
       export FZF_BASE=${pkgs.fzf}/share/fzf
 
       # Source all zshenv files (zshenv, zshenv.work, etc.) from the config dir.
-      # These are either decrypted by agenix or created locally on disk.
       for f in "$ZDOTDIR"/config/zshenv*; do
         [ -f "$f" ] && source "$f"
       done

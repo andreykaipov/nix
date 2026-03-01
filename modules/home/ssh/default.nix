@@ -1,28 +1,16 @@
 {
   pkgs,
   lib,
-  secrets,
   host,
   ...
 }:
 
 let
   hostKey = "${host.hostname}.pem";
-  hostKeyAge = "${secrets}/ssh/${hostKey}.age";
-  hasHostKey = builtins.pathExists hostKeyAge;
   hasPublicKey = (host.publicKey or "") != "";
 in
 {
   home.packages = with pkgs; [ openssh ];
-
-  age.secrets = lib.optionalAttrs hasHostKey {
-    ${hostKey} = {
-      symlink = false;
-      path = "${host.homeDirectory}/.ssh/${hostKey}";
-      file = hostKeyAge;
-      mode = "600";
-    };
-  };
 
   home.file.".ssh/config".text = ''
     # vim: ft=sshconfig
@@ -52,7 +40,7 @@ in
 
   home.file.".ssh/config.d" = host.symlinkTo ./config.d;
 
-  # Write public key from host config (no symlink needed — private key is decrypted by agenix).
+  # Write public key from host config.
   # force: bootstrap would have already generated a host key before home-manager runs
   # but now we're going to manage it with home-manager, even if it has the same contents
   home.file.".ssh/${hostKey}.pub" = lib.mkIf hasPublicKey {

@@ -16,7 +16,7 @@ final: _: {
         pkgs = inputs.nixpkgs.legacyPackages.${system};
         scriptBin = pkgs.writeScriptBin scriptName ''
           #!/usr/bin/env bash
-          PATH=${pkgs.git}/bin:${pkgs.gh}/bin:${pkgs.age}/bin:$PATH
+          PATH=${pkgs.git}/bin:${pkgs.gh}/bin:$PATH
           echo "Running ${scriptName} for ${system}"
           exec ${inputs.self}/apps/${system}/${scriptName} "$@"
         '';
