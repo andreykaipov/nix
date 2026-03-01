@@ -8,8 +8,8 @@ The configuration is split into two independent layers:
 
 | Layer | Purpose | Command |
 |---|---|---|
-| **nix-darwin** | macOS system config (defaults, homebrew, dock, secrets) | `nix run .#build-switch` |
-| **home-manager** | User environment (shell, git, tmux, neovim, packages) | `nix run .#home-switch` |
+| **nix-darwin** | macOS system config (defaults, homebrew, dock, secrets) | `nix run .#switch-darwin` |
+| **home-manager** | User environment (shell, git, tmux, neovim, packages) | `nix run .#switch-home` |
 
 These are fully independent — changing your shell config doesn't require a darwin rebuild, and vice versa.
 
@@ -43,15 +43,25 @@ This sets up macOS system defaults, homebrew casks, dock layout, and agenix
 secrets:
 
 ```sh
-nix run .#build-switch
+nix run .#switch-darwin
 ```
+
+> **Note:** GUI apps are installed via homebrew casks into `/Applications/`,
+> not through Nix. Home-manager app linking is disabled since GUI apps come
+> from homebrew, not nix packages.
 
 ### 4. Build and switch home-manager
 
 This sets up your shell (zsh), git, ssh, tmux, neovim, and user packages:
 
 ```sh
-nix run .#home-switch
+nix run .#switch-home
+```
+
+Or run both at once:
+
+```sh
+nix run .#switch
 ```
 
 After the first run, `home-manager` is in your PATH (via
@@ -69,18 +79,15 @@ mkdir -p hosts/my-machine
 2. Add a `default.nix`:
 
 ```nix
-{ lib, ... }:
-let
-  homeDirectory = "/Users/myuser";
-in
+{ ... }:
+
 {
   system = "aarch64-darwin";
   username = "myuser";
-  inherit homeDirectory;
-  gitRoot = "${homeDirectory}/gh/nixos-config";
-  extraModules = [];
 }
 ```
+
+`homeDirectory` and `gitRoot` are derived automatically from `system` and `username`.
 
 3. Set the machine's hostname and run the build commands.
 
@@ -92,7 +99,7 @@ The host is auto-discovered — no changes to `flake.nix` needed.
 .
 ├── flake.nix                 # Flake entrypoint: inputs, outputs
 ├── lib/                      # Helper functions (mkConfig, mkApp)
-├── hosts/                    # Per-host config (system, username, homeDirectory, gitRoot)
+├── hosts/                    # Per-host config (system, username)
 │   ├── airfryer/             # macOS host
 │   └── toaster/              # macOS host
 ├── modules/
@@ -108,15 +115,19 @@ The host is auto-discovered — no changes to `flake.nix` needed.
 │   │   ├── system/           # macOS defaults (keyboard, finder, trackpad, security)
 │   │   └── user/             # User account registration
 │   └── home/                 # home-manager modules (user-level)
-│       ├── default.nix       # Main home module: zsh, git, ssh
+│       ├── default.nix       # Hub: imports all home sub-modules
+│       ├── shell/            # zsh + powerlevel10k
+│       ├── git/              # Git config (name, email, signing)
+│       ├── ssh/              # SSH config
 │       ├── packages/         # User packages (dev tools, LSPs, etc.)
 │       ├── tmux/             # tmux configuration
 │       └── nvim/             # Neovim configuration
 └── apps/
     └── aarch64-darwin/       # App scripts (nix run .#<name>)
-        ├── build-switch      # Build and switch nix-darwin
-        ├── home-switch       # Switch home-manager configuration
-        ├── clean             # Garbage collect old generations (>7 days)
+        ├── switch            # Build and switch both darwin + home
+        ├── switch-darwin     # Build and switch nix-darwin
+        ├── switch-home       # Switch home-manager configuration
+        ├── clean             # Garbage collect old generations (>30 days)
         └── rollback          # Roll back to a previous darwin generation
 ```
 
@@ -126,10 +137,13 @@ The host is auto-discovered — no changes to `flake.nix` needed.
 
 ```sh
 # System changes (macOS defaults, homebrew, dock, etc.)
-nix run .#build-switch
+nix run .#switch-darwin
 
 # Home environment changes (shell, packages, dotfiles, etc.)
-nix run .#home-switch
+nix run .#switch-home
+
+# Both at once
+nix run .#switch
 ```
 
 ### Adding a Homebrew cask
@@ -144,7 +158,7 @@ homebrew.casks = [
 ];
 ```
 
-Then `nix run .#build-switch`.
+Then `nix run .#switch-darwin`.
 
 ### Adding a user package
 
@@ -157,12 +171,29 @@ home.packages = with pkgs; [
 ];
 ```
 
-Then `nix run .#home-switch`.
+Then `nix run .#switch-home`.
+
+### Symlinking dotfiles for live editing
+
+Home-manager modules can symlink their `~/.config/<name>` directory back into
+the repo so edits take effect immediately without rebuilding:
+
+```nix
+{ host, ... }:
+
+{
+  xdg.configFile."nvim" = host.symlinkTo ./.;
+}
+```
+
+This creates `~/.config/nvim → ~/gh/nix/modules/home/nvim`. The directory name
+is derived from the path you pass in (`./.` resolves to the current module's
+directory). See `hosts/extend.nix` for implementation details.
 
 ### Garbage collection
 
 ```sh
-nix run .#clean   # removes generations older than 7 days
+nix run .#clean   # removes generations older than 30 days
 ```
 
 ### Rolling back nix-darwin
