@@ -1,9 +1,22 @@
-{ config, pkgs, agenix, secrets, ... }:
-
-let user = "andrey"; in
 {
+  config,
+  pkgs,
+  agenix,
+  secrets,
+  username,
+  homeDirectory,
+  ...
+}:
+
+{
+  imports = [ agenix.darwinModules.default ];
+
+  environment.systemPackages = [
+    agenix.packages."${pkgs.system}".default
+  ];
+
   age.identityPaths = [
-    "/Users/${user}/.ssh/id_ed25519"
+    "${homeDirectory}/.ssh/id_ed25519"
   ];
 
   # Your secrets go here
@@ -19,19 +32,19 @@ let user = "andrey"; in
   #
   # age.secrets."github-ssh-key" = {
   #   symlink = true;
-  #   path = "/Users/${user}/.ssh/id_github";
+  #   path = "${homeDirectory}/.ssh/id_github";
   #   file =  "${secrets}/github-ssh-key.age";
   #   mode = "600";
-  #   owner = "${user}";
+  #   owner = username;
   #   group = "staff";
   # };
 
   # age.secrets."github-signing-key" = {
   #   symlink = false;
-  #   path = "/Users/${user}/.ssh/pgp_github.key";
+  #   path = "${homeDirectory}/.ssh/pgp_github.key";
   #   file =  "${secrets}/github-signing-key.age";
   #   mode = "600";
-  #   owner = "${user}";
+  #   owner = username;
   # };
 
 }

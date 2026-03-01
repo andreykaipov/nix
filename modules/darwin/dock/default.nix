@@ -13,6 +13,10 @@ let
   inherit (pkgs) stdenv dockutil;
 in
 {
+  imports = [ ./settings ];
+
+  environment.systemPackages = [ dockutil ];
+
   options = {
     local.dock = {
       enable = mkOption {
