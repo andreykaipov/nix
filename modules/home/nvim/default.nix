@@ -3,7 +3,7 @@
 , neovim-nightly
 , ...
 }: {
-  xdg.configFile."nvim".source = config.lib.file.mkOutOfStoreSymlink "${config.gitRoot}/home/nvim";
+  xdg.configFile."nvim".source = config.lib.file.mkOutOfStoreSymlink "${config.gitRoot}/modules/home/nvim";
 
   programs.neovim = {
     package = neovim-nightly.packages.${pkgs.system}.default;

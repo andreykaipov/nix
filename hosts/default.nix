@@ -21,9 +21,7 @@ in
   {
     all = hosts';
     darwin = filterAttrs (_: v: strings.hasSuffix "darwin" v.system) hosts';
-    linux = filterAttrs (_: v: strings.hasSuffix "linux" v.system) hosts';
 
     # for lib.mkConfig
-    # TODO: maybe figure out a condition to prune out home-manager managed hosts
     home = hosts';
   }

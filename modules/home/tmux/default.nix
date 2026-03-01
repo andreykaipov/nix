@@ -8,7 +8,7 @@
   #
   # our tmux is spawned by our bootstrap import and will reference the config
   # directly at $XDG_CONFIG_HOME/tmux/core.conf instead
-  xdg.configFile."tmux".source = config.lib.file.mkOutOfStoreSymlink "${config.gitRoot}/home/tmux";
+  xdg.configFile."tmux".source = config.lib.file.mkOutOfStoreSymlink "${config.gitRoot}/modules/home/tmux";
   home.packages = with pkgs; [ tmux ];
 }
 
