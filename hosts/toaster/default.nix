@@ -1,6 +1,8 @@
-{ lib
-, ...
+{
+  lib,
+  ...
 }:
+
 let
   homeDirectory = "/Users/andrey";
 in

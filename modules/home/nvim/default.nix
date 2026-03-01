@@ -5,6 +5,7 @@
   neovim-nightly,
   ...
 }:
+
 {
   xdg.configFile."nvim".source =
     config.lib.file.mkOutOfStoreSymlink "${host.gitRoot}/modules/home/nvim";

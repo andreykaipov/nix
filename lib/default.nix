@@ -2,6 +2,7 @@
   self,
   ...
 }:
+
 let
   inherit (self) inputs;
   inherit (inputs) nixpkgs nixpkgs-stable;
