@@ -1,7 +1,5 @@
 {
-  config,
-  username,
-  homeDirectory,
+  host,
   ...
 }:
 
@@ -22,14 +20,14 @@
   # Dock entries (managed via dockutil)
   local.dock = {
     enable = true;
-    inherit username;
+    username = host.username;
     entries = [
       { path = "/Applications/WezTerm.app/"; }
       { path = "/System/Applications/Messages.app/"; }
       { path = "/System/Applications/Notes.app/"; }
       { path = "/System/Applications/System Settings.app/"; }
       {
-        path = "${homeDirectory}/Downloads";
+        path = "${host.homeDirectory}/Downloads/";
         section = "others";
         options = "--sort name --view grid --display stack";
       }

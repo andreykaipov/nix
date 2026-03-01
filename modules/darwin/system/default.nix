@@ -1,12 +1,12 @@
 {
-  username,
+  host,
   ...
 }:
 
 {
   system = {
     checks.verifyNixPath = false;
-    primaryUser = username;
+    primaryUser = host.username;
     stateVersion = 5;
 
     defaults = {

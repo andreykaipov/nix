@@ -15,8 +15,6 @@ in
 {
   imports = [ ./settings ];
 
-  environment.systemPackages = [ dockutil ];
-
   options = {
     local.dock = {
       enable = mkOption {
@@ -92,6 +90,8 @@ in
       ) cfg.entries;
     in
     {
+      environment.systemPackages = [ dockutil ];
+
       system.activationScripts.postActivation.text = ''
           echo >&2 "Setting up the Dock for ${cfg.username}..."
           su ${cfg.username} -s /bin/sh <<'USERBLOCK'
