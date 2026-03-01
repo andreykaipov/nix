@@ -1,4 +1,5 @@
 {
+  lib,
   host,
   ...
 }:
@@ -12,12 +13,5 @@
   programs.home-manager.enable = true;
   news.display = "silent";
 
-  imports = [
-    ./shell
-    ./git
-    ./ssh
-    ./packages
-    ./tmux
-    ./nvim
-  ];
+  imports = lib.discoverModules ./.;
 }
