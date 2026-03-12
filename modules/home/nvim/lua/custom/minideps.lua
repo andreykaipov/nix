@@ -18,8 +18,7 @@ function M.setup()
 			mini_path,
 		})
 
-		vim.opt.runtimepath:append(mini_path)
-		vim.cmd('helptags ALL')
+		vim.cmd('packloadall! | helptags ALL')
 		vim.cmd('echo "Installed `mini.nvim`" | redraw')
 	end
 
