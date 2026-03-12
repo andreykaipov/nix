@@ -148,12 +148,19 @@ mkdir -p hosts/my-machine
 2. Add a `default.nix` with at least `system` and `username`:
 
 ```nix
-{ ... }:
+{
+  lib,
+  ...
+}:
 {
   system = "aarch64-darwin";
   username = "myuser";
   publicKey = "ssh-ed25519 AAAA...";
-  extraModules = [ ... ];
+  extraModules = with lib.extras; [
+    # dev         # all dev tools at once
+    # dev.go      # just Go
+    # dev.cloud   # kubectl, awscli2
+  ];
 }
 ```
 
@@ -165,16 +172,25 @@ mkdir -p hosts/my-machine
 .
 ├── flake.nix          # Flake entrypoint
 ├── lib/               # Helper functions (mkConfig, mkApp, discoverModules)
-├── hosts/             # Per-host config (system, username, publicKey)
+├── hosts/             # Per-host config (system, username, publicKey, extraModules)
 ├── modules/
-│   ├── darwin/        # nix-darwin modules (system defaults, homebrew, dock, etc.)
-│   └── home/          # home-manager modules (shell, git, ssh, tmux, nvim, etc.)
+│   ├── darwin/        # Core nix-darwin modules (system defaults, homebrew, dock, etc.)
+│   ├── home/          # Core home-manager modules (shell, git, ssh, tmux, nvim, etc.)
+│   └── extra/         # Opt-in modules, picked per-host via extraModules
+│       └── dev/       # Development tools (go, lua, nix, terraform, cloud, docker, etc.)
 └── apps/
     └── aarch64-darwin/ # App scripts (switch, switch-darwin, switch-home, bootstrap, etc.)
 ```
 
-Adding a new module is just creating a subdirectory with a `default.nix` —
-`lib.discoverModules` picks it up automatically.
+Core modules under `modules/home/` and `modules/darwin/` are auto-discovered
+and applied to every host. Extra modules under `modules/extra/` are opt-in —
+each host chooses what it needs via `extraModules`.
+
+To add a new extra module, create a directory under `modules/extra/` with a
+`home.nix` and/or `darwin.nix`. It will be auto-discovered as `lib.extras.<name>`.
+Nested directories are supported (e.g., `modules/extra/dev/go/home.nix` becomes
+`lib.extras.dev.go`). Parent directories aggregate their children, so
+`lib.extras.dev` includes all dev sub-modules at once.
 
 ## Day-to-Day Usage
 

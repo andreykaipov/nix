@@ -35,12 +35,17 @@ write_pubkey() {
     mkdir -p "$(dirname "${host_config}")"
     cat > "${host_config}" <<EOF
 {
+  lib,
   ...
 }:
 {
   system = "$(uname -m)-darwin";
   username = "$(whoami)";
   publicKey = "${pubkey}";
+  extraModules = with lib.extras; [
+    # Opt into extra modules here. See modules/extra/ for available options.
+    # Example: dev (all dev tools), dev.go (just Go), dev.cloud (cloud CLIs)
+  ];
 }
 EOF
     printf "${green}Host config created${reset}\n"
