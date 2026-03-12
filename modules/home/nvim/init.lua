@@ -64,3 +64,8 @@ vim.keymap.set('n', '<leader>cr', function()
 	dofile(vim.fn.stdpath('config') .. '/init.lua')
 	vim.notify('Config reloaded', vim.log.levels.INFO)
 end, { desc = 'Reload config' })
+
+-- Ensure trailing newline after headless plugin install output
+if #vim.api.nvim_list_uis() == 0 then
+	print('')
+end

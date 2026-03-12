@@ -27,8 +27,8 @@
 
   home.activation.nvimPlugins = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
     echo "Installing nvim plugins..."
-    PATH="${pkgs.git}/bin:$PATH" ${
+    PATH="${pkgs.git}/bin:${pkgs.openssh}/bin:$PATH" ${
       inputs.neovim-nightly.packages.${pkgs.stdenv.hostPlatform.system}.default
-    }/bin/nvim --headless +qa 2>&1 || true
+    }/bin/nvim --headless +qa
   '';
 }
