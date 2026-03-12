@@ -33,6 +33,18 @@ final: _: {
       inherit hostname homeDirectory gitRoot;
       extraModules = [ ];
       desktopBackground = "/System/Library/Desktop Pictures/Solid Colors/Black.png";
+      theme = {
+        colorscheme = {
+          name = "randomhue";
+          lighterShade = 30;
+          blackBg = false;
+        };
+        tmux = {
+          pane = "subtle";
+          border = "all";
+          bg = "inactive";
+        };
+      };
     }
     // raw;
 

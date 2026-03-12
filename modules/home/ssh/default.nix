@@ -41,7 +41,7 @@ in
   home.file.".ssh/config.d" = host.symlinkTo ./config.d;
 
   # Write public key from host config.
-  # force: bootstrap would have already generated a host key before home-manager runs
+  # force: bootstrap would have already generated a host key before home-manager runs,
   # but now we're going to manage it with home-manager, even if it has the same contents
   home.file.".ssh/${hostKey}.pub" = lib.mkIf hasPublicKey {
     text = host.publicKey + "\n";

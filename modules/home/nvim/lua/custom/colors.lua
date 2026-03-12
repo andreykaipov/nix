@@ -11,11 +11,26 @@ function M.setup()
 	MiniDeps.add('andreykaipov/tmux-colorscheme-sync.nvim')
 	MiniDeps.add('bluz71/vim-moonfly-colors')
 
-	local color = vim.g.user.color or {}
-	local cs = color.colorscheme or { 'minisummer', 30 }
-	local scheme_name, lighter_shade, black_bg = cs[1], cs[2] or 30, cs[3]
-	local tmux = color.tmux or {}
+	local theme = vim.g.user.theme
+	local cs = theme.colorscheme
+	local scheme_name, lighter_shade, black_bg = cs[1], cs[2], cs[3]
+	local tmux = theme.tmux or {}
 	local tmux_bg = tmux.bg or 'inactive'
+	local has_tmux = vim.fn.executable('tmux') == 1
+
+	-- Setup tmux-colorscheme-sync BEFORE setting the colorscheme so its
+	-- ColorScheme autocmd fires on the initial colorscheme set. In interactive
+	-- mode UIEnter would catch it later, but in headless mode UIEnter never
+	-- fires, so the cache would never be written.
+	-- Only set tmux_source_file when tmux is in PATH (during home-manager
+	-- activation PATH is minimal and tmux isn't available).
+	local tcs_config = require('tmux-colorscheme-sync.config')
+	require('tmux-colorscheme-sync').setup({
+		cache_file = '~/.local/state/tmux/colorscheme-cache.conf',
+		tmux_source_file = has_tmux and '~/.config/tmux/styles.conf' or nil,
+		lighter_shade = lighter_shade,
+		manage_focus = false, -- we handle FocusLost/FocusGained ourselves below
+	})
 
 	-- Tell tmux style overrides and re-source styles so %if conditionals re-evaluate.
 	-- The plugin also sources styles.conf on ColorScheme, but that may not fire on
@@ -55,17 +70,6 @@ function M.setup()
 	vim.api.nvim_set_hl(0, 'CursorLineSign', { link = 'CursorLine' })
 	vim.api.nvim_set_hl(0, 'CursorLineFold', { link = 'CursorLine' })
 	vim.api.nvim_set_hl(0, 'CursorLineNr', { link = 'CursorLine' })
-
-	-- Sync tmux colors to match Neovim's colorscheme
-	local tcs_config = require('tmux-colorscheme-sync.config')
-	require('tmux-colorscheme-sync').setup({
-		cache_file = '~/.local/state/tmux/colorscheme-cache.conf',
-		tmux_source_file = '~/.config/tmux/styles.conf', -- re-source styles when colors change
-		lighter_shade = lighter_shade,     -- inactive pane bg: percent lighter than active, effectively the color of the entire terminal
-		-- Extra highlight groups to set to dim_bg on FocusLost (avoids flicker
-		-- vs bg='none' since Neovim can redraw before FocusGained fires)
-		manage_focus = false, -- we handle FocusLost/FocusGained ourselves below
-	})
 
 	-- Sync terminal background via OSC 11.
 	-- tmux_bg: 'active' uses Normal bg; 'inactive' (default) uses dimmed bg.

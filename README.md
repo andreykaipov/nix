@@ -145,38 +145,8 @@ but if you want to do it yourself, you can.
 mkdir -p hosts/my-machine
 ```
 
-2. Add a `default.nix` with at least `system` and `username`:
-
-```nix
-{
-  lib,
-  ...
-}:
-{
-  system = "aarch64-darwin";
-  username = "myuser";
-  publicKey = "ssh-ed25519 AAAA...";
-  colorscheme = {
-    name = "vaporwave";    # see list below
-    lighterShade = 10;      # 0-30, dims inactive panes/splits
-    blackBg = true;         # force #000000 background
-  };
-  extraModules = with lib.extras; [
-    # dev         # all dev tools at once
-    # dev.go      # just Go
-    # dev.cloud   # kubectl, awscli2
-  ];
-}
-```
-
-Available colorschemes (from installed nvim plugins + mini.nvim builtins):
-
-`tokyonight` `night-owl` `github_dark_default` `carbonfox` `moonfly`
-`onedark_dark` `vaporwave` `randomhue` `minischeme` `minicyan` `minispring`
-`minisummer` `miniautumn` `miniwinter`
-
-The `colorscheme` attribute is optional — when omitted, neovim falls back to
-`vaporwave` with `lighterShade = 10` and `blackBg = true`.
+2. Using an existing host as inspiration, add a `default.nix` with at
+   least the `system` and `username`.
 
 3. Set the machine's hostname to match, then run `nix run .#switch`.
 
@@ -207,6 +177,13 @@ Nested directories are supported (e.g., `modules/extra/dev/go/home.nix` becomes
 `lib.extras.dev` includes all dev sub-modules at once.
 
 ## Day-to-Day Usage
+
+### Colorscheme
+
+By default neovim uses mini.hues' `randomhue` — a different palette on every
+launch. To pin a specific colorscheme, set `theme.colorscheme.name` in your
+host config (`hosts/<name>/default.nix`) and run `nix run .#switch-home`.
+Run `colorschemes` to list all available names.
 
 ### Rebuild after config changes
 
