@@ -1,0 +1,6 @@
+#!/bin/sh
+# List available nvim colorschemes from installed plugin packs.
+find ~/.local/share/nvim/site/pack \
+  \( -path '*/colors/*.lua' -o -path '*/colors/*.vim' \) \
+  ! -path '*/tests/*' ! -path '*/extras/*' ! -path '*/lua/*/colors/*' \
+  | sed 's|.*/colors/||;s|\.lua$||;s|\.vim$||' | sort -u
