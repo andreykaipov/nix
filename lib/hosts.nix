@@ -32,6 +32,7 @@ final: _: {
     {
       inherit hostname homeDirectory gitRoot;
       extraModules = [ ];
+      desktopBackground = "/System/Library/Desktop Pictures/Solid Colors/Black.png";
     }
     // raw;
 

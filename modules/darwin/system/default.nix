@@ -81,8 +81,8 @@
     sudo -u ${host.username} /System/Library/PrivateFrameworks/SystemAdministration.framework/Resources/activateSettings -u
     killall Finder 2>/dev/null || true
 
-    # Set a plain black desktop background.
+    # Set the desktop background.
     echo "setting desktop background..."
-    osascript -e 'tell application "Finder" to set desktop picture to POSIX file "/System/Library/Desktop Pictures/Solid Colors/Black.png"'
+    osascript -e 'tell application "Finder" to set desktop picture to POSIX file "${host.desktopBackground}"'
   '';
 }
