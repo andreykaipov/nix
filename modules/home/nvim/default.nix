@@ -6,6 +6,13 @@
   ...
 }:
 
+let
+  cs = host.colorscheme or null;
+  hostLua = pkgs.writeText "host.lua" ''
+    return { '${cs.name}', ${toString cs.lighterShade}${if cs.blackBg or false then ", true" else ""} }
+  '';
+in
+
 {
   home.packages = with pkgs; [
     nodejs # for copilot.lua server
@@ -17,6 +24,7 @@
   ];
 
   xdg.configFile."nvim" = host.symlinkTo ./.;
+  xdg.dataFile."nvim/host.lua" = lib.mkIf (cs != null) { source = hostLua; };
   programs.neovim = {
     package = inputs.neovim-nightly.packages.${pkgs.stdenv.hostPlatform.system}.default;
     enable = true;

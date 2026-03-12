@@ -1,10 +1,12 @@
 -- User Config
+local ok, host_cs = pcall(dofile, vim.fn.stdpath('data') .. '/host.lua')
 vim.g.user = {
 	leader = ' ',
 	scrolloff = 20,
 	sidebar_width = 30,
 	color = {
 		-- colorscheme = { name, lighter_shade [, black_bg] }
+<<<<<<< HEAD
 		-- colorscheme = { 'tokyonight', 30, true },
 		-- colorscheme = { 'night-owl', 30 },
 		-- colorscheme = { 'github_dark_default', 30 },
@@ -18,6 +20,10 @@ vim.g.user = {
 		-- colorscheme = { 'moonfly', 10, true },
 		-- colorscheme = { 'onedark_dark', 10, true },
 		-- colorscheme = { 'vaporwave', 10, true },
+=======
+		-- overridden by hosts/<name>/default.nix colorscheme when set
+		colorscheme = ok and host_cs or { 'vaporwave', 10, true },
+>>>>>>> d647e68 (nvim: load colorscheme from host config)
 		tmux = {
 			pane = 'subtle', -- subtle|chunky
 			border = 'all', -- all|unfocused, when pane is chunky, 'unfocused' looks like 'all'
