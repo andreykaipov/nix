@@ -27,12 +27,55 @@ git_commit() {
     commit "$@"
 }
 
+# Available colorschemes (from installed nvim plugins + mini.nvim builtins)
+available_colors="tokyonight night-owl github_dark_default carbonfox moonfly onedark_dark vaporwave randomhue minischeme minicyan minispring minisummer miniautumn miniwinter"
+
+print_colors() {
+  printf "${yellow}Available colorschemes:${reset}\n"
+  for c in $available_colors; do
+    printf "  %s\n" "$c"
+  done
+}
+
+# Prompt for colorscheme and write the Nix attrset
+pick_colorscheme() {
+  print_colors
+  printf "${yellow}Pick a colorscheme [vaporwave]: ${reset}"
+  read cs_name
+  cs_name="${cs_name:-vaporwave}"
+
+  # Validate
+  valid=false
+  for c in $available_colors; do
+    if [ "$c" = "$cs_name" ]; then valid=true; break; fi
+  done
+  if [ "$valid" = false ]; then
+    printf "${red}Unknown colorscheme: %s — using vaporwave${reset}\n" "$cs_name"
+    cs_name="vaporwave"
+  fi
+
+  printf "${yellow}Lighter shade (0-30) [10]: ${reset}"
+  read cs_shade
+  cs_shade="${cs_shade:-10}"
+
+  printf "${yellow}Black background? (y/n) [y]: ${reset}"
+  read cs_black
+  cs_black="${cs_black:-y}"
+  case "$cs_black" in
+    [Yy]*) cs_black_nix="true" ;;
+    *)     cs_black_nix="false" ;;
+  esac
+}
+
 # Write or update the public key in the host config
 write_pubkey() {
   pubkey="$1"
   if [ ! -f "${host_config}" ]; then
     printf "${yellow}Creating host config: ${host_config}${reset}\n"
     mkdir -p "$(dirname "${host_config}")"
+
+    pick_colorscheme
+
     cat > "${host_config}" <<EOF
 {
   lib,
@@ -42,6 +85,11 @@ write_pubkey() {
   system = "$(uname -m)-darwin";
   username = "$(whoami)";
   publicKey = "${pubkey}";
+  colorscheme = {
+    name = "${cs_name}";
+    lighterShade = ${cs_shade};
+    blackBg = ${cs_black_nix};
+  };
   extraModules = with lib.extras; [
     # Opt into extra modules here. See modules/extra/ for available options.
     # Example: dev (all dev tools), dev.go (just Go), dev.cloud (cloud CLIs)

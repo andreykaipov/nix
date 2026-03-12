@@ -156,6 +156,11 @@ mkdir -p hosts/my-machine
   system = "aarch64-darwin";
   username = "myuser";
   publicKey = "ssh-ed25519 AAAA...";
+  colorscheme = {
+    name = "vaporwave";    # see list below
+    lighterShade = 10;      # 0-30, dims inactive panes/splits
+    blackBg = true;         # force #000000 background
+  };
   extraModules = with lib.extras; [
     # dev         # all dev tools at once
     # dev.go      # just Go
@@ -163,6 +168,15 @@ mkdir -p hosts/my-machine
   ];
 }
 ```
+
+Available colorschemes (from installed nvim plugins + mini.nvim builtins):
+
+`tokyonight` `night-owl` `github_dark_default` `carbonfox` `moonfly`
+`onedark_dark` `vaporwave` `randomhue` `minischeme` `minicyan` `minispring`
+`minisummer` `miniautumn` `miniwinter`
+
+The `colorscheme` attribute is optional — when omitted, neovim falls back to
+`vaporwave` with `lighterShade = 10` and `blackBg = true`.
 
 3. Set the machine's hostname to match, then run `nix run .#switch`.
 
