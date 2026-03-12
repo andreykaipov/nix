@@ -15,7 +15,7 @@ darwin_rebuild() {
     sudo darwin-rebuild "$@"
   else
     printf "${yellow}darwin-rebuild not in PATH, bootstrapping via nix run...${reset}\n"
-    sudo nix --extra-experimental-features 'nix-command flakes' run nix-darwin -- "$@"
+    sudo HOME=/var/root nix --extra-experimental-features 'nix-command flakes' run nix-darwin -- "$@"
   fi
 }
 
