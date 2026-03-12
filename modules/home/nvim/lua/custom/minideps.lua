@@ -18,8 +18,9 @@ function M.setup()
 			mini_path,
 		})
 
-		vim.cmd('packadd mini.nvim | helptags ALL')
-  		vim.cmd('echo "Installed `mini.nvim`" | redraw')
+		vim.opt.runtimepath:append(mini_path)
+		vim.cmd('helptags ALL')
+		vim.cmd('echo "Installed `mini.nvim`" | redraw')
 	end
 
 	local ok, deps = pcall(require, 'mini.deps')
