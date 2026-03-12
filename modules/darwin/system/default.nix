@@ -75,5 +75,9 @@
     # (scroll direction, key repeat, etc.) take effect without logging out.
     echo "restarting cfprefsd..."
     killall cfprefsd 2>/dev/null || true
+
+    # Set a plain black desktop background.
+    echo "setting desktop background..."
+    osascript -e 'tell application "Finder" to set desktop picture to POSIX file "/System/Library/Desktop Pictures/Solid Colors/Black.png"'
   '';
 }
