@@ -10,6 +10,10 @@
   home.packages = with pkgs; [
     nodejs # for copilot.lua server
     tree-sitter
+    lua
+    luarocks
+    lua-language-server
+    stylua
   ];
 
   xdg.configFile."nvim" = host.symlinkTo ./.;
