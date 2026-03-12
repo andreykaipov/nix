@@ -33,17 +33,6 @@ function M.setup()
 	-- See :help MiniSurround.config
 	require('mini.surround').setup({})
 
-	-- See :help MiniNotify.config
-	require('mini.notify').setup({
-		lsp_progress = { enable = false },
-	})
-	vim.keymap.set('n', '<leader>nn', function()
-		MiniNotify.show_history()
-		vim.bo.buftype = ''
-		vim.bo.bufhidden = 'wipe'
-		vim.bo.modified = false
-	end, { desc = 'Notification history' })
-
 	-- See :help which-key.nvim-which-key-setup
 	MiniDeps.add('folke/which-key.nvim')
 	require('which-key').setup({
@@ -62,6 +51,8 @@ function M.setup()
 		{ '<leader>f', group = 'Fuzzy Find' },
 		{ '<leader>b', group = 'Buffer' },
 	})
+
+
 end
 
 return M

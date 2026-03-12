@@ -48,6 +48,21 @@ require('custom.statusline').setup()
 require('custom.treesitter').setup()
 require('custom.lsp').setup()
 
+-- Setup MiniNotify after all modules so it doesn't swallow MiniDeps install
+-- logs during headless bootstrap (mini.notify is part of mini.nvim, so it
+-- doesn't need a MiniDeps.add and has no install log of its own).
+require('mini.notify').setup({
+	lsp_progress = { enable = false },
+})
+
+-- Open notification history in a buffer that doesn't interfere with our buffer logic
+vim.keymap.set('n', '<leader>nn', function()
+	MiniNotify.show_history()
+	vim.bo.buftype = ''
+	vim.bo.bufhidden = 'wipe'
+	vim.bo.modified = false
+end, { desc = 'Notification history' })
+
 -- Reload colorscheme and custom highlights without restarting
 vim.keymap.set('n', '<leader>cc', function()
 	package.loaded['custom.colors'] = nil
