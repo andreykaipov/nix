@@ -71,10 +71,13 @@
   # postActivation.text is concatenated across modules, so each module
   # (e.g. rectangle/) can append its own snippet.
   system.activationScripts.postActivation.text = ''
-    # Restart cfprefsd after defaults are written so NSGlobalDomain changes
-    # (scroll direction, key repeat, etc.) take effect without logging out.
-    echo "restarting cfprefsd..."
+    # Restart cfprefsd so preference changes (key repeat, beep, etc.) take
+    # effect, then activateSettings to apply input/trackpad/scroll changes,
+    # and restart Finder for Finder-specific defaults.
+    echo "applying system preferences..."
     killall cfprefsd 2>/dev/null || true
+    /System/Library/PrivateFrameworks/SystemAdministration.framework/Resources/activateSettings -u
+    killall Finder 2>/dev/null || true
 
     # Set a plain black desktop background.
     echo "setting desktop background..."
