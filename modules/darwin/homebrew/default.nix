@@ -31,7 +31,6 @@
 
     casks = [
       # Development Tools
-      "docker-desktop"
       "visual-studio-code"
       "wezterm"
 
@@ -48,7 +47,7 @@
 
     brews = [
       # CLI formulae installed via Homebrew (for things not in nixpkgs)
-      "gemini-cli"
+      # "gemini-cli"
     ];
 
     # These app IDs are from using the mas CLI app

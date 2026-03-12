@@ -12,6 +12,8 @@
     slack-mcp-server
   ];
 
+  home.file."bin-extra/slack-mcp-env" = host.symlinkTo ./slack-mcp-env;
+
   # OpenCode: ~/.config/opencode/
   xdg.configFile."opencode/opencode.json" = host.symlinkTo ./config/opencode/opencode.json;
   xdg.configFile."opencode/tui.json" = host.symlinkTo ./config/opencode/tui.json;

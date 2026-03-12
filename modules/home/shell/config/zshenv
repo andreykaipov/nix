@@ -1,4 +1,4 @@
-export PATH=~/bin:~/go/bin:~/.npm-global/bin:$PATH
+export PATH=~/bin:~/bin-extra:~/go/bin:~/.npm-global/bin:$PATH
 
 export NPM_CONFIG_USERCONFIG=~/.config/npm/npmrc
 

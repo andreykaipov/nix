@@ -37,6 +37,8 @@ final: _: {
             darwin = darwin.lib.darwinSystem;
           };
 
+          resolvedExtraModules = map (m: if lib.isPath m then import m else m) host.extraModules;
+
           args = getAttr kind {
             home = {
               inherit pkgs;
@@ -60,7 +62,7 @@ final: _: {
                   manual.manpages.enable = false;
                 }
               ]
-              ++ (host.extraHomeModules or [ ]);
+              ++ (concatMap (m: m.home or [ ]) resolvedExtraModules);
             };
             linux = { };
             darwin = {
@@ -72,7 +74,7 @@ final: _: {
                 ../modules/darwin
                 { nixpkgs.hostPlatform = system; }
               ]
-              ++ (host.extraDarwinModules or [ ]);
+              ++ (concatMap (m: m.darwin or [ ]) resolvedExtraModules);
             };
           };
         in
