@@ -81,8 +81,9 @@
     sudo -u ${host.username} /System/Library/PrivateFrameworks/SystemAdministration.framework/Resources/activateSettings -u
     killall Finder 2>/dev/null || true
 
-    # Set the desktop background.
+    # Set the desktop and lock screen background.
     echo "setting desktop background..."
-    osascript -e 'tell application "Finder" to set desktop picture to POSIX file "${host.desktopBackground}"'
+    osascript -e 'tell application "System Events" to tell every desktop to set picture to "${host.desktopBackground}"'
+    sudo defaults write /Library/Preferences/com.apple.loginwindow DesktopPicture "${host.desktopBackground}"
   '';
 }
