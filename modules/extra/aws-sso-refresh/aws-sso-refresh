@@ -40,7 +40,18 @@ for f in "$cache_dir"/*.json; do
   resp=$(curl -sf -X POST "https://oidc.${region}.amazonaws.com/token" \
     -H "Content-Type: application/json" \
     -d "$payload" 2>/dev/null) || {
-    echo "  FAILED. Refresh token may be expired. Run: aws sso login" >&2
+    echo "  refresh token expired, re-authenticating..."
+    session=$(jq -r '.startUrl // empty' "$f")
+    # Find the sso-session name from ~/.aws/config that matches this startUrl
+    sso_session=$(awk -v url="$session" '
+      /^\[sso-session / { name = $2; gsub(/\]/, "", name) }
+      /sso_start_url/ && index($0, url) { print name; exit }
+    ' ~/.aws/config 2>/dev/null)
+    if [ -n "$sso_session" ]; then
+      aws sso login --sso-session "$sso_session"
+    else
+      echo "  could not find sso-session for $session, run: aws sso login" >&2
+    fi
     continue
   }
 
