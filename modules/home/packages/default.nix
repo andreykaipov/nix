@@ -16,6 +16,9 @@
     wget
     zip
 
+    # Fonts
+    comic-mono
+
     # Text and terminal utilities
     jq
     yq

@@ -14,6 +14,7 @@ config.initial_cols = 180
 config.initial_rows = 45
 
 -- or, changing the font size and color scheme.
+config.font = wezterm.font("Comic Mono")
 config.font_size = 16
 -- config.color_scheme = 'AdventureTime'
 --
