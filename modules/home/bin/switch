@@ -1,0 +1,12 @@
+#!/bin/sh -e
+# Convenience wrapper for nix run .#switch[-darwin|-home].
+# Usage: switch [darwin|home]   (default: both)
+cd ~/gh/nix
+cmd="${1:-}"
+[ -n "$cmd" ] && shift
+case "$cmd" in
+  darwin) nix run .#switch-darwin -- "$@" ;;
+  home)   nix run .#switch-home -- "$@" ;;
+  "")     nix run .#switch ;;
+  *)      echo "Usage: switch [darwin|home]" >&2; exit 1 ;;
+esac
