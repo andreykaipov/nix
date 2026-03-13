@@ -27,6 +27,9 @@ nix run --refresh github:andreykaipov/nix#bootstrap -- <host>
 
 # 3. Build and switch everything
 cd ~/gh/nix && nix run .#switch
+
+# Subsequent rebuilds (from anywhere)
+switch [darwin|home]
 ```
 
 ### Prerequisites
