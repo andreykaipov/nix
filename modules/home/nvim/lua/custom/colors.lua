@@ -117,12 +117,7 @@ function M.setup(opts)
 		if vim.env.TMUX then
 			osc = string.format('\027Ptmux;\027%s\027\\', osc)
 		end
-		-- Skip OSC output in headless mode (no terminal to receive it, and the
-		-- escape bytes leak into the activation script output). The wezterm bg
-		-- cache below still needs to be written though.
-		if #vim.api.nvim_list_uis() > 0 then
-			vim.fn.chansend(vim.v.stderr, osc)
-		end
+		vim.fn.chansend(vim.v.stderr, osc)
 		-- Cache for wezterm cold start
 		local dir = bg_cache_path:match('(.*/)')
 		if dir then

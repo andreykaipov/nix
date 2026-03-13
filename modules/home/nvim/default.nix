@@ -41,11 +41,14 @@ in
     vimAlias = true;
   };
 
-  home.activation.nvimPlugins = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-    echo "Installing nvim plugins..."
+  home.activation.nvim = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+    # new line is weird because it sends OSC11 code to tmux
+    # ^[Ptmux;^[^[]11;#3d2520^[\^[\
+    # over stderr, it shows up as a new line
+    printf "installing nvim plugins... "
     date +%s > "$HOME/.local/share/nvim/color-seed"
     PATH="${pkgs.git}/bin:${pkgs.openssh}/bin:${pkgs.tmux}/bin:$PATH" ${
       inputs.neovim-nightly.packages.${pkgs.stdenv.hostPlatform.system}.default
-    }/bin/nvim --headless +qa 2>&1 | grep -v '^$' || true
+    }/bin/nvim --headless +qa 2>&1
   '';
 }
