@@ -66,9 +66,13 @@ function M.setup()
 		return nvimtree_open
 	end
 
-	vim.api.nvim_create_user_command('Q', function(opts)
+	-- :q and :wq with NvimTree: when there's a single editor window alongside
+	-- NvimTree, delete the buffer instead of closing the window (which would
+	-- leave NvimTree filling the whole screen). If the buffer is [No Name] and
+	-- unmodified, that means it's the last real buffer — quit nvim entirely.
+	-- Without NvimTree (or with multiple splits), fall through to the real :q.
+	local function quit_or_close(opts)
 		if should_close_buffer_instead() then
-			-- On a [No Name] buffer with only NvimTree left, just quit
 			local buf = vim.api.nvim_get_current_buf()
 			if vim.api.nvim_buf_get_name(buf) == '' and not vim.bo[buf].modified then
 				vim.cmd('qa' .. (opts.bang and '!' or ''))
@@ -78,14 +82,22 @@ function M.setup()
 		else
 			vim.cmd('q' .. (opts.bang and '!' or ''))
 		end
+	end
+
+	vim.api.nvim_create_user_command('Q', quit_or_close, { bang = true })
+
+	vim.api.nvim_create_user_command('Wq', function(opts)
+		vim.cmd('w' .. (opts.bang and '!' or ''))
+		quit_or_close(opts)
 	end, { bang = true })
 
 	vim.api.nvim_create_user_command('Bd', function()
 		close_buffer()
 	end, { bang = true })
 
-	-- Rewrite :q/:bd at the command line so users don't need to learn new commands
+	-- Rewrite :q/:wq/:bd at the command line so users don't need to learn new commands
 	vim.cmd([[cnoreabbrev <expr> q  getcmdtype() == ':' && getcmdline() ==# 'q'  ? 'Q'  : 'q']])
+	vim.cmd([[cnoreabbrev <expr> wq getcmdtype() == ':' && getcmdline() ==# 'wq' ? 'Wq' : 'wq']])
 	vim.cmd([[cnoreabbrev <expr> bd getcmdtype() == ':' && getcmdline() ==# 'bd' ? 'Bd' : 'bd']])
 	vim.cmd([[cnoreabbrev <expr> bdelete getcmdtype() == ':' && getcmdline() ==# 'bdelete' ? 'Bd' : 'bdelete']])
 
@@ -98,11 +110,13 @@ function M.setup()
 				return
 			end
 			for _, b in ipairs(vim.api.nvim_list_bufs()) do
-				if b ~= cur
+				if
+				    b ~= cur
 				    and vim.bo[b].buflisted
 				    and vim.api.nvim_buf_get_name(b) == ''
 				    and vim.bo[b].buftype == ''
-				    and not vim.bo[b].modified then
+				    and not vim.bo[b].modified
+				then
 					vim.api.nvim_buf_delete(b, {})
 				end
 			end

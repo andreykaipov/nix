@@ -12,7 +12,8 @@ function M.setup()
 			signs = { add = '+', change = '~', delete = '-' },
 		},
 	})
-	vim.keymap.set('n', '<leader>do', function()
+
+	vim.keymap.set('n', ',<CR>', function()
 		vim.b.minidiff_overlay_manual = true
 		MiniDiff.toggle_overlay()
 	end, { desc = 'Toggle diff overlay' })

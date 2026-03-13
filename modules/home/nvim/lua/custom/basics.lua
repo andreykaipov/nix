@@ -16,7 +16,12 @@ function M.setup()
 
 	-- Sensible defaults (undo, mouse, etc.)
 	-- Must come before our overrides so we can customize on top.
-	require('mini.basics').setup()
+	require('mini.basics').setup({
+		silent = true,
+		mappings = {
+			option_toggle_prefix = ',',
+		},
+	})
 
 	-- Persistent undo and backup directories
 	local undodir = vim.fn.stdpath('state') .. '/undo'
@@ -34,9 +39,9 @@ function M.setup()
 	vim.o.scrolloff = vim.g.user.scrolloff or 20
 	vim.o.winborder = 'rounded'
 	vim.o.signcolumn = 'auto:2-5' -- so new gutter signs don't move the text
-	vim.o.equalalways = false     -- don't auto-resize windows when opening/closing splits
-	vim.o.cmdheight = 0           -- hide command line when not in use
-	vim.o.laststatus = 3          -- single global statusline across all splits
+	vim.o.equalalways = false -- don't auto-resize windows when opening/closing splits
+	vim.o.cmdheight = 0    -- hide command line when not in use
+	vim.o.laststatus = 3   -- single global statusline across all splits
 
 	vim.o.cursorline = true
 	vim.o.cursorlineopt = 'both' -- highlight entire line including line number

@@ -51,8 +51,6 @@ function M.setup()
 		{ '<leader>f', group = 'Fuzzy Find' },
 		{ '<leader>b', group = 'Buffer' },
 	})
-
-
 end
 
 return M

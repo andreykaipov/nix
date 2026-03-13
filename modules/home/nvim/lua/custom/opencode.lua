@@ -37,10 +37,10 @@ function M.setup()
 	vim.keymap.set({ 'n', 't' }, '<leader>oo', function()
 		require('opencode').toggle()
 	end, { desc = 'Toggle opencode' })
-	vim.keymap.set({ 'n', 'x' }, 'go', function()
+	vim.keymap.set({ 'n', 'x' }, '<leader>og', function()
 		return require('opencode').operator('@this ')
 	end, { desc = 'Send to opencode', expr = true })
-	vim.keymap.set('n', 'goo', function()
+	vim.keymap.set('n', '<leader>ogg', function()
 		return require('opencode').operator('@this ') .. '_'
 	end, { desc = 'Send line to opencode', expr = true })
 end
