@@ -29,7 +29,7 @@ final: _: {
         if final.isDarwin raw.system then "/Users/${raw.username}" else "/home/${raw.username}";
       gitRoot = "${homeDirectory}/gh/nix";
     in
-    {
+    lib.recursiveUpdate {
       inherit hostname homeDirectory gitRoot;
       extraModules = [ ];
       desktopBackground = "/System/Library/Desktop Pictures/Solid Colors/Black.png";
@@ -45,8 +45,7 @@ final: _: {
           bg = "inactive";
         };
       };
-    }
-    // raw;
+    } raw;
 
   # Opt-in module bundles discovered recursively from modules/extra/
   # Leaf dirs (containing home.nix/darwin.nix) become { home = [...]; darwin = [...]; }
