@@ -20,9 +20,11 @@ git_commit() {
   git_config="$repo/modules/home/git/default.nix"
   git_name="$(grep 'name = "' "$git_config" | head -1 | sed 's/.*name = "\(.*\)";/\1/')"
   git_email="$(grep 'email = "' "$git_config" | head -1 | sed 's/.*email = "\(.*\)";/\1/')"
-  git -c commit.gpgsign=false \
-    -c user.name="$git_name" \
+  git -c user.name="$git_name" \
     -c user.email="$git_email" \
+    -c gpg.format=ssh \
+    -c user.signingkey="${key_dir}/${hostname}.pem" \
+    -c commit.gpgsign=true \
     commit "$@"
 }
 
