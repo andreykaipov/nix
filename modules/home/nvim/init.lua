@@ -56,7 +56,7 @@ end, { desc = 'Notification history' })
 -- Reload colorscheme and custom highlights without restarting
 vim.keymap.set('n', '<leader>cc', function()
 	package.loaded['custom.colors'] = nil
-	require('custom.colors').setup()
+	require('custom.colors').setup({ reseed = true })
 end, { desc = 'Reload colorscheme' })
 
 -- Reload entire lua config without restarting
@@ -70,7 +70,6 @@ vim.keymap.set('n', '<leader>cr', function()
 	vim.notify('Config reloaded', vim.log.levels.INFO)
 end, { desc = 'Reload config' })
 
--- Ensure trailing newline after headless plugin install output
 if #vim.api.nvim_list_uis() == 0 then
 	print('')
 end

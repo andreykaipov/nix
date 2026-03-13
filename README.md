@@ -180,9 +180,18 @@ Nested directories are supported (e.g., `modules/extra/dev/go/home.nix` becomes
 
 ### Colorscheme
 
-By default neovim uses mini.hues' `randomhue` — a different palette on every
-launch. To pin a specific colorscheme, set `theme.colorscheme.name` in your
-host config (`hosts/<name>/default.nix`) and run `nix run .#switch-home`.
+By default neovim uses mini.hues' `randomhue` — a random palette that stays
+consistent across all sessions until the next `nix run .#switch-home` (the seed
+is written at switch time). To re-roll the colorscheme without switching:
+
+```sh
+colorscheme        # from the shell — writes a new seed + updates tmux/wezterm
+```
+
+Or press `<leader>cc` inside neovim to re-roll interactively (reloads the colorscheme if not using randomhue).
+
+To pin a specific colorscheme instead of randomhue, set `theme.colorscheme.name`
+in your host config (`hosts/<name>/default.nix`) and run `nix run .#switch-home`.
 Run `colorschemes` to list all available names.
 
 ### Rebuild after config changes

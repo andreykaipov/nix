@@ -35,6 +35,7 @@ nvim/
 - Installs `nodejs` (for copilot.lua) and `tree-sitter` as runtime dependencies
 - Sets neovim as the default editor with `vi`/`vim` aliases
 - Runs a headless `nvim --headless +qa` on home activation to bootstrap plugins
+- Writes a color seed (`~/.local/share/nvim/color-seed`) at activation time so `randomhue` generates the same palette across all sessions until the next switch
 
 ## User Config
 
@@ -45,7 +46,7 @@ All user-facing settings live at the top of [init.lua](init.lua):
 | `leader`          | `Space`       | Leader key                                |
 | `scrolloff`       | `20`          | Lines to keep visible above/below cursor  |
 | `sidebar_width`   | `30`          | Default NvimTree sidebar width            |
-| `color.colorscheme` | `vaporwave` | Active colorscheme `{ name, lighter_shade [, black_bg] }` |
+| `color.colorscheme` | `randomhue` | Active colorscheme `{ name, lighter_shade [, black_bg] }` |
 | `color.tmux.pane` | `subtle`      | Tmux pane border style (`subtle` or `chunky`) |
 | `color.tmux.border` | `all`       | Tmux border visibility (`all` or `unfocused`) |
 | `color.tmux.bg`   | `inactive`    | Terminal bg source (`active` = Normal bg, `inactive` = dimmed) |
@@ -94,7 +95,7 @@ Formatting sources via none-ls: `stylua` · `terraform_fmt` · `terraform_valida
 | Key | Mode | Action |
 | --- | --- | --- |
 | `Space` | n | Leader |
-| `<leader>cc` | n | Reload colorscheme |
+| `<leader>cc` | n | Reload colorscheme (re-rolls if randomhue) |
 | `<leader>cr` | n | Reload entire Lua config |
 | `<leader>e` | n | Toggle file explorer sidebar |
 
@@ -179,6 +180,7 @@ Formatting sources via none-ls: `stylua` · `terraform_fmt` · `terraform_valida
 - **Tmux-aware navigation**: `Alt+hjkl` moves between Neovim splits first, then falls through to adjacent tmux panes
 - **Tmux entry direction**: When entering Neovim from a tmux pane, focus jumps to the edge split closest to where you came from
 - **Color sync**: Colorscheme changes propagate to tmux status bar and wezterm terminal background via OSC 11
+- **Per-switch colorscheme**: `randomhue` is seeded from a file written at `nix run .#switch` time, so every session gets the same hue until the next switch. Run `colorscheme` from the shell or `<leader>cc` in nvim to re-roll on demand.
 - **Inactive split dimming**: Unfocused splits use a lighter background matching tmux inactive pane style
 - **Focus awareness**: Bufferline tabs and NvimTree dim appropriately when Neovim loses focus
 - **Sidebar width persistence**: NvimTree width is cached to disk and restored across sessions

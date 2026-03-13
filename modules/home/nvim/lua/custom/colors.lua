@@ -1,7 +1,8 @@
 -- Colorscheme setup and terminal color sync
 local M = {}
 
-function M.setup()
+function M.setup(opts)
+	opts = opts or {}
 	MiniDeps.add('folke/tokyonight.nvim')
 	MiniDeps.add('oxfist/night-owl.nvim')
 	MiniDeps.add('EdenEast/nightfox.nvim')
@@ -16,18 +17,15 @@ function M.setup()
 	local scheme_name, lighter_shade, black_bg = cs[1], cs[2], cs[3]
 	local tmux = theme.tmux or {}
 	local tmux_bg = tmux.bg or 'inactive'
-	local has_tmux = vim.fn.executable('tmux') == 1
 
 	-- Setup tmux-colorscheme-sync BEFORE setting the colorscheme so its
 	-- ColorScheme autocmd fires on the initial colorscheme set. In interactive
 	-- mode UIEnter would catch it later, but in headless mode UIEnter never
 	-- fires, so the cache would never be written.
-	-- Only set tmux_source_file when tmux is in PATH (during home-manager
-	-- activation PATH is minimal and tmux isn't available).
 	local tcs_config = require('tmux-colorscheme-sync.config')
 	require('tmux-colorscheme-sync').setup({
 		cache_file = '~/.local/state/tmux/colorscheme-cache.conf',
-		tmux_source_file = has_tmux and '~/.config/tmux/styles.conf' or nil,
+		tmux_source_file = '~/.config/tmux/styles.conf',
 		lighter_shade = lighter_shade,
 		manage_focus = false, -- we handle FocusLost/FocusGained ourselves below
 	})
@@ -35,14 +33,41 @@ function M.setup()
 	-- Tell tmux style overrides and re-source styles so %if conditionals re-evaluate.
 	-- The plugin also sources styles.conf on ColorScheme, but that may not fire on
 	-- initial setup, so this explicit source ensures the options always take effect.
-	if vim.env.TMUX and vim.fn.executable('tmux') == 1 then
+	if vim.env.TMUX then
 		vim.fn.system({ 'tmux', 'set-option', '-g', '@nvim_status_bg', tmux_bg })
 		vim.fn.system({ 'tmux', 'set-option', '-g', '@nvim_pane_style', tmux.pane or 'red' })
 		vim.fn.system({ 'tmux', 'set-option', '-g', '@nvim_pane_border_style', tmux.border or 'blue' })
 		vim.fn.system({ 'tmux', 'source-file', vim.fn.expand('~/.config/tmux/styles.conf') })
 	end
 
-	vim.cmd.colorscheme(scheme_name)
+	-- For randomhue, use a fixed seed so every nvim session gets the same hue.
+	-- The seed file is written by the activation script at nix switch time, so
+	-- colors change per switch. <leader>cc passes reseed=true to re-roll on demand.
+	if scheme_name == 'randomhue' then
+		if opts.reseed then
+			math.randomseed(vim.loop.hrtime())
+		else
+			local seed_file = vim.fn.stdpath('data') .. '/color-seed'
+			local ok, content = pcall(vim.fn.readfile, seed_file)
+			local seed = ok and tonumber(content[1]) or tonumber(os.date('%Y%m%d'))
+			math.randomseed(seed)
+		end
+		local hues = require('mini.hues')
+		local base = hues.gen_random_base_colors()
+		hues.setup({
+			background = base.background,
+			foreground = base.foreground,
+			n_hues = 8,
+			saturation = vim.o.background == 'dark' and 'medium' or 'high',
+			accent = 'bg',
+		})
+		vim.g.colors_name = 'randomhue'
+		-- mini.hues.setup() doesn't fire ColorScheme (it's not a real colorscheme),
+		-- so fire it manually for tmux-colorscheme-sync and other autocmds.
+		vim.cmd('doautocmd ColorScheme')
+	else
+		vim.cmd.colorscheme(scheme_name)
+	end
 
 	-- Force black background if requested
 	if black_bg then
@@ -92,7 +117,12 @@ function M.setup()
 		if vim.env.TMUX then
 			osc = string.format('\027Ptmux;\027%s\027\\', osc)
 		end
-		vim.fn.chansend(vim.v.stderr, osc)
+		-- Skip OSC output in headless mode (no terminal to receive it, and the
+		-- escape bytes leak into the activation script output). The wezterm bg
+		-- cache below still needs to be written though.
+		if #vim.api.nvim_list_uis() > 0 then
+			vim.fn.chansend(vim.v.stderr, osc)
+		end
 		-- Cache for wezterm cold start
 		local dir = bg_cache_path:match('(.*/)')
 		if dir then
@@ -175,9 +205,9 @@ function M.setup()
 		create_diff_nc_variants()
 
 		local wh = 'Normal:NormalNC,SignColumn:SignColumnNC,LineNr:LineNrNC'
-			.. ',MiniDiffSignAdd:MiniDiffSignAddNC'
-			.. ',MiniDiffSignChange:MiniDiffSignChangeNC'
-			.. ',MiniDiffSignDelete:MiniDiffSignDeleteNC'
+		    .. ',MiniDiffSignAdd:MiniDiffSignAddNC'
+		    .. ',MiniDiffSignChange:MiniDiffSignChangeNC'
+		    .. ',MiniDiffSignDelete:MiniDiffSignDeleteNC'
 		local function is_our_wh(s)
 			return s == '' or s == wh
 		end

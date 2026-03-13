@@ -1,0 +1,4 @@
+#!/bin/sh -e
+# Regenerate the random colorscheme seed and update tmux/wezterm caches.
+date +%s > "$HOME/.local/share/nvim/color-seed"
+nvim --headless +qa

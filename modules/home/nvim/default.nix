@@ -43,8 +43,9 @@ in
 
   home.activation.nvimPlugins = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
     echo "Installing nvim plugins..."
+    date +%s > "$HOME/.local/share/nvim/color-seed"
     PATH="${pkgs.git}/bin:${pkgs.openssh}/bin:${pkgs.tmux}/bin:$PATH" ${
       inputs.neovim-nightly.packages.${pkgs.stdenv.hostPlatform.system}.default
-    }/bin/nvim --headless +qa
+    }/bin/nvim --headless +qa 2>&1 | grep -v '^$' || true
   '';
 }
