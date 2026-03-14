@@ -1,5 +1,6 @@
 {
   host,
+  config,
   ...
 }:
 
@@ -17,6 +18,9 @@ in
       StartInterval = 1800;
       StandardOutPath = logFile;
       StandardErrorPath = logFile;
+      EnvironmentVariables = {
+        PATH = "${config.home.profileDirectory}/bin";
+      };
     };
   };
 }

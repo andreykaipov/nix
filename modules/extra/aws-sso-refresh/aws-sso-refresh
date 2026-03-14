@@ -6,13 +6,22 @@ set -eu
 margin=900
 while [ $# -gt 0 ]; do
   case "$1" in
-    --margin) margin="$2"; shift 2 ;;
-    *) echo "usage: aws-sso-refresh [--margin SECONDS]" >&2; exit 1 ;;
+  --margin)
+    margin="$2"
+    shift 2
+    ;;
+  *)
+    echo "usage: aws-sso-refresh [--margin SECONDS]" >&2
+    exit 1
+    ;;
   esac
 done
 
 cache_dir="$HOME/.aws/sso/cache"
-[ -d "$cache_dir" ] || { echo "no SSO cache directory" >&2; exit 1; }
+[ -d "$cache_dir" ] || {
+  echo "no SSO cache directory" >&2
+  exit 1
+}
 
 now=$(date +%s)
 refreshed=0
@@ -58,10 +67,10 @@ for f in "$cache_dir"/*.json; do
   new_expiry=$(date -u -d "+$(echo "$resp" | jq -r '.expiresIn') seconds" +%Y-%m-%dT%H:%M:%SZ)
 
   jq --arg at "$(echo "$resp" | jq -r '.accessToken')" \
-     --arg ea "$new_expiry" \
-     --arg rt "$(echo "$resp" | jq -r '.refreshToken // empty')" \
-     '.accessToken = $at | .expiresAt = $ea | if $rt != "" then .refreshToken = $rt else . end' \
-     "$f" > "$f.tmp" && mv "$f.tmp" "$f"
+    --arg ea "$new_expiry" \
+    --arg rt "$(echo "$resp" | jq -r '.refreshToken // empty')" \
+    '.accessToken = $at | .expiresAt = $ea | if $rt != "" then .refreshToken = $rt else . end' \
+    "$f" >"$f.tmp" && mv "$f.tmp" "$f"
 
   echo "  refreshed, new expiry: $new_expiry"
   refreshed=$((refreshed + 1))
