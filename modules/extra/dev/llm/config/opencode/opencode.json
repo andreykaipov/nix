@@ -46,6 +46,11 @@
                 "ARGOCD_API_TOKEN": "{env:ARGOCD_API_TOKEN}",
                 "MCP_READ_ONLY": "true"
             }
+        },
+        "grafana": {
+            "enabled": false,
+            "type": "local",
+            "command": ["uvx", "mcp-grafana"]
         }
     },
     "tools": {
@@ -74,6 +79,9 @@
         "slack_usergroups_users_update": false
     },
     "permission": {
+        "external_directory": {
+            "/nix/store/*": "allow"
+        },
         "atlassian_jira_create_issue": "ask",
         "atlassian_jira_update_issue": "ask",
         "atlassian_jira_transition_issue": "ask",
