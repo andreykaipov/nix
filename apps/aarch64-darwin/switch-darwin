@@ -21,7 +21,8 @@ darwin_rebuild() {
 
 # Move away any /etc files that would conflict with nix-darwin's activation.
 # This handles stale files from previous installs or the Nix installer.
-for f in /etc/zshenv /etc/zshrc /etc/zprofile /etc/bashrc; do
+# Skips symlinks since it means those files are already managed by nix-darwin.
+for f in /etc/zshenv /etc/zshrc /etc/zprofile /etc/bashrc /etc/nix/nix.custom.conf; do
   if [ -e "$f" ] && [ ! -L "$f" ]; then
     printf "${yellow}Moving $f to $f.before-nix-darwin${reset}\n"
     sudo mv "$f" "$f.before-nix-darwin"
