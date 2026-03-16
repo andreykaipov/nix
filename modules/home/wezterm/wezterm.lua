@@ -76,6 +76,14 @@ config.keys = {
 	{ key = "DownArrow",  mods = "ALT",   action = wezterm.action.SendKey({ key = "DownArrow", mods = "ALT" }) },
 }
 
+-- Don't include trailing ) in URLs, e.g. "(https://example.com)" should
+-- only link "https://example.com". URLs that contain paired () still work,
+-- e.g. "https://example.com/page_(section)" links the full URL.
+config.hyperlink_rules = {
+	{ regex = [=[\b\w+://(?:[^\s()]*\([^\s()]*\))*[^\s()]*]=], format = "$0" },
+	{ regex = [=[\b\w+@[\w-]+(\.[\w-]+)+\b]=], format = "mailto:$0" },
+}
+
 config.set_environment_variables = { BOOTSTRAP = "1" }
 config.default_prog = { wezterm.config_dir .. "/bootstrap.sh" }
 
