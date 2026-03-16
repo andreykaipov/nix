@@ -40,12 +40,10 @@
     inputs:
     let
       lib = import ./lib { inherit inputs; };
-      hosts = import ./hosts { inherit lib; };
     in
     {
       apps = lib.forAvailableSystems lib.mkApps;
-      homeConfigurations = lib.mkConfig "home" hosts;
-      darwinConfigurations = lib.mkConfig "darwin" hosts;
-      # nixosConfigurations = lib.mkConfig "linux" hosts;
+      homeConfigurations = lib.forAllHosts lib.mkConfig;
+      darwinConfigurations = lib.forDarwinHosts lib.mkConfig;
     };
 }

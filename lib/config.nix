@@ -8,10 +8,15 @@ let
   inherit (inputs) nixpkgs nixpkgs-stable;
   inherit (inputs) home-manager darwin;
   inherit (nixpkgs) lib;
-
-  overlays = import ../overlays { inherit inputs; };
 in
-final: _: {
+final: _:
+let
+  hosts = import ../hosts { lib = final; };
+in
+{
+  forAllHosts = f: f "home" hosts;
+  forDarwinHosts = f: f "darwin" hosts;
+
   # Builds configurations for a given kind (home, darwin, linux) across all matching hosts
   mkConfig =
     kind: hosts:
@@ -26,8 +31,9 @@ final: _: {
             import pkgs {
               inherit system;
               config.allowUnfree = true;
-              inherit overlays;
+              overlays = import ../overlays { inherit inputs; };
             };
+
           pkgs = unfree nixpkgs;
           pkgs-stable = unfree nixpkgs-stable;
 
@@ -37,69 +43,39 @@ final: _: {
             darwin = darwin.lib.darwinSystem;
           };
 
-          resolvedExtraModules = map (m: if lib.isPath m then import m else m) host.extraModules;
+          baseModules = [
+            (import ../hosts/extend.nix host) # passes host with additional functions on it
+            (../modules + "/${kind}")
+          ];
 
-          args = getAttr kind {
+          resolvedExtraModules = map (m: if lib.isPath m then import m else m) host.extraModules;
+          extraModules = concatMap (m: m.${kind} or [ ]) resolvedExtraModules;
+
+          baseArgs = getAttr kind {
             home = {
               inherit pkgs;
               lib = final;
-              extraSpecialArgs = inputs // {
+              extraSpecialArgs = {
                 inherit inputs pkgs-stable;
-                # host is passed to _module by the extend.nix import below, not here
               };
-              modules = [
-                (import ../hosts/extend.nix host)
-                ../modules/home
-                {
-                  # GUI apps come from homebrew casks, not nix packages
-                  # So we disable linking into /Applications/Home Manager Apps
-                  # https://github.com/nix-community/home-manager/issues/8336#issuecomment-3696615357
-                  targets.darwin.copyApps.enable = false;
-                  targets.darwin.linkApps.enable = false;
-
-                  # Workaround for builtins.toFile options.json warning with Determinate Nix
-                  # https://github.com/nix-community/home-manager/issues/7935
-                  manual.manpages.enable = false;
-                }
-              ]
-              ++ (concatMap (m: m.home or [ ]) resolvedExtraModules);
             };
             linux = { };
             darwin = {
-              specialArgs = inputs // {
+              specialArgs = {
                 lib = final;
-                inherit host pkgs pkgs-stable;
+                inherit inputs pkgs pkgs-stable;
               };
               modules = [
-                ../modules/darwin
                 { nixpkgs.hostPlatform = system; }
-              ]
-              ++ (concatMap (m: m.darwin or [ ]) resolvedExtraModules);
+              ];
             };
+          };
+
+          args = baseArgs // {
+            modules = baseModules ++ (baseArgs.modules or [ ]) ++ extraModules;
           };
         in
         configuration args;
     in
     lib.mapAttrs (_: configure) kindHosts;
-
-  # Builds all *Configurations outputs, skipping kinds with no hosts
-  mkConfigs =
-    hosts:
-    let
-      nonEmpty = filter (kind: hosts.${kind} or { } != { }) (attrNames hosts);
-      outputName =
-        kind:
-        {
-          home = "homeConfigurations";
-          darwin = "darwinConfigurations";
-          linux = "nixosConfigurations";
-        }
-        .${kind};
-    in
-    listToAttrs (
-      map (kind: {
-        name = outputName kind;
-        value = final.mkConfig kind hosts;
-      }) nonEmpty
-    );
 }
