@@ -1,0 +1,415 @@
+diff --git a/cmd/slack-mcp-server/main.go b/cmd/slack-mcp-server/main.go
+index 3999c14..0f97942 100644
+--- a/cmd/slack-mcp-server/main.go
++++ b/cmd/slack-mcp-server/main.go
+@@ -12,6 +12,7 @@ import (
+ 
+ 	"github.com/korotovsky/slack-mcp-server/pkg/provider"
+ 	"github.com/korotovsky/slack-mcp-server/pkg/server"
++	"github.com/korotovsky/slack-mcp-server/pkg/version"
+ 	"github.com/mattn/go-isatty"
+ 	"go.uber.org/zap"
+ 	"go.uber.org/zap/zapcore"
+@@ -23,12 +24,19 @@ var defaultSsePort = 13080
+ func main() {
+ 	var transport string
+ 	var enabledToolsFlag string
++	var showVersion bool
+ 	flag.StringVar(&transport, "t", "stdio", "Transport type (stdio, sse or http)")
+ 	flag.StringVar(&transport, "transport", "stdio", "Transport type (stdio, sse or http)")
+ 	flag.StringVar(&enabledToolsFlag, "e", "", "Comma-separated list of enabled tools (empty = all tools)")
+ 	flag.StringVar(&enabledToolsFlag, "enabled-tools", "", "Comma-separated list of enabled tools (empty = all tools)")
++	flag.BoolVar(&showVersion, "version", false, "Print version and exit")
+ 	flag.Parse()
+ 
++	if showVersion {
++		fmt.Printf("slack-mcp-server %s (commit: %s, built: %s)\n", version.Version, version.CommitHash, version.BuildTime)
++		os.Exit(0)
++	}
++
+ 	if enabledToolsFlag == "" {
+ 		enabledToolsFlag = os.Getenv("SLACK_MCP_ENABLED_TOOLS")
+ 	}
+@@ -161,6 +169,15 @@ func main() {
+ 
+ func newUsersWatcher(p *provider.ApiProvider, once *sync.Once, logger *zap.Logger) func() {
+ 	return func() {
++		if v := os.Getenv("SLACK_MCP_SKIP_CACHE"); v == "true" || v == "1" {
++			logger.Info("SLACK_MCP_SKIP_CACHE is set, skipping eager users cache",
++				zap.String("context", "console"),
++			)
++			p.LoadUsersCacheFromDisk()
++			p.MarkUsersReady()
++			return
++		}
++
+ 		logger.Info("Caching users collection...",
+ 			zap.String("context", "console"),
+ 		)
+@@ -193,6 +210,15 @@ func newUsersWatcher(p *provider.ApiProvider, once *sync.Once, logger *zap.Logge
+ 
+ func newChannelsWatcher(p *provider.ApiProvider, once *sync.Once, logger *zap.Logger) func() {
+ 	return func() {
++		if v := os.Getenv("SLACK_MCP_SKIP_CACHE"); v == "true" || v == "1" {
++			logger.Info("SLACK_MCP_SKIP_CACHE is set, skipping eager channels cache",
++				zap.String("context", "console"),
++			)
++			p.LoadChannelsCacheFromDisk()
++			p.MarkChannelsReady()
++			return
++		}
++
+ 		logger.Info("Caching channels collection...",
+ 			zap.String("context", "console"),
+ 		)
+diff --git a/pkg/handler/conversations.go b/pkg/handler/conversations.go
+index 8ea3e58..846adde 100644
+--- a/pkg/handler/conversations.go
++++ b/pkg/handler/conversations.go
+@@ -1426,8 +1426,24 @@ func (ch *ConversationsHandler) resolveChannelID(ctx context.Context, channel st
+ 		return channelsMaps.Channels[chn].ID, nil
+ 	}
+ 
+-	// Channel not found - try refreshing cache and retry once
+-	ch.logger.Debug("Channel not found in cache, attempting refresh",
++	// Channel not found - try a single-channel lookup first (avoids bulk re-fetch)
++	ch.logger.Debug("Channel not found in cache, trying lazy lookup",
++		zap.String("channel", channel))
++
++	if id, err := ch.apiProvider.LookupChannelByName(ctx, channel); err == nil {
++		ch.logger.Debug("Channel resolved via lazy lookup",
++			zap.String("channel", channel),
++			zap.String("channel_id", id))
++		return id, nil
++	}
++
++	// When SLACK_MCP_SKIP_CACHE is set, do not fall back to bulk refresh
++	if v := os.Getenv("SLACK_MCP_SKIP_CACHE"); v == "true" || v == "1" {
++		return "", fmt.Errorf("channel %q not found", channel)
++	}
++
++	// Lazy lookup failed - fall back to full cache refresh
++	ch.logger.Debug("Lazy lookup failed, attempting full cache refresh",
+ 		zap.String("channel", channel))
+ 
+ 	refreshErr := ch.apiProvider.ForceRefreshChannels(ctx)
+@@ -1475,6 +1491,14 @@ func (ch *ConversationsHandler) convertMessagesFromHistory(slackMessages []slack
+ 
+ 		userName, realName, ok := getUserInfo(msg.User, usersMap.Users)
+ 
++		// Lazy user resolution: if not in cache, try single API lookup
++		if !ok && msg.User != "" && msg.SubType != "bot_message" {
++			if u, err := ch.apiProvider.LookupUserByID(context.Background(), msg.User); err == nil {
++				userName, realName, ok = u.Name, u.RealName, true
++				usersMap = ch.apiProvider.ProvideUsersMap() // refresh after cache update
++			}
++		}
++
+ 		if !ok && msg.SubType == "bot_message" {
+ 			userName, realName, ok = getBotInfo(msg.Username)
+ 		}
+@@ -1547,6 +1571,14 @@ func (ch *ConversationsHandler) convertMessagesFromSearch(slackMessages []slack.
+ 	for _, msg := range slackMessages {
+ 		userName, realName, ok := getUserInfo(msg.User, usersMap.Users)
+ 
++		// Lazy user resolution
++		if !ok && msg.User != "" && msg.Username == "" {
++			if u, err := ch.apiProvider.LookupUserByID(context.Background(), msg.User); err == nil {
++				userName, realName, ok = u.Name, u.RealName, true
++				usersMap = ch.apiProvider.ProvideUsersMap()
++			}
++		}
++
+ 		if !ok && msg.User == "" && msg.Username != "" {
+ 			userName, realName, ok = getBotInfo(msg.Username)
+ 		} else if !ok {
+@@ -1851,13 +1883,12 @@ func (ch *ConversationsHandler) parseParamsToolMark(request mcp.CallToolRequest)
+ 
+ 	// Resolve channel name to ID if needed
+ 	if strings.HasPrefix(channel, "#") || strings.HasPrefix(channel, "@") {
+-		channelsMaps := ch.apiProvider.ProvideChannelsMaps()
+-		chn, ok := channelsMaps.ChannelsInv[channel]
+-		if !ok {
+-			ch.logger.Error("Channel not found", zap.String("channel", channel))
+-			return nil, fmt.Errorf("channel %q not found", channel)
++		resolvedChannel, err := ch.resolveChannelID(context.Background(), channel)
++		if err != nil {
++			ch.logger.Error("Channel not found", zap.String("channel", channel), zap.Error(err))
++			return nil, err
+ 		}
+-		channel = channelsMaps.Channels[chn].ID
++		channel = resolvedChannel
+ 	}
+ 
+ 	ts := request.GetString("ts", "")
+@@ -1995,6 +2026,14 @@ func (ch *ConversationsHandler) paramFormatChannel(raw string) (string, error) {
+ 		if id, ok := cms.ChannelsInv[raw]; ok {
+ 			return cms.Channels[id].Name, nil
+ 		}
++		// Try lazy lookup
++		if chID, err := ch.apiProvider.LookupChannelByName(context.Background(), raw); err == nil {
++			cms = ch.apiProvider.ProvideChannelsMaps()
++			if chn, ok := cms.Channels[chID]; ok {
++				return chn.Name, nil
++			}
++			return strings.TrimPrefix(raw, "#"), nil
++		}
+ 		return "", fmt.Errorf("channel %q not found", raw)
+ 	}
+ 	// Handle both C (standard channels) and G (private groups/channels) prefixes
+diff --git a/pkg/provider/api.go b/pkg/provider/api.go
+index 32eba0b..b5b4e8a 100644
+--- a/pkg/provider/api.go
++++ b/pkg/provider/api.go
+@@ -4,6 +4,7 @@ import (
+ 	"context"
+ 	"encoding/json"
+ 	"errors"
++	"fmt"
+ 	"io"
+ 	"os"
+ 	"path/filepath"
+@@ -1157,6 +1158,243 @@ func (ap *ApiProvider) ProvideChannelsMaps() *ChannelsCache {
+ 	return ap.channelsSnapshot.Load()
+ }
+ 
++func (ap *ApiProvider) MarkUsersReady() {
++	ap.usersReady = true
++}
++
++// LoadUsersCacheFromDisk loads the users cache file without hitting the Slack API.
++func (ap *ApiProvider) LoadUsersCacheFromDisk() {
++	data, err := os.ReadFile(ap.usersCachePath)
++	if err != nil {
++		ap.logger.Info("No users cache file found, starting with empty cache",
++			zap.String("cache_file", ap.usersCachePath))
++		return
++	}
++	var cachedUsers []slack.User
++	if err := json.Unmarshal(data, &cachedUsers); err != nil || len(cachedUsers) == 0 {
++		ap.logger.Warn("Users cache invalid or empty, starting fresh",
++			zap.String("cache_file", ap.usersCachePath))
++		return
++	}
++	newSnapshot := &UsersCache{
++		Users:    make(map[string]slack.User, len(cachedUsers)),
++		UsersInv: make(map[string]string, len(cachedUsers)),
++	}
++	for _, u := range cachedUsers {
++		newSnapshot.Users[u.ID] = u
++		newSnapshot.UsersInv[u.Name] = u.ID
++	}
++	ap.usersSnapshot.Store(newSnapshot)
++	ap.logger.Info("Loaded users from disk cache (skip-cache mode)",
++		zap.Int("count", len(cachedUsers)),
++		zap.String("cache_file", ap.usersCachePath))
++}
++
++func (ap *ApiProvider) MarkChannelsReady() {
++	ap.channelsReady = true
++}
++
++// LookupChannelByName searches for a single channel by name via the edge API
++// and adds it to the channels cache. Returns the channel ID if found.
++func (ap *ApiProvider) LookupChannelByName(ctx context.Context, name string) (string, error) {
++	mcpClient, ok := ap.client.(*MCPSlackClient)
++	if !ok {
++		return "", fmt.Errorf("lazy channel lookup requires MCPSlackClient")
++	}
++
++	query := strings.TrimLeft(name, "#@")
++
++	// Try edge search first
++	results, err := mcpClient.edgeClient.SearchChannels(ctx, query)
++	if err != nil {
++		ap.logger.Debug("Edge channel search error",
++			zap.String("query", query), zap.Error(err))
++	} else if len(results) > 0 {
++		for _, ch := range results {
++			if ch.Name == query || ch.NameNormalized == query {
++				mapped := mapChannel(
++					ch.ID, ch.Name, ch.NameNormalized,
++					ch.Topic.Value, ch.Purpose.Value,
++					ch.User, nil, ch.NumMembers,
++					ch.IsIM, ch.IsMpIM, ch.IsPrivate, ch.IsExtShared,
++					ap.ProvideUsersMap().Users,
++				)
++				ap.addChannelToCache(mapped)
++				ap.logger.Debug("Channel resolved via edge search",
++					zap.String("channel", name),
++					zap.String("channel_id", ch.ID))
++				return ch.ID, nil
++			}
++		}
++	}
++
++	// Fallback: search messages in the channel to discover its ID
++	ap.logger.Debug("Edge search missed, trying message search fallback",
++		zap.String("channel", name))
++	msgs, _, searchErr := ap.client.SearchContext(ctx, "in:#"+query, slack.SearchParameters{
++		Sort:          slack.DEFAULT_SEARCH_SORT,
++		SortDirection: slack.DEFAULT_SEARCH_SORT_DIR,
++		Count:         1,
++	})
++	if searchErr != nil {
++		ap.logger.Debug("Message search fallback failed",
++			zap.String("channel", name),
++			zap.Error(searchErr))
++	} else if msgs != nil && len(msgs.Matches) > 0 {
++		chID := msgs.Matches[0].Channel.ID
++		chName := msgs.Matches[0].Channel.Name
++		if chID != "" {
++			mapped := mapChannel(
++				chID, chName, chName,
++				"", "",
++				"", nil, 0,
++				false, false, false, false,
++				ap.ProvideUsersMap().Users,
++			)
++			ap.addChannelToCache(mapped)
++			ap.logger.Info("Channel resolved via message search",
++				zap.String("channel", name),
++				zap.String("channel_id", chID))
++			return chID, nil
++		}
++	} else {
++		ap.logger.Debug("Message search returned no results",
++			zap.String("channel", name))
++	}
++
++	return "", fmt.Errorf("channel %q not found", name)
++}
++
++// LookupUserByID fetches a single user by ID and adds it to the users cache.
++func (ap *ApiProvider) LookupUserByID(ctx context.Context, userID string) (*slack.User, error) {
++	// Check cache first
++	snapshot := ap.usersSnapshot.Load()
++	if u, ok := snapshot.Users[userID]; ok {
++		return &u, nil
++	}
++
++	usersInfo, err := ap.client.GetUsersInfo(userID)
++	if err != nil {
++		return nil, fmt.Errorf("users.info failed for %s: %w", userID, err)
++	}
++	if usersInfo == nil || len(*usersInfo) == 0 {
++		return nil, fmt.Errorf("user %s not found", userID)
++	}
++
++	user := (*usersInfo)[0]
++	ap.addUserToCache(user)
++	ap.logger.Debug("User resolved via lazy lookup",
++		zap.String("user_id", userID),
++		zap.String("user_name", user.Name))
++	return &user, nil
++}
++
++func (ap *ApiProvider) addUserToCache(user slack.User) {
++	for {
++		old := ap.usersSnapshot.Load()
++		newSnapshot := &UsersCache{
++			Users:    make(map[string]slack.User, len(old.Users)+1),
++			UsersInv: make(map[string]string, len(old.UsersInv)+1),
++		}
++		for k, v := range old.Users {
++			newSnapshot.Users[k] = v
++		}
++		for k, v := range old.UsersInv {
++			newSnapshot.UsersInv[k] = v
++		}
++		newSnapshot.Users[user.ID] = user
++		newSnapshot.UsersInv[user.Name] = user.ID
++		if ap.usersSnapshot.CompareAndSwap(old, newSnapshot) {
++			ap.persistUsersCache(newSnapshot)
++			break
++		}
++	}
++}
++
++func (ap *ApiProvider) persistUsersCache(snapshot *UsersCache) {
++	users := make([]slack.User, 0, len(snapshot.Users))
++	for _, u := range snapshot.Users {
++		users = append(users, u)
++	}
++	data, err := json.MarshalIndent(users, "", "  ")
++	if err != nil {
++		ap.logger.Error("Failed to marshal users for cache", zap.Error(err))
++		return
++	}
++	if err := os.WriteFile(ap.usersCachePath, data, 0644); err != nil {
++		ap.logger.Error("Failed to write users cache",
++			zap.String("cache_file", ap.usersCachePath),
++			zap.Error(err))
++	}
++}
++
++func (ap *ApiProvider) addChannelToCache(ch Channel) {
++	for {
++		old := ap.channelsSnapshot.Load()
++		newSnapshot := &ChannelsCache{
++			Channels:    make(map[string]Channel, len(old.Channels)+1),
++			ChannelsInv: make(map[string]string, len(old.ChannelsInv)+1),
++		}
++		for k, v := range old.Channels {
++			newSnapshot.Channels[k] = v
++		}
++		for k, v := range old.ChannelsInv {
++			newSnapshot.ChannelsInv[k] = v
++		}
++		newSnapshot.Channels[ch.ID] = ch
++		newSnapshot.ChannelsInv[ch.Name] = ch.ID
++		if ap.channelsSnapshot.CompareAndSwap(old, newSnapshot) {
++			ap.persistChannelsCache(newSnapshot)
++			break
++		}
++	}
++}
++
++// LoadChannelsCacheFromDisk loads the channels cache file without hitting the Slack API.
++func (ap *ApiProvider) LoadChannelsCacheFromDisk() {
++	data, err := os.ReadFile(ap.channelsCachePath)
++	if err != nil {
++		ap.logger.Info("No channels cache file found, starting with empty cache",
++			zap.String("cache_file", ap.channelsCachePath))
++		return
++	}
++	var cachedChannels []Channel
++	if err := json.Unmarshal(data, &cachedChannels); err != nil || len(cachedChannels) == 0 {
++		ap.logger.Warn("Channels cache invalid or empty, starting fresh",
++			zap.String("cache_file", ap.channelsCachePath))
++		return
++	}
++	newSnapshot := &ChannelsCache{
++		Channels:    make(map[string]Channel, len(cachedChannels)),
++		ChannelsInv: make(map[string]string, len(cachedChannels)),
++	}
++	for _, c := range cachedChannels {
++		newSnapshot.Channels[c.ID] = c
++		newSnapshot.ChannelsInv[c.Name] = c.ID
++	}
++	ap.channelsSnapshot.Store(newSnapshot)
++	ap.logger.Info("Loaded channels from disk cache (skip-cache mode)",
++		zap.Int("count", len(cachedChannels)),
++		zap.String("cache_file", ap.channelsCachePath))
++}
++
++func (ap *ApiProvider) persistChannelsCache(snapshot *ChannelsCache) {
++	channels := make([]Channel, 0, len(snapshot.Channels))
++	for _, ch := range snapshot.Channels {
++		channels = append(channels, ch)
++	}
++	data, err := json.MarshalIndent(channels, "", "  ")
++	if err != nil {
++		ap.logger.Error("Failed to marshal channels for cache", zap.Error(err))
++		return
++	}
++	if err := os.WriteFile(ap.channelsCachePath, data, 0644); err != nil {
++		ap.logger.Error("Failed to write channels cache",
++			zap.String("cache_file", ap.channelsCachePath),
++			zap.Error(err))
++	}
++}
++
+ func (ap *ApiProvider) IsReady() (bool, error) {
+ 	if !ap.usersReady {
+ 		return false, ErrUsersNotReady

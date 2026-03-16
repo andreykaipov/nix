@@ -13,11 +13,16 @@ final: prev: {
 
     vendorHash = "sha256-mR+UFQRi98OTCyNISy3e7QTGKusd8XhNW4iz57QvpZE=";
 
+    patches = [
+      ./slack-mcp-server-skip-cache.patch
+    ];
+
     subPackages = [ "cmd/slack-mcp-server" ];
 
-    ldflags = [
+    ldflags = let pkg = "github.com/korotovsky/slack-mcp-server/pkg/version"; in [
       "-s"
       "-w"
+      "-X" "${pkg}.Version=${version}+patched"
     ];
   };
 }

@@ -125,6 +125,8 @@ db.close()
   echo "export SLACK_MCP_XOXD_TOKEN='$cookie'"
 else
   log "tokens already set in environment, skipping extraction"
+  echo "export SLACK_MCP_XOXC_TOKEN='$SLACK_MCP_XOXC_TOKEN'"
+  echo "export SLACK_MCP_XOXD_TOKEN='$SLACK_MCP_XOXD_TOKEN'"
 fi
 
 # Extract User-Agent from Slack's browser log if not already set
@@ -141,10 +143,11 @@ if [[ -z "${SLACK_MCP_USER_AGENT:-}" ]]; then
 else
   log "SLACK_MCP_USER_AGENT already set, skipping log parsing"
 fi
-log "setting CUSTOM_TLS=true, ADD_MESSAGE_TOOL=true, MARK_TOOL=true"
+log "setting CUSTOM_TLS=true, ADD_MESSAGE_TOOL=true, MARK_TOOL=true, SKIP_CACHE=true"
 echo "export SLACK_MCP_CUSTOM_TLS=true"
 echo "export SLACK_MCP_ADD_MESSAGE_TOOL=true"
 echo "export SLACK_MCP_MARK_TOOL=true"
+echo "export SLACK_MCP_SKIP_CACHE=true"
 tools=(
   conversations_history
   conversations_replies
