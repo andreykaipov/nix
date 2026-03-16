@@ -12,5 +12,6 @@
   };
   extraModules = with lib.extras; [
     dev
+    ./custom.nix
   ];
 }
