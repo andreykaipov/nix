@@ -19,7 +19,7 @@ in
       StandardOutPath = logFile;
       StandardErrorPath = logFile;
       EnvironmentVariables = {
-        PATH = "${config.home.profileDirectory}/bin";
+        PATH = "${config.home.profileDirectory}/bin:/usr/bin";
       };
     };
   };
