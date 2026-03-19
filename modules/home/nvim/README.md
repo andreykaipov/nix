@@ -18,7 +18,7 @@ nvim/
     ├── editing.lua           # Comments, surround, pairs, alignment, icons, which-key
     ├── guides.lua            # Indent guides, indent scope, scrollbar with sign indicators
     ├── git.lua               # mini.git + mini.diff with gutter signs and diff overlay
-    ├── opencode.lua          # OpenCode AI assistant integration via tmux
+    ├── pi.lua                # Pi coding agent integration via sidekick.nvim
     ├── buffers.lua           # Buffer close/reopen, layout-aware :q/:bd, empty buffer cleanup
     ├── nvim-tree.lua         # File explorer sidebar + bufferline tabs
     ├── picker.lua            # Fuzzy finder (mini.pick)
@@ -80,7 +80,6 @@ Plugins are managed by **mini.deps** (part of mini.nvim). On first launch, mini.
 | `nvimtools/none-ls.nvim` | Formatters/linters as LSP sources |
 | `nvim-treesitter/nvim-treesitter` | Syntax highlighting and code parsing |
 | `VonHeikemen/ts-enable.nvim` | Treesitter auto-install helper |
-| `nickjvandyke/opencode.nvim` | OpenCode AI assistant |
 
 ## LSP Servers
 

@@ -20,7 +20,7 @@ in
 
 {
   home.packages = with pkgs; [
-    nodejs # for copilot.lua server
+    nodejs # for sidekick.nvim and treesitter
     tree-sitter
     lua
     luarocks

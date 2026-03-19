@@ -12,6 +12,6 @@
   };
   extraModules = with lib.extras; [
     dev
-    ./custom.nix
+    ./extra/pi.nix
   ];
 }

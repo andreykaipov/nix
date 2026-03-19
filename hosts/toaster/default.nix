@@ -13,5 +13,6 @@
   extraModules = with lib.extras; [
     dev
     aws-sso-refresh
+    ./extra/pi.nix
   ];
 }
