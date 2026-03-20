@@ -14,7 +14,8 @@ config.initial_cols = 180
 config.initial_rows = 45
 
 -- or, changing the font size and color scheme.
-config.font = wezterm.font("Comic Mono")
+-- config.font = wezterm.font("Comic Mono")
+config.font = wezterm.font("ComicShannsMono Nerd Font")
 config.font_size = 16
 -- config.color_scheme = 'AdventureTime'
 --
@@ -70,10 +71,12 @@ config.keys = {
 	{ key = "s",          mods = "SUPER",       action = wezterm.action.SendKey({ key = "F3" }) },
 	{ key = "f",          mods = "SUPER|SHIFT", action = wezterm.action.SendKey({ key = "F4" }) },
 	-- Disable WezTerm's default Alt+Arrow bindings so they pass through to tmux/nvim
-	{ key = "LeftArrow",  mods = "ALT",   action = wezterm.action.SendKey({ key = "LeftArrow", mods = "ALT" }) },
-	{ key = "RightArrow", mods = "ALT",   action = wezterm.action.SendKey({ key = "RightArrow", mods = "ALT" }) },
-	{ key = "UpArrow",    mods = "ALT",   action = wezterm.action.SendKey({ key = "UpArrow", mods = "ALT" }) },
-	{ key = "DownArrow",  mods = "ALT",   action = wezterm.action.SendKey({ key = "DownArrow", mods = "ALT" }) },
+	{ key = "LeftArrow",  mods = "ALT",         action = wezterm.action.SendKey({ key = "LeftArrow", mods = "ALT" }) },
+	{ key = "RightArrow", mods = "ALT",         action = wezterm.action.SendKey({ key = "RightArrow", mods = "ALT" }) },
+	{ key = "UpArrow",    mods = "ALT",         action = wezterm.action.SendKey({ key = "UpArrow", mods = "ALT" }) },
+	{ key = "DownArrow",  mods = "ALT",         action = wezterm.action.SendKey({ key = "DownArrow", mods = "ALT" }) },
+	-- Send CSI-u encoded Shift+Enter so tmux/pi can distinguish it from plain Enter
+	{ key = "Enter",      mods = "SHIFT",       action = wezterm.action.SendString("\x1b[13;2u") },
 }
 
 -- Don't include trailing ) in URLs, e.g. "(https://example.com)" should
@@ -81,7 +84,7 @@ config.keys = {
 -- e.g. "https://example.com/page_(section)" links the full URL.
 config.hyperlink_rules = {
 	{ regex = [=[\b\w+://(?:[^\s()]*\([^\s()]*\))*[^\s()]*]=], format = "$0" },
-	{ regex = [=[\b\w+@[\w-]+(\.[\w-]+)+\b]=], format = "mailto:$0" },
+	{ regex = [=[\b\w+@[\w-]+(\.[\w-]+)+\b]=],                 format = "mailto:$0" },
 }
 
 config.set_environment_variables = { BOOTSTRAP = "1" }

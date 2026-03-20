@@ -21,7 +21,7 @@ function readCachedColors(): Record<string, string> {
       );
       if (match) colors[match[1]] = match[2];
     }
-  } catch {}
+  } catch { }
   return colors;
 }
 

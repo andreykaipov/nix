@@ -18,6 +18,7 @@
 
     # Fonts
     comic-mono
+    nerd-fonts.comic-shanns-mono # verify name: fc-list | grep -i shanns
 
     # Text and terminal utilities
     jq
