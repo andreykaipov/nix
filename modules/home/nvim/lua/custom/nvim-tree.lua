@@ -169,7 +169,14 @@ function M.setup()
 	require('bufferline').setup({
 		options = {
 			themable = false,
-			middle_mouse_command = 'bdelete! %d',
+			middle_mouse_command = function(bufnr)
+				-- Don't close special buffers (NvimTree, etc.)
+				if vim.bo[bufnr].filetype == 'NvimTree' or vim.bo[bufnr].buftype ~= '' then
+					return
+				end
+				require('custom.buffers').track_closed(bufnr)
+				MiniBufremove.delete(bufnr, true)
+			end,
 			separator_style = 'thin',
 			indicator = { style = 'none' },
 			offsets = {

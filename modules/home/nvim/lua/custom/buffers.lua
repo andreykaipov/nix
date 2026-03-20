@@ -1,12 +1,20 @@
 -- Buffer management: close, reopen, layout preservation
 local M = {}
 
+-- Track recently closed buffers for Ctrl+Shift+T reopen
+local closed_buffers = {}
+
+-- Record a buffer's path before closing it (used by middle-click in nvim-tree.lua)
+function M.track_closed(bufnr)
+	local name = vim.api.nvim_buf_get_name(bufnr)
+	if name ~= '' then
+		table.insert(closed_buffers, name)
+	end
+end
+
 function M.setup()
 	-- See :help MiniBufremove.config
 	require('mini.bufremove').setup({})
-
-	-- Track recently closed buffers for Ctrl+Shift+T reopen
-	local closed_buffers = {}
 
 	-- Close buffer and preserve window layout
 	local function close_buffer()
@@ -16,10 +24,7 @@ function M.setup()
 		if ft == 'NvimTree' or vim.bo[buf].buftype ~= '' then
 			return
 		end
-		local name = vim.api.nvim_buf_get_name(buf)
-		if name ~= '' then
-			table.insert(closed_buffers, name)
-		end
+		M.track_closed(buf)
 		MiniBufremove.delete(buf, true)
 	end
 
