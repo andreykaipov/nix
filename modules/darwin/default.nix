@@ -12,7 +12,6 @@
     let
       cachix = {
         "nix-community.cachix.org" = "mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs=";
-        "nix-community-neovim-nightly-overlay.cachix.org" = "WlgMaITRm3UMnm28W1mM8hBDTdBs0chO54bens56oVo=";
       };
       substituters = lib.mapAttrsToList (h: _: "https://${h}") cachix;
       publicKeys = lib.mapAttrsToList (h: k: "${h}-1:${k}") cachix;
