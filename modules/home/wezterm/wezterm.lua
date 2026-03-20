@@ -14,8 +14,8 @@ config.initial_cols = 180
 config.initial_rows = 45
 
 -- or, changing the font size and color scheme.
--- config.font = wezterm.font("Comic Mono")
-config.font = wezterm.font("ComicShannsMono Nerd Font")
+config.font = wezterm.font("Comic Mono")
+-- config.font = wezterm.font("ComicShannsMono Nerd Font")
 config.font_size = 16
 -- config.color_scheme = 'AdventureTime'
 --
@@ -79,11 +79,12 @@ config.keys = {
 	{ key = "Enter",      mods = "SHIFT",       action = wezterm.action.SendString("\x1b[13;2u") },
 }
 
--- Don't include trailing ) in URLs, e.g. "(https://example.com)" should
+-- Don't include trailing ) or . in URLs, e.g. "(https://example.com)" should
+-- only link "https://example.com", and "Visit https://example.com." should
 -- only link "https://example.com". URLs that contain paired () still work,
 -- e.g. "https://example.com/page_(section)" links the full URL.
 config.hyperlink_rules = {
-	{ regex = [=[\b\w+://(?:[^\s()]*\([^\s()]*\))*[^\s()]*]=], format = "$0" },
+	{ regex = [=[\b\w+://(?:[^\s()]*\([^\s()]*\))*[^\s().]*(?:\.[^\s().]+)*]=], format = "$0" },
 	{ regex = [=[\b\w+@[\w-]+(\.[\w-]+)+\b]=],                 format = "mailto:$0" },
 }
 
