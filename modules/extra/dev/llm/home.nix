@@ -44,40 +44,40 @@ in
     mcp = {
       mkServer = lib.mkOption {
         type = lib.types.raw;
-        default = mcpServer;
         readOnly = true;
         description = "Helper: creates a lazy MCP server entry that sources zshenv.secrets";
+        default = mcpServer;
       };
       mkRemoteServer = lib.mkOption {
         type = lib.types.raw;
-        default = mcpRemoteServer;
         readOnly = true;
         description = "Helper: creates a lazy remote MCP server entry with OAuth";
+        default = mcpRemoteServer;
       };
       terraform = lib.mkOption {
         type = lib.types.attrs;
-        default = mcpServer "terraform-mcp-server stdio --toolsets= --tools=search_providers,get_provider_details,get_latest_provider_version,search_modules,get_module_details,get_latest_module_version,list_terraform_projects,list_workspaces,get_workspace_details,list_runs,get_run_details,get_plan_details,get_plan_logs,get_apply_details,get_apply_logs,list_workspace_variables,list_variable_sets,read_workspace_tags";
         readOnly = true;
         description = "Terraform MCP server definition";
+        default = mcpServer "terraform-mcp-server stdio --toolsets= --tools=search_providers,get_provider_details,get_latest_provider_version,search_modules,get_module_details,get_latest_module_version,list_terraform_projects,list_workspaces,get_workspace_details,list_runs,get_run_details,get_plan_details,get_plan_logs,get_apply_details,get_apply_logs,list_workspace_variables,list_variable_sets,read_workspace_tags";
       };
       slack = lib.mkOption {
         type = lib.types.attrs;
+        readOnly = true;
+        description = "Slack MCP server definition";
         default = mcpServer "slack-mcp-server --transport stdio" // {
           exposeResources = false; # no resources to avoid bulk user queries
         };
-        readOnly = true;
-        description = "Slack MCP server definition";
       };
     };
     mcpServers = lib.mkOption {
       type = lib.types.attrsOf lib.types.attrs;
-      default = { };
       description = "MCP servers for pi's mcp.json";
+      default = { };
     };
     settings = lib.mkOption {
       type = lib.types.attrs;
-      default = { };
       description = "Additional settings to merge into pi's settings.json";
+      default = { };
     };
   };
 
