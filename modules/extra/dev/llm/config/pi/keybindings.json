@@ -1,0 +1,5 @@
+{
+  "newLine": ["shift+enter", "ctrl+j"],
+  "pageUp": ["pageUp", "alt+u"],
+  "pageDown": ["pageDown", "alt+n"]
+}

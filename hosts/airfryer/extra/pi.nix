@@ -3,10 +3,11 @@
     (
       { config, ... }:
       {
-        pi.settings.defaultProvider = "copilot";
+        pi.settings.defaultProvider = "github-copilot";
+        pi.settings.defaultModel = "claude-opus-4.6";
+        pi.settings.defaultThinkingLevel = "high";
         pi.mcpServers = {
-          terraform = config.pi.mcpServer "terraform-mcp-server stdio";
-          slack = config.pi.mcpServer "slack-mcp-server --transport stdio";
+          inherit (config.pi.mcp) terraform slack;
         };
       }
     )

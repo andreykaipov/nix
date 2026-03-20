@@ -4,12 +4,14 @@
       { config, ... }:
       {
         pi.settings.defaultProvider = "amazon-bedrock";
+        pi.settings.defaultModel = "claude-opus-4.6";
+        pi.settings.defaultThinkingLevel = "high";
         pi.mcpServers = {
-          terraform = config.pi.mcpServer "terraform-mcp-server stdio";
-          slack = config.pi.mcpServer "slack-mcp-server --transport stdio";
-          atlassian = config.pi.mcpServer "uvx mcp-atlassian";
-          argocd = config.pi.mcpServer "npx argocd-mcp@latest stdio";
-          grafana = config.pi.mcpServer "uvx mcp-grafana";
+          inherit (config.pi.mcp) terraform slack;
+          atlassian = config.pi.mcp.mkServer "TOOLSETS=default,jira_links uvx mcp-atlassian";
+          argocd = config.pi.mcp.mkServer "MCP_READ_ONLY=true npx argocd-mcp@latest stdio";
+          grafana = config.pi.mcp.mkServer "uvx mcp-grafana";
+          cloudflare = config.pi.mcp.mkRemoteServer "https://mcp.cloudflare.com/mcp";
         };
       }
     )
