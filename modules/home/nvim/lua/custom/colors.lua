@@ -32,6 +32,13 @@ function M.setup(opts)
 		manage_focus = false, -- we handle FocusLost/FocusGained ourselves below
 	})
 
+	-- Source tmux styles before the colorscheme is set. This repaints the
+	-- tmux pane bg to prevent a black flash on first render. main.conf
+	-- handles transparent vs opaque via %if @transparent.
+	if vim.env.TMUX then
+		vim.fn.system({ 'tmux', 'source-file', vim.fn.expand('~/.config/tmux/styles/main.conf') })
+	end
+
 	-- For randomhue, use a fixed seed so every nvim session gets the same hue.
 	-- The seed file is written by the activation script at nix switch time, so
 	-- colors change per switch. <leader>cc passes reseed=true to re-roll on demand.
@@ -298,12 +305,12 @@ function M.setup(opts)
 		vim.api.nvim_create_autocmd('FocusGained', {
 			group = group,
 			callback = function()
-				if M.transparent then
-					return
-				end
 				-- 1. Move cursor to edge split if entering from tmux.
 				-- Must happen first so resync highlights the correct window.
 				require('custom.navigation').apply_tmux_nav_dir()
+				if M.transparent then
+					return
+				end
 				-- 2. Restore all highlight groups in one shot.
 				local normal_hl = vim.api.nvim_get_hl(0, { name = 'Normal' })
 				normal_hl.bg = normal_bg
