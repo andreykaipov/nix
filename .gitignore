@@ -7,3 +7,8 @@ modules/home/nvim/tmp
 
 # plaintext secret env vars — encrypted via age on commit
 modules/home/shell/config/zshenv.*
+
+# generated style files to keep colorscheme in sync across terminal
+modules/home/nvim/host.lua
+modules/home/tmux/config/styles/host.conf
+modules/home/tmux/config/styles/nvim-colors.conf
