@@ -1,5 +1,6 @@
 -- Colorscheme setup and terminal color sync
 local M = {}
+M.transparent = false
 
 function M.setup(opts)
 	opts = opts or {}
@@ -23,6 +24,7 @@ function M.setup(opts)
 	-- mode UIEnter would catch it later, but in headless mode UIEnter never
 	-- fires, so the cache would never be written.
 	local tcs_config = require('tmux-colorscheme-sync.config')
+
 	require('tmux-colorscheme-sync').setup({
 		cache_file = '~/.local/state/tmux/colorscheme-cache.conf',
 		tmux_source_file = '~/.config/tmux/styles.conf',
@@ -30,9 +32,6 @@ function M.setup(opts)
 		manage_focus = false, -- we handle FocusLost/FocusGained ourselves below
 	})
 
-	-- Tell tmux style overrides and re-source styles so %if conditionals re-evaluate.
-	-- The plugin also sources styles.conf on ColorScheme, but that may not fire on
-	-- initial setup, so this explicit source ensures the options always take effect.
 	if vim.env.TMUX then
 		vim.fn.system({ 'tmux', 'set-option', '-g', '@nvim_status_bg', tmux_bg })
 		vim.fn.system({ 'tmux', 'set-option', '-g', '@nvim_pane_style', tmux.pane or 'red' })
@@ -177,7 +176,7 @@ function M.setup(opts)
 		vim.api.nvim_create_autocmd('BufWinEnter', {
 			pattern = '*',
 			callback = function()
-				if vim.bo.filetype == 'NvimTree' then
+				if not M.transparent and vim.bo.filetype == 'NvimTree' then
 					apply_nvimtree_dim()
 				end
 			end,
@@ -194,7 +193,8 @@ function M.setup(opts)
 		local function create_diff_nc_variants()
 			for _, name in ipairs(diff_sign_groups) do
 				local hl = vim.api.nvim_get_hl(0, { name = name, link = false })
-				vim.api.nvim_set_hl(0, name .. 'NC', vim.tbl_extend('force', hl, { bg = dim_bg }))
+				hl.bg = nil
+				vim.api.nvim_set_hl(0, name .. 'NC', hl)
 			end
 		end
 		create_diff_nc_variants()
@@ -253,7 +253,11 @@ function M.setup(opts)
 		})
 		vim.api.nvim_create_autocmd({ 'WinEnter', 'WinLeave' }, {
 			group = group,
-			callback = resync_all_windows,
+			callback = function()
+				if not M.transparent then
+					resync_all_windows()
+				end
+			end,
 		})
 		-- On FocusLost, everything is inactive — force NvimTreeNormal to dim.
 		-- LESSON: When switching to a tmux pane, the Neovim window stays current
@@ -265,6 +269,9 @@ function M.setup(opts)
 		vim.api.nvim_create_autocmd('FocusLost', {
 			group = group,
 			callback = function()
+				if M.transparent then
+					return
+				end
 				-- Hide cursor so tmux caches a cursorless frame.
 				-- Restored on BufEnter in nvim-tree.lua.
 				vim.o.guicursor = 'a:CursorHidden'
@@ -310,6 +317,9 @@ function M.setup(opts)
 		vim.api.nvim_create_autocmd('FocusGained', {
 			group = group,
 			callback = function()
+				if M.transparent then
+					return
+				end
 				-- 1. Move cursor to edge split if entering from tmux.
 				-- Must happen first so resync highlights the correct window.
 				require('custom.navigation').apply_tmux_nav_dir()
@@ -366,6 +376,44 @@ function M.setup(opts)
 		callback = apply_highlights,
 	})
 	apply_highlights()
+
+	-- Toggle nvim transparency (independent of wezterm/tmux toggle)
+	local saved_hls = {}
+	local transparent_groups = {
+		'Normal',
+		'NormalNC',
+		'LineNr',
+		'SignColumnNC',
+		'LineNrNC',
+		'NormalFloat',
+		'EndOfBuffer',
+		'WinSeparator',
+		'StatusLine',
+		'StatusLineNC',
+		'TabLineFill',
+		'NvimTreeNormal',
+		'NvimTreeNormalNC',
+		'BufferLineOffsetSeparator',
+	}
+	vim.keymap.set('n', '<leader>u', function()
+		M.transparent = not M.transparent
+		if M.transparent then
+			for _, name in ipairs(transparent_groups) do
+				saved_hls[name] = vim.api.nvim_get_hl(0, { name = name, link = false })
+				local hl = vim.tbl_extend('force', saved_hls[name], { bg = 'NONE' })
+				vim.api.nvim_set_hl(0, name, hl)
+			end
+			vim.notify('Transparency on', vim.log.levels.INFO)
+		else
+			for _, name in ipairs(transparent_groups) do
+				if saved_hls[name] then
+					vim.api.nvim_set_hl(0, name, saved_hls[name])
+				end
+			end
+			saved_hls = {}
+			vim.notify('Transparency off', vim.log.levels.INFO)
+		end
+	end, { desc = 'Toggle transparency' })
 end
 
 return M
