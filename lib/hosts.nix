@@ -40,9 +40,9 @@ final: _: {
           blackBg = false;
         };
         tmux = {
-          pane = "subtle";
-          border = "none";
-          bg = "inactive";
+          pane = "subtle"; # subtle/chunky
+          border = "all"; # all/none
+          bg = "inactive"; # inactive/active
         };
       };
     } raw;

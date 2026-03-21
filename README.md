@@ -197,6 +197,58 @@ To pin a specific colorscheme instead of randomhue, set `theme.colorscheme.name`
 in your host config (`hosts/<name>/default.nix`) and run `nix run .#switch-home`.
 Run `colorschemes` to list all available names.
 
+Colorscheme options under `theme.colorscheme`:
+
+| Option         | Default      | Description                                          |
+| -------------- | ------------ | ---------------------------------------------------- |
+| `name`         | `randomhue`  | Colorscheme name (or `randomhue` for random palette) |
+| `lighterShade` | `30`         | Percent to lighten bg for inactive panes/splits       |
+| `blackBg`      | `false`      | Force black background on Normal/SignColumn/LineNr    |
+
+These are written to `~/.config/nvim/host.lua` on nix switch and can be
+edited live without rebuilding.
+
+Tmux theme options under `theme.tmux`:
+
+| Option   | Values              | Description                          |
+| -------- | ------------------- | ------------------------------------ |
+| `pane`   | `subtle` / `chunky` | Pane border style                    |
+| `border` | `all` / `none`      | Border visibility                    |
+| `bg`     | `inactive` / `active` | Terminal bg source (dimmed or Normal) |
+
+These are written to `~/.config/tmux/styles/host.conf` on nix switch and can
+be edited live without rebuilding. Changes take effect on tmux config reload
+(`prefix r`). See [color sync order](#color-sync-order) for how they flow
+through the stack.
+
+#### Color sync order
+
+nvim is the color source — it generates the colorscheme (e.g. randomhue) and
+propagates colors to tmux and wezterm. The full chain involves all four layers
+(nix, nvim, tmux, wezterm) interacting at different times:
+
+**On nix switch:**
+1. Activation script writes `~/.config/nvim/host.lua` (colorscheme name, tmux theme settings)
+2. Activation script writes `~/.config/tmux/styles/host.conf` (pane style, border style, status bg)
+3. nvim runs headless (`nvim --headless +qa`) which triggers the colorscheme sync plugin — this writes `~/.config/tmux/styles/nvim-colors.conf` with the generated color values
+
+**On tmux startup (or config reload):**
+1. `core.conf` sources `styles/host.conf` — sets `@host_pane_style`, `@host_pane_border_style`, `@host_status_bg`
+2. `core.conf` sources `styles/main.conf` — reads `styles/nvim-colors.conf` to set `@nvim_color_*` options, then applies all tmux styles using those values
+
+**On nvim startup (or colorscheme change):**
+1. `tmux-colorscheme-sync` plugin repaints pane bg in `setup()` (prevents black flash)
+2. Plugin reads nvim highlight groups → sets `@nvim_color_*` tmux options → writes `styles/nvim-colors.conf` → re-sources `styles/main.conf` (if colors changed)
+3. `sync_terminal_bg` sends OSC 11 to set wezterm's terminal background color
+
+**On wezterm startup:**
+1. Reads `~/.config/tmux/styles/nvim-colors.conf` to set initial background color (before nvim starts)
+
+**On transparency toggle (Cmd+U):**
+1. Wezterm sets `@transparent` tmux option and re-sources `styles/main.conf`
+2. `styles/main.conf` applies transparent or opaque styles based on `@transparent`
+3. nvim transparency is toggled independently via `<leader>u`
+
 ### Rebuild after config changes
 
 ```sh
