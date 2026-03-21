@@ -228,6 +228,10 @@ function M.setup(opts)
 			end
 			-- Update NvimTreeNormal so the bufferline offset title bg matches
 			set_nvimtree_bg(nvimtree_active and normal_bg_hex or dim_bg)
+			-- Bold the Explorer title when NvimTree is focused
+			local title_hl = vim.api.nvim_get_hl(0, { name = 'BufferLineExplorerTitle' })
+			title_hl.bold = nvimtree_active
+			vim.api.nvim_set_hl(0, 'BufferLineExplorerTitle', title_hl)
 			refresh_scrollview()
 		end
 
