@@ -26,18 +26,11 @@ function M.setup(opts)
 	local tcs_config = require('tmux-colorscheme-sync.config')
 
 	require('tmux-colorscheme-sync').setup({
-		cache_file = '~/.local/state/tmux/colorscheme-cache.conf',
-		tmux_source_file = '~/.config/tmux/styles.conf',
+		state_file = '~/.config/tmux/styles/nvim-colors.conf',
+		tmux_source_file = '~/.config/tmux/styles/main.conf',
 		lighter_shade = lighter_shade,
 		manage_focus = false, -- we handle FocusLost/FocusGained ourselves below
 	})
-
-	if vim.env.TMUX then
-		vim.fn.system({ 'tmux', 'set-option', '-g', '@nvim_status_bg', tmux_bg })
-		vim.fn.system({ 'tmux', 'set-option', '-g', '@nvim_pane_style', tmux.pane or 'red' })
-		vim.fn.system({ 'tmux', 'set-option', '-g', '@nvim_pane_border_style', tmux.border or 'blue' })
-		vim.fn.system({ 'tmux', 'source-file', vim.fn.expand('~/.config/tmux/styles.conf') })
-	end
 
 	-- For randomhue, use a fixed seed so every nvim session gets the same hue.
 	-- The seed file is written by the activation script at nix switch time, so
@@ -99,8 +92,6 @@ function M.setup(opts)
 	-- tmux_bg: 'active' uses Normal bg; 'inactive' (default) uses dimmed bg.
 	-- This way when nvim goes transparent on FocusLost, the terminal bg
 	-- shows through as the chosen color — matching tmux.
-	-- Also cache the color so wezterm can read it on cold start.
-	local bg_cache_path = vim.fn.expand('~/.local/state/wezterm/bg-color.txt')
 	local function sync_terminal_bg()
 		local mapping = tcs_config.get_color_mapping()
 		local bg
@@ -117,16 +108,6 @@ function M.setup(opts)
 			osc = string.format('\027Ptmux;\027%s\027\\', osc)
 		end
 		vim.fn.chansend(vim.v.stderr, osc)
-		-- Cache for wezterm cold start
-		local dir = bg_cache_path:match('(.*/)')
-		if dir then
-			os.execute('mkdir -p ' .. dir)
-		end
-		local f = io.open(bg_cache_path, 'w')
-		if f then
-			f:write(bg)
-			f:close()
-		end
 	end
 
 	-- Dim inactive splits using the same bg tmux uses for inactive panes
