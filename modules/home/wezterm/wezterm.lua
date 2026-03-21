@@ -65,6 +65,8 @@ config.mouse_bindings = {
 }
 
 config.keys = {
+	-- Toggle transparency
+	{ key = "u",          mods = "SUPER",       action = wezterm.action.EmitEvent("toggle-transparency") },
 	-- Cmd+W / Cmd+Shift+T / Cmd+S → F1/F2/F3 so they don't shadow Ctrl-W, Alt-T, or get swallowed
 	{ key = "w",          mods = "SUPER",       action = wezterm.action.SendKey({ key = "F1" }) },
 	{ key = "t",          mods = "SUPER|SHIFT", action = wezterm.action.SendKey({ key = "F2" }) },
@@ -85,10 +87,29 @@ config.keys = {
 -- e.g. "https://example.com/page_(section)" links the full URL.
 config.hyperlink_rules = {
 	{ regex = [=[\b\w+://(?:[^\s()]*\([^\s()]*\))*[^\s().]*(?:\.[^\s().]+)*]=], format = "$0" },
-	{ regex = [=[\b\w+@[\w-]+(\.[\w-]+)+\b]=],                 format = "mailto:$0" },
+	{ regex = [=[\b\w+@[\w-]+(\.[\w-]+)+\b]=],                                  format = "mailto:$0" },
 }
 
 config.set_environment_variables = { BOOTSTRAP = "1" }
 config.default_prog = { wezterm.config_dir .. "/bootstrap.sh" }
+
+local tmux = os.getenv("HOME") .. "/.nix-profile/bin/tmux"
+wezterm.on("toggle-transparency", function(window)
+	local overrides = window:get_config_overrides() or {}
+	local _, current = wezterm.run_child_process({ tmux, "show", "-gv", "@transparent" })
+	local is_on = current:gsub("%s+$", "") == "on"
+
+	if is_on then
+		overrides.window_background_opacity = 0.99
+		overrides.macos_window_background_blur = 0
+		wezterm.run_child_process({ tmux, "set", "-g", "@transparent", "off" })
+	else
+		overrides.window_background_opacity = 0.2
+		overrides.macos_window_background_blur = 10
+		wezterm.run_child_process({ tmux, "set", "-g", "@transparent", "on" })
+	end
+	wezterm.run_child_process({ tmux, "source", os.getenv("HOME") .. "/.config/tmux/styles.conf" })
+	window:set_config_overrides(overrides)
+end)
 
 return config
