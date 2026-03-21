@@ -28,7 +28,7 @@ function readCachedColors(): Record<string, string> {
 function generateTheme(colors: Record<string, string>): object {
   const bg = colors.normal_bg || "";
   const lighterBg = colors.normal_lighter_bg || "";
-  const darkerBg = colors.normal_darker_bg || "";
+  const darkerBg = colors.normal_bg || "";
   const fg = colors.normal_fg || "";
   const tablineBg = colors.tabline_bg || "";
 
