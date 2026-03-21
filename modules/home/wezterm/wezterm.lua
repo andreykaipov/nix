@@ -31,16 +31,17 @@ config.window_background_opacity = 0.99 -- not 1.0: macOS draws a border line wi
 -- config.window_padding = { left = 0, right = 0, top = 0, bottom = 0 }
 config.window_padding = { left = 10, right = 10, top = 5, bottom = 0 }
 
--- Read cached bg color written by nvim's colorscheme sync so the
--- terminal background is correct even before nvim starts.
-local bg_cache = wezterm.home_dir .. "/.local/state/wezterm/bg-color.txt"
-local f = io.open(bg_cache, "r")
+-- Read bg color from tmux colorscheme cache so the terminal background
+-- is correct even before nvim starts.
+local cache_path = wezterm.home_dir .. "/.config/tmux/styles/nvim-colors.conf"
+local f = io.open(cache_path, "r")
 if f then
-	local color = f:read("*a")
+	local content = f:read("*a")
 	f:close()
-	if color and #color > 0 then
+	local bg = content:match("@nvim_color_normal_lighter_bg '(#%x+)'")
+	if bg then
 		config.colors = config.colors or {}
-		config.colors.background = color
+		config.colors.background = bg
 	end
 end
 
@@ -108,7 +109,7 @@ wezterm.on("toggle-transparency", function(window)
 		overrides.macos_window_background_blur = 10
 		wezterm.run_child_process({ tmux, "set", "-g", "@transparent", "on" })
 	end
-	wezterm.run_child_process({ tmux, "source", os.getenv("HOME") .. "/.config/tmux/styles.conf" })
+	wezterm.run_child_process({ tmux, "source", os.getenv("HOME") .. "/.config/tmux/styles/main.conf" })
 	window:set_config_overrides(overrides)
 end)
 

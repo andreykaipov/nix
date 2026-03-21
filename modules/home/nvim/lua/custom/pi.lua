@@ -47,7 +47,7 @@ function M.setup()
 	-- Re-generate pi's auto theme from the tmux colorscheme cache.
 	-- Pi hot-reloads the theme file automatically.
 	local function sync_pi_theme()
-		local cache = vim.fn.expand('~/.local/state/tmux/colorscheme-cache.conf')
+		local cache = vim.fn.expand('~/.config/tmux/styles/nvim-colors.conf')
 		local ok, lines = pcall(vim.fn.readfile, cache)
 		if not ok then return end
 		local colors = {}

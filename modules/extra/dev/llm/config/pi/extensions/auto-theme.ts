@@ -7,7 +7,7 @@ import { join } from "node:path";
 
 const CACHE_FILE = join(
   process.env.HOME || "~",
-  ".local/state/tmux/colorscheme-cache.conf"
+  ".config/tmux/styles/nvim-colors.conf"
 );
 
 function readCachedColors(): Record<string, string> {
