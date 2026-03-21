@@ -48,7 +48,7 @@ All user-facing settings live at the top of [init.lua](init.lua):
 | `sidebar_width`   | `30`          | Default NvimTree sidebar width            |
 | `color.colorscheme` | `randomhue` | Active colorscheme `{ name, lighter_shade [, black_bg] }` |
 | `color.tmux.pane` | `subtle`      | Tmux pane border style (`subtle` or `chunky`) |
-| `color.tmux.border` | `all`       | Tmux border visibility (`all` or `unfocused`) |
+| `color.tmux.border` | `all`       | Tmux border visibility (`all` or `none`) |
 | `color.tmux.bg`   | `inactive`    | Terminal bg source (`active` = Normal bg, `inactive` = dimmed) |
 
 ## Plugins

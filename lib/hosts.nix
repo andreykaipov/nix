@@ -41,7 +41,7 @@ final: _: {
         };
         tmux = {
           pane = "subtle";
-          border = "all";
+          border = "none";
           bg = "inactive";
         };
       };
