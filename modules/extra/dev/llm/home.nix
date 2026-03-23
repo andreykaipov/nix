@@ -106,9 +106,7 @@ in
     home.file.".pi/agent/themes" = host.symlinkTo ./config/pi/themes;
     home.file.".pi/agent/skills" = host.symlinkTo ./config/pi/skills;
     home.file.".pi/agent/agents" = host.symlinkTo ./config/pi/agents;
-
     home.file.".pi/agent/extensions" = host.symlinkTo ./config/pi/extensions;
-    home.file.".pi/suggester/config.json" = host.symlinkTo ./config/pi/suggester-config.json;
 
     # Patch pi-mcp-adapter with renderCall/renderResult (PR #8)
     home.activation.patchPiMcpAdapter = lib.hm.dag.entryAfter [ "writeBoundary" ] ''

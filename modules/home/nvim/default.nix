@@ -49,6 +49,6 @@ in
     date +%s > "$HOME/.local/share/nvim/color-seed"
     PATH="${pkgs.git}/bin:${pkgs.openssh}/bin:${pkgs.tmux}/bin:$PATH" ${
       inputs.neovim-nightly.packages.${pkgs.stdenv.hostPlatform.system}.default
-    }/bin/nvim --headless +qa 2>&1
+    }/bin/nvim --headless +'lua MiniDeps.snap_load()' +qa 2>&1
   '';
 }
