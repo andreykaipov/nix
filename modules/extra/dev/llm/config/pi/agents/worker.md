@@ -1,6 +1,6 @@
 ---
 name: worker
-description: General-purpose subagent with full capabilities, isolated context
+description: Use to implement changes from a plan, or for any task that needs full tool access in isolated context.
 model: claude-sonnet-4.6
 thinking: medium
 defaultReads: context.md, plan.md

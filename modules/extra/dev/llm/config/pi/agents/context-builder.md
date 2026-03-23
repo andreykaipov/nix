@@ -1,7 +1,8 @@
 ---
 name: context-builder
-description: Analyzes requirements and codebase, generates context and meta-prompt
-tools: read, grep, find, ls, bash, web_search
+description: Use when a task needs both codebase analysis and external research before planning. Generates context and meta-prompt for planner.
+tools: read, grep, find, ls, bash, web_search, mcp:slack
+skill: slack
 model: claude-sonnet-4.6
 thinking: medium
 output: context.md

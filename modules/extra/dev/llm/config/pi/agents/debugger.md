@@ -1,6 +1,6 @@
 ---
 name: debugger
-description: Root cause diagnosis from evidence — never investigates, only analyzes
+description: Use after investigator to diagnose root cause. Analyzes investigation evidence only — never re-investigates.
 tools: read, grep, find, ls, bash
 model: claude-opus-4.6
 thinking: high

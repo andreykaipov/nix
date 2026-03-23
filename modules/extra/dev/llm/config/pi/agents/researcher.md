@@ -1,6 +1,6 @@
 ---
 name: researcher
-description: Autonomous web researcher — searches, evaluates, and synthesizes a focused research brief
+description: Use when you need answers from the web — docs, APIs, best practices, comparisons. Searches, evaluates, and synthesizes a focused research brief.
 tools: read, write, web_search, fetch_content, get_search_content
 model: claude-sonnet-4.6
 thinking: medium

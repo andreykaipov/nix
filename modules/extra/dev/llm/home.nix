@@ -42,8 +42,6 @@ let
     packages = [
       "npm:pi-mcp-adapter"
       "npm:pi-subagents"
-      "npm:pi-web-access"
-      "npm:@guwidoe/pi-prompt-suggester"
     ];
   }
   // config.pi.settings;

@@ -1,6 +1,6 @@
 ---
 name: investigator
-description: Exhaustive evidence gatherer — finds all relevant data before forming conclusions
+description: Use when triaging incidents, support tickets, or production issues. Exhaustive evidence gatherer that finds all relevant data before forming conclusions.
 tools: read, grep, find, ls, bash
 model: claude-opus-4.6
 thinking: high

@@ -27,15 +27,30 @@ which spawns isolated pi processes with their own model, tools, and system promp
 
 #### Agent Roster
 
-| Agent | Model | Thinking | Tools | Purpose |
-|-------|-------|----------|-------|---------|
-| **scout** | Haiku 4.5 | off | read, grep, find, ls, bash, write | Fast codebase recon, returns compressed context |
-| **planner** | Opus 4.6 | high | read, grep, find, ls, write | Creates implementation plans (read-only) |
-| **worker** | Sonnet 4.6 | medium | all | Implements changes |
-| **reviewer** | Opus 4.6 | high | read, grep, find, ls, bash | Code review and quality analysis |
-| **debugger** | Opus 4.6 | high | read, grep, find, ls, bash | Deep debugging and root cause analysis (read-only) |
-| **context-builder** | Sonnet 4.6 | medium | read, grep, find, ls, bash, web_search | Analyzes requirements and codebase |
-| **researcher** | Sonnet 4.6 | medium | read, write, web_search, fetch_content | Web research and synthesis |
+**Exploration & Planning**
+
+| Agent | Model | Thinking | Purpose |
+|-------|-------|----------|---------|
+| **scout** | Haiku 4.5 | off | Fast codebase recon, returns compressed context |
+| **context-builder** | Sonnet 4.6 | medium | Deep codebase + web research, generates context and meta-prompt |
+| **researcher** | Sonnet 4.6 | medium | Pure web research — docs, APIs, best practices |
+| **planner** | Opus 4.6 | high | Creates detailed implementation plans from context |
+
+**Implementation & Review**
+
+| Agent | Model | Thinking | Purpose |
+|-------|-------|----------|---------|
+| **worker** | Sonnet 4.6 | medium | Implements changes from a plan |
+| **reviewer** | Opus 4.6 | high | Validates implementation quality and correctness |
+| **karen** | Opus 4.6 | high | Reality-checks "completed" work, catches BS |
+| **pragmatist** | Sonnet 4.6 | medium | Catches over-engineering and unnecessary complexity |
+
+**Debugging & Incidents**
+
+| Agent | Model | Thinking | Purpose |
+|-------|-------|----------|---------|
+| **investigator** | Opus 4.6 | high | Exhaustive evidence gathering for incidents/tickets |
+| **debugger** | Opus 4.6 | high | Root cause diagnosis from investigator's evidence |
 
 #### Usage
 

@@ -1,7 +1,0 @@
-{
-  "schemaVersion": 6,
-  "inference": {
-    "seederModel": "claude-haiku-4.5",
-    "suggesterModel": "claude-haiku-4.5"
-  }
-}

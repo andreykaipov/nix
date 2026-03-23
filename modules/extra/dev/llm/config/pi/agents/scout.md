@@ -1,7 +1,8 @@
 ---
 name: scout
-description: Fast codebase recon that returns compressed context for handoff
-tools: read, grep, find, ls, bash, write
+description: Use when exploring unfamiliar code or gathering context before planning. Fast codebase recon that returns compressed findings for handoff.
+tools: read, grep, find, ls, bash, write, mcp:slack
+skill: slack
 model: claude-haiku-4.5
 thinking: off
 output: context.md

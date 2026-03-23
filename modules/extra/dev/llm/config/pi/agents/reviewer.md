@@ -1,6 +1,6 @@
 ---
 name: reviewer
-description: Code review specialist that validates implementation and fixes issues
+description: Use after worker to validate implementation quality, catch bugs, and verify the work matches the plan.
 tools: read, grep, find, ls, bash
 model: claude-opus-4.6
 thinking: high

@@ -1,6 +1,6 @@
 ---
 name: planner
-description: Creates implementation plans from context and requirements
+description: Use after scout or when a task needs a structured plan before implementation. Creates detailed implementation plans from context.
 tools: read, grep, find, ls, write
 model: claude-opus-4.6
 thinking: high
