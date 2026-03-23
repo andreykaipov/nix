@@ -82,13 +82,13 @@ config.keys = {
 	{ key = "Enter",      mods = "SHIFT",       action = wezterm.action.SendString("\x1b[13;2u") },
 }
 
--- Don't include trailing ) or . in URLs, e.g. "(https://example.com)" should
+-- Don't include trailing ), . or ` in URLs, e.g. "(https://example.com)" should
 -- only link "https://example.com", and "Visit https://example.com." should
 -- only link "https://example.com". URLs that contain paired () still work,
 -- e.g. "https://example.com/page_(section)" links the full URL.
 config.hyperlink_rules = {
-	{ regex = [=[\b\w+://(?:[^\s()]*\([^\s()]*\))*[^\s().]*(?:\.[^\s().]+)*]=], format = "$0" },
-	{ regex = [=[\b\w+@[\w-]+(\.[\w-]+)+\b]=],                                  format = "mailto:$0" },
+	{ regex = [=[\b\w+://(?:[^\s()`]*\([^\s()`]*\))*[^\s().`]*(?:\.[^\s().`]+)*]=], format = "$0" },
+	{ regex = [=[\b\w+@[\w-]+(\.[\w-]+)+\b]=],                                      format = "mailto:$0" },
 }
 
 config.set_environment_variables = { BOOTSTRAP = "1" }
