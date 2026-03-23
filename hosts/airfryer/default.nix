@@ -12,6 +12,7 @@
   };
   extraModules = with lib.extras; [
     dev
+    music
     ./extra/pi.nix
   ];
 }

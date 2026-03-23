@@ -37,6 +37,7 @@ require('custom.picker').setup()
 require('custom.statusline').setup()
 require('custom.treesitter').setup()
 require('custom.lsp').setup()
+require('custom.tidal').setup()
 
 -- Setup MiniNotify after all modules so it doesn't swallow MiniDeps install
 -- logs during headless bootstrap (mini.notify is part of mini.nvim, so it
