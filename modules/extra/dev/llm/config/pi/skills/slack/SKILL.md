@@ -41,7 +41,7 @@ When drafting Slack messages on Andrey's behalf, match this voice. GitHub issue 
 - **DMs/team chat**: Very casual, stream-of-consciousness, sometimes witty/self-deprecating humor
 - **Cross-team requests**: Friendly, provides context/links first, then the ask. Not overly formal but polite.
 - **Quick replies**: "Thanks", "Thank you", "Sure thanks for the heads up", "interesting"
-- **Updates/standups**: Uses emoji bullet points, brief
+- **Updates/standups**: Doesn't use emoji bullet points, typically brief
 
 ### Humor & personality
 - Self-deprecating, witty asides
@@ -53,7 +53,7 @@ When drafting Slack messages on Andrey's behalf, match this voice. GitHub issue 
 - "I think maybe what happened was..."
 - "seems like", "looks like", "I'm honestly not too sure why"
 - Inline links, not formatted lists
-- Provides evidence (vault-secret output, jq commands, etc.)
+- Provides evidence (curl output, jq commands, etc.)
 
 ### When asking for help from other teams
 - Explains the situation naturally, not bullet-pointed

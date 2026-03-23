@@ -34,10 +34,9 @@ let
     defaultThinkingLevel = "high";
     theme = "auto";
     enabledModels = [
-      "claude-opus-4.6-1m"
-      "claude-opus-4.6"
-      "claude-sonnet-4.6"
-      "claude-haiku-4.5"
+      "*claude-opus-4[.-]6*"
+      "*claude-sonnet-4[.-]6*"
+      "*claude-haiku-4[.-]5*"
     ];
     packages = [
       "npm:pi-mcp-adapter"
