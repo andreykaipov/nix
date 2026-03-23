@@ -4,8 +4,8 @@
       { config, ... }:
       {
         pi.settings.defaultProvider = "amazon-bedrock";
-        pi.settings.defaultModel = "claude-opus-4.6";
-        pi.settings.defaultThinkingLevel = "high";
+        pi.settings.defaultModel = "claude-sonnet-4.6";
+        pi.settings.defaultThinkingLevel = "medium";
         pi.mcpServers = {
           inherit (config.pi.mcp) terraform slack;
           atlassian = config.pi.mcp.mkServer "TOOLSETS=default,jira_links uvx mcp-atlassian";
