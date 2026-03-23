@@ -12,7 +12,7 @@ let
     command = "bash";
     args = [
       "-c"
-      ". ~/.config/zsh/config/zshenv.secrets && exec ${cmd}"
+      ". ~/.config/zsh/config/zshenv.secrets && exec env ${cmd}"
     ];
   };
 
@@ -65,7 +65,7 @@ in
         type = lib.types.attrs;
         readOnly = true;
         description = "Terraform MCP server definition";
-        default = mcpServer "terraform-mcp-server stdio --toolsets= --tools=search_providers,get_provider_details,get_latest_provider_version,search_modules,get_module_details,get_latest_module_version,list_terraform_projects,list_workspaces,get_workspace_details,list_runs,get_run_details,get_plan_details,get_plan_logs,get_apply_details,get_apply_logs,list_workspace_variables,list_variable_sets,read_workspace_tags";
+        default = mcpServer "terraform-mcp-server stdio --toolsets= --tools=search_providers,get_provider_details,get_latest_provider_version,search_modules,get_module_details,get_latest_module_version,list_terraform_projects,list_workspaces,get_workspace_details,list_runs,get_run_details,get_plan_details,get_plan_logs,get_plan_json_output,get_apply_details,get_apply_logs,list_workspace_variables,list_variable_sets,read_workspace_tags";
       };
       slack = lib.mkOption {
         type = lib.types.attrs;
