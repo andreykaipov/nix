@@ -31,10 +31,19 @@ let
   };
 
   settingsConfig = {
-    defaultThinkingLevel = "medium";
+    defaultThinkingLevel = "high";
     theme = "auto";
+    enabledModels = [
+      "claude-opus-4.6-1m"
+      "claude-opus-4.6"
+      "claude-sonnet-4.6"
+      "claude-haiku-4.5"
+    ];
     packages = [
       "npm:pi-mcp-adapter"
+      "npm:pi-subagents"
+      "npm:pi-web-access"
+      "npm:@guwidoe/pi-prompt-suggester"
     ];
   }
   // config.pi.settings;
@@ -97,8 +106,11 @@ in
     # Symlink the rest of the configs so it's easier to edit on the fly
     home.file.".pi/agent/keybindings.json" = host.symlinkTo ./config/pi/keybindings.json;
     home.file.".pi/agent/themes" = host.symlinkTo ./config/pi/themes;
-    home.file.".pi/agent/extensions" = host.symlinkTo ./config/pi/extensions;
     home.file.".pi/agent/skills" = host.symlinkTo ./config/pi/skills;
+    home.file.".pi/agent/agents" = host.symlinkTo ./config/pi/agents;
+
+    home.file.".pi/agent/extensions" = host.symlinkTo ./config/pi/extensions;
+    home.file.".pi/suggester/config.json" = host.symlinkTo ./config/pi/suggester-config.json;
 
     # Patch pi-mcp-adapter with renderCall/renderResult (PR #8)
     home.activation.patchPiMcpAdapter = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
