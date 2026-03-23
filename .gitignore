@@ -12,3 +12,6 @@ modules/home/shell/config/zshenv.*
 modules/home/nvim/host.lua
 modules/home/tmux/config/styles/host.conf
 modules/home/tmux/config/styles/nvim-colors.conf
+
+# pi runtime/cache files
+.pi/suggester
