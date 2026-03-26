@@ -112,7 +112,7 @@ in
       adapter="$HOME/.npm-global/lib/node_modules/pi-mcp-adapter/index.ts"
       patch_file="${./pi-mcp-adapter-render.patch}"
       if [ -f "$adapter" ]; then
-        if ! grep -q "renderMcpToolCall" "$adapter" 2>/dev/null; then
+        if ! grep -q "function renderMcpToolCall" "$adapter" 2>/dev/null; then
           ${pkgs.patch}/bin/patch -s -p0 "$adapter" "$patch_file" 2>/dev/null && \
             echo "Patched pi-mcp-adapter with renderCall/renderResult" || \
             echo "Warning: pi-mcp-adapter patch failed (version mismatch?)"
