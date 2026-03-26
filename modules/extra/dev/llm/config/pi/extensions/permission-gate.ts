@@ -48,7 +48,6 @@ const bashPatterns: [RegExp, string][] = [
 
 // Deny outright (even with confirmation)
 const bashDeny: RegExp[] = [
-  /\bgit\s+push\s+(--force|-f)\b/,
   /\bterraform\s+destroy\b/,
   /\bdd\b/,
   /\bmkfs\b/,
@@ -85,12 +84,25 @@ function formatMcpConfirm(
 }
 
 export default function (pi: ExtensionAPI) {
+  // Track approved commands/categories in this session
+  const approvedCommands = new Set<string>();
+  const approvedCategories = new Set<string>();
+  let autoYes = false;
+
+  pi.registerCommand("yolo", {
+    description: "Toggle auto-approve all permission gates",
+    handler: async (_args, ctx) => {
+      autoYes = !autoYes;
+      ctx.ui.notify(autoYes ? "Permission gate: auto-yes ON" : "Permission gate: auto-yes OFF", autoYes ? "warning" : "info");
+    },
+  });
+
   pi.on("tool_call", async (event, ctx) => {
     // ── Bash commands ─────────────────────────────────────────────────────
     if (event.toolName === "bash") {
       const command = event.input.command as string;
 
-      // Hard deny
+      // Hard deny (even in auto-yes mode)
       const denied = bashDeny.find((p) => p.test(command));
       if (denied) {
         return { block: true, reason: `Command denied by policy: ${command}` };
@@ -99,14 +111,22 @@ export default function (pi: ExtensionAPI) {
       // Soft gate
       const match = bashPatterns.find(([p]) => p.test(command));
       if (match) {
+        const category = match[1];
+
+        // Skip if auto-yes, exact command, or category is approved
+        if (autoYes || approvedCommands.has(command) || approvedCategories.has(category)) return undefined;
+
         if (!ctx.hasUI) {
-          return { block: true, reason: `Destructive command blocked (no UI): ${match[1]}` };
+          return { block: true, reason: `Destructive command blocked (no UI): ${category}` };
         }
-        const ok = await ctx.ui.confirm(
-          `⚠️  ${match[1]}`,
-          command.length > 120 ? command.slice(0, 117) + "..." : command,
+        const preview = command.length > 120 ? command.slice(0, 117) + "..." : command;
+        const choice = await ctx.ui.select(
+          `⚠️  ${category}: ${preview}`,
+          ["Yes (just once)", "Yes (this command)", `Yes (all "${category}")`, "No"],
         );
-        if (!ok) return { block: true, reason: "Blocked by user" };
+        if (!choice || choice === "No") return { block: true, reason: "Blocked by user" };
+        if (choice === "Yes (this command)") approvedCommands.add(command);
+        if (choice === `Yes (all "${category}")`) approvedCategories.add(category);
       }
 
       return undefined;
@@ -116,13 +136,23 @@ export default function (pi: ExtensionAPI) {
     if (!builtinTools.has(event.toolName)) {
       const isMutation = mcpMutationPatterns.some((p) => p.test(event.toolName));
       if (isMutation) {
+        const mcpKey = `${event.toolName}::${JSON.stringify(event.input)}`;
+
+        // Skip if auto-yes, exact call, or tool name is approved
+        if (autoYes || approvedCommands.has(mcpKey) || approvedCategories.has(event.toolName)) return undefined;
+
         if (!ctx.hasUI) {
           return { block: true, reason: `MCP mutation blocked (no UI): ${event.toolName}` };
         }
 
         const { title, preview } = formatMcpConfirm(event.toolName, event.input);
-        const ok = await ctx.ui.confirm(title, preview);
-        if (!ok) return { block: true, reason: "Blocked by user" };
+        const choice = await ctx.ui.select(
+          `${title}\n${preview}`,
+          ["Yes (just once)", "Yes (this call)", `Yes (all "${event.toolName}")`, "No"],
+        );
+        if (!choice || choice === "No") return { block: true, reason: "Blocked by user" };
+        if (choice === "Yes (this call)") approvedCommands.add(mcpKey);
+        if (choice === `Yes (all "${event.toolName}")`) approvedCategories.add(event.toolName);
       }
     }
 
