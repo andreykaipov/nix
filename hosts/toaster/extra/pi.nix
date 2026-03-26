@@ -13,6 +13,7 @@
           grafana = config.pi.mcp.mkServer "uvx mcp-grafana";
           cloudflare = config.pi.mcp.mkRemoteServer "https://mcp.cloudflare.com/mcp";
           google_workspace = config.pi.mcp.mkServer "uvx workspace-mcp --tools gmail drive calendar docs sheets slides contacts";
+          miro = config.pi.mcp.mkRemoteServer "https://mcp.miro.com/";
         };
       }
     )
