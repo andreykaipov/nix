@@ -62,7 +62,8 @@ Adds renderCall/renderResult, /mcp-reconnect, /mcp autocomplete
 +
 +  if (!options.expanded) {
 +    const PREVIEW_LINES = 5;
-+    const preview = lines.slice(0, PREVIEW_LINES).join("\n");
++    const MAX_LINE_LEN = 300;
++    const preview = lines.slice(0, PREVIEW_LINES).map((l: string) => l.length > MAX_LINE_LEN ? l.slice(0, MAX_LINE_LEN) + "..." : l).join("\n");
 +    let text = theme.fg("success", "✓ ");
 +    text += preview;
 +    if (lineCount > PREVIEW_LINES) {

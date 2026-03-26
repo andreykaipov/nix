@@ -25,6 +25,7 @@ When using the Slack MCP server, follow these rules to avoid triggering Slack's 
 
 - `users_search` and `conversations_unreads` are not available (browser token)
 - Never bulk query the Slack API (e.g. listing all users or all channels) — this will flag and revoke the user token. Paginating is fine but be mindful of volume and add sleeps between requests.
+- The channel parameter in all Slack tools is called `channel_id`, not `channel`. Using `channel` will error.
 
 ## Andrey's Slack Voice
 
