@@ -70,9 +70,9 @@ function generateTheme(colors: Record<string, string>): object {
       customMessageBg: "lighterBg",
       customMessageText: "",
       customMessageLabel: "#9575cd",
-      toolPendingBg: "darkerBg",
-      toolSuccessBg: "darkerBg",
-      toolErrorBg: "darkerBg",
+      toolPendingBg: "bg",
+      toolSuccessBg: "bg",
+      toolErrorBg: "bg",
       toolTitle: "",
       toolOutput: "gray",
 
