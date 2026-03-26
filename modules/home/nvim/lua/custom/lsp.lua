@@ -23,6 +23,14 @@ function M.setup()
 			local id = vim.tbl_get(event, 'data', 'client_id')
 			local client = id and vim.lsp.get_client_by_id(id)
 
+			-- Disable semantic tokens for terraformls: terraform-ls returns invalid
+			-- token lengths causing an infinite loop in str_utfindex on neovim nightly.
+			-- https://github.com/neovim/neovim/issues/36257
+			-- https://github.com/hashicorp/terraform-ls/issues/2094
+			if client and client.name == 'terraformls' then
+				client.server_capabilities.semanticTokensProvider = nil
+			end
+
 			if client and client:supports_method('textDocument/completion') then
 				vim.bo[event.buf].omnifunc = 'v:lua.MiniCompletion.completefunc_lsp'
 			end
