@@ -33,6 +33,7 @@ function M.setup()
 	vim.o.backup = true
 	vim.o.backupdir = backupdir
 	vim.o.writebackup = true
+	vim.o.swapfile = false
 
 	vim.o.number = true
 	vim.o.relativenumber = true
