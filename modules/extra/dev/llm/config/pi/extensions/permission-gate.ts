@@ -30,7 +30,7 @@ const bashPatterns: [RegExp, string][] = [
   [/\bhelm\s+(install|upgrade|uninstall|delete)\b/, "helm mutate"],
 
   // Terraform
-  [/\bterraform\s+(apply|destroy|import|state)\b/, "terraform mutate"],
+  [/\bterraform\s+(apply|destroy|import|state rm|state mv)\b/, "terraform mutate"],
 
   // Docker
   [/\bdocker\s+(rm|rmi|stop|kill)\b/, "docker mutate"],
@@ -40,7 +40,6 @@ const bashPatterns: [RegExp, string][] = [
 
   // Misc
   [/\bsudo\b/, "sudo"],
-  [/\b(chmod|chown)\b/, "chmod/chown"],
   [/\bcurl\b.*\s+(-X\s+(POST|PUT|DELETE|PATCH)\b|--upload)/, "curl mutate"],
   [/\bkill(all)?\b/, "kill"],
   [/\bpkill\b/, "pkill"],

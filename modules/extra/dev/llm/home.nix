@@ -40,7 +40,7 @@ let
     ];
     packages = [
       "npm:pi-mcp-adapter"
-      "npm:pi-subagents"
+      # "npm:pi-subagents"
     ];
   }
   // config.pi.settings;
