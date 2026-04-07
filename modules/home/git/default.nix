@@ -39,7 +39,7 @@ in
       gpg.format = "ssh";
       init.defaultBranch = "main";
       core = {
-        editor = "nvim";
+        editor = "test -t 0 && nvim || true";
         autocrlf = "input";
       };
       commit.gpgsign = true;
