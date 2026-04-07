@@ -1,14 +1,15 @@
 Backport of https://github.com/nicobailon/pi-mcp-adapter/pull/8
 Adds renderCall/renderResult, /mcp-reconnect, /mcp autocomplete
---- a/index.ts	2026-03-23 14:39:31
-+++ b/index.ts	2026-03-23 14:40:27
+Updated for v2.2.2 (lifecycle generation rewrite)
+--- a/index.ts	2026-04-04 01:45:15
++++ b/index.ts	2026-04-07 12:00:00
 @@ -1,4 +1,5 @@
- import type { ExtensionAPI, ExtensionContext, ToolInfo } from "@mariozechner/pi-coding-agent";
+ import type { ExtensionAPI, ToolInfo } from "@mariozechner/pi-coding-agent";
 +import { Text } from "@mariozechner/pi-tui";
  import type { McpExtensionState } from "./state.js";
  import { Type } from "@sinclair/typebox";
  import { showStatus, showTools, reconnectServers, authenticateServer, openMcpPanel } from "./commands.js";
-@@ -8,7 +9,105 @@
+@@ -8,6 +9,105 @@
  import { loadMetadataCache } from "./metadata-cache.js";
  import { executeCall, executeConnect, executeDescribe, executeList, executeSearch, executeStatus, executeUiMessages } from "./proxy-modes.js";
  import { getConfigPathFromArgv, truncateAtWord } from "./utils.js";
@@ -108,14 +109,13 @@ Adds renderCall/renderResult, /mcp-reconnect, /mcp autocomplete
 +  } else {
 +    text += theme.fg("muted", "status");
 +  }
- 
++
 +  return new Text(text, 0, 0);
 +}
-+
+ 
  export default function mcpAdapter(pi: ExtensionAPI) {
    let state: McpExtensionState | null = null;
-   let initPromise: Promise<McpExtensionState> | null = null;
-@@ -35,6 +134,12 @@
+@@ -66,6 +165,12 @@
        description: spec.description || "(no description)",
        promptSnippet: truncateAtWord(spec.description, 100) || `MCP tool from ${spec.serverName}`,
        parameters: Type.Unsafe<Record<string, unknown>>(spec.inputSchema || { type: "object", properties: {} }),
@@ -128,7 +128,7 @@ Adds renderCall/renderResult, /mcp-reconnect, /mcp autocomplete
        execute: createDirectToolExecutor(() => state, () => initPromise, spec),
      });
    }
-@@ -81,6 +186,25 @@
+@@ -120,6 +225,25 @@
  
    pi.registerCommand("mcp", {
      description: "Show MCP server status",
@@ -154,7 +154,7 @@ Adds renderCall/renderResult, /mcp-reconnect, /mcp autocomplete
      handler: async (args, ctx) => {
        if (!state && initPromise) {
          try {
-@@ -119,6 +243,30 @@
+@@ -158,6 +282,30 @@
      },
    });
  
@@ -185,7 +185,7 @@ Adds renderCall/renderResult, /mcp-reconnect, /mcp autocomplete
    pi.registerCommand("mcp-auth", {
      description: "Authenticate with an MCP server (OAuth)",
      handler: async (args, ctx) => {
-@@ -161,6 +309,12 @@
+@@ -200,6 +348,12 @@
        server: Type.Optional(Type.String({ description: "Filter to specific server (also disambiguates tool calls)" })),
        action: Type.Optional(Type.String({ description: "Action: 'ui-messages' to retrieve prompts/intents from UI sessions" })),
      }),

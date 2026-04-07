@@ -39,7 +39,7 @@ let
       "*claude-haiku-4[.-]5*"
     ];
     packages = [
-      "npm:pi-mcp-adapter"
+      "npm:pi-mcp-adapter@2.2.2"
       # "npm:pi-subagents"
     ];
   }
