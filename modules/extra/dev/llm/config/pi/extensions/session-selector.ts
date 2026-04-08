@@ -515,7 +515,11 @@ export default function (pi: ExtensionAPI) {
 			const selected = await showSessionSelector(ctx, currentSessions, allSessions, currentPath);
 			if (selected) {
 				pendingSwitchPath = selected;
-				pi.sendUserMessage("/_session-switch");
+				// sendUserMessage skips command handling, so inject via editor + Enter.
+				// Delay a tick to ensure the custom UI overlay is fully dismissed.
+				await new Promise(r => setTimeout(r, 0));
+				ctx.ui.setEditorText("/_session-switch");
+				process.stdin.emit("data", "\r");
 			}
 		},
 	});
