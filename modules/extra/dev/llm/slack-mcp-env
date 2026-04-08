@@ -143,23 +143,23 @@ if [[ -z "${SLACK_MCP_USER_AGENT:-}" ]]; then
 else
   log "SLACK_MCP_USER_AGENT already set, skipping log parsing"
 fi
-log "setting CUSTOM_TLS=true, ADD_MESSAGE_TOOL=true, MARK_TOOL=true, SKIP_CACHE=true"
+log "setting CUSTOM_TLS=true, ADD_MESSAGE_TOOL=true, MARK_TOOL=false, SKIP_CACHE=true"
 echo "export SLACK_MCP_CUSTOM_TLS=true"
 echo "export SLACK_MCP_ADD_MESSAGE_TOOL=true"
-echo "export SLACK_MCP_MARK_TOOL=true"
+echo "export SLACK_MCP_MARK_TOOL=false"
 echo "export SLACK_MCP_SKIP_CACHE=true"
 tools=(
   conversations_history
   conversations_replies
   conversations_search_messages
-  conversations_unreads
   conversations_add_message
-  conversations_mark
   reactions_add
   reactions_remove
   users_search
   usergroups_list
   usergroups_me
+  # conversations_mark
+  # conversations_unreads
   # channels_list           # bulk enumeration triggers anti-scraping
   # usergroups_create       # destructive write
   # usergroups_update       # destructive write
