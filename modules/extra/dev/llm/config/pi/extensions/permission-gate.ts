@@ -4,6 +4,7 @@
  * Prompts for confirmation before:
  *   - Destructive/mutating bash commands (rm, git push, kubectl delete, terraform apply, etc.)
  *   - MCP tool calls that create, update, delete, or otherwise mutate state
+ *   - Cloudflare API mutations via cloudflare_execute (POST, PUT, PATCH, DELETE)
  *
  * In non-interactive mode (no UI), mutations are blocked outright.
  */
@@ -26,21 +27,21 @@ const bashPatterns: [RegExp, string][] = [
   [/\bgit\s+(checkout\s+--|restore)\b/, "git restore/checkout"],
 
   // Kubernetes
-  [/\bkubectl\s+(delete|apply|exec|edit|scale|rollout|patch|drain|cordon)\b/, "kubectl mutate"],
-  [/\bhelm\s+(install|upgrade|uninstall|delete)\b/, "helm mutate"],
+  [/\bkubectl\s+(delete|apply|exec|edit|scale|rollout|patch|drain|cordon)\b/, "kubectl $1"],
+  [/\bhelm\s+(install|upgrade|uninstall|delete)\b/, "helm $1"],
 
-  // Terraform
-  [/\bterraform\s+(apply|destroy|import|state rm|state mv)\b/, "terraform mutate"],
+  // Terraform (category derived from subcommand)
+  [/\bterraform\s+(apply|destroy|import|state\s+rm|state\s+mv)\b/, "terraform $1"],
 
   // Docker
-  [/\bdocker\s+(rm|rmi|stop|kill)\b/, "docker mutate"],
+  [/\bdocker\s+(rm|rmi|stop|kill)\b/, "docker $1"],
 
   // AWS CLI
-  [/\baws\s+\S+\s+(delete-|remove-|terminate-|put-|create-|update-|modify-|stop-|reboot-)/, "aws mutate"],
+  [/\baws\s+\S+\s+(delete-|remove-|terminate-|put-|create-|update-|modify-|stop-|reboot-)/, "aws $1"],
 
   // Misc
   [/\bsudo\b/, "sudo"],
-  [/\bcurl\b.*\s+(-X\s+(POST|PUT|DELETE|PATCH)\b|--upload)/, "curl mutate"],
+  [/\bcurl\b.*\s+(-X\s+(POST|PUT|DELETE|PATCH)\b|--upload|-d\b|--data(-raw|-binary|-urlencode)?\b|-F\b|--form\b)/, "curl mutate"],
   [/\bkill(all)?\b/, "kill"],
   [/\bpkill\b/, "pkill"],
 ];
@@ -56,6 +57,16 @@ const bashDeny: RegExp[] = [
 // These cover Slack, Atlassian, ArgoCD, and general patterns.
 const mcpMutationPatterns: RegExp[] = [
   /\b(create|update|delete|remove|add|edit|transition|mark|move|reply|uninstall|apply|patch|scale|rollout|drain)\b/i,
+];
+
+// ── Cloudflare execute: patterns in the `code` arg that require confirmation ─
+const cloudflareMutationPatterns: [RegExp, string][] = [
+  [/method:\s*["'](POST|PUT|PATCH|DELETE)["']/, "cloudflare API mutate ($1)"],
+];
+
+const cloudflareDeny: RegExp[] = [
+  // Deleting entire zones or accounts is too dangerous
+  /\/zones\/[^/]*["'`]\s*\}/, // bare zone delete
 ];
 
 // Built-in tools that are always safe
@@ -110,7 +121,9 @@ export default function (pi: ExtensionAPI) {
       // Soft gate
       const match = bashPatterns.find(([p]) => p.test(command));
       if (match) {
-        const category = match[1];
+        const category = match[1].includes("$")
+          ? match[1].replace(/\$(\d+)/g, (_, i) => command.match(match[0])?.[+i] ?? "")
+          : match[1];
 
         // Skip if auto-yes, exact command, or category is approved
         if (autoYes || approvedCommands.has(command) || approvedCategories.has(category)) return undefined;
@@ -126,6 +139,44 @@ export default function (pi: ExtensionAPI) {
         if (!choice || choice === "No") return { block: true, reason: "Blocked by user" };
         if (choice === "Yes (this command)") approvedCommands.add(command);
         if (choice === `Yes (all "${category}")`) approvedCategories.add(category);
+      }
+
+      return undefined;
+    }
+
+    // ── Cloudflare execute ───────────────────────────────────────────────
+    if (event.toolName === "mcp" && (event.input as Record<string, unknown>).tool === "cloudflare_execute") {
+      const mcpArgs =
+        typeof event.input.args === "string" ? JSON.parse(event.input.args as string) : event.input.args ?? {};
+      const code = (mcpArgs as Record<string, unknown>).code as string ?? "";
+
+      // Hard deny
+      const denied = cloudflareDeny.find((p) => p.test(code));
+      if (denied) {
+        return { block: true, reason: `Cloudflare command denied by policy` };
+      }
+
+      // Soft gate on mutating HTTP methods
+      const match = cloudflareMutationPatterns.find(([p]) => p.test(code));
+      if (match) {
+        const category = match[1].includes("$")
+          ? match[1].replace(/\$(\d+)/g, (_, i) => code.match(match[0])?.[+i] ?? "")
+          : match[1];
+
+        if (autoYes || approvedCategories.has(`cf::${category}`)) return undefined;
+
+        if (!ctx.hasUI) {
+          return { block: true, reason: `Cloudflare mutation blocked (no UI): ${category}` };
+        }
+
+        const preview = code.length > 200 ? code.slice(0, 197) + "..." : code;
+        const choice = await ctx.ui.select(
+          `⚠️  ${category}\n${preview}`,
+          ["Yes (just once)", `Yes (all "${category}")`, "No"],
+        );
+        if (!choice || choice === "No") return { block: true, reason: "Blocked by user" };
+        if (choice === `Yes (all "${category}")`) approvedCategories.add(`cf::${category}`);
+        return undefined;
       }
 
       return undefined;
