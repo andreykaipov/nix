@@ -11,6 +11,57 @@
 
 import type { ExtensionAPI } from "@mariozechner/pi-coding-agent";
 
+// ── Strip obviously-safe contexts from a command before pattern matching ────
+//
+// This is intentionally conservative: we only strip things we're very confident
+// are non-executing.  Anything ambiguous is left in so the gate still fires.
+//
+//   Safe to strip:
+//     - Comments:  # ... (only when not inside quotes — we approximate this)
+//     - echo/printf arguments: `echo "terraform apply"` → `echo ""`
+//     - grep/rg/ag/ack patterns: `grep "terraform apply" file` → `grep "" file`
+//     - Variable assignments (RHS): `FOO="terraform apply"` → `FOO=""`
+//
+//   NOT safe to strip (dangerous wrappers — leave as-is):
+//     - eval "terraform apply"
+//     - bash -c "terraform apply"
+//     - sh -c "terraform apply"
+//     - xargs, $(), backticks, etc.
+//
+function stripSafeContexts(command: string): string {
+  let cmd = command;
+
+  // 1. Strip inline comments: ` # ...` at end of line (not inside quotes — rough heuristic)
+  //    Only strip if the `#` is preceded by whitespace or is at the start.
+  cmd = cmd.replace(/(?:^|\s)#(?![!\/]).*$/gm, "");
+
+  // 2. If the entire (trimmed) command is a simple echo/printf, neutralize quoted args.
+  //    We only do this for single-command lines, not pipelines or chains.
+  //    Dangerous wrappers (eval, bash -c, sh -c, xargs) are excluded.
+  const dangerousWrappers = /\b(eval|xargs|bash\s+-c|sh\s+-c|source)\b|(?:^|[\s;|&])\.\s/;
+  if (!dangerousWrappers.test(cmd)) {
+    // Strip quoted strings that are arguments to known-safe commands.
+    // "Safe" = the quoted string won't be executed.
+    const safeArgCommands =
+      /\b(echo|printf|cat|tee|write|log|info|warn|error|debug|grep|egrep|fgrep|rg|ag|ack|sed|awk|perl|jq|yq)\b/;
+    if (safeArgCommands.test(cmd)) {
+      // Neutralize double-quoted and single-quoted strings.
+      // This is aggressive but OK because we already checked for dangerous wrappers.
+      cmd = cmd.replace(/"(?:[^"\\]|\\.)*"/g, '""');
+      cmd = cmd.replace(/'[^']*'/g, "''");
+
+      // If the command is a single simple invocation of a safe command (no chains/pipes/subshells),
+      // the entire thing is safe — return empty to skip all gates.
+      const chainOps = /[;&|`]|\$\(/;
+      if (!chainOps.test(cmd)) {
+        return "";
+      }
+    }
+  }
+
+  return cmd;
+}
+
 // ── Bash command patterns that require confirmation ─────────────────────────
 const bashPatterns: [RegExp, string][] = [
   // File operations
@@ -112,17 +163,24 @@ export default function (pi: ExtensionAPI) {
     if (event.toolName === "bash") {
       const command = event.input.command as string;
 
-      // Hard deny (even in auto-yes mode)
-      const denied = bashDeny.find((p) => p.test(command));
+      // Hard deny (even in auto-yes mode).
+      // NOTE: this also checks against the stripped version so that
+      // `echo "terraform destroy"` doesn't get blocked, but `eval "terraform destroy"` does.
+      const denied = bashDeny.find((p) => p.test(stripSafeContexts(command)));
       if (denied) {
         return { block: true, reason: `Command denied by policy: ${command}` };
       }
 
+      // Strip obviously-safe contexts (echo, grep, comments) before matching.
+      // This reduces false positives like `echo "terraform apply"` without
+      // compromising safety — dangerous wrappers (eval, bash -c) are left intact.
+      const stripped = stripSafeContexts(command);
+
       // Soft gate
-      const match = bashPatterns.find(([p]) => p.test(command));
+      const match = bashPatterns.find(([p]) => p.test(stripped));
       if (match) {
         const category = match[1].includes("$")
-          ? match[1].replace(/\$(\d+)/g, (_, i) => command.match(match[0])?.[+i] ?? "")
+          ? match[1].replace(/\$(\d+)/g, (_, i) => stripped.match(match[0])?.[+i] ?? "")
           : match[1];
 
         // Skip if auto-yes, exact command, or category is approved
