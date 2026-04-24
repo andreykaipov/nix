@@ -30,6 +30,9 @@ in
     defaultEditor = true;
     viAlias = true;
     vimAlias = true;
+    withRuby = false;
+    withPython3 = false;
+    initLua = lib.mkForce ""; # suppress HM-generated init.lua — conflicts with xdg.configFile."nvim" symlink
   };
 
   home.activation.nvim = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
