@@ -1,6 +1,20 @@
 {
-  "newLine": ["shift+enter", "ctrl+j"],
-  "pageUp": ["pageUp", "alt+u"],
-  "pageDown": ["pageDown", "alt+n"],
-  "selectModel": ["alt+l"]
+  "tui.editor.pageUp": [
+    "pageUp",
+    "alt+u"
+  ],
+  "tui.editor.pageDown": [
+    "pageDown",
+    "alt+n"
+  ],
+  "tui.input.newLine": [
+    "shift+enter",
+    "ctrl+j"
+  ],
+  "app.model.select": [
+    "alt+l"
+  ],
+  "app.tree.filter.labeledOnly": [
+    "alt+l"
+  ]
 }
