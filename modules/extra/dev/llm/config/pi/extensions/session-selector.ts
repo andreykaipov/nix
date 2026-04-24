@@ -14,8 +14,9 @@
 import type { ExtensionAPI, ExtensionContext } from "@mariozechner/pi-coding-agent";
 import { SessionManager, type SessionInfo } from "@mariozechner/pi-coding-agent";
 import {
-	Input, getEditorKeybindings, matchesKey,
+	Input, getKeybindings, matchesKey,
 	truncateToWidth, visibleWidth, fuzzyMatch,
+	type KeybindingsManager,
 } from "@mariozechner/pi-tui";
 import { spawnSync } from "node:child_process";
 import { existsSync } from "node:fs";
@@ -191,8 +192,8 @@ async function showSessionSelector(
 	let currentSessions = initialCurrentSessions;
 	let allSessions = initialAllSessions;
 
-	return ctx.ui.custom<string | null>((tui, theme, _keybindings, done) => {
-		const kb = getEditorKeybindings();
+	return ctx.ui.custom<string | null>((tui, theme, keybindings, done) => {
+		const kb = keybindings;
 		const searchInput = new Input();
 		let selectedIndex = 0;
 		let filtered: FlatNode[] = [];
@@ -394,7 +395,7 @@ async function showSessionSelector(
 				}
 
 				if (confirmingDelete) {
-					if (kb.matches(data, "selectConfirm") || matchesKey(data, "enter")) {
+					if (kb.matches(data, "tui.select.confirm") || matchesKey(data, "enter")) {
 						const path = confirmingDelete;
 						confirmingDelete = null;
 						deleteSessionFile(path).then(ok => {
@@ -416,14 +417,14 @@ async function showSessionSelector(
 				}
 
 				if (matchesKey(data, "escape")) { done(null); }
-				else if (kb.matches(data, "selectUp") || matchesKey(data, "up")) { selectedIndex = Math.max(0, selectedIndex - 1); }
-				else if (kb.matches(data, "selectDown") || matchesKey(data, "down")) { selectedIndex = Math.min(filtered.length - 1, selectedIndex + 1); }
-				else if (kb.matches(data, "selectPageUp")) { selectedIndex = Math.max(0, selectedIndex - maxVisible); }
-				else if (kb.matches(data, "selectPageDown")) { selectedIndex = Math.min(filtered.length - 1, selectedIndex + maxVisible); }
-				else if (kb.matches(data, "selectConfirm") || matchesKey(data, "enter")) {
+				else if (kb.matches(data, "tui.select.up") || matchesKey(data, "up")) { selectedIndex = Math.max(0, selectedIndex - 1); }
+				else if (kb.matches(data, "tui.select.down") || matchesKey(data, "down")) { selectedIndex = Math.min(filtered.length - 1, selectedIndex + 1); }
+				else if (kb.matches(data, "tui.select.pageUp")) { selectedIndex = Math.max(0, selectedIndex - maxVisible); }
+				else if (kb.matches(data, "tui.select.pageDown")) { selectedIndex = Math.min(filtered.length - 1, selectedIndex + maxVisible); }
+				else if (kb.matches(data, "tui.select.confirm") || matchesKey(data, "enter")) {
 					if (filtered[selectedIndex]) done(filtered[selectedIndex].session.path);
 				}
-				else if (kb.matches(data, "tab")) {
+				else if (kb.matches(data, "tui.input.tab")) {
 					if (scope === "current") {
 						scope = "all";
 						if (!allSessions) {
@@ -438,11 +439,11 @@ async function showSessionSelector(
 						} else { refilter(); }
 					} else { scope = "current"; refilter(); }
 				}
-				else if (kb.matches(data, "toggleSessionSort") || matchesKey(data, "ctrl+s")) {
+				else if (matchesKey(data, "ctrl+s")) {
 					sortMode = sortMode === "threaded" ? "recent" : sortMode === "recent" ? "relevance" : "threaded";
 					refilter();
 				}
-				else if (kb.matches(data, "deleteSession") || matchesKey(data, "ctrl+d")) {
+				else if (matchesKey(data, "ctrl+d")) {
 					const sel = filtered[selectedIndex];
 					if (sel && sel.session.path !== currentPath) { confirmingDelete = sel.session.path; }
 					else if (sel?.session.path === currentPath) { setStatus("Cannot delete active session", "error"); }
