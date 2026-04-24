@@ -11,5 +11,6 @@
     opentofu
     terraform-ls
     tflint
+    tfswitch
   ];
 }
