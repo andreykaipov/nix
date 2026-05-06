@@ -91,10 +91,13 @@ config.keys = {
 -- Dot is already stripped from the trailing end. To exclude more trailing
 -- characters, just append them here, e.g. [=[`}]']=]
 local url_excl = [=[`}"]=]
-local url_regex = ([=[\b\w+://(?:[^\s()EXCL]*\([^\s()EXCL]*\))*[^\s().EXCL]*(?:\.[^\s().EXCL]+)*]=]):gsub("EXCL", url_excl)
+local url_regex = ([=[\b\w+://(?:[^\s()EXCL]*\([^\s()EXCL]*\))*[^\s().EXCL]*(?:\.[^\s().EXCL]+)*]=]):gsub(
+	"EXCL",
+	url_excl
+)
 
 config.hyperlink_rules = {
-	{ regex = url_regex, format = "$0" },
+	{ regex = url_regex,                       format = "$0" },
 	{ regex = [=[\b\w+@[\w-]+(\.[\w-]+)+\b]=], format = "mailto:$0" },
 }
 
