@@ -7,7 +7,7 @@
         pi.settings.defaultModel = "claude-opus-4.6-1m";
         pi.settings.defaultThinkingLevel = "high";
         pi.mcpServers = {
-          inherit (config.pi.mcp) terraform slack;
+          inherit (config.pi.mcp) terraform slack playwright godot;
           datadog = config.pi.mcp.mkRemoteServer "https://mcp.datadoghq.com/api/unstable/mcp-server/mcp";
           azure = config.pi.mcp.mkServer "npx -y @azure/mcp@latest server start";
           # Upstream bug: splunk-mcp uses splunklib's token= kwarg (for session keys)
