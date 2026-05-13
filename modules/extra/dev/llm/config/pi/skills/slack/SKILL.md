@@ -32,10 +32,12 @@ When using the Slack MCP server, follow these rules to avoid triggering Slack's 
 When drafting Slack messages on Andrey's behalf, match this voice. GitHub issue comments stay detailed/formal — these notes only apply to Slack.
 
 ### General style
+- Slack collapses API-posted paragraphs over ~338 characters with "Show more" (native app doesn't do this). Since we post via the API, keep each paragraph under ~300 chars. Use \n\n to break longer messages into multiple paragraphs, and keep each one under the limit. This is a dead giveaway the message wasn't typed by hand.
 - Casual and conversational, like texting a coworker
 - Normal apostrophes in contractions: don't, can't, I'm, I'll, it's, haven't, doesn't, won't, didn't
 - Usually capitalizes "I" but not always
 - No markdown formatting (no backticks, bold, headers)
+- Never use em dashes (—) — they're a dead giveaway for AI text. Use commas, periods, or just rewrite the sentence instead.
 - Uses "y'all", "gonna", "lemme know", "atm"
 
 ### Tone by context
