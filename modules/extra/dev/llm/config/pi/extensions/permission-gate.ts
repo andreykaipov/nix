@@ -7,6 +7,8 @@
  *   - Cloudflare API mutations via cloudflare_execute (POST, PUT, PATCH, DELETE)
  *
  * In non-interactive mode (no UI), mutations are blocked outright.
+ *
+ * Tests: npx tsx --test tests/permission-gate.test.ts  (from ~/gh/nix/modules/extra/dev/llm/config/pi/)
  */
 
 import type { ExtensionAPI } from "@mariozechner/pi-coding-agent";
@@ -240,9 +242,42 @@ export default function (pi: ExtensionAPI) {
       return undefined;
     }
 
-    // ── MCP tool calls (non-builtin) ──────────────────────────────────────
+    // ── MCP gateway tool calls ────────────────────────────────────────────
+    // The MCP gateway is a builtin tool (toolName === "mcp"), but the *inner*
+    // tool (event.input.tool) may be a mutation.  Check it here.
+    if (event.toolName === "mcp" && (event.input as Record<string, unknown>).tool) {
+      const innerTool = (event.input as Record<string, unknown>).tool as string;
+      // Normalize underscores to spaces so \b word boundaries match MCP tool names
+      // e.g. "slack_conversations_add_message" → "slack conversations add message"
+      const normalizedTool = innerTool.replace(/_/g, " ");
+      const isMutation = mcpMutationPatterns.some((p) => p.test(normalizedTool));
+      if (isMutation) {
+        const mcpKey = `mcp::${innerTool}::${JSON.stringify(event.input)}`;
+
+        // Skip if auto-yes, exact call, or inner tool name is approved
+        if (autoYes || approvedCommands.has(mcpKey) || approvedCategories.has(innerTool)) return undefined;
+
+        if (!ctx.hasUI) {
+          return { block: true, reason: `MCP mutation blocked (no UI): ${innerTool}` };
+        }
+
+        const { title, preview } = formatMcpConfirm(event.toolName, event.input as Record<string, unknown>);
+        const choice = await ctx.ui.select(
+          `${title}\n${preview}`,
+          ["Yes (just once)", "Yes (this call)", `Yes (all "${innerTool}")`, "No"],
+        );
+        if (!choice || choice === "No") return { block: true, reason: "Blocked by user" };
+        if (choice === "Yes (this call)") approvedCommands.add(mcpKey);
+        if (choice === `Yes (all "${innerTool}")`) approvedCategories.add(innerTool);
+      }
+
+      return undefined;
+    }
+
+    // ── Non-builtin tool calls (direct MCP, not via gateway) ────────────────
     if (!builtinTools.has(event.toolName)) {
-      const isMutation = mcpMutationPatterns.some((p) => p.test(event.toolName));
+      const normalizedName = event.toolName.replace(/_/g, " ");
+      const isMutation = mcpMutationPatterns.some((p) => p.test(normalizedName));
       if (isMutation) {
         const mcpKey = `${event.toolName}::${JSON.stringify(event.input)}`;
 
@@ -253,7 +288,7 @@ export default function (pi: ExtensionAPI) {
           return { block: true, reason: `MCP mutation blocked (no UI): ${event.toolName}` };
         }
 
-        const { title, preview } = formatMcpConfirm(event.toolName, event.input);
+        const { title, preview } = formatMcpConfirm(event.toolName, event.input as Record<string, unknown>);
         const choice = await ctx.ui.select(
           `${title}\n${preview}`,
           ["Yes (just once)", "Yes (this call)", `Yes (all "${event.toolName}")`, "No"],
