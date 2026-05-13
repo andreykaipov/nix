@@ -9,7 +9,7 @@
         pi.settings.defaultModel = "us.anthropic.claude-opus-4-6-v1";
         pi.settings.defaultThinkingLevel = "high";
         pi.mcpServers = {
-          inherit (config.pi.mcp) terraform slack;
+          inherit (config.pi.mcp) terraform slack playwright;
           atlassian = config.pi.mcp.mkServer "TOOLSETS=default,jira_links uvx mcp-atlassian";
           argocd = config.pi.mcp.mkServer "MCP_READ_ONLY=true npx argocd-mcp@latest stdio";
           grafana = config.pi.mcp.mkServer "uvx mcp-grafana";

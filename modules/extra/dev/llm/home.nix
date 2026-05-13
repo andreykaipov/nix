@@ -73,6 +73,12 @@ in
           exposeResources = false; # no resources to avoid bulk user queries
         };
       };
+      playwright = lib.mkOption {
+        type = lib.types.attrs;
+        readOnly = true;
+        description = "Playwright MCP server for browser automation";
+        default = mcpServer "npx @playwright/mcp@latest";
+      };
     };
     mcpServers = lib.mkOption {
       type = lib.types.attrsOf lib.types.attrs;
