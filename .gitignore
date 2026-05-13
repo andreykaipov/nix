@@ -5,6 +5,9 @@ result
 # nvim is an out of store symlink
 modules/home/nvim/tmp
 
+# tfswitch installs them to ~/bin
+modules/home/bin/terraform
+
 # plaintext secret env vars — encrypted via age on commit
 modules/home/shell/config/zshenv.*
 
