@@ -34,7 +34,7 @@ let
     defaultThinkingLevel = "high";
     theme = "auto";
     enabledModels = [
-      "*claude-opus-4[.-]6*"
+      "*claude-opus-4[.-]*"
       "*claude-sonnet-4[.-]6*"
       "*claude-haiku-4[.-]5*"
     ];
