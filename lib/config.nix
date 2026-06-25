@@ -31,6 +31,11 @@ in
             import pkgs {
               inherit system;
               config.allowUnfree = true;
+              # CVE-2024-23342: timing side-channel in pure-Python ecdsa.
+              # Transitive dep of checkov → paramiko; not exploitable locally.
+              config.permittedInsecurePackages = [
+                "python3.13-ecdsa-0.19.2"
+              ];
               overlays = import ../overlays { inherit inputs; };
             };
 
